@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Jslab, Jsans } from './fonts';
 import { Metadata } from 'next';
+import Navbar from '@/app/ui/navbar';
 
 export const metadata: Metadata = {
   title: 'Character Vault',
@@ -9,50 +10,13 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <div className='flex flex-grow justify-center mx-10 md:mx-16 p-4'>
-        <div className='z-50 flex-grow relative flex items-center'>
-          <div className='logo z-50 flex items-center mx-5'>
-            <Image
-              className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'
-              src='/VTM-ANKH.svg'
-              alt='Next.js Logo'
-              width={10}
-              height={37}
-              priority
-            />
-          </div>
-          <div className='logo z-50 flex items-center'>
-            {/* <Image
-              className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'
-              src='/VTM-LOGO.svg'
-              alt='Next.js Logo'
-              width={100}
-              height={37}
-              priority
-            /> */}
-            <p className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert text-xl'>
-              Character Vault
-            </p>
-          </div>
-        </div>
-        <div className='transition-colors duration-1000 ease-in-out'>
-          <nav className='hidden lg:block h-full ml-auto'>
-            <ul className='z-50 flex items-center'>
-              <li className='z-50 mx-5 lg:inline-block dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'>
-                Log In
-              </li>
-              <li className='z-50 mx-5 lg:inline-block dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'>
-                Sign Up
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div>
+      <Navbar />
       <main className='flex min-h-screen flex-col items-center justify-between p-16'>
         {/* relative ANKH */}
         <div className='relative flex justify-center items-center'>
+          {/* dark:drop-shadow-[0_0_0.3rem_#ffffff70] */}
           <Image
-            className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] p-16'
+            className='relative dark:drop-shadow-[0_0_0.3rem_#e2e8f070] p-16'
             src='/VTM-ANKH.svg'
             alt='Next.js Logo'
             width={500}
@@ -62,11 +26,11 @@ export default function Home() {
         </div>
         {/* GRID */}
         <div className='absolute flex items-center justify-center mt-60'>
-          <div className='grid grid-cols-2 gap-14 w-full px-16'>
+          <div className='grid grid-cols-2 gap-96 w-full px-16'>
             {/* RIGHT */}
-            <div className='flex flex-col border-2 border-zinc-950 items-center justify-center backdrop-blur-md bg-zinc-950/20'>
+            <div className='flex flex-col border-2 border-zinc-950 items-center justify-center backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
               <Image
-                className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert p-16'
+                className='relative dark:invert p-16'
                 src='/VTM-LOGO.svg'
                 alt='Next.js Logo'
                 width={500}
@@ -75,20 +39,18 @@ export default function Home() {
               />
             </div>
             {/* LEFT */}
-            <div className='flex flex-col border-2 border-zinc-950 backdrop-blur-md bg-zinc-950/20'>
-              <p className='px-16 pt-16 pb-4 dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'>
-                Welcome to the
-              </p>
-              <h1 className='text-6xl dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert px-16 pb-4'>
+            <div className='flex flex-col backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
+              <p className='px-16 pt-16 pb-4 dark:invert'>Welcome to the</p>
+              <h1 className='text-6xl dark:invert px-16 pb-4'>
                 Character Vault
               </h1>
-              <p className='text-lg text-justify dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert pb-4 px-16'>
+              <p className='text-lg text-justify dark:invert pb-4 px-16'>
                 This is a place where you can create, edit, and delete
                 characters for your Vampire: The Masquerade games. You can also
                 manage your existing characters, or update your character sheets
                 during sessions.
               </p>
-              <p className='text-lg text-justify dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert px-16 pb-8'>
+              <p className='text-lg text-justify dark:invert px-16 pb-8'>
                 Create an account if you don't already have one and start your
                 journey into the Night.
               </p>
