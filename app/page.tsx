@@ -11,22 +11,24 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className='flex min-h-screen flex-col items-center justify-between p-16'>
-        {/* relative ANKH */}
-        <div className='relative flex justify-center items-center'>
+
+      <main className='relative flex h-screen flex-col items-center px-10 py-3'>
+        <div className='relative flex h-screen flex-col items-center justify-center'>
           {/* dark:drop-shadow-[0_0_0.3rem_#ffffff70] */}
           <Image
-            className='relative dark:drop-shadow-[0_0_0.3rem_#e2e8f070] p-16'
+            className='relative dark:drop-shadow-2xl p-16'
             src='/VTM-ANKH.svg'
             alt='Next.js Logo'
-            width={500}
+            width={350}
             height={37}
             priority
           />
         </div>
+        {/* relative ANKH */}
+
         {/* GRID */}
-        <div className='absolute flex items-center justify-center mt-60'>
-          <div className='grid grid-cols-2 gap-96 w-full px-16'>
+        <div className='absolute flex items-center justify-center mt-36'>
+          <div className='grid grid-cols-2 gap-96 w-full px-10'>
             {/* RIGHT */}
             <div className='flex flex-col border-2 border-zinc-950 items-center justify-center backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
               <Image
@@ -45,10 +47,11 @@ export default function Home() {
                 Character Vault
               </h1>
               <p className='text-lg text-justify dark:invert pb-4 px-16'>
-                This is a place where you can create, edit, and delete
-                characters for your Vampire: The Masquerade games. You can also
-                manage your existing characters, or update your character sheets
-                during sessions.
+                This is a place where you can create, edit, and store your
+                characters for any Vampire: The Masquerade games. You can manage
+                existing character information, and in the future you will be
+                able to fill out, and update your character sheets during
+                sessions.
               </p>
               <p className='text-lg text-justify dark:invert px-16 pb-8'>
                 Create an account if you don't already have one and start your
@@ -61,7 +64,7 @@ export default function Home() {
           </div>
         </div>
         {/* FOOTER */}
-        <div className='flex justify-center w-full mb-16'>
+        <div className='flex justify-center w-full'>
           <div className='z-50 flex flex-grow justify-between'>
             <div className=''>
               <Image
