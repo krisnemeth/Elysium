@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Jslab, Jsans } from './fonts';
 import { Metadata } from 'next';
 import Navbar from '@/app/ui/navbar';
+import Footer from './ui/footer';
 
 export const metadata: Metadata = {
   title: 'Character Vault',
@@ -63,37 +64,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        {/* FOOTER */}
-        <div className='flex justify-center w-full'>
-          <div className='z-50 flex flex-grow justify-between'>
-            <div className=''>
-              <Image
-                className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert py-4'
-                src='/VTM-LOGO.svg'
-                alt='Next.js Logo'
-                width={100}
-                height={37}
-                priority
-              />
-            </div>
-            <div className=''>
-              <p className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert py-6'>
-                Copyright &copy; 2024. Developed by Krisztian Nemeth
-              </p>
-            </div>
-            <div className=''>
-              <Image
-                className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert py-4'
-                src='/VTM-LOGO.svg'
-                alt='Next.js Logo'
-                width={100}
-                height={37}
-                priority
-              />
-            </div>
-          </div>
-        </div>
-
+        <Footer />
         {/* <div className='z-10 max-w-7xl w-full items-center justify-between text-sm lg:flex'>
         <p
           className={`${Jslab.className} font-extrabold fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-red-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30`}
