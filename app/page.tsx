@@ -1,8 +1,10 @@
-import Image from 'next/image';
+// import Image from 'next/image';
+import Link from 'next/link';
 import { Jslab, Jsans } from './fonts';
 import { Metadata } from 'next';
-import Navbar from '@/app/ui/navbar';
-import Footer from './ui/footer';
+import { VtmAnkh, VtmLogo } from '@/app/ui/svgs';
+// import Navbar from '@/app/ui/navbar';
+// import Footer from './ui/footer';
 
 export const metadata: Metadata = {
   title: 'Character Vault',
@@ -11,19 +13,12 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className='relative flex h-screen flex-col items-center px-10 py-3'>
-        <div className='relative flex h-screen flex-col items-center justify-center'>
+        <div className='relative flex h-screen flex-col w-full items-center justify-center p-16'>
+          <VtmAnkh className='text-black text-8xl' />
           {/* dark:drop-shadow-[0_0_0.3rem_#ffffff70] */}
-          <Image
-            className='relative dark:drop-shadow-2xl p-16'
-            src='/VTM-ANKH.svg'
-            alt='Next.js Logo'
-            width={350}
-            height={37}
-            priority
-          />
         </div>
         {/* relative ANKH */}
 
@@ -31,7 +26,7 @@ export default function Home() {
         <div className='absolute flex items-center justify-center mt-36'>
           <div className='grid grid-cols-2 gap-96 w-full px-10'>
             {/* RIGHT */}
-            <div className='flex flex-col border-2 border-zinc-950 items-center justify-center backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
+            {/* <div className='flex flex-col border-2 border-zinc-950 items-center justify-center backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
               <Image
                 className='relative dark:invert p-16'
                 src='/VTM-LOGO.svg'
@@ -40,31 +35,42 @@ export default function Home() {
                 height={37}
                 priority
               />
-            </div>
+            </div> */}
             {/* LEFT */}
-            <div className='flex flex-col backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
-              <p className='px-16 pt-16 pb-4 dark:invert'>Welcome to the</p>
-              <h1 className='text-6xl dark:invert px-16 pb-4'>
+            <div className='flex flex-col backdrop-blur-md bg-black/20 shadow-2xl'>
+              <p className='px-8 pt-16 pb-4 text-slate-400'>Welcome to the</p>
+              <h1 className='text-6xl text-slate-300 px-8 pb-4'>
                 Character Vault
               </h1>
-              <p className='text-lg text-justify dark:invert pb-4 px-16'>
+              <p className='text-lg text-justify text-slate-400 pb-4 px-8'>
                 This is a place where you can create, edit, and store your
                 characters for any Vampire: The Masquerade games. You can manage
                 existing character information, and in the future you will be
                 able to fill out, and update your character sheets during
                 sessions.
               </p>
-              <p className='text-lg text-justify dark:invert px-16 pb-8'>
+              <p className='text-lg text-justify text-slate-400 px-8 pb-8'>
                 Create an account if you don't already have one and start your
                 journey into the Night.
               </p>
-              <div className='flex items-start px-16 pb-16'>
-                <button className='dark:invert'>Get Started &rarr;</button>
+              <div className='flex flex-row gap-2 items-start justify-between px-8 pb-16'>
+                <div className='w-full'>
+                  <Link href='/dashboard'>
+                    <button className='flex h-[48px] w-full grow items-center justify-center gap-2 bg-purple-950 dark:bg-red-950 p-3 text-lg text-slate-300 font-medium dark:hover:bg-red-800 hover:bg-purple-900 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3'>
+                      <div className='hidden md:block mt-1'>Log In</div>
+                    </button>
+                  </Link>
+                </div>
+                <div className='w-full'>
+                  <button className='flex h-[48px] w-full grow items-center justify-center gap-2 bg-purple-950 dark:bg-red-950 p-3 text-lg text-slate-300 font-medium dark:hover:bg-red-800 hover:bg-purple-900 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3'>
+                    <div className='hidden md:block mt-1'>Sign Up</div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <Footer />
+        {/* <Footer /> */}
         {/* <div className='z-10 max-w-7xl w-full items-center justify-between text-sm lg:flex'>
         <p
           className={`${Jslab.className} font-extrabold fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-red-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30`}
