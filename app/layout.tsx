@@ -4,8 +4,8 @@ import { Jsans } from './fonts';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Character Vault',
-    default: 'Character Vault',
+    template: '%s | Elysium',
+    default: 'Elysium',
   },
   description:
     'A place to store your characters, and character sheets for the World of Darkness. Developed by Krisztian Nemeth web developer.',

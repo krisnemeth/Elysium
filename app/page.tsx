@@ -3,148 +3,157 @@ import Link from 'next/link';
 import { Jslab, Jsans } from './fonts';
 import { Metadata } from 'next';
 import { VtmAnkh, VtmLogo } from '@/app/ui/svgs';
-// import Navbar from '@/app/ui/navbar';
+import Navbar from '@/app/ui/navbar';
 // import Footer from './ui/footer';
 
+import { GiDrop, GiFangs } from 'react-icons/gi';
+import { FaGithubSquare } from 'react-icons/fa';
+import { MdArrowOutward } from 'react-icons/md';
+
 export const metadata: Metadata = {
-  title: 'Character Vault',
+  title: 'Elysium',
 };
 
 export default function Home() {
   return (
     <>
-      {/* <Navbar /> */}
+      <main className='relative flex h-screen flex-col items-center overscroll-contain'>
+        <Navbar />
 
-      <main className='relative flex h-screen flex-col items-center px-10 py-3'>
-        <div className='relative flex h-screen flex-col w-full items-center justify-center p-16'>
-          <VtmAnkh className='text-black text-8xl' />
-          {/* dark:drop-shadow-[0_0_0.3rem_#ffffff70] */}
+        <div className='flex flex-col items-center justify-center mt-48'>
+          <div className='py-16 px-24 text-slate-300'>
+            <h2 className='text-6xl drop-shadow-2xl text-center'>
+              Master the Shadows
+            </h2>
+            <p className='text-lg mt-4'>
+              Unveil the secrets of the night as you immerse yourself in the
+              World Of Darkness with our companion app.
+            </p>
+          </div>
+
+          <div className='mt-36'>
+            <div className='relative group'>
+              <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-600 to-violet-600 dark:from-pink-600 dark:to-violet-600 rounded-lg blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 w-96'></div>
+              <button className='relative flex items-center justify-center bg-black px-4 py-2 text-slate-300 rounded-lg group-hover:text-slate-100 transition duration-200 ease-in-out w-96'>
+                <span className='text-lg'>
+                  Get Started <MdArrowOutward className='inline text-xl mb-1' />
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
-        {/* relative ANKH */}
+
+        {/* <div className='absolute grid grid-cols-12 border-2 w-full '>
+          <div className='relative flex h-full flex-col w-full items-center justify-center col-span-2'>
+            <div className='relative'>
+              <div className='absolute inset-y-5 blur-xl'>
+                <VtmAnkh className=' text-rose-600 text-6xl w-48' />
+              </div>
+              <VtmAnkh className='relative text-black text-6xl w-48 drop-shadow-[0_0_0.3rem_#f43f5e80]' />
+            </div>
+          </div>
+          <div className='relative flex h-full  flex-col w-full items-center justify-center col-span-8 bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-40'>
+            <div className='relative '>
+              <div className='absolute inset-y-5 blur-xl'>
+                <VtmAnkh className=' text-rose-600 text-6xl w-48' />
+              </div>
+              <VtmAnkh className='relative text-black text-6xl w-48 drop-shadow-[0_0_0.3rem_#f43f5e80]' />
+            </div>
+          </div>
+          <div className='relative flex h-full flex-col w-full items-center justify-center col-span-2'>
+            <div className='relative'>
+              <div className='absolute inset-y-5 blur-xl'>
+                <VtmAnkh className=' text-rose-600 text-6xl w-48' />
+              </div>
+              <VtmAnkh className='relative text-black text-6xl w-48 drop-shadow-[0_0_0.3rem_#f43f5e80]' />
+            </div>
+          </div>
+        </div> */}
 
         {/* GRID */}
-        <div className='absolute flex items-center justify-center mt-36'>
-          <div className='grid grid-cols-2 gap-96 w-full px-10'>
-            {/* RIGHT */}
-            {/* <div className='flex flex-col border-2 border-zinc-950 items-center justify-center backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
-              <Image
-                className='relative dark:invert p-16'
-                src='/VTM-LOGO.svg'
-                alt='Next.js Logo'
-                width={500}
-                height={37}
-                priority
-              />
-            </div> */}
-            {/* LEFT */}
-            <div className='flex flex-col backdrop-blur-md bg-black/20 shadow-2xl'>
-              <p className='px-8 pt-16 pb-4 text-slate-400'>Welcome to the</p>
-              <h1 className='text-6xl text-slate-300 px-8 pb-4'>
-                Character Vault
-              </h1>
-              <p className='text-lg text-justify text-slate-400 pb-4 px-8'>
-                This is a place where you can create, edit, and store your
-                characters for any Vampire: The Masquerade games. You can manage
-                existing character information, and in the future you will be
-                able to fill out, and update your character sheets during
-                sessions.
-              </p>
-              <p className='text-lg text-justify text-slate-400 px-8 pb-8'>
-                Create an account if you don't already have one and start your
-                journey into the Night.
-              </p>
-              <div className='flex flex-row gap-2 items-start justify-between px-8 pb-16'>
-                <div className='w-full'>
-                  <Link href='/dashboard'>
-                    <button className='flex h-[48px] w-full grow items-center justify-center gap-2 bg-purple-950 dark:bg-red-950 p-3 text-lg text-slate-300 font-medium dark:hover:bg-red-800 hover:bg-purple-900 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3'>
-                      <div className='hidden md:block mt-1'>Log In</div>
-                    </button>
-                  </Link>
+        {/* <div className='absolute flex flex-col w-full h-full px-6 justify-between mt-14'>
+          
+          <div className='grid grid-cols-12 grid-rows-2 gap-10 mt-6'>
+            <div className='flex flex-col text-start row-span-2 col-span-4 h-full'>
+              <div className='h-full w-full bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20 '>
+                <div className='flex flex-col text-justify text-slate-300 h-full p-8'>
+                  <p className='text-base'>Welcome to</p>
+                  <h1 className='text-5xl pt-6'>Elysium</h1>
+                  <p className='text-base pt-6'>
+                    This is a companion to the popular tabletop roleplaying game
+                    `Vampire: The Masquerade` where you can create, edit and
+                    store your characters. I am a huge fan of the game, and I
+                    wanted to create a tool that would help others keep track of
+                    their characters, and allow them to update character sheets
+                    suring sessions.
+                  </p>
+                  <p className='text-base pt-6'>
+                    This project is brought to you by Krisztian Nemeth. It is
+                    still well under construction. If you would like to
+                    contribute, please check out the repo on GitHub, or if you
+                    want to see more of my work, check my portfolio.
+                  </p>
                 </div>
-                <div className='w-full'>
-                  <button className='flex h-[48px] w-full grow items-center justify-center gap-2 bg-purple-950 dark:bg-red-950 p-3 text-lg text-slate-300 font-medium dark:hover:bg-red-800 hover:bg-purple-900 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3'>
-                    <div className='hidden md:block mt-1'>Sign Up</div>
+              </div>
+            </div>
+            <div className='flex flex-col col-span-4 h-full'></div>
+            <div className='flex flex-col col-span-4 h-full'>
+              <div className=' bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20 col-span-3'>
+                <div className='p-8 text-slate-300 text-justify'>
+                  <div className='flex justify-between'>
+                    <h2 className='text-xl font-extrabold'>
+                      Soaring Leap Back In
+                    </h2>
+                    <GiFangs className='text-2xl mb-1' />
+                  </div>
+
+                  <p className='pt-8'>
+                    You know what you're doing. Get back to work and add or edit
+                    characters or update sheets during a session.
+                  </p>
+                </div>
+                <div className='flex justify-end px-8 pb-4'>
+                  <div className='relative group'>
+                    <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-600 to-violet-600 rounded-lg blur-lg opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 w-36'></div>
+                    <button className='relative flex items-center justify-center bg-black px-4 py-2 text-slate-300 rounded-lg group-hover:text-slate-100 transition duration-200 ease-in-out w-36'>
+                      <span className='text-lg'>
+                        Log In{' '}
+                       
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className='flex flex-col col-span-4 h-full'></div>
+            <div className=' bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-20  col-span-4'>
+              <div className='p-8 text-slate-300 text-justify'>
+                <div className='flex justify-between'>
+                  <h2 className='text-xl font-extrabold'>Start Your Journey</h2>
+                  <GiDrop className='text-2xl mb-1' />
+                </div>
+
+                <p className='pt-8'>
+                  If you're new here, do not fret. Create an account, and
+                  Embrace the Night. What could possibly go wrong...?
+                </p>
+              </div>
+              <div className='flex justify-end px-8 pb-4'>
+                <div className='relative group'>
+                  <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-600 to-violet-600 rounded-lg blur-lg opacity-65 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 w-36'></div>
+                  <button className='relative flex items-center justify-center bg-black px-4 py-2 text-slate-300 rounded-lg group-hover:text-slate-100 transition duration-200 ease-in-out w-36'>
+                    <span className='text-lg'>
+                      Sign Up <MdArrowOutward className='inline text-xl mb-1' />
+                    </span>
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        {/* <Footer /> */}
-        {/* <div className='z-10 max-w-7xl w-full items-center justify-between text-sm lg:flex'>
-        <p
-          className={`${Jslab.className} font-extrabold fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-red-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30`}
-        >
+         
           
-        </p>
-
-        <div className='fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none'>
-          <a
-            className={`${Jslab.className} font-extrabold pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0`}
-            href='#'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <button
-              className={`${Jslab.className} text-base font-extrabold fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-red-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30`}
-            >
-              Log In &rarr;
-            </button>
-          </a>
-        </div>
-      </div>
-
-      <div className=''>
-        <div className='flex items-center justify-center mb-4'>
-          <p className={`${Jslab.className} font-semibold text-lg`}>
-            Welcome to the
-          </p>
-        </div>
-        <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[280px] after:w-full sm:after:w-[240px] after:translate-x-1/2 after:bg-gradient-conic after:from-sky-200 after:via-violet-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-violet-700 before:dark:opacity-10 after:dark:from-violet-900 after:dark:via-[#991b1b] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-          {/* #991b1b #0141ff*/}
-
-        {/* <Image
-            className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'
-            src='/VTM-LOGO.svg'
-            alt='Next.js Logo'
-            width={500}
-            height={37}
-            priority
-          />
-        </div>
-        <h1
-          className={`${Jslab.className} text-5xl font-extrabold text-center p-8`}
-        >
-          Character Vault
-        </h1>
-      </div> */}
-
-        {/* <div className='z-10 max-w-7xl w-full items-center justify-between text-sm lg:flex'>
-        <div className='grid grid-cols-2 gap-16'>
-          <div className='flex flex-col gap-4 border-2 fixed left-0 top-0 w-full justify-center border-b border-red-800 bg-gradient-to-b from-zinc-100 pb-6 pt-8 backdrop-blur-2xl dark:border-red-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30'>
-            <p className='text-base font-extrabold p-4'>Get started &rarr;</p>
-            <p className='text-sm px-4'>
-              Create an account if you don't already have one, then you can
-              start your journey into the Night.
-            </p>
-            <p className='text-sm pb-2 px-4'>
-              You can create, edit, and delete characters, and more.
-            </p>
-          </div>
-          <div className='flex flex-col gap-4 border-2 fixed left-0 top-0 w-full justify-center border-b border-red-800 bg-gradient-to-b from-zinc-100 pb-6 pt-8 backdrop-blur-2xl dark:border-red-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30'>
-            <p className={`${Jslab.className} text-lg font-extrabold p-4`}>
-              Log in &rarr;
-            </p>
-            <p className='text-sm px-4'>
-              Add new characters, and manage your existing ones, or update your
-              character sheets during sessions.
-            </p>
-            <p className='text-sm pb-2 px-4'>
-              Remember... what could possibly go wrong?
-            </p>
-          </div>
-        </div>
-      </div> */}
+        </div> */}
+        {/* <Footer /> */}
       </main>
     </>
   );
