@@ -1,9 +1,11 @@
-// import Image from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Jslab, Jsans } from './fonts';
 import { Metadata } from 'next';
-import { VtmAnkh, VtmLogo } from '@/app/ui/svgs';
+import { AnarchLogo, BrujahLogo, VtmAnkh, VtmLogo } from '@/app/ui/svgs';
 import Navbar from '@/app/ui/navbar';
+
+import { BrujahClan } from '@/app/ui/svgs';
 // import Footer from './ui/footer';
 
 import { GiDrop, GiFangs } from 'react-icons/gi';
@@ -20,7 +22,7 @@ export default function Home() {
       <main className='relative flex h-screen flex-col items-center overscroll-contain'>
         <Navbar />
 
-        <div className='flex flex-col items-center justify-center mt-48'>
+        <div className='flex flex-col items-center justify-center mt-48 mx-96'>
           <div className='py-16 px-24 text-slate-300'>
             <h2 className='text-6xl drop-shadow-2xl text-center'>
               Master the Shadows
@@ -29,6 +31,40 @@ export default function Home() {
               Unveil the secrets of the night as you immerse yourself in the
               World Of Darkness with our companion app.
             </p>
+          </div>
+
+          <div className='flex flex-col w-full mt-2'>
+            <div className='grid grid-cols-4 gap-10'>
+              <div className='flex flex-col col-span-2 border-2 border-slate-300 bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-60'>
+                <div className='flex flex-col text-slate-300'>
+                  <div className='grid grid-cols-4'>
+                    <div className='flex flex-col col-span-1 p-2 border-2 border-slate-300 items-center'>
+                      <Image
+                        src={'/enforcer.png'}
+                        width={'100'}
+                        height={'70'}
+                        alt='character image'
+                        className='rounded-full'
+                      />
+                      <BrujahLogo className='h-18 text-slate-300' />
+                    </div>
+                    <div className='flex flex-col col-span-3 border-2 border-slate-300'>
+                      <h3 className='text-2xl pt-5 px-2'>Jacques Sauvage</h3>
+                      <div className='flex items-start pt-2 px-2'>
+                        <BrujahClan className='text-slate-300 h-7' />
+                      </div>
+                      <p className='text-lg text-justify pt-6 px-2'>
+                        Impatient, hot-headed enforcer of the Anarachs. Loyal to
+                        The Movement through and through.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className='flex flex-col col-span-2 border-2 border-slate-300'>
+                <p className='text-white'>CARD 2</p>
+              </div>
+            </div>
           </div>
 
           <div className='mt-36'>
