@@ -16,15 +16,48 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <main>
-      <h1 className={`${Jslab.className} mb-4 text-xl md:text-2xl`}>
-        Dashboard
+      <h1
+        className={`${Jslab.className} mb-4 text-xl md:text-3xl text-slate-300`}
+      >
+        Overview
       </h1>
       <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-4'>
-        <div>SOMETHING</div>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
       </div>
-      <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8'>
-        <div>SOMETHING</div>
-        <div>SOMETHING</div>
+      <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2'>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
+      </div>
+      <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2'>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
+      </div>
+      <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2'>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
+        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
+          <p className='text-slate-300 text-lg'>SOMETHING</p>
+        </div>
       </div>
     </main>
   );

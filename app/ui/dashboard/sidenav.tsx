@@ -3,6 +3,7 @@ import NavLinks from '@/app/ui/dashboard/nav-links';
 import Image from 'next/image';
 import { FaPowerOff } from 'react-icons/fa';
 import { VtmLogo, VtmAnkh } from '@/app/ui/svgs';
+import { GiDove } from 'react-icons/gi';
 // import { signOut } from '@/auth';
 
 export default function SideNav() {
@@ -15,10 +16,10 @@ export default function SideNav() {
         <div className='w-32 md:text-center md:w-56 inline-block'>
           <VtmLogo className='relative text-2xl text-slate-300' />
         </div>
-        <div className='w-56 md:text-center md:w-56 inline-block'>
-          <span className='text-3xl md:text-3xl text-slate-300'>
-            Character Vault
-          </span>
+        <div className='logo z-50 flex items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-300 ml-2  '>
+          <GiDove className='text-lg md:text-2xl mb-1 mr-2 md:mr-2' />
+
+          <p className='relative text-lg md:text-2xl ml-2 md:ml-2'>Elysium</p>
         </div>
       </Link>
 
@@ -26,7 +27,7 @@ export default function SideNav() {
         <NavLinks />
         <div className='hidden h-auto w-full grow bg-black md:block'>
           <div className='flex flex-col items-center mt-24'>
-            <VtmAnkh className='text-xl text-slate-400 w-36' />
+            <VtmAnkh className='text-xl text-slate-300 w-36' />
             {/* <Image
               className='relative dark:invert p-2'
               src='/VTM-ANKH.svg'
@@ -40,7 +41,7 @@ export default function SideNav() {
         <form
           action={async () => {
             'use server';
-            await signOut();
+            // await signOut();
           }}
         >
           <button className='flex h-[48px] w-full grow items-center justify-center gap-2 bg-purple-950 dark:bg-red-950 p-3 text-lg text-slate-300 font-medium dark:hover:bg-red-800 hover:bg-purple-900 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3'>

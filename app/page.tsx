@@ -39,8 +39,8 @@ export default function Home() {
               Master the Shadows
             </h2>
             <p className='text-sm text-center lg:text-lg mt-6 px-6'>
-              Manage characters of the night as you immerse yourself in the
-              World Of Darkness with our companion app.
+              Manage characters of the night as you immerse yourself in Vampire:
+              The Masquerade with our companion app.
             </p>
           </div>
           {/* Example Cards */}
