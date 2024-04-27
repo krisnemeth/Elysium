@@ -13,12 +13,12 @@ import {
 } from '@/app/ui/svgs';
 import Navbar from '@/app/ui/navbar';
 import Footer from '@/app/ui/footer';
+import GlowUpButton from '@/app/ui/glowUpButton';
 
 // import Footer from './ui/footer';
 
 import { GiDrop, GiFangs } from 'react-icons/gi';
 import { FaGithubSquare } from 'react-icons/fa';
-import { MdArrowOutward } from 'react-icons/md';
 import CardPreview from './ui/characters/CardPreview';
 
 export const metadata: Metadata = {
@@ -34,17 +34,17 @@ export default function Home() {
         {/* Welcome text */}
 
         <div className='flex flex-col items-center justify-center mt-20 xl:mt-36 xl:mx-80'>
-          <div className='py-10 text-slate-300'>
-            <h2 className='text-2xl lg:text-4xl xl:text-6xl drop-shadow-2xl text-center'>
+          <div className='pt-10 pb-2 md:py-10 text-slate-300'>
+            <h2 className='text-3xl lg:text-4xl xl:text-6xl drop-shadow-2xl text-center'>
               Master the Shadows
             </h2>
-            <p className='text-sm text-center lg:text-lg mt-4 px-6'>
-              Unveil the secrets of the night as you immerse yourself in the
+            <p className='text-sm text-center lg:text-lg mt-6 px-6'>
+              Manage characters of the night as you immerse yourself in the
               World Of Darkness with our companion app.
             </p>
           </div>
           {/* Example Cards */}
-          <div className='flex flex-col mx-6 mt-2'>
+          <div className='flex flex-col mx-6 mt-6'>
             <div className='grid sm:grid-cols-1 sm:gap-8 xl:grid-cols-4 gap-10'>
               <div className='hidden md:flex flex-col col-span-2 order-1'>
                 <CardPreview
@@ -54,7 +54,7 @@ export default function Home() {
                       width={'150'}
                       height={'70'}
                       alt='character image'
-                      className='rounded-full h-36 xl:h-52 xl:w-44'
+                      className='rounded-full xl:h-36 xl:w-36'
                     />
                   }
                   characterName='Jacques Sauvage'
@@ -74,35 +74,28 @@ export default function Home() {
                       width={'150'}
                       height={'0'}
                       alt='character image'
-                      className='rounded-full xl:h-52 xl:w-44 mt-2'
+                      className='rounded-full h-24 w-24 xl:h-36 xl:w-36 mt-2'
                     />
                   }
                   characterName='Ailah Al-Malik'
                   description='Ruthless leader of the Glasgow Camarilla. Calculated, cold, and cruel. Their servants are terrified of them, and for good measure.'
                   Title={
-                    <VentrueTitle className='text-slate-300 h-4 md:h-5 mt-3' />
+                    <VentrueTitle className='text-slate-300 h-3 md:h-5 mt-1' />
                   }
-                  Logo={<VentrueLogo className='text-slate-300 h-5' />}
+                  Logo={<VentrueLogo className='text-slate-300 h-3' />}
                 />
               </div>
             </div>
           </div>
 
-          <div className='flex items-center text-slate-300 mt-10 mx-6'>
-            <p className='text-lg text-center mt-4'>
+          {/* <div className='flex items-center text-slate-300 mt-4 md:mt-10 mx-6'>
+            <p className='text-sm text-center mt-4'>
               Are you ready to embark on your character creation journey?
             </p>
-          </div>
+          </div> */}
 
-          <div className='mt-10'>
-            <div className='relative group'>
-              <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-600 to-violet-600 dark:from-pink-600 dark:to-violet-600 rounded-lg blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 w-52 xl:w-96'></div>
-              <button className='relative flex items-center justify-center bg-black px-4 py-2 text-slate-300 rounded-lg group-hover:text-slate-100 transition duration-200 ease-in-out w-52 xl:w-96'>
-                <span className='text-lg'>
-                  Get Started <MdArrowOutward className='inline text-xl mb-1' />
-                </span>
-              </button>
-            </div>
+          <div className='mt-20'>
+            <GlowUpButton />
           </div>
         </div>
 

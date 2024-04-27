@@ -1,14 +1,14 @@
-import Image from 'next/image';
-
 export default function Footer() {
+  let currentYear = new Date().getFullYear();
+
   return (
-    <div className='flex justify-center w-full px-4 py-2 bg-black mt-10'>
+    <div className='flex xl:mx-80 px-10 py-4 bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-60 fixed bottom-0'>
       <div className='z-50 flex flex-grow justify-center'>
         <div className=''>
-          <p className='relative text-justify text-slate-300 text-sm'>
-            &copy;2024 Elysium. All Rights Reserved. All product and company
-            names are trademarks&#8482; or registered&#174; trademarks of their
-            respective holders.
+          <p className='relative text-justify text-slate-300 text-xs'>
+            &copy;{currentYear} Elysium. All Rights Reserved. All product and
+            company names are trademarks&#8482; or registered&#174; trademarks
+            of their respective holders.
           </p>
         </div>
       </div>
