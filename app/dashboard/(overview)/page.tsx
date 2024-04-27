@@ -1,4 +1,4 @@
-// import Image from 'next/image';
+import Image from 'next/image';
 // // import Navbar from '@/app/ui/navbar';
 // import Footer from '@/app/ui/footer';
 // import Link from 'next/link';
@@ -6,8 +6,9 @@
 // import { GiVampireCape } from 'react-icons/gi';
 // import { FaFile, FaPlusSquare, FaPowerOff } from 'react-icons/fa';
 
-import { Jslab } from '@/app/fonts';
 import { Metadata } from 'next';
+import OverviewCard from '@/app/ui/characters/OverviewCard';
+import CharacterList from '@/app/ui/characters/CharacterList';
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -16,48 +17,14 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <main>
-      <h1
-        className={`${Jslab.className} mb-4 text-xl md:text-3xl text-slate-300`}
-      >
-        Overview
-      </h1>
-      <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-4'>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-      </div>
-      <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2'>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-      </div>
-      <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2'>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-      </div>
-      <div className='mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2'>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
-        <div className='w-full h-52 border-2 border-slate-300 flex items-center justify-center'>
-          <p className='text-slate-300 text-lg'>SOMETHING</p>
-        </div>
+      <h1 className=' mb-4 text-xl md:text-4xl text-slate-300'>Overview</h1>
+      <p className='text-lg text-slate-300 mt-8'>
+        Information at a glance about your characters and more.
+      </p>
+      <div className='grid gap-6 sm:grid-cols-1 lg:grid-cols-3 mt-7'>
+        <OverviewCard cardTitle='Characters Finished:' Amount={6} />
+        <OverviewCard cardTitle='Character Drafts:' Amount={2} />
+        <OverviewCard cardTitle='Loresheets' Amount={3} />
       </div>
     </main>
   );

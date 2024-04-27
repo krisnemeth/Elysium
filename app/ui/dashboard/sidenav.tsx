@@ -17,9 +17,9 @@ export default function SideNav() {
           <VtmLogo className='relative text-2xl text-slate-300' />
         </div>
         <div className='logo z-50 flex items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-300 ml-2  '>
-          <GiDove className='text-lg md:text-2xl mb-1 mr-2 md:mr-2' />
+          <GiDove className='text-lg md:text-4xl mb-1 md:mr-2' />
 
-          <p className='relative text-lg md:text-2xl ml-2 md:ml-2'>Elysium</p>
+          <p className='relative text-lg md:text-4xl md:ml-2'>Elysium</p>
         </div>
       </Link>
 
