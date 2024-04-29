@@ -1,16 +1,16 @@
 import React from 'react';
 
-interface CharacterListProps {
+interface ListItemProps {
   characterImage: React.ReactNode;
   characterName: string;
   clanSymbol: React.ReactNode;
 }
 
-export default function CharacterList({
+export default function CardListItem({
   characterImage,
   characterName,
   clanSymbol,
-}: CharacterListProps) {
+}: ListItemProps) {
   return (
     <div>
       {/* hardcoding characters just now for rep purpose, will map through them later once they are in db */}

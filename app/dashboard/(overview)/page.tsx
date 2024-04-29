@@ -1,14 +1,18 @@
 import Image from 'next/image';
-// // import Navbar from '@/app/ui/navbar';
-// import Footer from '@/app/ui/footer';
-// import Link from 'next/link';
-
-// import { GiVampireCape } from 'react-icons/gi';
-// import { FaFile, FaPlusSquare, FaPowerOff } from 'react-icons/fa';
-
 import { Metadata } from 'next';
-import OverviewCard from '@/app/ui/characters/OverviewCard';
-import CharacterList from '@/app/ui/characters/CharacterList';
+import OverviewCard from '@/app/ui/dashboard/OverviewCard';
+import CardList from '@/app/ui/dashboard/CardList';
+import CardListItem from '@/app/ui/dashboard/CardListItem';
+
+import {
+  BrujahLogo,
+  VentrueLogo,
+  MalkavianLogo,
+  TremereLogo,
+  GangrelLogo,
+  LasombraLogo,
+  BanuHaqimLogo,
+} from '@/app/ui/svgs';
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -22,8 +26,105 @@ export default async function Page() {
         Information at a glance about your characters and more.
       </p>
       <div className='grid gap-6 sm:grid-cols-1 lg:grid-cols-3 mt-7'>
-        <OverviewCard cardTitle='Characters Finished:' Amount={6} />
-        <OverviewCard cardTitle='Character Drafts:' Amount={2} />
+        <OverviewCard cardTitle='Characters Finished:' Amount={6}>
+          <CardList>
+            <CardListItem
+              characterImage={
+                <Image
+                  src={'/Brujah.jpg'}
+                  width={'100'}
+                  height={'100'}
+                  alt='character image'
+                  className='rounded-full xl:h-10 xl:w-10'
+                />
+              }
+              characterName='Jacques Sauvage'
+              clanSymbol={<BrujahLogo className='text-slate-300 h-6' />}
+            />
+            <CardListItem
+              characterImage={
+                <Image
+                  src={'/Ventrue.jpg'}
+                  width={'100'}
+                  height={'100'}
+                  alt='character image'
+                  className='rounded-full xl:h-10 xl:w-10'
+                />
+              }
+              characterName='Ailah Al-Malik'
+              clanSymbol={<VentrueLogo className='text-slate-300 h-6' />}
+            />
+            <CardListItem
+              characterImage={
+                <Image
+                  src={'/Malkavian.jpg'}
+                  width={'100'}
+                  height={'100'}
+                  alt='character image'
+                  className='rounded-full xl:h-10 xl:w-10'
+                />
+              }
+              characterName='Claire Voyant'
+              clanSymbol={<MalkavianLogo className='text-slate-300 h-6' />}
+            />
+            <CardListItem
+              characterImage={
+                <Image
+                  src={'/Tremere.jpg'}
+                  width={'100'}
+                  height={'100'}
+                  alt='character image'
+                  className='rounded-full xl:h-10 xl:w-10'
+                />
+              }
+              characterName='Agatha'
+              clanSymbol={<TremereLogo className='text-slate-300 h-6' />}
+            />
+            <CardListItem
+              characterImage={
+                <Image
+                  src={'/Gangrel.jpg'}
+                  width={'100'}
+                  height={'100'}
+                  alt='character image'
+                  className='rounded-full xl:h-10 xl:w-10'
+                />
+              }
+              characterName='Chelsea Grim'
+              clanSymbol={<GangrelLogo className='text-slate-300 h-6' />}
+            />
+          </CardList>
+        </OverviewCard>
+        <OverviewCard cardTitle='Character Drafts:' Amount={2}>
+          <CardList>
+            <CardListItem
+              characterImage={
+                <Image
+                  src={'/Female3.jpg'}
+                  width={'100'}
+                  height={'100'}
+                  alt='character image'
+                  className='rounded-full xl:h-10 xl:w-10'
+                />
+              }
+              characterName='Trixx O’Hare'
+              clanSymbol={<LasombraLogo className='text-slate-300 h-6' />}
+            />
+            <CardListItem
+              characterImage={
+                <Image
+                  src={'/Male1.jpg'}
+                  width={'100'}
+                  height={'100'}
+                  alt='character image'
+                  className='rounded-full xl:h-10 xl:w-10'
+                />
+              }
+              characterName='Vic Stevens'
+              clanSymbol={<BanuHaqimLogo className='text-slate-300 h-6' />}
+            />
+          </CardList>
+        </OverviewCard>
         <OverviewCard cardTitle='Loresheets' Amount={3} />
       </div>
     </main>
