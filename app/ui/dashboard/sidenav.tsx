@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import NavLinks from '@/app/ui/dashboard/nav-links';
-import Image from 'next/image';
 import { FaPowerOff } from 'react-icons/fa';
 import { VtmLogo, VtmAnkh } from '@/app/ui/svgs';
 import { GiDove } from 'react-icons/gi';
