@@ -4,40 +4,40 @@ export { default as VtmLogo } from './VtmLogo.svg';
 export { default as VtmAnkh } from './VtmAnkh.svg';
 
 export { default as AnarchLogo } from './anarchLogoV5.svg';
-export { default as AnarchTitle } from './anarchTitleV5.svg';
+export { default as AnarchTitle } from './AnarchTitleV5.svg';
 
-export { default as BrujahTitle } from './clanBrujahTitleV5.svg';
-export { default as BrujahLogo } from './clanBrujahSymbolV5.svg';
+export { default as BrujahTitle } from './ClanBrujahTitleV5.svg';
+export { default as BrujahLogo } from './ClanBrujahSymbolV5.svg';
 
-export { default as ToreadorTitle } from './clanToreadorTitleV5.svg';
-export { default as ToreadorLogo } from './clanToreadorSymbolV5.svg';
+export { default as ToreadorTitle } from './ClanToreadorTitleV5.svg';
+export { default as ToreadorLogo } from './ClanToreadorSymbolV5.svg';
 
-export { default as MalkavianTitle } from './clanMalkavianTitleV5.svg';
-export { default as MalkavianLogo } from './clanMalkavianSymbolV5.svg';
+export { default as MalkavianTitle } from './ClanMalkavianTitleV5.svg';
+export { default as MalkavianLogo } from './ClanMalkavianSymbolV5.svg';
 
-export { default as ClanVentrueTitle } from './clanVentrueTitleV5.svg';
-export { default as VentrueLogo } from './clanVentrueSymbolV5.svg';
+export { default as VentrueTitle } from './ClanVentrueTitleV5.svg';
+export { default as VentrueLogo } from './ClanVentrueSymbolV5.svg';
 
-export { default as TremereTitle } from './clanTremereTitleV5.svg';
-export { default as TremereLogo } from './clanTremereSymbolV5.svg';
+export { default as TremereTitle } from './ClanTremereTitleV5.svg';
+export { default as TremereLogo } from './ClanTremereSymbolV5.svg';
 
-export { default as GangrelTitle } from './clanGangrelTitleV5.svg';
-export { default as GangrelLogo } from './clanGangrelSymbolV5.svg';
+export { default as GangrelTitle } from './ClanGangrelTitleV5.svg';
+export { default as GangrelLogo } from './ClanGangrelSymbolV5.svg';
 
-export { default as HecataTitle } from './clanHecataTitleV5.svg';
-export { default as HecataLogo } from './clanHecataSymbolV5.svg';
+export { default as HecataTitle } from './ClanHecataTitleV5.svg';
+export { default as HecataLogo } from './ClanHecataSymbolV5.svg';
 
-export { default as BanuHaqimTitle } from './clanBanuHaqimTitleV5.svg';
-export { default as BanuHaqimLogo } from './clanBanuHaqimSymbolV5.svg';
+export { default as BanuHaqimTitle } from './ClanBanuHaqimTitleV5.svg';
+export { default as BanuHaqimLogo } from './ClanBanuHaqimSymbolV5.svg';
 
-export { default as LasombraTitle } from './clanLasombraTitleV5.svg';
-export { default as LasombraLogo } from './clanLasombraSymbolV5.svg';
+export { default as LasombraTitle } from './ClanLasombraTitleV5.svg';
+export { default as LasombraLogo } from './ClanLasombraSymbolV5.svg';
 
-export { default as TzimisceTitle } from './clanTzimisceTitleV5.svg';
-export { default as TzimisceLogo } from './clanTzimisceSymbolV5.svg';
+export { default as TzimisceTitle } from './ClanTzimisceTitleV5.svg';
+export { default as TzimisceLogo } from './ClanTzimisceSymbolV5.svg';
 
-export { default as NosferatuTitle } from './clanNosferatuTitleV5.svg';
-export { default as NosferatuLogo } from './clanNosferatuSymbolV5.svg';
+export { default as NosferatuTitle } from './ClanNosferatuTitleV5.svg';
+export { default as NosferatuLogo } from './ClanNosferatuSymbolV5.svg';
 
-export { default as RavnosTitle } from './clanRavnosTitleV5.svg';
-export { default as RavnosLogo } from './clanRavnosSymbolV5.svg';
+export { default as RavnosTitle } from './ClanRavnosTitleV5.svg';
+export { default as RavnosLogo } from './ClanRavnosSymbolV5.svg';
