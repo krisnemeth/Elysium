@@ -15,7 +15,7 @@ export { default as ToreadorLogo } from './ClanToreadorSymbolV5.svg';
 export { default as MalkavianTitle } from './ClanMalkavianTitleV5.svg';
 export { default as MalkavianLogo } from './ClanMalkavianSymbolV5.svg';
 
-export { default as VentrueTitle } from './ClanVentrueTitleV5.svg';
+// export { default as VentrueTitle } from './ClanVentrueTitleV5.svg';
 export { default as VentrueLogo } from './ClanVentrueSymbolV5.svg';
 
 export { default as TremereTitle } from './ClanTremereTitleV5.svg';
