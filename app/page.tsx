@@ -60,17 +60,14 @@ export default function Home() {
                   characterName='Jacques Sauvage'
                   description='Impatient, hot-headed enforcer of the Anarachs. Loyal to
                         The Movement through and through. Runs an establishment called The Last Stand.'
-                  Title={
-                    <BrujahTitle className='text-slate-300 h-8 mt-4 mr-2' />
-                  }
-                  Logo={<BrujahLogo className='text-slate-300 h-8' />}
+                  Logo={<BrujahLogo className='text-slate-300 h-6' />}
                 />
               </div>
               <div className='flex flex-col col-span-2'>
                 <CardPreview
                   characterImage={
                     <Image
-                      src={'/Malkavian.jpg'}
+                      src={'/Ventrue.jpg'}
                       width={'150'}
                       height={'0'}
                       alt='character image'
@@ -79,10 +76,7 @@ export default function Home() {
                   }
                   characterName='Ailah Al-Malik'
                   description='Ruthless leader of the Glasgow Camarilla. Calculated, cold, and cruel. Their servants are terrified of them, and for good measure.'
-                  Title={
-                    <VentrueTitle className='text-slate-300 h-3 md:h-5 mt-1' />
-                  }
-                  Logo={<VentrueLogo className='text-slate-300 h-3' />}
+                  Logo={<VentrueLogo className='text-slate-300 h-3 md:h-5' />}
                 />
               </div>
             </div>
