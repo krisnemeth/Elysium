@@ -13,13 +13,14 @@ import {
 } from '@/app/ui/svgs';
 import Navbar from '@/app/ui/navbar';
 import Footer from '@/app/ui/footer';
-import GlowUpButton from '@/app/ui/glowUpButton';
 
 // import Footer from './ui/footer';
 
 import { GiDrop, GiFangs } from 'react-icons/gi';
 import { FaGithubSquare } from 'react-icons/fa';
+import { MdArrowOutward } from 'react-icons/md';
 import CardPreview from './ui/characters/CardPreview';
+import GlowUpButtonLarge from '@/app/ui/glowUpButtonLarge';
 
 export const metadata: Metadata = {
   title: 'Elysium',
@@ -89,7 +90,12 @@ export default function Home() {
           </div> */}
 
           <div className='mt-20'>
-            <GlowUpButton />
+            <GlowUpButtonLarge
+              buttonText='Get Started'
+              buttonIcon={
+                <MdArrowOutward className='text-slate-300 text-xl ml-2 mb-1' />
+              }
+            ></GlowUpButtonLarge>
           </div>
         </div>
 
