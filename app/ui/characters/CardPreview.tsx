@@ -6,7 +6,6 @@ type CardPreviewProps = {
   characterImage: React.ReactNode;
   characterName: string;
   description: string;
-  Title: React.ReactNode;
   Logo: React.ReactNode;
 };
 
@@ -15,7 +14,6 @@ export default function CardPreview({
   characterName,
   description,
   Logo,
-  Title,
 }: CardPreviewProps) {
   return (
     <div className='flex flex-col text-slate-300 border-2 border-black bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-60 shadow-2xl w-full h-full xl:h-52'>
@@ -24,7 +22,7 @@ export default function CardPreview({
           {characterImage}
 
           <div className='flex'>
-            <div>{Title}</div>
+            <div></div>
           </div>
         </div>
         <div className='flex flex-col col-span-8 xl:col-span-8'>
