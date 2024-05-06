@@ -24,7 +24,7 @@ export default function TextInput({
         name={name}
         value={value}
         onChange={onChange}
-        className='mt-1 border-2 w-full px-3 py-2 border-slate-300 text-black bg-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md'
+        className='mt-1 border-2 w-full px-2 py-1 border-slate-300 text-black bg-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md'
       />
     </div>
   );
