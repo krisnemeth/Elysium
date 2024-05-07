@@ -14,7 +14,7 @@ export default function TextInputDropdown({
   onChange,
 }: TextInputDropdownProps) {
   return (
-    <div className='p-1'>
+    <div className=''>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
