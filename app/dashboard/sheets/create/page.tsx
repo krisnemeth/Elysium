@@ -8,6 +8,7 @@ import TextInputFields from '@/app/ui/sheets/TextInputFields';
 import { Metadata } from 'next';
 import { VtmLogo } from '@/app/ui/svgs';
 import Disciplines from '@/app/ui/sheets/Disciplines';
+import ResonanceHunger from '@/app/ui/sheets/ResonanceHunger';
 
 export const metadata: Metadata = {
   title: 'Create New Character',
@@ -30,6 +31,7 @@ export default function CreateSheet() {
         <LifeStats />
         <CategoryDividers title='Disciplines' />
         <Disciplines />
+        <ResonanceHunger />
       </form>
     </div>
   );

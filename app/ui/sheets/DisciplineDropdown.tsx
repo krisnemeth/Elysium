@@ -1,14 +1,12 @@
 import React from 'react';
 
 interface TextInputDropdownProps {
-  name: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
 }
 
 export default function TextInputDropdown({
-  name,
   options,
   value,
   onChange,

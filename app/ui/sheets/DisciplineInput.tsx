@@ -1,22 +1,23 @@
 'use client';
 import React, { useState } from 'react';
 import DisciplineDropdown from './DisciplineDropdown'; // Import TextInputDropdown
+import DisciplineCheckbox from './DisciplineCheckbox'; // Import TextInputDropdown
 
-interface CheckBoxInputProps {
-  dropdownOptions: string[]; // Add dropdownOptions prop
-  dropdownValue: string; // Add dropdownValue prop
-  onDropdownChange: (value: string) => void; // Add onDropdownChange prop
+interface DisciplineInputProps {
+  dropdownOptions: string[];
+  dropdownValue: string;
+  onDropdownChange: (value: string) => void;
   values: boolean[];
   onChange: (index: number, values: boolean[]) => void;
 }
 
-export default function CheckBoxInput({
+export default function DisciplineInput({
   dropdownOptions,
   dropdownValue,
   onDropdownChange,
   values,
   onChange,
-}: CheckBoxInputProps) {
+}: DisciplineInputProps) {
   const [inputValues, setInputValues] = useState(Array(5).fill('')); // State for input fields
 
   const handleInputChange = (index: number, value: string) => {
@@ -29,32 +30,12 @@ export default function CheckBoxInput({
   return (
     <>
       <div className='grid grid-cols-2 pr-4 py-1 border-b-2 border-slate-300'>
-        <DisciplineDropdown // Use TextInputDropdown as label
+        <DisciplineDropdown
           options={dropdownOptions}
-          name='predator'
           value={dropdownValue}
           onChange={onDropdownChange}
         />
-        <div className='flex justify-end mt-1'>
-          {values.map((value, index) => (
-            <>
-              <input
-                type='checkbox'
-                id={`predator-${index}`}
-                name={`predator-${index}`}
-                checked={value}
-                onChange={() => {
-                  const newValues = [...values];
-                  newValues[index] = !value;
-                  onChange(index, newValues);
-                }}
-                className={`border-2 border-slate-300 text-slate-300 shadow-sm rotate-45 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-3 w-4 h-4 mt-1 inline-block cursor-pointer checked:bg-slate-300 ${
-                  value ? 'bg-slate-300' : ''
-                }`}
-              />
-            </>
-          ))}
-        </div>
+        <DisciplineCheckbox disciplineLevel={values} onChange={onChange} />
       </div>
       <div className='flex flex-col'>
         {inputValues.map((value, index) => (

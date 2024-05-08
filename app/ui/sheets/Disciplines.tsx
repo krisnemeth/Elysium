@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import DisciplineDropCheckInput from '@/app/ui/sheets/DisciplineDropCheckInput';
+import DisciplineInput from '@/app/ui/sheets/DisciplineInput';
 
 export default function Disciplines() {
   const dropdownOptions = [
@@ -48,7 +48,7 @@ export default function Disciplines() {
           key={index}
           className='flex flex-col border-r-2 border-slate-300 mt-2'
         >
-          <DisciplineDropCheckInput
+          <DisciplineInput
             dropdownOptions={dropdownOptions}
             dropdownValue={discipline.dropdownValue}
             onDropdownChange={(value) => handleDropdownChange(index, value)}
