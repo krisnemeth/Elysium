@@ -16,8 +16,8 @@ export default function ResonanceHunger({
   const [hunger, setHunger] = useState(hungerValues);
 
   return (
-    <div className='grid grid-cols-2 gap-6 px-6 border-t-2 border-slate-300 mx-10 my-6'>
-      <div className='flex flex-col  text-slate-300 px-6 mt-2'>
+    <div className='grid grid-cols-2 gap-6 px-6 border-t-2 border-slate-300 mx-6 mt-6 mb-10'>
+      <div className='flex flex-col  text-slate-300 px-10 mt-6'>
         <div className='grid grid-cols-12'>
           <label htmlFor='resonance' className='col-span-3 text-xl mt-2'>
             Resonance
@@ -30,7 +30,7 @@ export default function ResonanceHunger({
         </div>
       </div>
       <div className='flex flex-col'>
-        <div className='grid grid-cols-12 mt-4'>
+        <div className='grid grid-cols-12 mt-8 mx-20'>
           <label htmlFor={label} className=' text-lg text-slate-300 col-span-3'>
             {label}
           </label>

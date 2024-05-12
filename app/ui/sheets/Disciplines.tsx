@@ -42,7 +42,7 @@ export default function Disciplines() {
   };
 
   return (
-    <div className='grid grid-cols-3 gap-2 px-6 my-2'>
+    <div className='grid grid-cols-3 gap-2 px-10 my-2'>
       {disciplines.map((discipline, index) => (
         <div
           key={index}
