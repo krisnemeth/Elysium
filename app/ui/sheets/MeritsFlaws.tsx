@@ -39,7 +39,7 @@ export default function MeritsFlaws() {
   return (
     <div className='border-t-2 border-slate-300 my-6 mx-6 px-6'>
       <div className='grid grid-cols-2 gap-2'>
-        <div className='flex flex-col mt-4 border-r-2 border-slate-300'>
+        <div className='flex flex-col my-4 border-r-2 border-slate-300'>
           <div className='text-center my-2 border-b-2 border-slate-300 mr-2'>
             <h4 className='text-lg text-slate-300'>
               Backgrounds, Merits & Flaws
@@ -61,10 +61,10 @@ export default function MeritsFlaws() {
           <div className='text-center my-2 border-b-2 border-slate-300 mr-2 mt-4'>
             <h4 className='text-lg text-slate-300'>Notes</h4>
           </div>
-          <div className='flex mr-2'>
+          <div className='flex mr-2 mb-6'>
             <textarea
               id='notes'
-              rows={8}
+              rows={10}
               className='w-full bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent'
             ></textarea>
           </div>
