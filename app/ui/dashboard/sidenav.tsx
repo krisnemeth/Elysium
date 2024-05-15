@@ -9,13 +9,13 @@ export default function SideNav() {
   return (
     <div className='flex h-full flex-col px-3 py-2 md:px-2 bg-black/30'>
       <Link
-        className='mb-2 flex h-20 items-center justify-between md:flex-col md:items-center md:justify-between bg-black p-4 md:h-40'
+        className='mb-2 flex h-20 items-center justify-between md:flex-col md:items-center md:justify-between bg-black p-4 md:h-20'
         href='/'
       >
-        <div className='w-32 md:text-center md:w-56 inline-block'>
+        {/* <div className='w-32 md:text-center md:w-56 inline-block'>
           <VtmLogo className='relative text-2xl text-slate-300' />
-        </div>
-        <div className='logo z-50 flex items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-300 ml-2  '>
+        </div> */}
+        <div className='logo z-50 flex items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-300 ml-2 mt-1'>
           <GiDove className='text-lg md:text-4xl mb-1 md:mr-2' />
 
           <p className='relative text-lg md:text-4xl md:ml-2'>Elysium</p>
