@@ -1,6 +1,11 @@
 import Image from 'next/image';
 import CardPreview from '@/app/ui/characters/CardPreview';
-import { BrujahLogo, VentrueLogo } from '@/app/ui/svgs';
+import {
+  BrujahLogo,
+  BrujahTitle,
+  VentrueLogo,
+  VentrueTitle,
+} from '@/app/ui/svgs';
 
 export default function Page() {
   return (
@@ -27,7 +32,8 @@ export default function Page() {
               characterName='Jacques Sauvage'
               description='Impatient, hot-headed enforcer of the Anarachs. Loyal to
                         The Movement through and through. Runs an establishment called The Last Stand.'
-              Logo={<BrujahLogo className='text-slate-300 h-6' />}
+              clanTitle={<BrujahTitle className='text-slate-300 h-3 md:h-5' />}
+              clanLogo={<BrujahLogo className='text-slate-300 h-6' />}
             />
           </div>
           <div className='flex flex-col col-span-2'>
@@ -43,7 +49,8 @@ export default function Page() {
               }
               characterName='Ailah Al-Malik'
               description='Ruthless leader of the Glasgow Camarilla. Calculated, cold, and cruel. Their servants are terrified of them, and for good measure.'
-              Logo={<VentrueLogo className='text-slate-300 h-3 md:h-5' />}
+              clanTitle={<VentrueTitle className='text-slate-300 h-3 md:h-5' />}
+              clanLogo={<VentrueLogo className='text-slate-300 h-3 md:h-5' />}
             />
           </div>
         </div>

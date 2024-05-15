@@ -124,7 +124,7 @@ export default function Home() {
               by your side. Sign up now and embark on a journey into the
               shadows, where intrigue, betrayal, and eternal power await.
             </p>
-            <p className='relative text-justify text-slate-300 text-xs mx-6 mt-6'>
+            <p className='md:hidden relative text-justify text-slate-300 text-xs mx-6 mt-6'>
               &copy;2024 Elysium. All Rights Reserved. All product and company
               names are trademarks&#8482; or registered&#174; trademarks of
               their respective holders.
