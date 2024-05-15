@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className='relative flex h-screen flex-col items-center xl:overscroll-contain mx-1'>
+      <main className='z-10 relative flex h-screen flex-col items-center xl:overscroll-contain mx-1'>
         {/* Character Art Left and Right */}
         <div className='absolute grid grid-cols-12 lg:gap-4 w-screen h-screen  opacity-100'>
           <div className='flex flex-col col-span-6 lg:col-span-4'>
@@ -61,15 +61,15 @@ export default function Home() {
 
         {/* Welcome text */}
 
-        <div className=' flex flex-col items-center justify-center mt-24 lg:mt-48 lg:mx-96'>
-          <div className='pt-10 pb-2 md:py-10 text-slate-300'>
-            <p className='text-sm text-center lg:text-lg mt-6 px-16'>
+        <div className=' flex flex-col items-center justify-center mt-10 lg:mt-48 lg:mx-96'>
+          <div className='pt-14 pb-2 md:py-10 text-slate-300'>
+            <p className='text-xs text-center lg:text-lg mt-6 px-16'>
               Welcome to
             </p>
-            <h1 className='text-2xl lg:text-4xl xl:text-8xl drop-shadow-2xl text-center tracking-wide bg-gradient-to-r from-violet'>
+            <h1 className='text-5xl lg:text-4xl xl:text-8xl drop-shadow-2xl text-center tracking-wide bg-gradient-to-r from-violet'>
               Elysium
             </h1>
-            <p className='text-sm text-center lg:text-xl mt-4 px-16'>
+            <p className='text-xs text-center lg:text-xl mt-4 px-16'>
               Are you ready to immerse yourself in the dark and mysterious world
               of Vampire: The Masquerade? Look no further than Elysium, your
               indispensable character management tool designed to elevate your
@@ -77,7 +77,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className='mt-6'>
+          <div className='mt-64 lg:mt-6'>
             <a href='#features'>
               <GlowUpButtonLarge
                 buttonText='Learn More'
@@ -91,13 +91,13 @@ export default function Home() {
       </main>
       <section
         id='features'
-        className='relative flex w-screen h-screen bg-gradient-to-t from-black from-90% opacity-85 '
+        className='z-40 relative lg:flex w-screen min-h-screen lg:w-screen lg:h-screen bg-no-repeat bg-gradient-to-t from-black from-90% opacity-85 '
       >
-        <div className='absolute flex flex-col items-center w-full opacity-100'>
-          <div className='flex flex-col items-center justify-center text-slate-300 mt-40'>
-            <h2 className='text-4xl'>Features</h2>
+        <div className='absolute flex flex-col items-center w-screen lg:w-full opacity-100'>
+          <div className='flex flex-col items-center justify-center text-slate-300 mt-16 lg:mt-40'>
+            <h2 className='text-2xl lg:text-4xl'>Features</h2>
           </div>
-          <div className='grid grid-cols-1 xl:grid-cols-12 m-6 p-6 mt-6 gap-8'>
+          <div className='grid grid-cols-1 lg:grid-cols-12 mx-6 p-6 mt-6 gap-8 w-full bg-black'>
             <FeatureColumn
               title='Effortless Character Creation'
               description='Build your vampire persona with ease using our intuitive character
@@ -118,11 +118,16 @@ export default function Home() {
               description="Take Elysium with you wherever you go. Our mobile-friendly interface ensures you're never far from your character, allowing you to dive into the darkness at a moment's notice."
             />
           </div>
-          <div className='flex flex-col w-full px-24 text-slate-300'>
-            <p className='text-sm text-center lg:text-lg px-16'>
-              Experience Vampire: The Masquerade V5 like never before with
-              Elysium by your side. Sign up now and embark on a journey into the
+          <div className='flex flex-col w-full px-4 lg:px-24 text-slate-300 mb-0 bg-black py-10'>
+            <p className='text-sm mx-6 text-justify lg:text-lg lg:px-16'>
+              Experience Vampire: The Masquerade like never before with Elysium
+              by your side. Sign up now and embark on a journey into the
               shadows, where intrigue, betrayal, and eternal power await.
+            </p>
+            <p className='relative text-justify text-slate-300 text-xs mx-6 mt-6'>
+              &copy;2024 Elysium. All Rights Reserved. All product and company
+              names are trademarks&#8482; or registered&#174; trademarks of
+              their respective holders.
             </p>
           </div>
         </div>
