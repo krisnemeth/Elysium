@@ -20,23 +20,55 @@ export default function Disciplines() {
 
   const [disciplines, setDisciplines] = useState(
     Array(6).fill({
-      dropdownValue: '',
-      checkboxValues: [false, false, false, false, false],
+      dropdownValue: dropdownOptions[0],
+      checkboxValues: Array(5).fill(false),
+      textInputValues: Array(5).fill(''),
     })
   );
 
   const handleDropdownChange = (index: number, value: string) => {
-    setDisciplines((prevState) =>
-      prevState.map((discipline, i) =>
+    setDisciplines((prevDisciplines) =>
+      prevDisciplines.map((discipline, i) =>
         i === index ? { ...discipline, dropdownValue: value } : discipline
       )
     );
   };
 
-  const handleCheckboxChange = (index: number, values: boolean[]) => {
-    setDisciplines((prevState) =>
-      prevState.map((discipline, i) =>
-        i === index ? { ...discipline, checkboxValues: values } : discipline
+  const handleCheckboxChange = (
+    index: number,
+    checkboxIndex: number,
+    value: boolean
+  ) => {
+    setDisciplines((prevDisciplines) =>
+      prevDisciplines.map((discipline, i) =>
+        i === index
+          ? {
+              ...discipline,
+              checkboxValues: discipline.checkboxValues.map(
+                (checkboxValue: boolean, j: number) =>
+                  j === checkboxIndex ? value : checkboxValue
+              ),
+            }
+          : discipline
+      )
+    );
+  };
+
+  const handleTextInputChange = (
+    index: number,
+    inputIndex: number,
+    value: string
+  ) => {
+    setDisciplines((prevDisciplines) =>
+      prevDisciplines.map((discipline, i) =>
+        i === index
+          ? {
+              ...discipline,
+              textInputValues: discipline.textInputValues.map(
+                (v: string, j: number) => (j === inputIndex ? value : v)
+              ),
+            }
+          : discipline
       )
     );
   };
@@ -52,8 +84,14 @@ export default function Disciplines() {
             dropdownOptions={dropdownOptions}
             dropdownValue={discipline.dropdownValue}
             onDropdownChange={(value) => handleDropdownChange(index, value)}
-            values={discipline.checkboxValues}
-            onChange={(values) => handleCheckboxChange(index, values)} // Fix: Wrap the value in an array
+            checkboxValues={discipline.checkboxValues}
+            onCheckboxChange={(checkboxIndex, value) =>
+              handleCheckboxChange(index, checkboxIndex, value)
+            }
+            textInputValues={discipline.textInputValues}
+            onTextInputChange={(inputIndex, value) =>
+              handleTextInputChange(index, inputIndex, value)
+            }
           />
         </div>
       ))}
