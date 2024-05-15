@@ -30,11 +30,38 @@ export default function Home() {
   return (
     <>
       <main className='relative flex h-screen flex-col items-center xl:overscroll-contain mx-1'>
+        <div className='absolute grid grid-cols-12 gap-4 border-2 border-slate-300 w-full h-screen  opacity-100'>
+          <div className='flex flex-col col-span-4 border-2 border-slate-300 '>
+            <div className=' image-container-left flex '>
+              <Image
+                src={'/HomepageArtLeft.webp'}
+                alt=''
+                height={0}
+                width={600}
+                className='-translate-x-28 translate-y-28 fixed'
+              />
+            </div>
+          </div>
+          <div className='flex flex-col items-center justify-center col-span-4 border-2 border-slate-300'>
+            <h1 className='text-4xl text-slate-300'>CENTER</h1>
+          </div>
+          <div className='flex flex-col col-span-4 border-2 border-slate-300'>
+            <div className='image-container-left flex'>
+              <Image
+                src={'/HomepageArtRight.webp'}
+                alt=''
+                height={0}
+                width={600}
+                className='translate-x-28 translate-y-32 fixed'
+              />
+            </div>
+          </div>
+        </div>
         <Navbar />
 
         {/* Welcome text */}
 
-        <div className='flex flex-col items-center justify-center mt-20 xl:mt-36 xl:mx-80'>
+        <div className=' flex flex-col items-center justify-center mt-20 xl:mt-36 xl:mx-80'>
           <div className='pt-10 pb-2 md:py-10 text-slate-300'>
             <h2 className='text-3xl lg:text-4xl xl:text-6xl drop-shadow-2xl text-center'>
               Master the Shadows
@@ -44,44 +71,8 @@ export default function Home() {
               The Masquerade with our companion app.
             </p>
           </div>
-          {/* Example Cards */}
-          <div className='flex flex-col mx-6 mt-6'>
-            <div className='grid sm:grid-cols-1 sm:gap-8 xl:grid-cols-4 gap-10'>
-              <div className='hidden md:flex flex-col col-span-2 order-1'>
-                <CardPreview
-                  characterImage={
-                    <Image
-                      src={'/Brujah.jpg'}
-                      width={'150'}
-                      height={'70'}
-                      alt='character image'
-                      className='rounded-full xl:h-36 xl:w-36'
-                    />
-                  }
-                  characterName='Jacques Sauvage'
-                  description='Impatient, hot-headed enforcer of the Anarachs. Loyal to
-                        The Movement through and through. Runs an establishment called The Last Stand.'
-                  Logo={<BrujahLogo className='text-slate-300 h-6' />}
-                />
-              </div>
-              <div className='flex flex-col col-span-2'>
-                <CardPreview
-                  characterImage={
-                    <Image
-                      src={'/Ventrue.jpg'}
-                      width={'150'}
-                      height={'0'}
-                      alt='character image'
-                      className='rounded-full h-24 w-24 xl:h-36 xl:w-36 mt-2'
-                    />
-                  }
-                  characterName='Ailah Al-Malik'
-                  description='Ruthless leader of the Glasgow Camarilla. Calculated, cold, and cruel. Their servants are terrified of them, and for good measure.'
-                  Logo={<VentrueLogo className='text-slate-300 h-3 md:h-5' />}
-                />
-              </div>
-            </div>
-          </div>
+
+          {/* Character Art Left and Right */}
 
           {/* <div className='flex items-center text-slate-300 mt-4 md:mt-10 mx-6'>
             <p className='text-sm text-center mt-4'>
@@ -89,14 +80,14 @@ export default function Home() {
             </p>
           </div> */}
 
-          <div className='mt-20'>
+          {/* <div className='mt-20'>
             <GlowUpButtonLarge
               buttonText='Get Started'
               buttonIcon={
                 <MdArrowOutward className='text-slate-300 text-xl ml-2 mb-1' />
               }
             ></GlowUpButtonLarge>
-          </div>
+          </div> */}
         </div>
 
         {/* <div classNameName='absolute grid grid-cols-12 border-2 w-full '>
@@ -209,8 +200,13 @@ export default function Home() {
          
           
         </div> */}
-        <Footer />
       </main>
+      <section className='relative w-screen h-screen bg-gradient-to-t from-black from-90% opacity-70 border-2 border-slate-300'>
+        <div className='absolute flex flex-col items-center justify-center'>
+          <h1 className='text-slate-300 text-4xl'>HAHA</h1>
+        </div>
+      </section>
+      <Footer />
     </>
   );
 }
