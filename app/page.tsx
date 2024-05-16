@@ -21,7 +21,7 @@ import { FaGithubSquare } from 'react-icons/fa';
 import { MdArrowDownward } from 'react-icons/md';
 import CardPreview from './ui/characters/CardPreview';
 import GlowUpButtonLarge from '@/app/ui/glowUpButtonLarge';
-import FeatureColumn from './ui/home/FeatureColumn';
+import FeatureCard from './ui/home/FeatureCard';
 
 export const metadata: Metadata = {
   title: 'Elysium',
@@ -41,7 +41,7 @@ export default function Home() {
                 alt=''
                 height={0}
                 width={600}
-                className='-translate-x-20 translate-y-72 lg:-translate-x-28 lg:translate-y-28 fixed h-fit w-56 lg:w-[600px]'
+                className='-translate-x-20 translate-y-52 md:-translate-x-6 md:translate-y-[500px] lg:-translate-x-28 lg:translate-y-28 xl:-translate-x-28 xl:translate-y-28 fixed h-fit w-[400px] md:w-[400px] lg:w-[400px] xl:w-[600px]'
               />
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function Home() {
                 alt=''
                 height={0}
                 width={600}
-                className='translate-x-10 translate-y-80 lg:translate-x-28 lg:translate-y-32 fixed h-fit w-56 lg:h-fit lg:w-[600px]'
+                className='translate-x-4 translate-y-80 md:-translate-x-56 md:translate-y-68 lg:translate-x-24 lg:translate-y-44 xl:translate-x-28 xl:translate-y-32 fixed h-fit w-[250px] md:w-[700px] lg:w-[400px] xl:w-[600px]'
               />
             </div>
           </div>
@@ -61,23 +61,26 @@ export default function Home() {
 
         {/* Welcome text */}
 
-        <div className=' flex flex-col items-center justify-center mt-10 lg:mt-48 lg:mx-96'>
-          <div className='pt-14 pb-2 md:py-10 text-slate-300'>
-            <p className='text-xs text-center lg:text-lg mt-6 px-16'>
+        <div className=' flex flex-col items-center justify-center mt-2 md:mt-20 lg:mt-48 lg:mx-96'>
+          <div className='pt-8 pb-2 md:py-10 text-slate-300'>
+            <p className='text-xs text-center md:text-base lg:text-lg xl:text-xl mt-6 px-16'>
               Welcome to
             </p>
-            <h1 className='text-5xl lg:text-4xl xl:text-8xl drop-shadow-2xl text-center tracking-wide bg-gradient-to-r from-violet'>
+            <h1 className='text-5xl md:text-6xl lg:text-7xl xl:text-8xl drop-shadow-2xl text-center tracking-wide bg-gradient-to-r from-violet'>
               Elysium
             </h1>
-            <p className='text-xs text-center lg:text-xl mt-4 px-16'>
+            <p className='text-xs text-center md:text-base lg:text-base xl:text-xl mt-1 md:px-0 px-16'>
               Are you ready to immerse yourself in the dark and mysterious world
               of Vampire: The Masquerade? Look no further than Elysium, your
               indispensable character management tool designed to elevate your
               gaming experience.
             </p>
+            <div className='flex md:hidden flex-row justify-center mt-10'>
+              <VtmAnkh className='text-xl text-slate-300 w-20' />
+            </div>
           </div>
 
-          <div className='mt-64 lg:mt-6'>
+          <div className='mt-80 md:mt-[700px] lg:mt-6'>
             <a href='#features'>
               <GlowUpButtonLarge
                 buttonText='Learn More'
@@ -91,29 +94,29 @@ export default function Home() {
       </main>
       <section
         id='features'
-        className='z-40 relative lg:flex w-screen min-h-screen lg:w-screen lg:h-screen bg-no-repeat bg-gradient-to-t from-black from-90% opacity-85 '
+        className='z-40 relative lg:flex w-screen min-h-screen lg:w-screen lg:h-screen bg-gradient-to-t from-black from-90% opacity-85 '
       >
         <div className='absolute flex flex-col items-center w-screen lg:w-full opacity-100'>
           <div className='flex flex-col items-center justify-center text-slate-300 mt-16 lg:mt-40'>
             <h2 className='text-2xl lg:text-4xl'>Features</h2>
           </div>
-          <div className='grid grid-cols-1 lg:grid-cols-12 mx-6 p-6 mt-6 gap-8 w-full bg-black'>
-            <FeatureColumn
+          <div className='grid grid-cols-1 lg:grid-cols-12 mx-6 p-6 mt-6 gap-8 w-full bg-black justify-items-center'>
+            <FeatureCard
               title='Effortless Character Creation'
               description='Build your vampire persona with ease using our intuitive character
               creation tools. From selecting your clan and attributes to defining
               your backstory, Elysium guides you through every step of the
               process.'
             />
-            <FeatureColumn
+            <FeatureCard
               title='Comprehensive Character Sheets'
               description="Access your character sheet anytime, anywhere. Keep track of your stats, disciplines, and abilities, ensuring you're always ready for the next encounter."
             />
-            <FeatureColumn
+            <FeatureCard
               title='Interactive Storytelling'
-              description="Seamlessly integrate your character's narrative into the game with our storytelling features. Record your character's experiences, relationships, and decisions, enriching the tapestry of your Vampire: The Masquerade adventures."
+              description="Seamlessly integrate your character's narrative into the game with our loresheets. Record your character's experiences, relationships, and decisions, enriching the tapestry of your adventures."
             />
-            <FeatureColumn
+            <FeatureCard
               title='Mobile Compatibility'
               description="Take Elysium with you wherever you go. Our mobile-friendly interface ensures you're never far from your character, allowing you to dive into the darkness at a moment's notice."
             />
