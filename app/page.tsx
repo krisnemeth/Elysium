@@ -41,7 +41,7 @@ export default function Home() {
                 alt=''
                 height={0}
                 width={600}
-                className='-translate-x-20 translate-y-52 md:-translate-x-6 md:translate-y-[500px] lg:-translate-x-28 lg:translate-y-28 xl:-translate-x-28 xl:translate-y-28 fixed h-fit w-[400px] md:w-[400px] lg:w-[400px] xl:w-[600px]'
+                className='-translate-x-20 translate-y-52 md:-translate-x-6 md:translate-y-[500px] lg:-translate-x-28 lg:translate-y-28 xl:-translate-x-28 xl:translate-y-28 2xl:-translate-x-40 2xl:translate-y-16 fixed h-fit w-[400px] md:w-[400px] lg:w-[400px] xl:w-[400px] 2xl:w-[600px]'
               />
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function Home() {
                 alt=''
                 height={0}
                 width={600}
-                className='translate-x-4 translate-y-80 md:-translate-x-56 md:translate-y-68 lg:translate-x-24 lg:translate-y-44 xl:translate-x-28 xl:translate-y-32 fixed h-fit w-[250px] md:w-[700px] lg:w-[400px] xl:w-[600px]'
+                className='translate-x-4 translate-y-80 md:-translate-x-56 md:translate-y-68 lg:translate-x-24 lg:translate-y-44 xl:translate-x-44 xl:translate-y-36 2xl:translate-x-40 2xl:translate-y-16 fixed h-fit w-[250px] md:w-[700px] lg:w-[400px] xl:w-[400px] 2xl:w-[600px]'
               />
             </div>
           </div>

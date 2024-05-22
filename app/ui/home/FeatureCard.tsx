@@ -12,7 +12,7 @@ export default function FeatureCard({
   description,
 }: FeatureCardProps) {
   return (
-    <div className='flex flex-col col-span-3 border border-slate-300 text-slate-300 rounded-md w-72 xl:w-96'>
+    <div className='flex flex-col col-span-3 border border-slate-300 text-slate-300 rounded-md w-72 lg:w-80 xl:w-80'>
       <div className='card p-4 '>
         <div className='h-56 border border-slate-300 rounded-md px-2 xl:px-4'>
           <h4 className='text-xl lg:text-3xl text-center'>VIDEO CONTENT</h4>
