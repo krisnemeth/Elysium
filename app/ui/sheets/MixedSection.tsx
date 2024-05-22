@@ -2,8 +2,10 @@
 
 import React from 'react';
 import MeritsFlawsInput from '@/app/ui/sheets/MeritsFlawsInput';
+import BloodPotency from './BloodPotency';
+import Notes from './Notes';
 
-export default function MeritsFlaws() {
+export default function MixedSection() {
   const [rows, setRows] = React.useState(
     Array(13).fill({ textInputValue: '', checkboxValues: Array(5).fill(false) })
   );
@@ -58,15 +60,11 @@ export default function MeritsFlaws() {
               }
             />
           ))}
-          <div className='text-center my-2 border-b-2 border-slate-300 mr-2 mt-4'>
-            <h4 className='text-lg text-slate-300'>Notes</h4>
-          </div>
-          <div className='flex mr-2 mb-6'>
-            <textarea
-              id='notes'
-              rows={10}
-              className='w-full bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent'
-            ></textarea>
+          <Notes />
+        </div>
+        <div className='flex flex-col my-4'>
+          <div className='text-center my-2 border-b-2 border-slate-300'>
+            <BloodPotency />
           </div>
         </div>
       </div>
