@@ -1,4 +1,3 @@
-import AttributeHeaders from '@/app/ui/sheets/AttributeHeaders';
 import CategoryDividers from '@/app/ui/sheets/CategoryDividers';
 import Attributes from '@/app/ui/sheets/Attributes';
 import Skills from '@/app/ui/sheets/Skills';
@@ -20,13 +19,12 @@ export default function CreateSheet() {
   return (
     <div className='w-full border-2 border-slate-300 xl:px-0 2xl:px-0'>
       <div className='flex flex-col items-center mt-6 mb-6'>
-        <VtmLogo className='h-28 text-slate-300' />
-        <h1 className='text-slate-300 text-3xl'>Character Sheet</h1>
+        <VtmLogo className='h-16 xl:h-28 text-slate-300' />
+        <h1 className='text-slate-300 text-lg xl:text-3xl'>Character Sheet</h1>
       </div>
       <form action=''>
         <TextInputFields />
         <CategoryDividers title='Attributes' />
-        <AttributeHeaders />
         <Attributes />
         <CategoryDividers title='Skills' />
         <Skills />

@@ -40,9 +40,9 @@ export default function MixedSection() {
   };
 
   return (
-    <div className='border-t-2 border-slate-300 my-6 mx-6 px-6'>
-      <div className='grid grid-cols-2 gap-2'>
-        <div className='flex flex-col my-4 border-r-2 border-slate-300'>
+    <div className='border-t-2 border-slate-300 my-6 mx-0 px-2 xl:mx-6 xl:px-6'>
+      <div className='grid grid-cols-1 xl:grid-cols-12 gap-2'>
+        <div className='flex flex-col col-span-6 my-4 border-r-2 border-slate-300'>
           <div className='text-center mt-2 mb-4 border-b-2 border-slate-300 mr-2'>
             <h4 className='text-lg text-slate-300'>
               Backgrounds, Merits & Flaws
@@ -63,7 +63,7 @@ export default function MixedSection() {
           ))}
           <TextArea label='Notes' id='notes' rows={22} />
         </div>
-        <div className='flex flex-col my-4'>
+        <div className='flex flex-col col-span-6 my-4'>
           <BloodPotency />
           <BioData />
         </div>

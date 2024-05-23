@@ -69,7 +69,7 @@ export default function BloodPotency() {
         bloodPotency={bloodPotency}
         handleBloodPotencyChange={handleBloodPotencyChange}
       />
-      <div className='grid grid-cols-12 mt-4 mx-4'>
+      <div className='grid grid-cols-12 mt-4 mx-0 xl:mx-4'>
         <div className='flex flex-col col-span-6 border-r-2 border-slate-300'>
           <BloodPotencyTextInput
             label='Blood Surge'
@@ -111,7 +111,7 @@ export default function BloodPotency() {
           />
         </div>
       </div>
-      <div className='grid-grid-cols-12 mx-2 my-2'>
+      <div className='grid-grid-cols-12 mx-0 xl:mx-2 my-2'>
         <div className='flex flex-col col-span-12'>
           <Experience
             label='Total Experience'
