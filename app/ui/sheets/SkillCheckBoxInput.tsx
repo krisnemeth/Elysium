@@ -30,7 +30,7 @@ export default function SkillCheckBoxInput({
             name={label}
             value={textValue}
             onChange={(e) => onTextChange(e.target.value)}
-            className=' text-slate-500 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent w-40 h-6 inline-block cursor-text'
+            className=' text-slate-500 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent w-36 xl:w-56 h-6 inline-block cursor-text'
           />
         ))}
       </div>

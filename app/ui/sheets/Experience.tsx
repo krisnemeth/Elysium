@@ -14,7 +14,7 @@ export default function Experience({
   onChange,
 }: ExperienceInputProps) {
   return (
-    <div className='grid grid-cols-12 p-1 mx-2'>
+    <div className='grid grid-cols-1 xl:grid-cols-12 p-1 xl:mx-2'>
       <div className='flex flex-col col-span-4'>
         <label
           htmlFor='experience'

@@ -9,20 +9,20 @@ export default function SideNav() {
   return (
     <div className='flex h-full flex-col px-3 py-2 md:px-2 bg-black/30'>
       <Link
-        className='mb-2 flex h-20 items-center justify-between md:flex-col md:items-center md:justify-between bg-black p-4 md:h-20'
+        className='mb-2 flex h-14 items-center justify-start md:flex-col md:items-center md:justify-between bg-black p-4 md:h-20'
         href='/'
       >
         {/* <div className='w-32 md:text-center md:w-56 inline-block'>
           <VtmLogo className='relative text-2xl text-slate-300' />
         </div> */}
-        <div className='logo z-50 flex items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-300 ml-2 mt-1'>
-          <GiDove className='text-lg md:text-4xl mb-1 md:mr-2' />
+        <div className='logo z-50 flex flex-row items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-300 ml-2 mt-1'>
+          <GiDove className='text-2xl md:text-4xl mb-1 mr-2 md:mr-2' />
 
-          <p className='relative text-lg md:text-4xl md:ml-2'>Elysium</p>
+          <p className='relative text-2xl md:text-4xl md:ml-2'>Elysium</p>
         </div>
       </Link>
 
-      <div className='flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2'>
+      <div className='bottom-0 flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2'>
         <NavLinks />
         <div className='hidden h-auto w-full grow bg-black md:block'>
           <div className='flex flex-col items-center mt-24'>

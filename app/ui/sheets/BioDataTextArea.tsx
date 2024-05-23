@@ -8,7 +8,7 @@ interface TextAreaInputProps {
 
 export default function TextArea({ label, id, rows }: TextAreaInputProps) {
   return (
-    <div className='mx-4 '>
+    <div className='xl:mx-4 mt-1 '>
       <div className='text-start my-1 mt-2'>
         <h4 className='text-base text-slate-300'>{label}</h4>
       </div>
