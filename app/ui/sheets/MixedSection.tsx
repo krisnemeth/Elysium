@@ -63,9 +63,7 @@ export default function MixedSection() {
           <Notes />
         </div>
         <div className='flex flex-col my-4'>
-          <div className='text-center my-2 border-b-2 border-slate-300'>
-            <BloodPotency />
-          </div>
+          <BloodPotency />
         </div>
       </div>
     </div>
