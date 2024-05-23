@@ -3,7 +3,8 @@
 import React from 'react';
 import MeritsFlawsInput from '@/app/ui/sheets/MeritsFlawsInput';
 import BloodPotency from './BloodPotency';
-import Notes from './Notes';
+import TextArea from './TextArea';
+import BioData from './BioData';
 
 export default function MixedSection() {
   const [rows, setRows] = React.useState(
@@ -42,7 +43,7 @@ export default function MixedSection() {
     <div className='border-t-2 border-slate-300 my-6 mx-6 px-6'>
       <div className='grid grid-cols-2 gap-2'>
         <div className='flex flex-col my-4 border-r-2 border-slate-300'>
-          <div className='text-center my-2 border-b-2 border-slate-300 mr-2'>
+          <div className='text-center mt-2 mb-4 border-b-2 border-slate-300 mr-2'>
             <h4 className='text-lg text-slate-300'>
               Backgrounds, Merits & Flaws
             </h4>
@@ -60,10 +61,11 @@ export default function MixedSection() {
               }
             />
           ))}
-          <Notes />
+          <TextArea label='Notes' id='notes' rows={22} />
         </div>
         <div className='flex flex-col my-4'>
           <BloodPotency />
+          <BioData />
         </div>
       </div>
     </div>

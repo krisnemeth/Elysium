@@ -12,7 +12,7 @@ export default function MeritsFlawsInput({
   handleCheckboxChange,
 }: MeritsFlawsInputProps) {
   return (
-    <div className='grid grid-cols-12 mt-1'>
+    <div className='grid grid-cols-12 mt-1.5 mx-2'>
       <div className=' col-span-8'>
         <input
           type='text'
@@ -21,7 +21,7 @@ export default function MeritsFlawsInput({
           className='w-full appearance-none bg-transparent border-b-2 border-dotted border-slate-300 text-slate-300 text-lg font-semibold px-2 py-1 leading-tight focus:outline-none focus:ring-0'
         />
       </div>
-      <div className='ml-4 col-span-4'>
+      <div className='flex flex-row justify-end mr-4 col-span-4'>
         {checkboxValues.map((value, index) => (
           <input
             key={index}
