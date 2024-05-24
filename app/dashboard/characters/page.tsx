@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import CardPreview from '@/app/ui/characters/CardPreview';
+
 import {
   BrujahLogo,
   BrujahTitle,
@@ -16,7 +17,7 @@ export default function Page() {
       </h1>
 
       {/* Example Cards */}
-      <div className='flex flex-col mx-6 mt-6'>
+      {/* <div className='flex flex-col mx-6 mt-6'>
         <div className='grid sm:grid-cols-1 sm:gap-8 xl:grid-cols-4 gap-10'>
           <div className='hidden md:flex flex-col col-span-2 order-1'>
             <CardPreview
@@ -54,7 +55,7 @@ export default function Page() {
             />
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
