@@ -26,15 +26,7 @@ export default function SideNav() {
         <NavLinks />
         <div className='hidden h-auto w-full grow bg-black md:block'>
           <div className='flex flex-col items-center mt-24'>
-            <VtmAnkh className='text-xl text-slate-300 w-36' />
-            {/* <Image
-              className='relative dark:invert p-2'
-              src='/VTM-ANKH.svg'
-              alt='Next.js Logo'
-              width={150}
-              height={37}
-              priority
-            /> */}
+            <VtmAnkh className='text-xl text-slate-300 w-32' />
           </div>
         </div>
         <form
@@ -43,7 +35,7 @@ export default function SideNav() {
             // await signOut();
           }}
         >
-          <button className='flex h-[48px] w-full grow items-center justify-center gap-2 bg-purple-950 dark:bg-red-950 p-3 text-lg text-slate-300 font-medium dark:hover:bg-red-800 hover:bg-purple-900 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3'>
+          <button className='flex h-[48px] w-full grow items-center rounded-md justify-center gap-2 bg-purple-950 dark:bg-red-950 p-3 text-lg text-slate-300 font-medium dark:hover:bg-red-800 hover:bg-purple-900 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3 '>
             <FaPowerOff className='w-6' />
             <div className='hidden md:block mt-1'>Log Out</div>
           </button>
