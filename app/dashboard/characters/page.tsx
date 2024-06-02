@@ -23,8 +23,8 @@ import {
 export default function Page() {
   return (
     <div className='flex flex-col'>
-      <div className='flex flex-col items-center mx-2 p-4 border border-slate-300/50 rounded-xl bg-black'>
-        <h1 className='text-2xl text-slate-300'>Characters</h1>
+      <div className='flex flex-col items-center mx-2 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
+        <h1 className='text-2xl text-slate-300/80'>Characters</h1>
       </div>
       <div className='flex flex-col items-center px-2 pt-4'>
         <div className='grid grid-cols-1 xl:grid-cols-12 gap-2 xl:gap-4 w-full mb-40'>
@@ -41,10 +41,10 @@ export default function Page() {
             characterName='Trixx Laveau'
             description="Anarch enforcer and true believer of The Cause. Right hand to the Anarch leader. If you don't want trouble, stay out of her way."
             clanTitle={
-              <BrujahTitle className='h-6 xl:h-12 w-auto text-slate-300' />
+              <BrujahTitle className='h-6 xl:h-12 w-auto text-slate-300/80' />
             }
             clanLogo={
-              <BrujahLogo className='h-4 xl:h-8 w-auto text-slate-300' />
+              <BrujahLogo className='h-4 xl:h-8 w-auto text-slate-300/80' />
             }
           />
           <CardPreview

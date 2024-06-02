@@ -31,7 +31,7 @@ export default function SideNav() {
             // await signOut();
           }}
         >
-          <button className='flex h-[48px] w-full grow items-center rounded-md justify-center gap-2 bg-black dark:bg-red-950 p-3 text-base text-slate-300 border border-slate-300/50 dark:hover:bg-red-800 hover:bg-rose-600 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3 '>
+          <button className='flex h-[48px] w-full grow items-center rounded-md justify-center gap-2 bg-black p-3 text-base text-slate-300 border border-slate-300/50 dark:hover:bg-red-800 dark:hover:border-red-800 hover:bg-rose-600 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3 '>
             <FaPowerOff className='w-6' />
             <div className='hidden md:block mt-1'>Log Out</div>
           </button>
