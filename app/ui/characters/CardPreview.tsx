@@ -20,7 +20,7 @@ export default function CardPreview({
   clanTitle,
 }: CardPreviewProps) {
   return (
-    <div className='flex flex-col col-span-6 text-slate-300 border border-slate-300 bg-black rounded-2xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-80 shadow-md shadow-black w-full h-full xl:w-full'>
+    <div className='flex flex-col col-span-6 text-slate-300 border border-slate-300/50 bg-black rounded-2xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-80 shadow-md shadow-black w-full h-full xl:w-full'>
       <div className='grid grid-cols-1 xl:grid-cols-12 gap-1 m-2 xl:m-4'>
         <div className='flex flex-col max-w-full xl:col-span-4 p-2 items-center border border-slate-300/50 rounded-lg'>
           {characterImage}

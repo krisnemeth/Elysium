@@ -23,11 +23,11 @@ import {
 export default function Page() {
   return (
     <div className='flex flex-col'>
-      <div className='flex flex-col items-center m-4'>
+      <div className='flex flex-col items-center mx-2 p-4 border border-slate-300/50 rounded-xl bg-black'>
         <h1 className='text-2xl text-slate-300'>Characters</h1>
       </div>
-      <div className='flex flex-col items-center  p-2'>
-        <div className='grid grid-cols-1 xl:grid-cols-12 gap-2 xl:gap-6 w-full mb-40'>
+      <div className='flex flex-col items-center  px-2 pt-4'>
+        <div className='grid grid-cols-1 xl:grid-cols-12 gap-2 xl:gap-4 w-full mb-40'>
           <CardPreview
             characterImage={
               <Image

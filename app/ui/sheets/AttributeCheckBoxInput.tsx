@@ -19,7 +19,7 @@ export default function CheckBoxInput({
       </label>
       <div className='flex justify-end mt-1'>
         {values.map((value, index) => (
-          <>
+          <div key={index}>
             <input
               key={index}
               type='checkbox'
@@ -31,7 +31,7 @@ export default function CheckBoxInput({
                 value ? 'bg-slate-300' : ''
               }`}
             />
-          </>
+          </div>
         ))}
       </div>
     </div>

@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 
 export default function CreateSheet() {
   return (
-    <div className='w-full border-2 border-slate-300 xl:px-0 2xl:px-44'>
+    <div className='w-full border border-slate-300/80 rounded-lg xl:px-0 2xl:px-44 shadow-xl shadow-black'>
       <div className='flex flex-col items-center mt-6 mb-6'>
-        <VtmLogo className='h-16 xl:h-28 text-slate-300' />
+        <VtmLogo className='h-16 xl:h-28 text-slate-300/80' />
         <h1 className='text-slate-300 text-lg xl:text-3xl'>Character Sheet</h1>
       </div>
       <form action=''>
