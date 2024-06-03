@@ -14,7 +14,7 @@ export default function Sheets() {
         <h1 className='text-xl'>Sheet Management</h1>
       </div>
       <div className='flex flex-col items-center mt-4'>
-        <div className='grid grid-cols-12 gap-4 w-full'>
+        <div className='grid grid-cols-1 lg:grid-cols-12 gap-4 w-full'>
           <div className='flex flex-col w-full col-span-6 border border-slate-300/50 rounded-lg bg-black bg-opacity-80 shadow-md shadow-black'>
             <div className='flex flex-col p-6'>
               <h2 className='text-xl'>Lore Sheets</h2>

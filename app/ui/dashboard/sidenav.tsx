@@ -7,7 +7,7 @@ import { GiDove } from 'react-icons/gi';
 
 export default function SideNav() {
   return (
-    <div className='z-50 fixed top-0 md:relative flex h-full w-full flex-col px-2 pb-2 xl:py-2 md:px-2 border border-slate-300/50 md:rounded-xl'>
+    <div className='z-50 fixed top-0 md:relative flex bg-black md:h-full w-full flex-col px-2 pb-2 xl:py-2 md:px-2 border border-slate-300/50 md:rounded-xl'>
       <div className='mb-2 flex items-center justify-start md:flex-col md:items-center bg-black md:justify-between p-4 h-14 md:h-16 rounded-md'>
         <Link href='/'>
           <div className='logo z-50 flex flex-row items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-300 md:-translate-y-1'>
