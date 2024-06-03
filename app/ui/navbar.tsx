@@ -22,23 +22,27 @@ export default function Navbar() {
             <li className='z-50 lg:inline-block rounded-md'>
               <div className='relative group'>
                 <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-600 to-violet-600 rounded-sm blur-md opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 w-20 md:w-24 lg:w-28 '></div>
-                <button className='relative flex items-center justify-center bg-black md:py-1 py-2 text-slate-300 rounded-md group-hover:text-slate-100 transition duration-200 ease-in-out w-20 h-10 md:w-24 lg:w-28 '>
-                  <span className='text-xs md:text-sm'>
-                    Log In{' '}
-                    <MdArrowForward className='inline text-xs md:text-sm mb-1' />
-                  </span>
-                </button>
+                <Link href='/dashboard'>
+                  <button className='relative flex items-center justify-center bg-black md:py-1 py-2 text-slate-300 rounded-md group-hover:text-slate-100 transition duration-200 ease-in-out w-20 h-10 md:w-24 lg:w-28 '>
+                    <span className='text-xs md:text-sm'>
+                      Log In{' '}
+                      <MdArrowForward className='inline text-xs md:text-sm mb-1' />
+                    </span>
+                  </button>
+                </Link>
               </div>
             </li>
             <li className='z-50 lg:inline-block border border-slate-300/60 rounded-md ml-2'>
               <div className='relative group'>
                 <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-600 to-violet-600 rounded-sm blur-md opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 w-20 md:w-24 lg:w-28'></div>
-                <button className='relative flex items-center justify-center md:px-1 md:py-1 py-2 text-slate-300 rounded-md bg-black group-hover:text-slate-100 transition duration-200 ease-in-out w-20 h-10 md:w-24 lg:w-28'>
-                  <span className='text-xs md:text-sm'>
-                    Sign Up{' '}
-                    <MdArrowOutward className='inline text-xs md:text-sm mb-1' />
-                  </span>
-                </button>
+                <Link href='/dashboard'>
+                  <button className='relative flex items-center justify-center md:px-1 md:py-1 py-2 text-slate-300 rounded-md bg-black group-hover:text-slate-100 transition duration-200 ease-in-out w-20 h-10 md:w-24 lg:w-28'>
+                    <span className='text-xs md:text-sm'>
+                      Sign Up{' '}
+                      <MdArrowOutward className='inline text-xs md:text-sm mb-1' />
+                    </span>
+                  </button>
+                </Link>
               </div>
             </li>
           </ul>

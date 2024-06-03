@@ -21,7 +21,7 @@ export default function CardListItem({
           </div>
         </div>
 
-        <div className='w-8 p-2 mt-2'>
+        <div className='w-8 p-2 mt-6 lg:mt-2'>
           <div>{clanSymbol}</div>
         </div>
       </div>
