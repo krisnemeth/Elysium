@@ -12,7 +12,7 @@ type CardPreviewProps = {
   clanTitle: React.ReactNode;
 };
 
-export default function CardPreview({
+export default function CharacterCard({
   characterImage,
   characterName,
   description,
@@ -21,11 +21,11 @@ export default function CardPreview({
 }: CardPreviewProps) {
   return (
     <div className='flex flex-col col-span-6 text-slate-300/80 border border-slate-300/50 bg-black rounded-2xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-80 shadow-md shadow-black w-full h-full xl:w-full'>
-      <div className='grid grid-cols-1 xl:grid-cols-12 gap-1 m-2 xl:m-4'>
-        <div className='flex flex-col max-w-full xl:col-span-4 p-2 items-center border border-slate-300/50 rounded-lg'>
+      <div className='grid grid-cols-1 md:grid-cols-12 xl:grid-cols-12 gap-1 m-2 xl:m-4'>
+        <div className='flex flex-col max-w-full md:col-span-6 xl:col-span-4 p-2 items-center border border-slate-300/50 rounded-lg'>
           {characterImage}
         </div>
-        <div className='flex flex-col xl:col-span-8 text-xs xl:text-base'>
+        <div className='flex flex-col  md:col-span-6 xl:col-span-8 text-xs xl:text-base'>
           <div className='grid grid-cols-12 gap-0 mx-1 xl:mx-2 mt-2'>
             <div className='flex flex-col col-span-4 xl:col-span-6 pt-1 items-start justify-end'>
               <h3 className=''>Name:</h3>
@@ -54,7 +54,7 @@ export default function CardPreview({
             <p className='text-xs xl:text-sm text-justify'>{description}</p>
           </div>
         </div>
-        <div className='flex flex-col col-span-1 xl:col-span-12 mt-2'>
+        <div className='flex flex-col col-span-1 md:col-span-12 xl:col-span-12 mt-2'>
           <div className='grid grid-cols-2 xl:grid-cols-12 gap-1'>
             <div className='flex flex-col col-span-1 xl:col-span-4'>
               <GlowUpButtonMedium buttonHref='#' buttonText='Loresheet' />

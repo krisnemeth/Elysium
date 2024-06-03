@@ -1,6 +1,11 @@
 import GlowUpButtonMedium from '@/app/ui/glowUpButtonMedium';
+import { Metadata } from 'next';
 import React from 'react';
 import { FaPlus } from 'react-icons/fa';
+
+export const metadata: Metadata = {
+  title: 'Sheets',
+};
 
 export default function Sheets() {
   return (

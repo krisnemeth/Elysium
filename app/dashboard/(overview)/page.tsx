@@ -20,26 +20,25 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   return (
-    <main>
-      <h1 className=' mb-4 text-xl md:text-4xl text-slate-300'>Overview</h1>
-      <p className='text-lg text-slate-300 mt-8'>
-        Information at a glance about your characters and more.
-      </p>
-      <div className='grid gap-6 sm:grid-cols-1 lg:grid-cols-3 mt-7'>
+    <div className='flex flex-col'>
+      <div className='flex flex-col items-center mx-2 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
+        <h1 className='text-2xl text-slate-300/80'>Overview</h1>
+      </div>
+      <div className='grid gap-4 grid-cols-1 md:grid-cols-3 mt-4 mx-2'>
         <OverviewCard cardTitle='Characters Finished:' Amount={6}>
           <CardList>
             <CardListItem
               characterImage={
                 <Image
-                  src={'/Brujah.jpg'}
+                  src={'/Female1.jpg'}
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-full xl:h-10 xl:w-10'
+                  className='rounded-sm xl:h-14 xl:w-auto'
                 />
               }
-              characterName='Jacques Sauvage'
-              clanSymbol={<BrujahLogo className='text-slate-300 h-6' />}
+              characterName='Trixx Laveau'
+              clanSymbol={<BrujahLogo className='text-slate-300 h-5' />}
             />
             <CardListItem
               characterImage={
@@ -48,11 +47,11 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-full xl:h-10 xl:w-10'
+                  className='rounded-sm xl:h-14 xl:w-auto'
                 />
               }
               characterName='Ailah Al-Malik'
-              clanSymbol={<VentrueLogo className='text-slate-300 h-6' />}
+              clanSymbol={<VentrueLogo className='text-slate-300 h-5' />}
             />
             <CardListItem
               characterImage={
@@ -61,11 +60,11 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-full xl:h-10 xl:w-10'
+                  className='rounded-sm xl:h-14 xl:w-auto'
                 />
               }
               characterName='Claire Voyant'
-              clanSymbol={<MalkavianLogo className='text-slate-300 h-6' />}
+              clanSymbol={<MalkavianLogo className='text-slate-300 h-5' />}
             />
             <CardListItem
               characterImage={
@@ -74,11 +73,11 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-full xl:h-10 xl:w-10'
+                  className='rounded-sm xl:h-14 xl:w-auto'
                 />
               }
-              characterName='Agatha'
-              clanSymbol={<TremereLogo className='text-slate-300 h-6' />}
+              characterName='Agatha Ramalho'
+              clanSymbol={<TremereLogo className='text-slate-300 h-5' />}
             />
             <CardListItem
               characterImage={
@@ -87,11 +86,11 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-full xl:h-10 xl:w-10'
+                  className='rounded-sm xl:h-14 xl:w-auto'
                 />
               }
-              characterName='Chelsea Grim'
-              clanSymbol={<GangrelLogo className='text-slate-300 h-6' />}
+              characterName='Chelsea Grimm'
+              clanSymbol={<GangrelLogo className='text-slate-300 h-5' />}
             />
           </CardList>
         </OverviewCard>
@@ -104,11 +103,11 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-full xl:h-10 xl:w-10'
+                  className='rounded-sm xl:h-14 xl:w-auto'
                 />
               }
-              characterName='Trixx O’Hare'
-              clanSymbol={<LasombraLogo className='text-slate-300 h-6' />}
+              characterName="Ada O'Connor"
+              clanSymbol={<LasombraLogo className='text-slate-300 h-5' />}
             />
             <CardListItem
               characterImage={
@@ -117,17 +116,17 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-full xl:h-10 xl:w-10'
+                  className='rounded-sm xl:h-14 xl:w-auto'
                 />
               }
-              characterName='Vic Stevens'
-              clanSymbol={<BanuHaqimLogo className='text-slate-300 h-6' />}
+              characterName='Vic Vargas'
+              clanSymbol={<BanuHaqimLogo className='text-slate-300 h-5' />}
             />
           </CardList>
         </OverviewCard>
         <OverviewCard cardTitle='Loresheets' Amount={3} />
       </div>
-    </main>
+    </div>
   );
 }
 

@@ -1,5 +1,10 @@
+import { Metadata } from 'next';
 import Image from 'next/image';
-import CardPreview from '@/app/ui/characters/CardPreview';
+import CharacterCard from '@/app/ui/characters/CharacterCard';
+
+export const metadata: Metadata = {
+  title: 'Characters',
+};
 
 import {
   BrujahLogo,
@@ -28,7 +33,7 @@ export default function Page() {
       </div>
       <div className='flex flex-col items-center px-2 pt-4'>
         <div className='grid grid-cols-1 xl:grid-cols-12 gap-2 xl:gap-4 w-full mb-40'>
-          <CardPreview
+          <CharacterCard
             characterImage={
               <Image
                 src='/Female1.jpg'
@@ -47,7 +52,7 @@ export default function Page() {
               <BrujahLogo className='h-4 xl:h-8 w-auto text-slate-300/80' />
             }
           />
-          <CardPreview
+          <CharacterCard
             characterImage={
               <Image
                 src='/Tremere.jpg'
@@ -66,7 +71,7 @@ export default function Page() {
               <TremereLogo className='h-4 xl:h-6 w-auto text-slate-300' />
             }
           />
-          <CardPreview
+          <CharacterCard
             characterImage={
               <Image
                 src='/Ventrue.jpg'
@@ -83,7 +88,7 @@ export default function Page() {
             }
             clanLogo={<VentrueLogo className='h-4 xl:h-6 w-6 text-slate-300' />}
           />
-          <CardPreview
+          <CharacterCard
             characterImage={
               <Image
                 src='/Male1.jpg'
@@ -102,7 +107,7 @@ export default function Page() {
               <BanuHaqimLogo className='h-4 xl:h-6 w-6 text-slate-300' />
             }
           />
-          <CardPreview
+          <CharacterCard
             characterImage={
               <Image
                 src='/Female3.jpg'
@@ -121,7 +126,7 @@ export default function Page() {
               <LasombraLogo className='h-4 xl:h-6 w-6 text-slate-300' />
             }
           />
-          <CardPreview
+          <CharacterCard
             characterImage={
               <Image
                 src='/Malkavian.jpg'
@@ -140,7 +145,7 @@ export default function Page() {
               <MalkavianLogo className='h-4 xl:h-6 w-6 text-slate-300' />
             }
           />
-          <CardPreview
+          <CharacterCard
             characterImage={
               <Image
                 src='/Gangrel.jpg'
@@ -157,7 +162,7 @@ export default function Page() {
             }
             clanLogo={<GangrelLogo className='h-4 xl:h-6 w-6 text-slate-300' />}
           />
-          <CardPreview
+          <CharacterCard
             characterImage={
               <Image
                 src='/Nosferatu.jpeg'
