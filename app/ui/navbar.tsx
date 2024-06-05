@@ -6,7 +6,7 @@ import { GiDove } from 'react-icons/gi';
 export default function Navbar() {
   return (
     <div className='w-full fixed z-50'>
-      <div className='flex justify-between p-2 bg-black shadow-md shadow-black rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-75 md:border border-slate-300/50 md:mx-36 lg:mx-6 xl:mx-2 md:mt-1 lg:mt-1.5 xl:mt-4 h-12 lg:h-16 '>
+      <div className='flex justify-between p-2 bg-black shadow-md shadow-black rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-75 md:border border-slate-300/50 md:mx-2 lg:mx-6 xl:mx-2 md:mt-1 lg:mt-1.5 xl:mt-4 h-12 lg:h-16 '>
         <div className='z-50 relative flex items-center'>
           <div className='logo z-50 flex items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-100/80 divide-x-2 divide-slate-100/80'>
             <GiDove className='text-sm md:text-xl mb-1 mr-1 md:mr-2' />
