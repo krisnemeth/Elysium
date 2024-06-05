@@ -12,7 +12,6 @@ import WelcomeText from './ui/home/WelcomeText';
 import Image from 'next/image';
 
 export default function Home() {
-  let currentYear = new Date().getFullYear();
   return (
     <>
       <Navbar />
@@ -29,7 +28,7 @@ export default function Home() {
           <div className='flex w-full items-center justify-center text-slate-300 mt-16 lg:mt-24 xl:pt-2 mb-4'>
             <h2 className='text-xl lg:text-2xl'>Feature Highlights</h2>
           </div>
-          <div className='grid grid-cols-1 lg:grid-cols-12 mb-20 w-full bg-black justify-items-center py-10 px-12'>
+          <div className='grid grid-cols-1 lg:grid-cols-12 gap-4 mb-20 w-full justify-items-center py-10 px-16'>
             <GlowUpCard
               title='Effortless Character Creation'
               description='Build your vampire persona with ease using our intuitive character
@@ -49,11 +48,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className='footer z-30 relative flex w-screen h-screen lg:flex lg:w-screen lg:h-screen bg-gradient-to-b from-violet-950 from-5% to-black to-90% opacity-100'>
+      <section className='footer z-30 relative flex w-screen h-screen lg:flex lg:w-screen lg:h-screen bg-gradient-to-b from-violet-950 dark:from-red-950 from-5% dark:to-black to-black to-90%  bg-opacity-100'>
         {/* GRID */}
-        <div className='absolute w-full mt-0 md:mt-28'>
-          <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 mx-4 md:mx-20'>
-            <div className='flex flex-col col-span-6 w-full lg:h-96 ml-1'>
+        <div className='absolute w-full mt-0 md:mt-24'>
+          <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 mx-4 md:mx-2'>
+            <div className='flex flex-col col-span-6 w-full h-full ml-1'>
               <div className='flex flex-col h-full py-6'>
                 <p className='text-xs lg:text-base text-slate-300  mt-16'>
                   Manage your characters
@@ -71,14 +70,14 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className='flex flex-col col-span-6 order-1 lg:order-2 w-full lg:h-96 items-center justify-center bg-black border rounded-md border-slate-300/50 shadow-md shadow-black'>
+            <div className='flex flex-col col-span-6 order-1 lg:order-2 w-full h-full items-center justify-center bg-black shadow-md shadow-black'>
               <h1 className='text-8xl text-slate-300 text-center'>
                 <Image
                   src={'/ProductShot.webp'}
                   width={'1000'}
                   height={'0'}
                   alt='character image'
-                  className='xl:h-100% xl:w-100%'
+                  className='xl:h-100% xl:w-100% border rounded-xl border-slate-300/50'
                 />
               </h1>
             </div>

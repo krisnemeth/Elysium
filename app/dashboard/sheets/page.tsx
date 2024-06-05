@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 export default function Sheets() {
   return (
     <div className='flex flex-col  h-full w-full text-slate-300/80'>
-      <div className='flex flex-col bg-black p-4 items-center border border-slate-300/50 rounded-lg'>
-        <h1 className='text-xl'>Sheet Management</h1>
+      <div className='flex flex-col items-center mx-0 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
+        <h1 className='text-2xl text-slate-300/80'>Sheet Management</h1>
       </div>
       <div className='flex flex-col items-center mt-4'>
         <div className='grid grid-cols-1 lg:grid-cols-12 gap-4 w-full'>
-          <div className='flex flex-col w-full col-span-6 border border-slate-300/50 rounded-lg bg-black bg-opacity-80 shadow-md shadow-black'>
+          <div className='flex flex-col w-full col-span-6 border border-slate-300/50 rounded-xl bg-black bg-opacity-80 shadow-md shadow-black'>
             <div className='flex flex-col p-6'>
               <h2 className='text-xl'>Lore Sheets</h2>
               <h3 className='text-base mt-4 text-justify'>

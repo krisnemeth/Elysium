@@ -21,10 +21,10 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <div className='flex flex-col'>
-      <div className='flex flex-col items-center mx-2 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
+      <div className='flex flex-col items-center mx-0 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
         <h1 className='text-2xl text-slate-300/80'>Overview</h1>
       </div>
-      <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 mt-4 mx-2'>
+      <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 mt-4 mx-0'>
         <OverviewCard cardTitle='Characters Finished:' Amount={6}>
           <CardList>
             <CardListItem

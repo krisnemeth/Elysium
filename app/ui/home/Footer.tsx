@@ -14,7 +14,7 @@ import LogoGrid from './LogoGrid';
 export default function Footer() {
   return (
     <div className='absolute bottom-0 z-10 w-full text-slate-300/50 bg-clip-padding backdrop-filter backdrop-blur-lg bg-black bg-opacity-50 py-3'>
-      <div className='grid grid-cols-12 mx-4 md:mx-20 h-64 border rounded-md border-slate-300/50'>
+      <div className='grid grid-cols-12 md:mx-2 h-56 border rounded-xl border-slate-300/50'>
         {/* COL 1 */}
         <div className='hidden md:flex flex-col col-span-3 items-start text-slate-300 px-4 py-2 m-2'>
           <p className='text-start text-sm'>Contact</p>
