@@ -17,8 +17,11 @@ export default function SkillCheckBoxInput({
   onTextChange,
 }: SkillCheckBoxInputProps) {
   return (
-    <div className='grid grid-cols-12 mx-1 py-1  border-b-2 border-dotted border-slate-300'>
-      <label htmlFor={label} className='mt-1 text-sm text-slate-300 col-span-3'>
+    <div className='grid grid-cols-12 mx-1 py-1 border-b-2 border-dotted border-slate-300'>
+      <label
+        htmlFor={label}
+        className='mt-1 text-xs lg:text-sm text-slate-300 col-span-3'
+      >
         {label}
       </label>
       <div className='col-span-6'>

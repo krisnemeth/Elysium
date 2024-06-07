@@ -28,10 +28,10 @@ export default function Attributes() {
   };
 
   return (
-    <div className='grid gap-2 px-2 xl:px-6 sm:grid-cols-1 lg:grid-cols-3'>
+    <div className='grid gap-4 grid-cols-1 md:grid-cols-3 px-2 md:px-2 xl:px-6'>
       <div className='flex flex-col mt-2'>
         <div className='flex flex-col text-center mt-2'>
-          <h3 className='text-base text-slate-300'>Physical</h3>
+          <h3 className='text-sm text-slate-300'>Physical</h3>
         </div>
         <div className='flex flex-col xl:border-r-2 xl:border-slate-300'>
           <AttributeCheckBoxInput
@@ -53,7 +53,7 @@ export default function Attributes() {
       </div>
       <div className='flex flex-col mt-2'>
         <div className='flex flex-col text-center mt-2'>
-          <h3 className='text-base text-slate-300'>Social</h3>
+          <h3 className='text-sm text-slate-300'>Social</h3>
         </div>
         <div className='flex flex-col xl:border-r-2 xl:border-slate-300'>
           <AttributeCheckBoxInput
@@ -75,7 +75,7 @@ export default function Attributes() {
       </div>
       <div className='flex flex-col mt-2'>
         <div className='flex flex-col text-center mt-2'>
-          <h3 className='text-base text-slate-300'>Mental</h3>
+          <h3 className='text-sm text-slate-300'>Mental</h3>
         </div>
         <AttributeCheckBoxInput
           label='Intelligence'

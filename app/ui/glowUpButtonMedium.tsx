@@ -15,7 +15,7 @@ export default function GlowUpButtonMedium({
   return (
     <Link href={buttonHref}>
       <div className='relative group border border-slate-300/50 rounded-md'>
-        <div className='absolute -inset-0.5 bg-gradient-to-r from-rose-600 to-violet-600 dark:from-red-600 dark:to-red-600 rounded-lg blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 w-full xl:max-w-full'></div>
+        <div className='absolute -inset-0.5 bg-rose-600 dark:red-700 rounded-lg blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 w-full xl:max-w-full'></div>
         <button className='relative flex items-center justify-center bg-black px-2 py-2 text-slate-300 rounded-lg group-hover:text-slate-100 transition duration-200 ease-in-out w-full'>
           <span className='text-xs'>{buttonText}</span>
           {buttonIcon}

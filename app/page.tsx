@@ -25,15 +25,15 @@ export default function Home() {
         className='z-30 relative lg:flex w-screen min-h-screen h-screen lg:w-screen lg:h-screen bg-gradient-to-t from-black from-90% opacity-95 shadow-xl shadow-black'
       >
         <div className='absolute flex flex-col items-center w-screen lg:w-full opacity-100'>
-          <div className='flex w-full items-center justify-center text-slate-300 mt-16 lg:mt-24 xl:pt-2 mb-4'>
+          <div className='flex w-full items-center justify-center text-slate-300 mt-16 lg:mt-24 xl:pt-2 mb-2'>
             <h2 className='text-xl lg:text-2xl'>Feature Highlights</h2>
           </div>
-          <div className='grid grid-cols-1 lg:grid-cols-12 gap-4 mb-20 w-full justify-items-center py-10 px-16'>
+          <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 mb-20 w-full py-10 px-2'>
             <GlowUpCard
               title='Effortless Character Creation'
               description='Build your vampire persona with ease using our intuitive character
-              creation tools. From selecting your clan and attributes to defining
-              your backstory, Elysium guides you through every step of the
+              creation tools. From selecting your clan and attributes to hashing out
+              your backstory in extent, Elysium guides you through every step of the
               process.'
             />
             <GlowUpCard
@@ -42,7 +42,11 @@ export default function Home() {
             />
             <GlowUpCard
               title='Mobile Compatibility'
-              description="Take Elysium with you wherever you go. Our mobile-friendly interface ensures you're never far from your character, allowing you to dive into the darkness at a moment's notice. "
+              description="Take Elysium with you wherever you go. Our mobile and tablet-friendly interface ensures you're never far from your character, allowing you to dive into the darkness at a moment's notice. "
+            />
+            <GlowUpCard
+              title='Dice Roller by Gabor Pfalzer'
+              description="Forgot your dice? No problem. You'll have access to a dice roller on you dashboard ensuring you're always ready to roll, no matter where you are. "
             />
           </div>
         </div>
@@ -53,7 +57,7 @@ export default function Home() {
         <div className='absolute w-full mt-0 md:mt-24'>
           <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 mx-4 md:mx-2'>
             <div className='flex flex-col col-span-6 w-full h-full ml-1'>
-              <div className='flex flex-col h-full py-6'>
+              <div className='flex flex-col h-full py-6 px-20'>
                 <p className='text-xs lg:text-base text-slate-300  mt-16'>
                   Manage your characters
                 </p>
@@ -70,7 +74,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className='flex flex-col col-span-6 order-1 lg:order-2 w-full h-full items-center justify-center bg-black shadow-md shadow-black'>
+            <div className='flex flex-col col-span-6 order-1 lg:order-2 w-full h-full items-center justify-center shadow-md shadow-black'>
               <h1 className='text-8xl text-slate-300 text-center'>
                 <Image
                   src={'/ProductShot.webp'}

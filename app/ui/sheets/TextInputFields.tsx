@@ -30,7 +30,7 @@ export default function TextInputFields() {
   };
 
   return (
-    <div className='grid grid-cols-1 xl:grid-cols-3 gap-6 px-0 xl:px-4'>
+    <div className='grid grid-cols-1 md:grid-cols-3 gap-2 xl:gap-4 px-1 md:px-0 xl:px-4'>
       <div className='flex flex-col'>
         <TextInput
           label='Name'

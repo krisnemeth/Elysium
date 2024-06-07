@@ -46,7 +46,7 @@ export default function DisciplineInput({
               name={`${value}-${index}`}
               checked={value}
               onChange={(e) => onCheckboxChange(index, e.target.checked)}
-              className={`border-2 border-slate-300 text-slate-300 shadow-sm rotate-45 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-2 w-3 h-3 mt-2 inline-block cursor-pointer checked:bg-slate-300 ${
+              className={`border-2 border-slate-300 text-slate-300 shadow-sm rotate-45 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-2 md:ml-1.5 w-3 h-3 mt-2 inline-block cursor-pointer checked:bg-slate-300 ${
                 value ? 'bg-slate-300' : ''
               }`}
             />

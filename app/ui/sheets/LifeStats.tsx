@@ -55,7 +55,7 @@ export default function LifeStats() {
   };
 
   return (
-    <div className='grid grid-cols-1 xl:grid-cols-3 gap-2 xl:px-6'>
+    <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-0 xl:px-6'>
       <div className='flex flex-col mt-2'>
         <LifeStatsInput
           label='Health'

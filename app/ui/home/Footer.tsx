@@ -87,7 +87,6 @@ export default function Footer() {
         </div>
         {/* COL 4 */}
         <div className='flex flex-col col-span-12 md:col-span-3 items-start border border-slate-300/50 rounded-md px-4 py-2 m-2'>
-          <p className='text-start text-slate-300 text-sm'>Sign Up</p>
           <form action='#' className='mt-2 w-full'>
             <div className=''>
               <label
@@ -99,10 +98,10 @@ export default function Footer() {
               <input
                 type='text'
                 id='name'
-                className='text-xs text-slate-300 px-2 py-1 mt-0.5 border rounded-md w-full border-slate-300/50 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent'
+                className='text-xs text-slate-300 px-2 py-2 mt-0.5 border rounded-md w-full border-slate-300/50 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent'
               />
             </div>
-            <div className='mt-2'>
+            <div className='mt-1 mb-5 '>
               <label
                 htmlFor='password'
                 className='block text-xs text-slate-300'
@@ -112,19 +111,19 @@ export default function Footer() {
               <input
                 type='text'
                 id='name'
-                className='text-xs text-slate-300 px-2 py-1 mt-0.5 border rounded-md w-full border-slate-300/50 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent'
+                className='text-xs text-slate-300 px-2 py-2 mt-0.5 border rounded-md w-full border-slate-300/50 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent'
               />
             </div>
             <GlowUpButtonMedium
               buttonText='Sign Up'
               buttonHref='#'
               buttonIcon={
-                <MdArrowOutward className='inline text-xs md:text-sm mb-1' />
+                <MdArrowOutward className='inline h-4 md:text-sm mb-1 ml-1' />
               }
             />
           </form>
         </div>
-        <LogoGrid />
+        {/* <LogoGrid /> */}
       </div>
     </div>
   );

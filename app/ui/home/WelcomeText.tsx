@@ -11,7 +11,7 @@ export default function WelcomeText() {
           <p className='text-xs text-center md:text-base lg:text-lg xl:text-xl mt-6 px-16'>
             Welcome to
           </p>
-          <h1 className='text-5xl md:text-6xl lg:text-7xl xl:text-8xl drop-shadow-2xl text-center tracking-wide bg-gradient-to-r from-violet'>
+          <h1 className='text-5xl md:text-6xl lg:text-7xl xl:text-8xl drop-shadow-xl text-center tracking-wide bg-gradient-to-r from-violet '>
             Elysium
           </h1>
           <p className='text-xs text-justify md:text-base lg:text-base xl:text-xl mt-1 md:px-0 px-16'>

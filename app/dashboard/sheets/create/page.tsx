@@ -17,24 +17,28 @@ export const metadata: Metadata = {
 
 export default function CreateSheet() {
   return (
-    <div className='w-full border border-slate-300/80 rounded-lg xl:px-0 2xl:px-44  shadow-xl shadow-black'>
-      <div className='flex flex-col items-center mt-6 mb-6'>
-        <VtmLogo className='h-16 xl:h-28 text-slate-300/80' />
-        <h1 className='text-slate-300 text-lg xl:text-3xl'>Character Sheet</h1>
+    <>
+      <div className='flex flex-col items-center mx-0 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
+        <h1 className='text-2xl text-slate-300/80'>Character Sheet</h1>
       </div>
-      <form action=''>
-        <TextInputFields />
-        <CategoryDividers title='Attributes' />
-        <Attributes />
-        <CategoryDividers title='Skills' />
-        <Skills />
-        <LifeStats />
-        <CategoryDividers title='Disciplines' />
-        <Disciplines />
-        <ResonanceHunger />
-        <TenetsTouchstonesBane />
-        <MixedSection />
-      </form>
-    </div>
+      <div className='w-full border border-slate-300/80 rounded-lg xl:px-0 2xl:px-44 shadow-xl shadow-black mt-2 md:mt-4'>
+        <div className='flex flex-col items-center mt-6 mb-6'>
+          <VtmLogo className='h-16 xl:h-28 text-slate-300/80' />
+        </div>
+        <form action=''>
+          <TextInputFields />
+          <CategoryDividers title='Attributes' />
+          <Attributes />
+          <CategoryDividers title='Skills' />
+          <Skills />
+          <LifeStats />
+          <CategoryDividers title='Disciplines' />
+          <Disciplines />
+          <ResonanceHunger />
+          <TenetsTouchstonesBane />
+          <MixedSection />
+        </form>
+      </div>
+    </>
   );
 }
