@@ -8,11 +8,11 @@ export default function WelcomeText() {
   return (
     <>
       <div className=' flex flex-col items-center justify-center mt-2 md:mt-20 lg:mt-24 lg:mx-80 '>
-        <div className='pt-8 lg:pt-0 pb-2 md:py-10 text-slate-300 p-4 '>
+        <div className='pt-8 lg:pt-0 pb-2 md:py-10 text-slate-300 p-4'>
           <p className='text-xs text-center md:text-base lg:text-lg xl:text-xl mt-6 lg:mt-0 px-16'>
             Welcome to
           </p>
-          <h1 className='text-6xl lg:text-7xl xl:text-8xl text-center tracking-wide bg-gradient-to-r from-violet drop-shadow-[0_0_0.9rem_#000] dark:drop-shadow-[0_0_0.9rem_#000]'>
+          <h1 className='text-6xl lg:text-7xl xl:text-8xl text-center tracking-wide drop-shadow-[0_0_0.9rem_#000] dark:drop-shadow-[0_0_0.9rem_#000]'>
             Elysium
           </h1>
           {/* <p className='text-xs text-justify md:text-base lg:text-base xl:text-xl mt-1 md:px-0 px-2'>
@@ -26,7 +26,7 @@ export default function WelcomeText() {
           </div>
         </div>
 
-        <div className='mt-80 md:mt-[700px] lg:mt-6 p-4'>
+        {/* <div className='mt-80 md:mt-[700px] lg:mt-6 p-4'>
           <Link href='#features'>
             <GlowUpButtonLarge
               buttonText='Learn More'
@@ -35,7 +35,7 @@ export default function WelcomeText() {
               }
             ></GlowUpButtonLarge>
           </Link>
-        </div>
+        </div> */}
       </div>
     </>
   );

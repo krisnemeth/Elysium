@@ -17,23 +17,22 @@ export default function Footer() {
   return (
     <>
       {/* GRID */}
-      <div className='w-full md:mb-24'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 mx-2 mb-16 md:mb-0'>
+      <div className='w-full md:my-20 lg:my-0 bg-gradient-to-t from-black to-violet-950 dark:to-red-950 bg-opacity-100 pb-10 pt-32'>
+        <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 mx-2 mb-10 md:mb-0'>
           <div className='flex flex-col col-span-6 w-full h-full ml-1'>
-            <div className='flex flex-col h-full py-6'>
-              <p className='text-xs lg:text-base text-slate-300  md:mt-16'>
+            <div className='flex flex-col h-full py-6 px-4'>
+              <p className='text-xs md:text-base text-slate-300  md:mt-16'>
                 Manage your characters
               </p>
-              <h4 className='text-xl lg:text-4xl  text-slate-300  mt-2 lg:mt-4'>
+              <h4 className='text-xl md:text-4xl mt-2 md:mt-4 text-slate-300 drop-shadow-[0_0_0.9rem_#000] dark:drop-shadow-[0_0_0.9rem_#000]'>
                 The best way there is.
               </h4>
-              <p className='text-xs lg:text-base text-slate-300  mt-2 lg:mt-4'>
+
+              <p className='text-xs md:text-base text-slate-300  mt-2 md:my-4'>
                 Whether you&apos;re a seasoned player or a newcomer finding your
                 way, our intuitive interface and rich features will guide you
-                every step of the way.
-              </p>
-              <p className='text-xs text-slate-300 mt-2 lg:mt-4'>
-                Try our app today, and let your story unfold!
+                every step of the way. Try our app today, and let your story
+                unfold!
               </p>
             </div>
           </div>
@@ -51,8 +50,8 @@ export default function Footer() {
         </div>
       </div>
       {/* FOOTER */}
-      <div className='bottom-0 z-10 w-full text-slate-300/50 bg-clip-padding backdrop-filter backdrop-blur-lg bg-black bg-opacity-80 py-3 h-80'>
-        <div className='grid grid-cols-12 md:mx-2 md:h-56 border rounded-xl border-slate-300/50'>
+      <div className=' z-10 w-full text-slate-300/50 bg-clip-padding backdrop-filter backdrop-blur-lg bg-black bg-opacity-80 h-80 md:h-full lg:h-56'>
+        <div className='grid grid-cols-12 md:mx-2 md:h-68 border rounded-xl border-slate-300/50'>
           {/* COL 1 */}
           <div className='hidden md:flex flex-col col-span-3 items-start text-slate-300 px-4 py-2 m-2'>
             <p className='text-start text-sm'>Contact</p>

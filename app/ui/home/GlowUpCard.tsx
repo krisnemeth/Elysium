@@ -12,7 +12,7 @@ export default function GlowUpButtonLarge({
   description,
 }: GlowUpCardProps) {
   return (
-    <div className='flex flex-col col-span-3 w-full h-full bg-black border border-slate-300/50 rounded-xl p-2'>
+    <div className='flex flex-col col-span-1 md:col-span-6 lg:col-span-3 w-full h-full bg-black border border-slate-300/50 rounded-xl p-2'>
       <div className='card p-2 text-slate-300'>
         <div className='h-52 border border-slate-300/50 rounded-md px-2 xl:px-4 mt-0'>
           <h4 className='text-xl lg:text-3xl text-center'>VIDEO CONTENT</h4>
