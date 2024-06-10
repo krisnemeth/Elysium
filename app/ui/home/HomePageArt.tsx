@@ -28,7 +28,7 @@ export default function HomePageArt() {
             height={0}
             width={600}
             priority={true}
-            className='translate-x-0 translate-y-10 md:translate-x-0 md:-translate-y-[50px] lg:translate-x-72 lg:translate-y-0 xl:translate-x-[370px] xl:-translate-y-10 2xl:translate-x-[650px] 2xl:-translate-y-14 3xl:translate-x-[780px] fixed h-fit w-[400px] md:w-[850px] lg:w-[600px] xl:w-[700px] 2xl:w-[600px] 3xl:w-[1000px]'
+            className='translate-x-0 translate-y-10 md:translate-x-0 md:-translate-y-[50px] lg:translate-x-72 lg:translate-y-0 xl:translate-x-[370px] xl:-translate-y-10 2xl:translate-x-[650px] 2xl:-translate-y-14 3xl:translate-x-[450px] 3xl:-translate-y-[170px] fixed h-fit w-[400px] md:w-[850px] lg:w-[600px] xl:w-[700px] 2xl:w-[600px] 3xl:w-[1000px]'
           />
         </div>
       </div>
