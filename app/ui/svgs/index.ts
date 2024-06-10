@@ -3,6 +3,8 @@
 export { default as VtmLogo } from './VtmLogo.svg';
 export { default as VtmAnkh } from './VtmAnkh.svg';
 
+export { default as CamarillaTitle } from './CamarillaTitleV5.svg';
+
 export { default as AnarchLogo } from './anarchLogoV5.svg';
 export { default as AnarchTitle } from './AnarchTitleV5.svg';
 

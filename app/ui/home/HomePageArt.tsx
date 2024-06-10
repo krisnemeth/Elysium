@@ -1,6 +1,22 @@
 import React from 'react';
 import Image from 'next/image';
-
+import { VscGithub } from 'react-icons/vsc';
+import { SlSocialLinkedin } from 'react-icons/sl';
+import {
+  TremereLogo,
+  VentrueLogo,
+  MalkavianLogo,
+  BrujahLogo,
+  LasombraLogo,
+  RavnosLogo,
+  GangrelLogo,
+  TzimisceLogo,
+  NosferatuLogo,
+  BanuHaqimLogo,
+  ToreadorLogo,
+  CamarillaTitle,
+  AnarchTitle,
+} from '../svgs';
 export default function HomePageArt() {
   return (
     <div className='absolute grid grid-cols-12 lg:gap-4 w-screen h-screen opacity-100 z-20'>
@@ -27,6 +43,27 @@ export default function HomePageArt() {
           />
         </div>
       </div> */}
+      <div className='fixed bottom-0 z-80 w-full'>
+        {/* container was next row class */}
+        <div className='relative flex h-full mx-auto'>
+          {/* left-side */}
+          <div className='absolute bottom-0 items-center hidden mt-auto mr-auto text-rose-600/70 dark:text-slate-300/70 left-8 md:flex md:flex-col'>
+            <div className='w-6 h-6 mb-10 -translate-x-8 -rotate-90'>
+              <AnarchTitle className='h-auto w-36 drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
+            </div>
+
+            <div className='stick w-0.5 dark:bg-slate-300/70 bg-rose-600/70 drop-shadow-[0_0_0.3rem_#e11d48] dark:drop-shadow-[0_0_0.3rem_#000] h-80 mt-2'></div>
+          </div>
+
+          {/* right-side */}
+          <div className='absolute bottom-0 items-center hidden mt-auto ml-auto text-rose-600/70 dark:text-slate-300/70 right-8 md:flex md:flex-col'>
+            <div className='w-6 h-6 mb-52 rotate-90'>
+              <CamarillaTitle className='h-auto w-52 drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
+            </div>
+            <div className='stick w-0.5 dark:bg-slate-300/70 bg-rose-600/70 h-72 mt-2 drop-shadow-[0_0_0.3rem_#e11d48] dark:drop-shadow-[0_0_0.3rem_#000]'></div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
