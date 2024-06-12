@@ -12,7 +12,7 @@ export default function Features() {
         <GlowUpCard
           image={
             <Image
-              src='/MobileShots.png'
+              src='/iPadCharShot.png'
               alt='?'
               width={1000}
               height={0}
@@ -28,7 +28,7 @@ export default function Features() {
         <GlowUpCard
           image={
             <Image
-              src='/MobileShots.png'
+              src='/SheetShot.png'
               alt='?'
               width={1000}
               height={0}

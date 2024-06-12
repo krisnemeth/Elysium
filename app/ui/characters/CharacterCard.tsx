@@ -58,16 +58,16 @@ export default function CharacterCard({
         </div>
         <div className='flex flex-col col-span-1 md:col-span-12 xl:col-span-12 mt-2'>
           <div className='grid grid-cols-2 md:grid-cols-12 xl:grid-cols-12 gap-1'>
-            <div className='flex flex-col col-span-1 md:col-span-3 xl:col-span-4'>
+            <div className='flex flex-col col-span-1 md:col-span-4 lg:col-span-3 xl:col-span-4'>
               <GlowUpButtonMedium buttonHref='#' buttonText='View Character' />
             </div>
-            <div className='flex flex-col col-span-1 md:col-span-3 xl:col-span-4'>
+            <div className='flex flex-col col-span-1 md:col-span-4 lg:col-span-3 xl:col-span-4'>
               <GlowUpButtonMedium buttonHref='#' buttonText='Loresheet' />
             </div>
-            <div className='flex flex-col col-span-1 md:col-span-3 xl:col-span-4'>
+            <div className='flex flex-col col-span-1 md:col-span-4 lg:col-span-3 xl:col-span-4'>
               <GlowUpButtonMedium buttonHref='#' buttonText='Character Sheet' />
             </div>
-            <div className='flex flex-col col-span-1 md:col-span-3 xl:col-span-4'>
+            <div className='flex flex-col col-span-1 md:col-span-4 lg:col-span-3 xl:col-span-4'>
               <GlowUpButtonMedium buttonHref='#' buttonText='Delete' />
             </div>
           </div>

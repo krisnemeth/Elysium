@@ -12,13 +12,13 @@ export default function GlowUpButtonLarge({
   description,
 }: GlowUpCardProps) {
   return (
-    <div className='flex flex-col col-span-1 md:col-span-6 lg:col-span-3 w-full h-full bg-black border border-slate-300/50 rounded-xl p-2'>
+    <div className='flex flex-col col-span-1 md:col-span-6 lg:col-span-6 xl:col-span-3 w-full h-full bg-black border border-slate-300/50 rounded-xl p-2'>
       <div className='card p-2 text-slate-300'>
         <div className='mt-0'>{image}</div>
         <div className='mt-4'>
           <h3 className='text-sm lg:text-base font-bold'>{title}</h3>
         </div>
-        <div className='mt-4 h-40'>
+        <div className='mt-4 h-auto'>
           <p className='text-xs lg:text-base text-justify'>{description}</p>
         </div>
       </div>
