@@ -48,3 +48,6 @@ export { default as Elysium1 } from './Elysium2.svg';
 export { default as Elysium2 } from './Elysium3.svg';
 export { default as Elysium3 } from './Elysium4.svg';
 export { default as Elysium4 } from './Elysium5.svg';
+
+export { default as SabbatLogo } from './sabbatLogoV5.svg';
+export { default as SabbatTitle } from './SabbatTitleV5.svg';

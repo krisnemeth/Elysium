@@ -4,15 +4,17 @@
 
 :root {
   --foreground-hex: #000000;
-  --background-start-hex: #2e1065;
+  --background-start-hex: #000;
+  /* --background-middle-hex: #2e1065; */
   --background-middle-hex: #4C1D95;
   --background-end-hex: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-hex: 212, 212, 212;
-    --background-start-hex: #450a0a;
+    --foreground-hex: #000;
+    --background-start-hex: #000;
+    /* --background-middle-hex: #450a0a; */
     --background-middle-hex: #991b1b;
     --background-end-hex: #000000;
   }
