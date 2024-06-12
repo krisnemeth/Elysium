@@ -30,7 +30,7 @@ export default function SideNav() {
         </div> */}
       </div>
 
-      <div className='bottom-0 flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2'>
+      <div className='bottom-0 flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2 mt-2'>
         <NavLinks />
         <div className='hidden h-auto w-full grow bg-black md:block rounded-md'>
           <div className='flex flex-col items-center justify-center mt-12'>

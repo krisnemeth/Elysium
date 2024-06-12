@@ -46,10 +46,10 @@ export default function Page() {
             characterName='Trixx Laveau'
             description="Anarch enforcer and true believer of The Cause. Right hand to the Anarch leader. If you don't want trouble, stay out of her way."
             clanTitle={
-              <BrujahTitle className='h-6 xl:h-12 w-auto text-slate-300/80' />
+              <BrujahTitle className='h-6 md:h-12 xl:h-12 w-auto text-slate-300/80' />
             }
             clanLogo={
-              <BrujahLogo className='h-4 xl:h-8 w-auto text-slate-300/80' />
+              <BrujahLogo className='h-4 md:h-8 xl:h-8 w-auto text-slate-300/80' />
             }
           />
           <CharacterCard
@@ -65,10 +65,10 @@ export default function Page() {
             characterName='Agatha Ramalho'
             description='Prefers their books to people. A Tremere scholar, they are the keeper of the Chantry library and the local expert on all things occult.'
             clanTitle={
-              <TremereTitle className='h-4 xl:h-8 w-auto text-slate-300' />
+              <TremereTitle className='h-4 md:h-8 xl:h-8 w-auto text-slate-300' />
             }
             clanLogo={
-              <TremereLogo className='h-4 xl:h-6 w-auto text-slate-300' />
+              <TremereLogo className='h-4 md:h-6 xl:h-6 w-auto text-slate-300' />
             }
           />
           <CharacterCard
