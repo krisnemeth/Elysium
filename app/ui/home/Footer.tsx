@@ -24,22 +24,31 @@ export default function Footer() {
               <p className='text-xs md:text-base text-slate-300  md:mt-16'>
                 Manage your characters
               </p>
-              <h4 className='text-xl md:text-4xl mt-2 md:mt-4 text-slate-300 drop-shadow-[0_0_0.9rem_#000] dark:drop-shadow-[0_0_0.9rem_#000]'>
+              <h4 className='text-xl md:text-6xl mt-2 md:mt-4 text-slate-300 drop-shadow-[0_0_0.9rem_#000] dark:drop-shadow-[0_0_0.9rem_#000]'>
                 The best way there is.
               </h4>
 
-              <p className='text-xs md:text-base text-slate-300  mt-2 md:my-4'>
+              <p className='text-xs md:text-base text-slate-300  mt-2 md:my-6'>
                 Whether you&apos;re a seasoned player or a newcomer finding your
                 way, our intuitive interface and rich features will guide you
                 every step of the way. Try our app today, and let your story
                 unfold!
               </p>
+              <div className='w-56'>
+                <GlowUpButtonMedium
+                  buttonText='Sign Up'
+                  buttonHref='/dashboard'
+                  buttonIcon={
+                    <MdArrowOutward className='inline h-4 md:text-sm mb-1 ml-1' />
+                  }
+                />
+              </div>
             </div>
           </div>
           <div className='flex flex-col col-span-6 order-1 lg:order-2 w-full h-full items-center justify-center shadow-md shadow-black'>
             <h1 className='text-8xl text-slate-300 text-center'>
               <Image
-                src={'/ProductShot.webp'}
+                src={'/iPadDarkShot.png'}
                 width={'1000'}
                 height={'0'}
                 alt='character image'
