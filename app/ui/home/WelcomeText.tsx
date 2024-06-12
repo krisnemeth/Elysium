@@ -1,5 +1,5 @@
 import React from 'react';
-import { VtmAnkh } from '@/app/ui/svgs';
+import { Elysium1, Elysium2, Elysium3, Elysium4, VtmAnkh } from '@/app/ui/svgs';
 import { MdArrowDownward } from 'react-icons/md';
 import GlowUpButtonLarge from '@/app/ui/glowUpButtonLarge';
 import Link from 'next/link';
@@ -7,21 +7,16 @@ import Link from 'next/link';
 export default function WelcomeText() {
   return (
     <>
-      <div className=' flex flex-col items-center justify-center mt-2 md:mt-20 lg:mt-24 lg:mx-80 '>
-        <div className='pt-8 lg:pt-0 pb-2 md:py-10 text-slate-300 p-4'>
-          <p className='text-xs text-center md:text-base lg:text-lg xl:text-xl mt-6 lg:mt-0 px-16'>
+      <div className='flex flex-col items-center justify-center mt-2 lg:mx-80'>
+        <div className=' text-slate-300 p-4'>
+          <p className='text-xs text-center md:text-base lg:text-lg xl:text-xl px-16 translate-y-10 md:translate-y-16 xl:translate-y-16'>
             Welcome to
           </p>
-          <h1 className='text-6xl lg:text-7xl xl:text-8xl text-center tracking-wide drop-shadow-[0_0_0.9rem_#000] dark:drop-shadow-[0_0_0.9rem_#000]'>
-            Elysium
-          </h1>
-          {/* <p className='text-xs text-justify md:text-base lg:text-base xl:text-xl mt-1 md:px-0 px-2'>
-            Are you ready to immerse yourself in the dark and mysterious world
-            of Vampire: The Masquerade? Look no further than Elysium, your
-            indispensable character management tool designed to elevate your
-            gaming experience.
-          </p> */}
-          <div className='flex flex-row justify-center mt-1'>
+          <div className='flex flex-row justify-center translate-y-5 md:translate-y-10 xl:translate-y-5'>
+            <Elysium1 className=' text-slate-300 w-64 md:w-[350px] lg:w-[350px] xl:w-[450px] 2xl:w-[800px] drop-shadow-[0_0_0.9rem_#000]' />
+          </div>
+
+          <div className=' flex flex-row justify-center -translate-y-4 md:-translate-y-0 xl:-translate-y-10'>
             <VtmAnkh className='text-xl text-rose-600/70 dark:text-black w-80 md:w-[700px] lg:w-[500px] xl:w-[550px] 2xl:w-[800px] drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
           </div>
         </div>

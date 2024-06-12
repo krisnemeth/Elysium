@@ -2,18 +2,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { MdArrowForward, MdArrowOutward } from 'react-icons/md';
 import { GiDove } from 'react-icons/gi';
+import { Elysium1 } from '@/app/ui/svgs';
 
 export default function Navbar() {
   return (
     <div className='w-full fixed z-50'>
       <div className='flex justify-between p-2 bg-black shadow-md shadow-black rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-75 border border-slate-300/50 md:mx-2 md:mt-1 lg:mt-1.5 xl:mt-4 h-14 lg:h-16'>
         <div className='z-50 relative flex items-center'>
-          <div className='logo z-50 flex items-center drop-shadow-[0_0_0.3rem_#ffffff70] text-slate-100/80 divide-x-2 divide-slate-100/80'>
-            <GiDove className='text-sm md:text-xl mb-1 mr-1 md:mr-2' />
+          <div className='logo z-50 flex items-center  text-slate-100/80'>
+            {/* <GiDove className='text-sm md:text-xl mb-1 mr-1 md:mr-2' /> */}
             <Link href='/' className=''>
-              <p className='relative text-sm md:text-xl ml-1 md:ml-2'>
+              {/* <p className='relative text-sm md:text-xl ml-1 md:ml-2'>
                 Elysium
-              </p>
+              </p> */}
+              <Elysium1 className=' text-slate-300/80 w-20 mt-1 ml-1' />
             </Link>
           </div>
         </div>

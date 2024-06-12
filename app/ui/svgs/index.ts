@@ -43,3 +43,8 @@ export { default as NosferatuLogo } from './ClanNosferatuSymbolV5.svg';
 
 export { default as RavnosTitle } from './ClanRavnosTitleV5.svg';
 export { default as RavnosLogo } from './ClanRavnosSymbolV5.svg';
+
+export { default as Elysium1 } from './Elysium2.svg';
+export { default as Elysium2 } from './Elysium3.svg';
+export { default as Elysium3 } from './Elysium4.svg';
+export { default as Elysium4 } from './Elysium5.svg';

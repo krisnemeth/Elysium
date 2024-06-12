@@ -59,7 +59,7 @@ export default function HomePageArt() {
         {/* container was next row class */}
         <div className='relative flex h-full mx-auto'>
           {/* left-side */}
-          <div className='absolute bottom-0 items-center hidden mt-auto mr-auto text-rose-600/70 dark:text-slate-300/50 left-5 md:flex md:flex-col'>
+          <div className='absolute bottom-0 hidden items-center mt-auto mr-auto text-rose-600/70 dark:text-slate-300/50 left-2 md:left-5 md:flex md:flex-col'>
             {/* <div className='w-6 h-6 mb-10 -translate-x-8 -rotate-90'>
               <AnarchTitle className='h-auto w-36 drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
             </div> */}
@@ -82,11 +82,11 @@ export default function HomePageArt() {
               <ToreadorTitle className='h-auto w-24 drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
             </div>
 
-            <div className='stick w-0.5 dark:bg-slate-300/50 bg-rose-600/70 drop-shadow-[0_0_0.3rem_#e11d48] dark:drop-shadow-[0_0_0.3rem_#000] h-4 mt-2'></div>
+            <div className='stick w-0.5 dark:bg-slate-300/50 bg-rose-600/70 drop-shadow-[0_0_0.3rem_#e11d48] dark:drop-shadow-[0_0_0.3rem_#000] md:h-96 lg:h-4 mt-2'></div>
           </div>
 
           {/* right-side */}
-          <div className='absolute bottom-0 items-center hidden mt-auto ml-auto text-rose-600/70 dark:text-slate-300/50 right-6 md:flex md:flex-col'>
+          <div className='absolute bottom-0 hidden items-center mt-auto ml-auto text-rose-600/70 dark:text-slate-300/50 right-2 md:right-6 md:flex md:flex-col'>
             <div className='w-6 h-6 mb-24 rotate-90 -translate-x-1'>
               <LasombraTitle className='h-auto w-24 drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
             </div>
@@ -105,7 +105,7 @@ export default function HomePageArt() {
             <div className='w-6 h-6 mb-28 rotate-90'>
               <BanuHaqimTitle className='h-auto w-28 drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
             </div>
-            <div className='stick w-0.5 dark:bg-slate-300/50 bg-rose-600/70 h-4 mt-2 drop-shadow-[0_0_0.3rem_#e11d48] dark:drop-shadow-[0_0_0.3rem_#000]'></div>
+            <div className='stick w-0.5 dark:bg-slate-300/50 bg-rose-600/70 md:h-96 lg:h-4 mt-2 drop-shadow-[0_0_0.3rem_#e11d48] dark:drop-shadow-[0_0_0.3rem_#000]'></div>
           </div>
         </div>
       </div>
