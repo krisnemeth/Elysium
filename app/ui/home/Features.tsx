@@ -8,7 +8,7 @@ export default function Features() {
       <div className='flex w-full items-center justify-center text-slate-300 mt-16 lg:mt-24 xl:py-2 mb-2 '>
         <h2 className='text-xl lg:text-2xl'>Feature Highlights</h2>
       </div>
-      <div className='grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-6 md:mb-20 w-full py-4 px-2'>
+      <div className='grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-10 md:mb-20 w-full py-4 px-8'>
         <GlowUpCard
           image={
             <Image

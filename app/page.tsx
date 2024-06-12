@@ -23,7 +23,7 @@ export default function Home() {
         id='features'
         className='z-30 relative flex w-screen h-full bg-black'
       >
-        <div className='absolute flex flex-col items-center w-screen lg:w-full bg-gradient-to-t from-black from-90% opacity-95 shadow-xl shadow-black'>
+        <div className='absolute flex flex-col items-center w-screen lg:w-full bg-gradient-to-t from-black from-90% shadow-xl shadow-black'>
           <Features />
           <Footer />
         </div>
