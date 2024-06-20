@@ -17,24 +17,24 @@ export default function Footer() {
   return (
     <>
       {/* GRID */}
-      <div className='w-full md:my-20 lg:my-0 bg-gradient-to-t from-black to-violet-950 dark:to-red-950 bg-opacity-100 pb-10 pt-32'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-6 mx-2 mb-10 md:mb-0'>
-          <div className='flex flex-col col-span-6 w-full h-full ml-1'>
-            <div className='flex flex-col h-full py-6 px-4'>
-              <p className='text-xs md:text-base text-slate-300  md:mt-16'>
+      <div className='w-full md:my-2 lg:my-0 bg-gradient-to-t from-black to-violet-950 dark:to-red-950 bg-opacity-100 pb-10 pt-24 border'>
+        <div className='grid grid-cols-1 lg:grid-cols-12 gap-2 md:gap-10 mx-2 mb-6 md:mb-0 px-4 md:px-10 '>
+          <div className='flex flex-col col-span-6 w-full h-full ml-1 text-center md:text-start border'>
+            <div className='flex flex-col h-full py-6'>
+              <p className='text-xs md:text-base text-slate-300 md:mt-16'>
                 Manage your characters
               </p>
               <h4 className='text-xl md:text-6xl mt-2 md:mt-4 text-slate-300 drop-shadow-[0_0_0.9rem_#000] dark:drop-shadow-[0_0_0.9rem_#000]'>
                 The best way there is.
               </h4>
 
-              <p className='text-xs md:text-base text-slate-300  mt-2 md:my-6'>
+              <p className='text-xs md:text-base text-slate-300 text-justify  mt-2 md:my-6'>
                 Whether you&apos;re a seasoned player or a newcomer finding your
                 way, our intuitive interface and rich features will guide you
                 every step of the way. Try our app today, and let your story
                 unfold!
               </p>
-              <div className='w-56'>
+              <div className='w-full md:w-56 mt-6'>
                 <GlowUpButtonMedium
                   buttonText='Sign Up'
                   buttonHref='/dashboard'
@@ -45,10 +45,10 @@ export default function Footer() {
               </div>
             </div>
           </div>
-          <div className='flex flex-col col-span-6 order-1 lg:order-2 w-full h-full items-center justify-center shadow-md shadow-black'>
+          <div className='flex flex-col col-span-6 lg:order-2 w-full h-full items-center justify-center shadow-md shadow-black'>
             <h1 className='text-8xl text-slate-300 text-center'>
               <Image
-                src={'/iPadDarkShot.png'}
+                src={'/iPadDark.png'}
                 width={'1000'}
                 height={'0'}
                 alt='character image'
@@ -58,8 +58,9 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
       {/* FOOTER */}
-      <div className=' z-10 w-full text-slate-300/50 bg-clip-padding backdrop-filter backdrop-blur-lg bg-black bg-opacity-80 h-80 md:h-full lg:h-56'>
+      <div className=' z-10 w-full text-slate-300/50 bg-clip-padding backdrop-filter backdrop-blur-lg bg-black bg-opacity-80 h-full md:h-full lg:h-56'>
         <div className='grid grid-cols-12 md:mx-2 md:h-68 border rounded-xl border-slate-300/50'>
           {/* COL 1 */}
           <div className='hidden md:flex flex-col col-span-3 items-start text-slate-300 px-4 py-2 m-2'>
@@ -115,7 +116,7 @@ export default function Footer() {
           </div>
 
           {/* COL 3 */}
-          <div className='order-2 md:order-3 flex flex-col col-span-12 md:col-span-3 justify-center md:justify-start md:items-start px-2 md:px-4 md:py-2 m-2'>
+          <div className='order-2 md:order-3 flex flex-col col-span-12 md:col-span-3 justify-end md:justify-start md:items-start px-2 md:px-4 md:py-2 m-2'>
             <p className='hidden md:block text-justify text-slate-300 text-sm'>
               Legal
             </p>
@@ -140,7 +141,7 @@ export default function Footer() {
             </p>
           </div>
           {/* COL 4 */}
-          <div className='md:flex flex-col col-span-12 md:col-span-3 items-start border border-slate-300/50 rounded-md px-4 py-2 m-2 h-52 order-1 md:order-4'>
+          <div className='hidden md:flex flex-col col-span-12 md:col-span-3 items-start border border-slate-300/50 rounded-md px-4 py-2 m-2 h-52 order-1 md:order-4'>
             <form action='#' className='mt-2 w-full'>
               <div className=''>
                 <label

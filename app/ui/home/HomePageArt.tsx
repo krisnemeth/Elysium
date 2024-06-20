@@ -32,15 +32,15 @@ import {
 export default function HomePageArt() {
   return (
     <div className='absolute grid grid-cols-12 lg:gap-4 w-screen h-screen opacity-100 z-20'>
-      <div className='flex flex-col col-span-6 lg:col-span-12'>
-        <div className='image-container-left flex '>
+      <div className='flex flex-col items-center col-span-12 lg:col-span-12'>
+        <div className='image-container-left fixed border'>
           <Image
             src={'/HomePageArtLeftMobile.webp'}
             alt=''
             height={0}
             width={600}
             priority={true}
-            className='translate-x-0 translate-y-10 md:translate-x-0 md:-translate-y-[50px] lg:translate-x-72 lg:translate-y-0 xl:translate-x-[370px] xl:-translate-y-10 2xl:translate-x-[650px] 2xl:-translate-y-14 3xl:translate-x-[450px] 3xl:-translate-y-[170px] fixed h-fit w-[400px] md:w-[850px] lg:w-[600px] xl:w-[700px] 2xl:w-[600px] 3xl:w-[1000px]'
+            className='translate-x-0 translate-y-10 md:-translate-y-[50px] lg:translate-y-14 xl:translate-y-0 2xl:translate-x-[650px] 2xl:-translate-y-14 3xl:translate-x-[450px] 3xl:-translate-y-[170px] h-fit w-[400px] md:w-[850px] lg:w-[600px] xl:w-[700px] 2xl:w-[600px] 3xl:w-[1000px] '
           />
         </div>
       </div>
