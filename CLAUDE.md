@@ -146,3 +146,20 @@ SVGs are handled by `@svgr/webpack` via custom rule in `next.config.mjs`. Import
 Development branch: `claude/review-previous-task-Hj63P`  
 Main branch: `main`  
 Always push to the designated feature branch unless told otherwise.
+
+---
+
+## Next Session — Start Here
+
+**Migrate to Next.js 16.2.4.** A full plan exists in the conversation history. Steps:
+
+1. Update packages:
+   ```bash
+   npm install next@16.2.4 react@19 react-dom@19
+   npm install --save-dev @types/react@19 @types/react-dom@19 eslint@10 eslint-config-next@16.2.4 @eslint/eslintrc
+   ```
+2. Delete `.eslintrc.json`, create `eslint.config.mjs` (flat config with `@eslint/eslintrc` compat layer).
+3. Add `--no-turbopack` to the `dev` script in `package.json` to preserve `@svgr/webpack` SVG handling.
+4. Verify: `npm run lint` + `npm run build` + `npm run dev`.
+
+No application code changes are expected — only deps + config.
