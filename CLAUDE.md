@@ -1,0 +1,358 @@
+# Elysium — CLAUDE.md
+
+## Project Overview
+
+**Elysium** is a web application for managing **Vampire: The Masquerade (VTM)** character sheets and loresheets. Players can create accounts, build full VTM character sheets (attributes, skills, disciplines, bio, etc.), and manage multiple characters. The name "Elysium" refers to the neutral ground in VTM lore.
+
+- Developer: Krisztian Nemeth — https://krisnemeth.dev
+- Repo: `krisnemeth/elysium`
+- Dev branch: `claude/project-analysis-refactor-plan-g3yB2`
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14.1.0 (App Router) |
+| Language | TypeScript 5 (strict) |
+| Styling | Tailwind CSS 3.3.0 |
+| Icons | react-icons 5.2.0 |
+| SVG components | @svgr/webpack 8.1.0 |
+| Fonts | Josefin Slab & Josefin Sans (Google Fonts) |
+| Database | **Supabase** (PostgreSQL — to be integrated) |
+| Auth | **Supabase Auth** (to be integrated) |
+| Hosting | Vercel (standard Next.js deployment) |
+
+---
+
+## Directory Structure
+
+```
+/
+├── app/
+│   ├── layout.tsx              # Root layout (fonts, dark theme)
+│   ├── page.tsx                # Landing/home page
+│   ├── globals.css             # Global dark-theme CSS
+│   ├── fonts.ts                # Google Fonts config
+│   ├── lib/
+│   │   └── utils.ts            # formatDate utility
+│   ├── ui/
+│   │   ├── navbar.tsx          # Fixed top nav (Log In / Sign Up)
+│   │   ├── footer.tsx          # Global footer
+│   │   ├── glowUpButtonLarge.tsx
+│   │   ├── glowUpButtonMedium.tsx
+│   │   ├── home/               # Landing page section components
+│   │   │   ├── WelcomeText.tsx
+│   │   │   ├── HomePageArt.tsx
+│   │   │   ├── Features.tsx
+│   │   │   ├── GlowUpCard.tsx
+│   │   │   ├── FeatureCard.tsx
+│   │   │   ├── LogoGrid.tsx
+│   │   │   └── Footer.tsx
+│   │   ├── dashboard/
+│   │   │   ├── sidenav.tsx     # Fixed sidebar (has commented-out signOut)
+│   │   │   ├── nav-links.tsx
+│   │   │   ├── OverviewCard.tsx
+│   │   │   ├── CardList.tsx
+│   │   │   └── CardListItem.tsx
+│   │   ├── characters/
+│   │   │   └── CharacterCard.tsx
+│   │   ├── sheets/             # Character sheet form section components
+│   │   │   ├── TextInputFields.tsx
+│   │   │   ├── Attributes.tsx
+│   │   │   ├── AttributeCheckBoxInput.tsx
+│   │   │   ├── Skills.tsx
+│   │   │   ├── SkillCheckBoxInput.tsx
+│   │   │   ├── LifeStats.tsx           # BUG: willpower & humanity use health state
+│   │   │   ├── LifeStatsInput.tsx
+│   │   │   ├── Disciplines.tsx
+│   │   │   ├── DisciplineInput.tsx
+│   │   │   ├── ResonanceHunger.tsx
+│   │   │   ├── ResonanceHungerInput.tsx  # STUB: renders placeholder text only
+│   │   │   ├── TenetsTouchstonesBane.tsx
+│   │   │   ├── BloodPotency.tsx
+│   │   │   ├── BloodPotencyCheckbox.tsx
+│   │   │   ├── BloodPotencyTextInput.tsx
+│   │   │   ├── BioData.tsx
+│   │   │   ├── BioDataDateOf.tsx
+│   │   │   ├── BioDataAge.tsx
+│   │   │   ├── BioDataTextArea.tsx
+│   │   │   ├── MixedSection.tsx
+│   │   │   ├── MeritsFlawsInput.tsx
+│   │   │   ├── Experience.tsx
+│   │   │   ├── TextInput.tsx
+│   │   │   ├── TextInputDropdown.tsx
+│   │   │   ├── TextArea.tsx
+│   │   │   └── CategoryDividers.tsx
+│   │   └── svgs/
+│   │       ├── index.ts        # All SVG exports
+│   │       └── *.svg           # 40+ clan/faction SVGs
+│   ├── dashboard/
+│   │   ├── layout.tsx          # Sidebar + content shell
+│   │   ├── (overview)/page.tsx # Dashboard home (static data)
+│   │   ├── characters/page.tsx # Character gallery (static data)
+│   │   ├── sheets/page.tsx     # Sheet type selection
+│   │   └── sheets/create/page.tsx  # Full character sheet form
+│   └── (no api/ directory yet)
+├── public/                     # Static assets (character/clan images, art)
+├── package.json
+├── tailwind.config.ts          # Custom 3xl breakpoint (1600px)
+├── next.config.mjs             # SVG webpack loader config
+├── tsconfig.json
+└── .eslintrc.json
+```
+
+---
+
+## Current State
+
+### What Works (Frontend Only)
+- **Landing page** — hero, feature highlights, logo grid, footer with sign-up form stub
+- **Dashboard layout** — responsive sidebar nav, mobile top nav
+- **Characters page** — gallery of 8 hardcoded VTM characters with images, clan symbols
+- **Sheet creator form** — complete UI for full VTM character sheet with local React state:
+  - Basic info (Name, Player, Chronicle, Concept, Ambition, Predator, Sire, Clan, Generation)
+  - 9 Attributes (Physical / Social / Mental, 5-checkbox each)
+  - 27 Skills (3 categories, 5-checkbox + optional label each)
+  - Life Stats (Health, Willpower, Humanity — 10 checkboxes each)
+  - 6 Discipline slots (dropdown + 5-level checkboxes + 5 power name fields)
+  - Resonance & Hunger (5-checkbox hunger track)
+  - Tenets, Touchstones & Bane (3 textareas)
+  - Blood Potency (10 checkboxes + 6 stat text fields)
+  - Experience (Total / Spent inputs)
+  - Biographical data (DoB, DoD, auto-calculated ages, appearance, history)
+  - Merits & Flaws (13 rows: name + 5-checkbox rating)
+
+### Known Bugs
+- **`app/ui/sheets/LifeStats.tsx` lines 69-78**: All three `<LifeStatsInput>` components pass `checkboxValues.health` and call `handleCheckboxChange('health', ...)` — willpower and humanity rows are broken.
+
+### What's Missing / Incomplete
+- No Supabase integration (database, auth)
+- No API route handlers (`app/api/` doesn't exist)
+- Form has no `onSubmit` / `action` handler — data is never saved
+- No authentication — Log Out button's server action is empty, `signOut` import is commented out
+- `ResonanceHungerInput.tsx` is a placeholder stub
+- All dashboard data is hardcoded (characters, overview counts)
+- Character action buttons (View, Edit, Delete) all link to `#`
+- No PDF export
+- No form validation
+- No search / filter on characters page
+- No loresheet system (navigation item exists, no implementation)
+
+---
+
+## Environment Variables (to be added)
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=      # server-side only, never expose to client
+```
+
+---
+
+## Design System
+
+- **Theme**: Dark gothic — black backgrounds, `slate-300` text, `rose-600` / `red-800` accents
+- **Gradients**: `violet-950 → red-950`
+- **Glass effects**: `backdrop-blur`, `bg-opacity`
+- **Glow buttons**: rose-600 blur shadow
+- **Checkboxes**: rotated 45° for diamond shape
+- **Borders**: dotted on text inputs
+- **Custom breakpoint**: `3xl` at 1600px (in addition to standard Tailwind breakpoints)
+- **Fonts**: Josefin Slab (headings), Josefin Sans (body)
+
+---
+
+## Refactoring & Completion Plan
+
+### Phase 0 — Bug Fixes (do first)
+
+1. **Fix `LifeStats.tsx`**: Change willpower and humanity inputs to use their own state keys and handlers.
+2. **Complete `ResonanceHungerInput.tsx`**: Implement resonance text input + 5-checkbox hunger track (same pattern as other stat inputs).
+3. **Remove dead/commented code**: Clean up commented-out blocks in `sidenav.tsx` and elsewhere.
+
+---
+
+### Phase 1 — Supabase Setup
+
+#### 1.1 Install dependencies
+```bash
+npm install @supabase/supabase-js @supabase/ssr
+```
+
+#### 1.2 Supabase client helpers
+Create `app/lib/supabase/`:
+- `client.ts` — browser client (`createBrowserClient`)
+- `server.ts` — server client (`createServerClient` using Next.js cookies)
+- `middleware.ts` — session refresh middleware
+
+#### 1.3 Next.js middleware
+Create `middleware.ts` at root to refresh Supabase Auth sessions on every request, protecting `/dashboard/**` routes.
+
+#### 1.4 Database Schema (PostgreSQL via Supabase)
+
+```sql
+-- Users are handled by Supabase Auth (auth.users)
+
+-- Character sheet (one row per character)
+create table public.characters (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references auth.users(id) on delete cascade,
+  name         text not null,
+  player       text,
+  chronicle    text,
+  concept      text,
+  ambition     text,
+  predator     text,
+  sire         text,
+  clan         text,
+  generation   text,
+  -- attributes (9 integers 0-5)
+  str int2, dex int2, sta int2,
+  cha int2, man int2, com int2,
+  int int2, wit int2, res int2,
+  -- life stats (10-bit arrays stored as integer bitmask or jsonb)
+  health       int2[],
+  willpower    int2[],
+  humanity     int2[],
+  -- disciplines (jsonb array of {name, level, powers[]})
+  disciplines  jsonb,
+  -- skills (jsonb map of skill_name -> {level, specialty})
+  skills       jsonb,
+  -- resonance & hunger
+  resonance    text,
+  hunger       int2,
+  -- blood potency
+  blood_potency         int2,
+  blood_surge           text,
+  power_bonus           text,
+  feeding_penalty       text,
+  mend_amount           text,
+  rouse_reroll          text,
+  bane_severity         text,
+  -- experience
+  exp_total    int2,
+  exp_spent    int2,
+  -- tenets / touchstones / bane
+  tenets       text,
+  touchstones  text,
+  clan_bane    text,
+  -- merits & flaws (jsonb array of {name, level})
+  merits_flaws jsonb,
+  -- bio
+  date_of_birth        date,
+  date_of_death        date,
+  appearance           text,
+  distinguishing_features text,
+  history              text,
+  notes                text,
+  -- meta
+  is_draft     boolean not null default true,
+  created_at   timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+
+-- Row-level security
+alter table public.characters enable row level security;
+create policy "Users own their characters"
+  on public.characters for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+```
+
+---
+
+### Phase 2 — Authentication
+
+#### 2.1 Auth pages
+Create `app/(auth)/login/page.tsx` and `app/(auth)/signup/page.tsx` using Supabase Auth UI or a custom form calling `supabase.auth.signInWithPassword` / `signUp`.
+
+#### 2.2 Wire up navbar buttons
+- "Log In" → `/login`
+- "Sign Up" → `/signup`
+
+#### 2.3 Wire up Log Out
+Uncomment and implement `signOut` in `sidenav.tsx` using Supabase client.
+
+#### 2.4 Protect dashboard
+Middleware redirects unauthenticated users from `/dashboard/**` to `/login`.
+
+---
+
+### Phase 3 — API / Server Actions
+
+Use **Next.js Server Actions** (already used pattern in the project with `'use server'`) rather than separate REST routes.
+
+Create `app/lib/actions/characters.ts`:
+- `createCharacter(formData)` — insert into `public.characters`
+- `updateCharacter(id, formData)` — update by id (RLS enforces ownership)
+- `deleteCharacter(id)` — delete by id
+- `getCharacters()` — fetch all characters for the current user
+- `getCharacter(id)` — fetch one character
+
+Create `app/lib/data/characters.ts`:
+- Server-side data fetching functions called from Server Components
+
+---
+
+### Phase 4 — Connect the Sheet Form
+
+1. Lift all local state in sheet components into a single parent form state object in `sheets/create/page.tsx` (convert it to `'use client'`).
+2. Wire the `<form>` `action` to the `createCharacter` Server Action.
+3. Add client-side validation (required fields, numeric ranges).
+4. After save, redirect to `/dashboard/characters/[id]`.
+5. Create `sheets/[id]/edit/page.tsx` that loads existing data and calls `updateCharacter`.
+
+---
+
+### Phase 5 — Dynamic Dashboard
+
+1. Replace all hardcoded character arrays in `(overview)/page.tsx` and `characters/page.tsx` with `getCharacters()` fetches.
+2. `OverviewCard` counts (finished, drafts, loresheets) become real queries.
+3. Character card "View / Edit / Delete" buttons become functional links and server actions.
+
+---
+
+### Phase 6 — Character Detail Page
+
+Create `app/dashboard/characters/[id]/page.tsx`:
+- Read-only view of a saved character sheet (print-friendly layout)
+- Edit button → navigate to edit page
+
+---
+
+### Phase 7 — PDF Export (Stretch)
+
+Use `@react-pdf/renderer` or `puppeteer` on a route handler to generate a print-ready VTM character sheet PDF.
+
+---
+
+### Phase 8 — Loresheet System (Stretch)
+
+The sidebar already has a Loresheet link. Implement:
+- `public.loresheets` table (user_id, title, content, character_id)
+- CRUD pages under `app/dashboard/loresheets/`
+
+---
+
+## Development Commands
+
+```bash
+npm run dev      # Start dev server at http://localhost:3000
+npm run build    # Production build
+npm run lint     # ESLint check
+```
+
+---
+
+## Notes for AI Assistants
+
+- All new code should be TypeScript with strict types.
+- Prefer **Server Components** by default; only add `'use client'` when interactivity is needed.
+- Prefer **Server Actions** over API routes for mutations.
+- Never expose `SUPABASE_SERVICE_ROLE_KEY` to the client bundle.
+- Follow the existing Tailwind dark-theme design: `bg-black`, `text-slate-300`, `border-slate-300/50`, hover `bg-rose-600`.
+- The VTM character sheet UI is intentionally faithful to the official sheet — don't simplify the field structure.
+- `clsx` is already installed; use it for conditional class names.

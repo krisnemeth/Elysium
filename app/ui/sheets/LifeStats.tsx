@@ -66,15 +66,15 @@ export default function LifeStats() {
       <div className='flex flex-col mt-2'>
         <LifeStatsInput
           label='Willpower'
-          values={checkboxValues.health}
-          onChange={(index) => handleCheckboxChange('health', index)}
+          values={checkboxValues.willpower}
+          onChange={(index) => handleCheckboxChange('willpower', index)}
         />
       </div>
       <div className='flex flex-col mt-2'>
         <LifeStatsInput
           label='Humanity'
-          values={checkboxValues.health}
-          onChange={(index) => handleCheckboxChange('health', index)}
+          values={checkboxValues.humanity}
+          onChange={(index) => handleCheckboxChange('humanity', index)}
         />
       </div>
     </div>
