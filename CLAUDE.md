@@ -14,11 +14,12 @@
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 14.2.35 (App Router) — Next.js 16 migration planned, see below |
+| Framework | Next.js 16.3.8 (App Router, Turbopack) + React 19 |
 | Language | TypeScript 5 (strict) |
 | Styling | Tailwind CSS 3.3.0 |
 | Icons | react-icons 5.2.0 |
-| SVG components | @svgr/webpack 8.1.0 |
+| SVG components | @svgr/webpack 8.1.0 (via `turbopack.rules`) |
+| Linting | ESLint 9 flat config (`eslint.config.mjs`) |
 | Fonts | Josefin Slab & Josefin Sans (Google Fonts) |
 | Database | **Supabase** (PostgreSQL — to be integrated) |
 | Auth | **Supabase Auth** (to be integrated) |
@@ -98,9 +99,9 @@
 ├── public/                     # Static assets (character/clan images, art)
 ├── package.json
 ├── tailwind.config.ts          # Custom 3xl breakpoint (1600px)
-├── next.config.mjs             # SVG webpack loader config
+├── next.config.mjs             # Turbopack rule: SVGs → React components via @svgr/webpack
 ├── tsconfig.json
-└── .eslintrc.json
+└── eslint.config.mjs           # ESLint flat config (core-web-vitals)
 ```
 
 ---
@@ -208,10 +209,10 @@ npm install @supabase/supabase-js @supabase/ssr
 Create `app/lib/supabase/`:
 - `client.ts` — browser client (`createBrowserClient`)
 - `server.ts` — server client (`createServerClient` using Next.js cookies)
-- `middleware.ts` — session refresh middleware
+- `proxy.ts` — session refresh helper
 
-#### 1.3 Next.js middleware
-Create `middleware.ts` at root to refresh Supabase Auth sessions on every request, protecting `/dashboard/**` routes.
+#### 1.3 Next.js proxy (formerly middleware)
+Create `proxy.ts` at root (Next.js 16 renamed `middleware.ts` → `proxy.ts`; export a function named `proxy`) to refresh Supabase Auth sessions on every request, protecting `/dashboard/**` routes.
 
 #### 1.4 Database Schema (PostgreSQL via Supabase)
 
@@ -359,22 +360,18 @@ The sidebar already has a Loresheet link. Implement:
 
 ---
 
-## Next.js 16 Migration (next major task)
+## Next.js 16 Notes
 
-Next was bumped to 14.2.35 to patch critical/high CVEs; the 2 remaining low-risk advisories require Next.js 16. Planned steps:
+Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ from older Next.js knowledge:
 
-1. Update packages:
-   ```bash
-   npm install next@16.2.4 react@19 react-dom@19
-   npm install --save-dev @types/react@19 @types/react-dom@19 eslint@10 eslint-config-next@16.2.4 @eslint/eslintrc
-   ```
-2. Delete `.eslintrc.json`, create `eslint.config.mjs` (flat config with `@eslint/eslintrc` compat layer).
-3. Add `--no-turbopack` to the `dev` script in `package.json` to preserve `@svgr/webpack` SVG handling.
-4. Verify: `npm run lint` + `npm run build` + `npm run dev`.
+- **Turbopack is the default** for `next dev` and `next build`. Don't add a `webpack()` function to `next.config.mjs` — a custom webpack config makes `next build` fail. Loaders go in `turbopack.rules`.
+- **`next lint` is removed.** `npm run lint` runs `eslint .` with the flat config. Stay on ESLint 9: `eslint-plugin-react` (pulled in by `eslint-config-next`) crashes on ESLint 10.
+- **`middleware.ts` is now `proxy.ts`** (Node.js runtime only).
+- **Request APIs are async-only**: `await params`, `await searchParams`, `await cookies()`, `await headers()`.
+- `next build` no longer runs lint and no longer prints per-route bundle sizes.
+- Bundled, version-matched docs live in `node_modules/next/dist/docs/` — check them before writing Next.js code.
 
-No application code changes are expected — only deps + config.
-
-When Supabase is added (Phase 1.3), note that Next.js 16 renames `middleware.ts` to `proxy.ts`.
+Remaining `npm audit` advisories (a `braces` DoS in Tailwind 3's watcher and `eslint-config-next`'s glob deps) are dev/build tooling only; clearing them requires the Tailwind 4 migration.
 
 ---
 
@@ -397,3 +394,13 @@ npm run lint     # ESLint check
 - Follow the existing Tailwind dark-theme design: `bg-black`, `text-slate-300`, `border-slate-300/50`, hover `bg-rose-600`.
 - The VTM character sheet UI is intentionally faithful to the official sheet — don't simplify the field structure.
 - `clsx` is already installed; use it for conditional class names.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
