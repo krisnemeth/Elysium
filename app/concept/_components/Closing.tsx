@@ -1,5 +1,12 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { VtmAnkh } from '@/app/ui/svgs';
+import {
+  DARK_PACK_LOGO,
+  DARK_PACK_NOTICE,
+  NOT_OFFICIAL_NOTICE,
+  WORLD_OF_DARKNESS_URL,
+} from '@/app/lib/dark-pack';
 
 export default function Closing() {
   const year = new Date().getFullYear();
@@ -34,11 +41,31 @@ export default function Closing() {
       </section>
 
       <footer className='flex flex-col gap-6 border-t border-paper/15 px-5 py-10 font-c-mono text-[0.65rem] leading-relaxed tracking-[0.1em] text-paper/45 uppercase md:flex-row md:justify-between md:px-10'>
-        <p className='max-w-[70ch]'>
-          Vampire: The Masquerade and associated logos, icons and characters are
-          the property of Paradox Interactive and White Wolf Entertainment.
-          &copy; {year} Elysium &middot; Built by Krisztian Nemeth.
-        </p>
+        <div className='flex max-w-[80ch] gap-4 tracking-normal normal-case'>
+          <Image
+            src={DARK_PACK_LOGO.src}
+            width={DARK_PACK_LOGO.width}
+            height={DARK_PACK_LOGO.height}
+            alt={DARK_PACK_LOGO.alt}
+            className='size-12 shrink-0'
+          />
+          <div className='flex flex-col gap-2'>
+            <p>
+              {DARK_PACK_NOTICE.replace('worldofdarkness.com.', '')}
+              <a
+                href={WORLD_OF_DARKNESS_URL}
+                className='underline underline-offset-2 transition-colors hover:text-blood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blood'
+              >
+                worldofdarkness.com
+              </a>
+              .
+            </p>
+            <p>
+              {NOT_OFFICIAL_NOTICE} &copy; {year} Elysium &middot; Built by
+              Krisztian Nemeth.
+            </p>
+          </div>
+        </div>
         <Link
           href='/'
           className='shrink-0 text-paper/70 transition-colors hover:text-blood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blood'

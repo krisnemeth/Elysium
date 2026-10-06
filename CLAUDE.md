@@ -378,6 +378,14 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 - `/concept`: experimental redesign. `_lib/hunger-dice.ts` implements V5 dice rules (crits, messy crits, bestial failures) as a pure function, reusable for the dashboard dice roller.
 - Scroll-driven effects use CSS `animation-timeline` in `globals.css`, with a static fallback and `prefers-reduced-motion` respected.
 
+## Licensing (Dark Pack)
+
+Elysium uses World of Darkness IP under the [Dark Pack Agreement](https://www.paradoxinteractive.com/games/world-of-darkness/community/dark-pack-agreement). Requirements:
+- Show the verbatim copyright notice, a "not official World of Darkness material" notice, and the Dark Pack logo. All three live in `app/lib/dark-pack.ts` and are rendered in both landing page footers; don't paraphrase the notice.
+- The rights holder named in the notice is Paradox Interactive AB. White Wolf is Paradox's World of Darkness brand, not a separate rights holder.
+- Character generators/apps must stay free: no in-app purchases, paywalls or other monetised transactions. Donations (Patreon, ko-fi) are allowed.
+- The official asset pack (Dark Pack logos, V5 clan/sect symbols including Ministry, Salubri, Caitiff and Thin-blood) is linked from the agreement page under "Download free materials".
+
 ## Tailwind 4 Notes
 
 Migrated from Tailwind 3 → 4 (2026-10-06); the UI was verified layout-identical to v3 on every route. There is no `tailwind.config.ts` — theme customisation lives in `@theme` in `app/globals.css`.

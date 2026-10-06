@@ -1,5 +1,12 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { Elysium1 } from '@/app/ui/svgs';
+import {
+  DARK_PACK_LOGO,
+  DARK_PACK_NOTICE,
+  NOT_OFFICIAL_NOTICE,
+  WORLD_OF_DARKNESS_URL,
+} from '@/app/lib/dark-pack';
 
 const LINK =
   'rounded-sm transition-colors duration-200 hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone';
@@ -58,26 +65,33 @@ export default function Footer() {
           </ul>
         </div>
 
-        <p className='text-xs leading-relaxed text-bone/40 md:col-span-4'>
-          Vampire: The Masquerade and associated logos, icons, and characters
-          are the property of Paradox Interactive and White Wolf Entertainment.
-          All rights reserved. Used with permission. For more information on
-          Vampire: The Masquerade, please visit the{' '}
-          <a
-            href='https://www.paradoxinteractive.com/games/world-of-darkness/about'
-            className={`underline underline-offset-2 ${LINK}`}
-          >
-            official Paradox Interactive website
-          </a>
-          .
-        </p>
+        <div className='flex gap-4 text-xs leading-relaxed text-bone/40 md:col-span-4'>
+          <Image
+            src={DARK_PACK_LOGO.src}
+            width={DARK_PACK_LOGO.width}
+            height={DARK_PACK_LOGO.height}
+            alt={DARK_PACK_LOGO.alt}
+            className='size-14 shrink-0'
+          />
+          <div className='flex flex-col gap-2'>
+            <p>
+              {DARK_PACK_NOTICE.replace('worldofdarkness.com.', '')}
+              <a
+                href={WORLD_OF_DARKNESS_URL}
+                className={`underline underline-offset-2 ${LINK}`}
+              >
+                worldofdarkness.com
+              </a>
+              .
+            </p>
+            <p>{NOT_OFFICIAL_NOTICE}</p>
+          </div>
+        </div>
       </div>
 
       <div className='border-t border-bone/10'>
         <p className='mx-auto max-w-6xl px-6 py-6 text-xs text-bone/40'>
-          &copy; {currentYear} Elysium. Built by Krisztian Nemeth. All product
-          and company names are trademarks&#8482; or registered&#174;
-          trademarks of their respective holders.
+          &copy; {currentYear} Elysium. Built by Krisztian Nemeth.
         </p>
       </div>
     </footer>
