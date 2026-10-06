@@ -408,14 +408,6 @@ Elysium is a cross-game vault for Vampire: The Masquerade, Werewolf: The Apocaly
 - **Dice:** rules for all three games in `app/lib/dice/rules.ts` (tested cases in git history: Hunger, Rage/Brutal, Desperation/Overreach/Despair). `app/ui/dice/DiceRoller.tsx` takes `game`. 3D dice: `app/ui/dice3d/` (React Three Fiber + three.js): `d10.ts` builds a true pentagonal trapezohedron and per-game face textures from the official glyphs in `public/dice/glyphs/`; `DiceScene.tsx` throws them and lands each on the rolled value. The `react-hooks/immutability` lint rule is disabled in that file because R3F mutates three.js objects in the render loop.
 - Werewolf tribe/auspice glyphs: `public/werewolf/*.png` (used as CSS masks). Sample portraits: `public/portraits/`.
 
-## Previous Vampire scenes (for reverting)
-
-Before the club alley / Elysium salon scenes (2026-10-06), the Vampire dashboard ambience was:
-- **Masquerade (dark):** grainy radial glows (accent-deep from the top, accent at the bottom left) and a large blurred crimson "mist" blob drifting sideways (`drift-x` 38s), no illustration. Gothic double-rule frame with ornamented corners.
-- **Neon Nights (light):** the same glows in violet/rose, with the neon-tube frame flickering (`neon-flicker` 7s).
-
-To restore, take `Vampire()` from `app/ui/game/Ambience.tsx` at commit `123b6c9` (`git show 123b6c9:app/ui/game/Ambience.tsx`).
-
 ## Licensing (Dark Pack)
 
 Elysium uses World of Darkness IP under the [Dark Pack Agreement](https://www.paradoxinteractive.com/games/world-of-darkness/community/dark-pack-agreement). Requirements:
