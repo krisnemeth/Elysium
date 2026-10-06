@@ -384,7 +384,14 @@ Elysium uses World of Darkness IP under the [Dark Pack Agreement](https://www.pa
 - Show the verbatim copyright notice, a "not official World of Darkness material" notice, and the Dark Pack logo. All three live in `app/lib/dark-pack.ts` and are rendered in both landing page footers; don't paraphrase the notice.
 - The rights holder named in the notice is Paradox Interactive AB. White Wolf is Paradox's World of Darkness brand, not a separate rights holder.
 - Character generators/apps must stay free: no in-app purchases, paywalls or other monetised transactions. Donations (Patreon, ko-fi) are allowed.
-- The official asset pack (Dark Pack logos, V5 clan/sect symbols including Ministry, Salubri, Caitiff and Thin-blood) is linked from the agreement page under "Download free materials".
+- The official asset pack is linked from the agreement page under "Download free materials". It's extracted (git-ignored, ~490 MB) in `brand-assets/`: VtM clan/sect/discipline/dice symbols and logos, plus ~300 official illustrations (characters, antagonists, locations, scenes). See `brand-assets/README.md`.
+
+## Official SVGs
+
+`app/ui/svgs/official/` holds 57 SVGs generated from the official EPS/AI artwork: 16 clan symbols (incl. Ministry, Salubri, Caitiff, Thin-blood), 14 clan name logos, Camarilla/Anarch/Sabbat symbols and names, 12 discipline badges, 6 dice symbols, the ankh and V5 logos. Import named components from `@/app/ui/svgs/official` (e.g. `ClanBrujah`, `ClanNameBrujah`, `DisciplineAuspex`, `DiceMessyCritical`).
+- Shapes use `currentColor`, so style them with `text-*`. White inner details use `var(--knockout, #fff)`; set `--knockout` (e.g. to the background colour) to recolour or "cut out" those details.
+- Regenerate with `scripts/convert-brand-svgs.sh` (needs `brew install ghostscript poppler`). Each file's ids are prefixed so inline SVGs don't share clip-path ids; `next.config.mjs` disables svgr's `cleanupIds` to keep them.
+- The older hand-sourced SVGs in `app/ui/svgs/` are still used by the hero and dashboard; prefer the official set for new work.
 
 ## Tailwind 4 Notes
 
