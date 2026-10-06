@@ -19,16 +19,17 @@
 }
 :root[data-theme='light'] [data-game='werewolf'] {
   /* The cave */
-  --ink: #16110c;
-  --color-bone: #efe5d3;
-  --accent: #ef8a3c;
-  --accent-deep: #4d2f17;
+  --ink: #121414;
+  --color-bone: #e6ebe7;
+  /* Lit by moonlight and the caern's spirit-glow, not fire. */
+  --accent: #2f9a88;
+  --accent-deep: #173833;
 }
 
 [data-game='hunter'] {
   /* The cabin */
-  --ink: #120d09;
-  --color-bone: #f1e6d2;
+  --ink: #0c0907;
+  --color-bone: #e6dccb;
   --accent: #f08a24;
   --accent-deep: #4a2a12;
   --font-cormorant: var(--font-special-elite);
@@ -141,33 +142,65 @@
     radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) bottom right / 12px 12px no-repeat;
 }
 
-/* Hunter, The inn: a clipboard. Hardboard back, steel clip, ruled notepaper. */
+/*
+  Hunter, The inn: a clipboard. Fibreboard back, a steel clip, a stack of
+  notepaper with a red margin; the ruled lines sit under the menu items so
+  they always line up.
+*/
 :root[data-theme='light'] [data-game='hunter'] .frame {
-  border: 9px solid #6e4b2c;
-  border-radius: 12px;
-  background-color: #fbf7ee;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0 1.9rem,
-    rgb(90 120 150 / 0.16) 1.9rem calc(1.9rem + 1px)
-  );
+  --paper: #fbf6ea;
+  border: 11px solid transparent;
+  border-radius: 14px;
+  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='2'/%3E%3CfeColorMatrix values='0 0 0 0 .34 0 0 0 0 .22 0 0 0 0 .12 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='90' height='90' fill='%23674529'/%3E%3Crect width='90' height='90' filter='url(%23f)'/%3E%3C/svg%3E") 30 round;
+  background-color: var(--paper);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .28 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23p)'/%3E%3C/svg%3E"),
+    linear-gradient(to right, transparent 2.35rem, rgb(214 72 72 / 0.55) 2.35rem calc(2.35rem + 1px), transparent calc(2.35rem + 1px), transparent calc(2.35rem + 4px), rgb(214 72 72 / 0.35) calc(2.35rem + 4px) calc(2.35rem + 5px), transparent calc(2.35rem + 5px));
+  /* Two more sheets peeking out underneath, then the board's shadow. */
   box-shadow:
-    inset 0 0 0 1px rgb(0 0 0 / 0.08),
-    0 1rem 1.75rem -0.75rem rgb(60 40 20 / 0.5);
+    3px 3px 0 -1px #f1ead9,
+    6px 6px 0 -2px #e6dcc6,
+    0 1.25rem 2rem -1rem rgb(50 32 15 / 0.55);
+  --color-bone: #2b2119;
 }
 :root[data-theme='light'] [data-game='hunter'] .frame::before {
   content: '';
   position: absolute;
-  z-index: 2;
-  top: -17px;
+  z-index: 3;
+  top: -22px;
   left: 50%;
-  width: 92px;
-  height: 26px;
+  width: 104px;
+  height: 34px;
   translate: -50% 0;
   pointer-events: none;
-  border-radius: 6px 6px 10px 10px;
-  background: linear-gradient(to bottom, #f2f2f2, #a9a9a9 45%, #d9d9d9 55%, #8e8e8e);
-  box-shadow: 0 3px 4px rgb(0 0 0 / 0.35), inset 0 1px 0 #fff;
+  border-radius: 8px 8px 14px 14px;
+  background:
+    radial-gradient(circle at 18% 70%, #6b6b6b 0 3px, transparent 3.5px),
+    radial-gradient(circle at 82% 70%, #6b6b6b 0 3px, transparent 3.5px),
+    linear-gradient(to bottom, transparent 0 44%, rgb(0 0 0 / 0.25) 44% 47%, transparent 47%),
+    linear-gradient(to bottom, #fbfbfb, #b8b8b8 30%, #e6e6e6 50%, #9a9a9a 85%, #c9c9c9);
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.35), inset 0 1px 0 #fff, inset 0 -2px 3px rgb(0 0 0 / 0.2);
+}
+/*
+  Ruled lines under each menu item (sidebar only), running the full width of
+  the paper, with the text starting just right of the red margin.
+*/
+:root[data-theme='light'] [data-game='hunter'] aside.frame nav a,
+:root[data-theme='light'] [data-game='hunter'] aside.frame > div:last-child > * {
+  margin-inline: -1rem;
+  border-radius: 0;
+  border-bottom: 1px solid rgb(90 125 165 / 0.38);
+  padding-left: 3.1rem;
+  justify-content: flex-start;
+}
+:root[data-theme='light'] [data-game='hunter'] aside.frame > div:last-child {
+  border-top: 0;
+}
+:root[data-theme='light'] [data-game='hunter'] aside.frame nav a > span:first-child {
+  display: none;
+}
+:root[data-theme='light'] [data-game='hunter'] aside.frame nav a[aria-current='page'] {
+  background: linear-gradient(176deg, transparent 18%, rgb(255 222 89 / 0.6) 22% 80%, transparent 84%);
 }
 
 /*
@@ -260,6 +293,41 @@
   0%, 88%, 91%, 93%, 100% { opacity: 0; }
   89% { opacity: 0.12; }
   92% { opacity: 0.07; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+@keyframes smoke {
+  0% { translate: 0 30%; opacity: 0; }
+  30% { opacity: 1; }
+  100% { translate: 4rem -60%; opacity: 0; }
+}
+
+/* A club door's light, on the beat. */
+@keyframes bass {
+  0%, 100% { opacity: 0.55; }
+  15% { opacity: 1; }
+}
+
+@keyframes spirit-glow {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes flame {
+  0%, 100% { scale: 1 1; rotate: -2deg; }
+  25% { scale: 0.92 1.08; rotate: 2deg; }
+  50% { scale: 1.04 0.95; rotate: -1deg; }
+  75% { scale: 0.96 1.06; rotate: 3deg; }
+}
+
+@keyframes candle-room {
+  0%, 100% { opacity: 1; }
+  30% { opacity: 0.93; }
+  60% { opacity: 0.97; }
 }
 
 @keyframes curtain {
