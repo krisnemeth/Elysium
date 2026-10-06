@@ -40,7 +40,7 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <Link href='/dashboard' className={LINK}>
+              <Link href='/vault/vampire' className={LINK}>
                 Log in
               </Link>
             </li>

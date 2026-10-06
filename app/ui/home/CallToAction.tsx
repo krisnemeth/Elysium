@@ -27,7 +27,7 @@ export default function CallToAction() {
             and backstory in one place, ready for the next session.
           </p>
           <Link
-            href='/dashboard'
+            href='/vault/vampire'
             className='group mt-10 inline-flex items-center gap-2 rounded-full bg-bone px-7 py-3.5 text-sm font-semibold text-ink shadow-[0_0_2.5rem_-0.5rem_var(--accent)] transition duration-300 hover:bg-white hover:shadow-[0_0_3rem_-0.25rem_var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone active:scale-[0.98]'
           >
             Create your first character

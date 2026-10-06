@@ -4,7 +4,9 @@ import Stagger from '@/app/ui/kit/Stagger';
 import MaskedPortrait from '../_components/MaskedPortrait';
 import Headline from '../_app/Headline';
 import { cButton, cLink, fileNo } from '../_app/styles';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import { CHARACTERS as ALL } from '@/app/lib/sample-characters';
+
+const CHARACTERS = ALL.filter((c) => c.game === 'vampire');
 import { CLANS } from '@/app/lib/clans';
 
 export const metadata: Metadata = { title: 'Case board' };
@@ -47,7 +49,7 @@ export default function Board() {
           <h2 id='closed-title' className='font-c-mono text-xs tracking-[0.25em] text-blood uppercase'>Closed files</h2>
           <Stagger as='ol' className='mt-4 border-t border-paper/15'>
             {closed.map((c) => {
-              const { Symbol, name: clan } = CLANS[c.clan];
+              const { Symbol, name: clan } = CLANS[c.clan!];
               return (
                 <li key={c.slug} className='group relative overflow-hidden border-b border-paper/15 transition-colors duration-500 hover:text-chalk'>
                   <div className='absolute inset-0 origin-left scale-x-0 bg-blood transition-transform duration-500 ease-(--ease-out-expo) group-hover:scale-x-100' />

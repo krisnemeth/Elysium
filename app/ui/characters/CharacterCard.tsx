@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { MdArrowOutward } from 'react-icons/md';
 import { CLANS } from '@/app/lib/clans';
+import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
 import type { Character } from '@/app/lib/sample-characters';
 import { panel } from '@/app/ui/kit/styles';
 
@@ -12,7 +13,8 @@ export default function CharacterCard({
   character: Character;
   style?: React.CSSProperties;
 }) {
-  const { Symbol, Wordmark, name: clanName } = CLANS[character.clan];
+  const Wordmark = character.clan ? CLANS[character.clan].Wordmark : undefined;
+  const clanName = factionName(character);
   return (
     <article
       style={style}
@@ -33,9 +35,9 @@ export default function CharacterCard({
             Draft
           </span>
         )}
-        <Symbol
-          aria-hidden
-          className='absolute top-4 right-4 h-8 w-auto max-w-10 text-bone/70 drop-shadow-[0_0_0.75rem_rgb(0_0_0/0.8)] transition-[color,scale] duration-500 ease-(--ease-spring) [--knockout:transparent] group-hover:scale-110 group-hover:text-bone'
+        <FactionMark
+          character={character}
+          className='absolute top-4 right-4 h-8 max-w-10 text-bone/70 drop-shadow-[0_0_0.75rem_rgb(0_0_0/0.8)] transition-[color,scale] duration-500 ease-(--ease-spring) [--knockout:transparent] group-hover:scale-110 group-hover:text-bone'
         />
         <div className='absolute inset-x-5 bottom-4'>
           {Wordmark ? (
@@ -51,7 +53,7 @@ export default function CharacterCard({
         <p className='text-sm leading-relaxed text-pretty text-bone/65'>{character.description}</p>
         <div className='mt-auto flex items-center justify-between gap-3 pt-5'>
           <Link
-            href='/dashboard/sheets/create'
+            href={`/vault/${character.game}/new`}
             className='group/link inline-flex items-center gap-1.5 text-sm text-bone transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent'
           >
             Open sheet

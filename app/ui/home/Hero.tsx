@@ -157,7 +157,7 @@ export default function Hero() {
           </p>
           <div className='flex flex-wrap items-center justify-center gap-3'>
             <Link
-              href='/dashboard'
+              href='/vault/vampire'
               className='group inline-flex items-center gap-2 rounded-full bg-bone px-6 py-3 text-sm font-semibold text-ink shadow-[0_0_2rem_-0.5rem_var(--accent)] transition duration-300 hover:bg-white hover:shadow-[0_0_2.5rem_-0.25rem_var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone active:scale-[0.98]'
             >
               Begin your chronicle

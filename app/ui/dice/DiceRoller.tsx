@@ -1,59 +1,126 @@
 'use client';
 
-import { useEffect, useRef, useState, type ComponentType, type SVGProps } from 'react';
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 import { GiD10 } from 'react-icons/gi';
 import { MdAdd, MdRemove, MdRefresh } from 'react-icons/md';
-import { resolveRoll, rollPool, type Die, type Outcome, type RollResult } from '@/app/lib/hunger-dice';
 import {
-  DiceBestialFailure,
-  DiceCritical,
-  DiceMessyCritical,
-  DiceSuccess,
-} from '@/app/ui/svgs/official';
+  canReroll,
+  rerollDice,
+  rollPool,
+  SPECIAL_DIE_NAME,
+  type Die,
+  type Game,
+  type Outcome,
+  type RollResult,
+} from '@/app/lib/dice/rules';
 import { buttonGhost, buttonPrimary, panel } from '@/app/ui/kit/styles';
-import D10 from './D10';
+import Glyph from './Glyph';
 
-type Svg = ComponentType<SVGProps<SVGSVGElement>>;
+// The 3D tray only runs in the browser.
+const DiceScene = dynamic(() => import('@/app/ui/dice3d/DiceScene'), {
+  ssr: false,
+  loading: () => <div className='grid h-full place-items-center text-sm text-bone/40'>Setting the table…</div>,
+});
 
-const ROLL_MS = 750;
 const MAX_REROLL = 3;
 
-const OUTCOMES: Record<Outcome, { title: string; note: string; Symbol?: Svg; grim?: boolean }> = {
-  critical: { title: 'Critical win', note: 'A pair of tens. Something remarkable happens.', Symbol: DiceCritical },
-  'messy-critical': { title: 'Messy critical', note: 'You win, but the Beast decides how.', Symbol: DiceMessyCritical, grim: true },
-  win: { title: 'Win', note: 'Enough successes to beat the difficulty.', Symbol: DiceSuccess },
+type OutcomeText = { title: string; note: string; glyph?: string; grim?: boolean };
+
+const BASE: Record<'critical' | 'win' | 'failure' | 'total-failure', OutcomeText> = {
+  critical: { title: 'Critical win', note: 'A pair of tens. Something remarkable happens.' },
+  win: { title: 'Win', note: 'Enough successes to beat the difficulty.' },
   failure: { title: 'Failure', note: 'Not enough. You may still succeed at a cost.' },
   'total-failure': { title: 'Total failure', note: 'Not a single success. The night turns against you.' },
-  'bestial-failure': { title: 'Bestial failure', note: 'You fail, and the Beast takes the wheel.', Symbol: DiceBestialFailure, grim: true },
 };
 
-// The symbol printed on a physical V5 die for this value.
-function FaceIcon({ die: { value, hunger }, className }: { die: Die; className: string }) {
-  if (value === 10) return hunger ? <DiceMessyCritical aria-hidden className={className} /> : <DiceCritical aria-hidden className={className} />;
-  if (value >= 6) return <DiceSuccess aria-hidden className={className} />;
-  if (hunger && value === 1) return <DiceBestialFailure aria-hidden className={className} />;
-  return null;
+const GAMES: Record<
+  Game,
+  {
+    success: string;
+    critical: string;
+    outcomes: Partial<Record<Outcome, OutcomeText>>;
+    check?: { title: string; body: string; button: string; calm: string; bad: string };
+  }
+> = {
+  vampire: {
+    success: 'vtm-ankh.svg',
+    critical: 'vtm-ankh-crit.svg',
+    outcomes: {
+      'messy-critical': { title: 'Messy critical', note: 'You win, but the Beast decides how.', glyph: 'vtm-messy.svg', grim: true },
+      'bestial-failure': { title: 'Bestial failure', note: 'You fail, and the Beast takes the wheel.', glyph: 'vtm-skull.svg', grim: true },
+    },
+    check: {
+      title: 'Rouse check',
+      body: 'Wake the blood for a discipline or Blood Surge. On a 1–5, your Hunger rises.',
+      button: 'Rouse the blood',
+      calm: 'Rouse check: calm',
+      bad: 'Rouse check: Hunger rises',
+    },
+  },
+  werewolf: {
+    success: 'wta-claw.png',
+    critical: 'wta-claw-crit.png',
+    outcomes: {
+      brutal: {
+        title: 'Brutal outcome',
+        note: 'Two or more Rage dice show 1 or 2. The test fails, unless the goal was to cause harm.',
+        glyph: 'wta-fangs.png',
+        grim: true,
+      },
+    },
+    check: {
+      title: 'Rage check',
+      body: 'Call on a Gift or shift your form. On a 1–5, you lose a point of Rage.',
+      button: 'Make a Rage check',
+      calm: 'Rage check: Rage holds',
+      bad: 'Rage check: Rage spent',
+    },
+  },
+  hunter: {
+    success: 'htr-flame.png',
+    critical: 'htr-flame-crit.png',
+    outcomes: {
+      overreach: {
+        title: 'Overreach or Despair',
+        note: 'You succeed, but a Desperation die shows a 1. Choose your price.',
+        glyph: 'htr-overreach.png',
+        grim: true,
+      },
+      despair: {
+        title: 'Despair',
+        note: 'You fail with a Desperation 1. Your Drive is lost until the cell fulfils it.',
+        glyph: 'htr-overreach.png',
+        grim: true,
+      },
+    },
+  },
+};
+
+function outcomeText(game: Game, outcome: Outcome): OutcomeText {
+  const g = GAMES[game];
+  return (
+    g.outcomes[outcome] ?? {
+      ...BASE[outcome as keyof typeof BASE],
+      glyph: outcome === 'critical' ? g.critical : outcome === 'win' ? g.success : undefined,
+    }
+  );
 }
 
-const randomDie = (hunger: boolean): Die => ({ value: Math.floor(Math.random() * 10) + 1, hunger });
-
-function prefersReducedMotion() {
-  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function useCssVar(name: string, fallback: string) {
+  const [value, setValue] = useState(fallback);
+  useEffect(() => {
+    const read = () =>
+      setValue(getComputedStyle(document.querySelector('[data-game]') ?? document.documentElement).getPropertyValue(name).trim() || fallback);
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, [name, fallback]);
+  return value;
 }
 
-function Stepper({
-  label,
-  value,
-  min,
-  max,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  onChange: (v: number) => void;
-}) {
+function Stepper({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
   const btn =
     'grid size-9 place-items-center rounded-full border border-bone/15 text-bone/80 transition duration-300 ease-(--ease-spring) hover:scale-110 hover:border-bone/40 hover:text-bone active:scale-95 focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-30';
   return (
@@ -74,230 +141,201 @@ function Stepper({
   );
 }
 
-function DieFace({
-  die,
-  rolling,
-  index,
-  selected,
-  selectable,
-  onSelect,
-}: {
-  die: Die;
-  rolling: boolean;
-  index: number;
-  selected: boolean;
-  selectable: boolean;
-  onSelect: () => void;
-}) {
-  const success = die.value >= 6;
-  const label = `${die.hunger ? 'Hunger die' : 'Die'} showing ${die.value}${selected ? ', selected for reroll' : ''}`;
-  return (
-    <li>
-      <button
-        type='button'
-        aria-label={label}
-        aria-pressed={selectable ? selected : undefined}
-        disabled={!selectable}
-        onClick={onSelect}
-        style={{ animationDelay: rolling ? `${index * -60}ms` : `${index * 55}ms` }}
-        className={[
-          'relative block w-16 transition-[opacity,filter,translate] duration-300 ease-(--ease-out-expo) md:w-20',
-          rolling ? 'die-spin' : 'die-land',
-          !rolling && !success && !(die.hunger && die.value === 1) ? 'opacity-45 saturate-50' : '',
-          selected ? '-translate-y-3 drop-shadow-[0_0_0.6rem_var(--color-bone)]' : '',
-          selectable ? 'cursor-pointer hover:-translate-y-1.5' : 'cursor-default',
-        ].join(' ')}
-      >
-        <D10 hunger={die.hunger} className='w-full'>
-          <FaceIcon die={die} className='h-7 w-auto md:h-9' />
-        </D10>
-        <span aria-hidden className='absolute inset-x-0 top-[58%] text-center text-[0.6rem] tabular-nums opacity-55'>
-          {die.value}
-        </span>
-      </button>
-    </li>
-  );
-}
-
 type HistoryEntry = { id: number; label: string; detail: string; grim?: boolean };
 
-export default function DiceRoller() {
+const idleDice = (game: Game, pool: number, special: number): Die[] => {
+  const specials = game === 'hunter' ? special : Math.min(special, pool);
+  const regulars = game === 'hunter' ? pool : pool - specials;
+  // 3 is a blank face on every V5-family die.
+  return [
+    ...Array.from({ length: regulars }, () => ({ value: 3, kind: 'regular' as const })),
+    ...Array.from({ length: specials }, () => ({ value: 3, kind: 'special' as const })),
+  ];
+};
+
+export default function DiceRoller({ game = 'vampire' }: { game?: Game }) {
+  const config = GAMES[game];
+  const specialName = SPECIAL_DIE_NAME[game];
   const [pool, setPool] = useState(5);
-  const [hunger, setHunger] = useState(1);
+  const [special, setSpecial] = useState(game === 'hunter' ? 0 : 1);
   const [difficulty, setDifficulty] = useState(3);
+  const [danger, setDanger] = useState(0);
+  const [despair, setDespair] = useState(false);
   const [result, setResult] = useState<RollResult | null>(null);
-  const [display, setDisplay] = useState<Die[]>([]);
-  const [rolling, setRolling] = useState(false);
+  const [rollKey, setRollKey] = useState(0);
+  const [rolled, setRolled] = useState<number[]>([]);
+  const [settled, setSettled] = useState(true);
   const [selected, setSelected] = useState<number[]>([]);
   const [rerolled, setRerolled] = useState(false);
-  const [rouse, setRouse] = useState<{ id: number; value: number } | null>(null);
+  const [choiceMade, setChoiceMade] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const timers = useRef<number[]>([]);
-  const nextId = useRef(1);
+  const accent = useCssVar('--accent', '#c81e2b');
 
-  useEffect(() => {
-    const pending = timers.current;
-    return () =>
-      pending.forEach((t) => {
-        clearTimeout(t);
-        clearInterval(t);
-      });
-  }, []);
+  const usableSpecial = game === 'hunter' && despair ? 0 : special;
 
   const log = (entry: Omit<HistoryEntry, 'id'>) =>
-    setHistory((h) => [{ ...entry, id: nextId.current++ }, ...h].slice(0, 8));
+    setHistory((h) => [{ ...entry, id: (h[0]?.id ?? 0) + 1 }, ...h].slice(0, 8));
 
-  // Flicker random faces while the dice tumble, then settle on the result.
-  const animateTo = (final: RollResult, onDone: (r: RollResult) => void) => {
-    if (prefersReducedMotion()) {
-      setDisplay(final.dice);
-      setResult(final);
-      onDone(final);
-      return;
-    }
-    setRolling(true);
-    setResult(null);
-    const flicker = window.setInterval(
-      () => setDisplay(final.dice.map((d) => randomDie(d.hunger))),
-      80,
-    );
-    const settle = window.setTimeout(() => {
-      clearInterval(flicker);
-      setDisplay(final.dice);
-      setRolling(false);
-      setResult(final);
-      onDone(final);
-    }, ROLL_MS);
-    timers.current.push(flicker, settle);
+  // The outcome is revealed once the dice have landed.
+  const throwDice = (indexes: number[]) => {
+    setRolled(indexes);
+    setRollKey((k) => k + 1);
+    setSettled(false);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(() => setSettled(true), reduced ? 0 : 1400 + indexes.length * 70);
+  };
+
+  const finish = (r: RollResult, label?: string) => {
+    setResult(r);
+    const text = outcomeText(game, r.outcome);
+    log({
+      label: label ? `${label}: ${text.title}` : text.title,
+      detail: `${r.dice.length} dice · ${r.dice.filter((d) => d.kind === 'special').length} ${specialName.toLowerCase()} · ${r.successes} vs ${difficulty}`,
+      grim: text.grim,
+    });
+    if (game === 'hunter' && r.outcome === 'despair') setDespair(true);
   };
 
   const roll = () => {
+    const r = rollPool(game, pool, usableSpecial, difficulty);
     setSelected([]);
     setRerolled(false);
-    setRouse(null);
-    animateTo(rollPool(pool, hunger, difficulty), (r) =>
-      log({
-        label: OUTCOMES[r.outcome].title,
-        detail: `${pool} dice · ${Math.min(hunger, pool)} hunger · ${r.successes} vs ${difficulty}`,
-        grim: OUTCOMES[r.outcome].grim,
-      }),
-    );
+    setChoiceMade(false);
+    throwDice(r.dice.map((_, i) => i));
+    finish(r);
   };
 
-  // Willpower: reroll up to three regular dice.
   const reroll = () => {
     if (!result) return;
-    const dice = result.dice.map((d, i) => (selected.includes(i) ? randomDie(false) : d));
+    const r = rerollDice(game, result, selected, difficulty);
+    throwDice(selected);
     setSelected([]);
     setRerolled(true);
-    animateTo(resolveRoll(dice, difficulty), (r) =>
-      log({ label: `Willpower reroll: ${OUTCOMES[r.outcome].title}`, detail: `${r.successes} vs ${difficulty}`, grim: OUTCOMES[r.outcome].grim }),
-    );
+    finish(r, 'Willpower reroll');
   };
 
-  const rouseCheck = () => {
+  const check = () => {
     const value = Math.floor(Math.random() * 10) + 1;
-    setRouse({ id: Date.now(), value });
-    if (value < 6) setHunger((h) => Math.min(5, h + 1));
-    log({
-      label: value >= 6 ? 'Rouse check: calm' : 'Rouse check: Hunger rises',
-      detail: `Rolled ${value}`,
-      grim: value < 6,
-    });
+    const ok = value >= 6;
+    if (!ok) setSpecial((s) => (game === 'vampire' ? Math.min(5, s + 1) : Math.max(0, s - 1)));
+    log({ label: ok ? config.check!.calm : config.check!.bad, detail: `Rolled ${value}`, grim: !ok });
   };
 
-  const toggleSelect = (i: number) =>
+  const choose = (choice: 'overreach' | 'despair') => {
+    setChoiceMade(true);
+    if (choice === 'overreach') setDanger((d) => Math.min(5, d + 1));
+    else setDespair(true);
+    log({ label: choice === 'overreach' ? 'Overreach: Danger +1' : 'Chose Despair', detail: '', grim: true });
+  };
+
+  const dice: Die[] = result ? result.dice : idleDice(game, pool, usableSpecial);
+  const canRerollNow = !!result && settled && !rerolled;
+  const sceneDice = dice.map((d, i) => ({
+    ...d,
+    dimmed: !!result && d.value < 6 && !(d.kind === 'special' && ((game === 'werewolf' && d.value <= 2) || d.value === 1)),
+    selected: selected.includes(i),
+    selectable: canRerollNow && canReroll(game, d),
+  }));
+  const toggle = (i: number) =>
     setSelected((s) => (s.includes(i) ? s.filter((x) => x !== i) : s.length < MAX_REROLL ? [...s, i] : s));
 
-  const dice = display.length ? display : Array.from({ length: pool }, (_, i) => ({ value: 0, hunger: i >= pool - Math.min(hunger, pool) }));
-  const outcome = result ? OUTCOMES[result.outcome] : null;
-  const canReroll = !!result && !rolling && !rerolled;
+  const resetRoll = () => {
+    setResult(null);
+    setRolled([]);
+    setSelected([]);
+  };
+
+  const text = result ? outcomeText(game, result.outcome) : null;
 
   return (
     <div className='grid gap-5 xl:grid-cols-3'>
-      <div className={`flex flex-col gap-8 p-6 md:p-8 xl:col-span-2 ${panel}`}>
+      <div className={`flex flex-col gap-6 p-6 md:p-8 xl:col-span-2 ${panel}`}>
         <div className='flex flex-wrap items-end justify-center gap-x-10 gap-y-6 md:justify-between'>
-          <Stepper label='Dice pool' value={pool} min={1} max={20} onChange={(v) => { setPool(v); setDisplay([]); setResult(null); }} />
-          <Stepper label='Hunger' value={hunger} min={0} max={5} onChange={(v) => { setHunger(v); setDisplay([]); setResult(null); }} />
-          <Stepper label='Difficulty' value={difficulty} min={1} max={10} onChange={(v) => { setDifficulty(v); setResult(null); }} />
+          <Stepper label='Dice pool' value={pool} min={1} max={20} onChange={(v) => { setPool(v); resetRoll(); }} />
+          <Stepper label={specialName} value={special} min={0} max={5} onChange={(v) => { setSpecial(v); resetRoll(); }} />
+          <Stepper label='Difficulty' value={difficulty} min={1} max={10} onChange={setDifficulty} />
         </div>
 
-        <ul aria-label='Dice' aria-busy={rolling} className='flex min-h-44 flex-wrap content-center justify-center gap-x-3 gap-y-5'>
-          {dice.map((die, i) =>
-            die.value === 0 ? (
-              <li key={`idle-${i}`} className='w-16 opacity-30 md:w-20'>
-                <D10 hunger={die.hunger} className='w-full' />
-              </li>
-            ) : (
-              <DieFace
-                key={`${i}-${rolling ? 'r' : 's'}`}
-                die={die}
-                index={i}
-                rolling={rolling}
-                selected={selected.includes(i)}
-                selectable={canReroll && !die.hunger}
-                onSelect={() => toggleSelect(i)}
-              />
-            ),
-          )}
+        <div className='relative -mx-2 h-72 md:h-96'>
+          <DiceScene game={game} dice={sceneDice} rollKey={rollKey} rolled={rolled} accent={accent} onSelect={toggle} />
+        </div>
+
+        {/* Screen reader and keyboard access to the dice */}
+        <ul aria-label='Dice' className='sr-only'>
+          {sceneDice.map((d, i) => (
+            <li key={i}>
+              <button type='button' disabled={!d.selectable} aria-pressed={d.selectable ? d.selected : undefined} onClick={() => toggle(i)}>
+                {d.kind === 'special' ? `${specialName} die` : 'Die'} {result ? `showing ${d.value}` : 'not rolled'}
+              </button>
+            </li>
+          ))}
         </ul>
 
         <div aria-live='polite' className='min-h-24 border-t border-bone/10 pt-6 text-center'>
-          {outcome && result ? (
-            <div key={`${result.successes}-${result.outcome}-${history[0]?.id}`} className='result-in flex flex-col items-center gap-2'>
+          {text && result && settled ? (
+            <div key={rollKey} className='result-in flex flex-col items-center gap-2'>
               <div className='flex items-center gap-3'>
-                {outcome.Symbol && <outcome.Symbol aria-hidden className={`h-12 w-auto ${outcome.grim ? 'text-accent' : 'text-bone'}`} />}
-                <p className={`font-display text-5xl italic ${outcome.grim ? 'text-accent' : ''}`}>{outcome.title}</p>
+                {text.glyph && <Glyph name={text.glyph} className={`inline-block size-12 ${text.grim ? 'text-accent' : 'text-bone'}`} />}
+                <p className={`font-display text-5xl italic ${text.grim ? 'text-accent' : ''}`}>{text.title}</p>
               </div>
-              <p className='text-bone/60'>{outcome.note}</p>
+              <p className='max-w-md text-bone/60'>{text.note}</p>
               <p className='text-xs tracking-[0.2em] text-bone/45 uppercase'>
                 {result.successes} {result.successes === 1 ? 'success' : 'successes'} vs difficulty {difficulty}
               </p>
+              {game === 'hunter' && result.outcome === 'overreach' && !choiceMade && (
+                <div className='mt-3 flex flex-wrap justify-center gap-3'>
+                  <button type='button' onClick={() => choose('overreach')} className={buttonPrimary}>Overreach (Danger +1)</button>
+                  <button type='button' onClick={() => choose('despair')} className={buttonGhost}>Accept Despair</button>
+                </div>
+              )}
             </div>
           ) : (
             <p className='text-sm text-bone/45'>
-              {rolling ? 'Rolling…' : 'Set your pool and roll. Red dice are Hunger dice.'}
+              {result ? 'Rolling…' : `Set your pool and roll. ${specialName} dice are the coloured ones.`}
             </p>
           )}
         </div>
 
         <div className='flex flex-wrap items-center justify-center gap-3'>
-          <button type='button' onClick={roll} disabled={rolling} className={`${buttonPrimary} px-8 py-3 text-base`}>
+          <button type='button' onClick={roll} disabled={!settled} className={`${buttonPrimary} px-8 py-3 text-base`}>
             <GiD10 aria-hidden className='size-5 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
-            Roll {pool} {pool === 1 ? 'die' : 'dice'}
+            Roll {pool + (game === 'hunter' ? usableSpecial : 0)} dice
           </button>
-          {canReroll && (
+          {canRerollNow && (
             <button type='button' onClick={reroll} disabled={!selected.length} className={buttonGhost}>
               <MdRefresh aria-hidden className='size-4 transition-transform duration-500 group-hover:-rotate-180' />
-              {selected.length ? `Reroll ${selected.length} with Willpower` : `Select up to ${MAX_REROLL} dice to reroll`}
+              {selected.length ? `Reroll ${selected.length} with Willpower` : `Tap up to ${MAX_REROLL} dice to reroll`}
             </button>
           )}
         </div>
       </div>
 
       <div className='flex flex-col gap-5'>
-        <section aria-labelledby='rouse-title' className={`p-6 ${panel}`}>
-          <h2 id='rouse-title' className='font-display text-2xl'>Rouse check</h2>
-          <p className='mt-2 text-sm leading-relaxed text-bone/60'>
-            Wake the blood for a discipline or Blood Surge. On a 1–5, your Hunger rises.
-          </p>
-          <div className='mt-5 flex items-center gap-4'>
-            <button type='button' onClick={rouseCheck} disabled={rolling} className={buttonGhost}>
-              Rouse the blood
-            </button>
-            {rouse && (
-              <span key={rouse.id} className='die-land relative block w-12'>
-                <D10 className='w-full'>
-                  {rouse.value >= 6 ? (
-                    <DiceSuccess aria-hidden className='h-5 w-auto' />
-                  ) : (
-                    <span className='font-display text-lg leading-none'>{rouse.value}</span>
-                  )}
-                </D10>
+        {config.check && (
+          <section aria-labelledby='check-title' className={`p-6 ${panel}`}>
+            <h2 id='check-title' className='font-display text-2xl'>{config.check.title}</h2>
+            <p className='mt-2 text-sm leading-relaxed text-bone/60'>{config.check.body}</p>
+            <button type='button' onClick={check} className={`${buttonGhost} mt-5`}>{config.check.button}</button>
+          </section>
+        )}
+
+        {game === 'hunter' && (
+          <section aria-labelledby='cell-title' className={`p-6 ${panel}`}>
+            <h2 id='cell-title' className='font-display text-2xl'>The cell</h2>
+            <div className='mt-4 flex items-center justify-between'>
+              <span className='text-sm text-bone/70'>Danger</span>
+              <span className='flex gap-1.5' aria-label={`Danger ${danger} of 5`}>
+                {Array.from({ length: 5 }, (_, i) => (
+                  <span key={i} className={`size-3 rotate-45 border transition-colors duration-500 ${i < danger ? 'border-accent bg-accent' : 'border-bone/30'}`} />
+                ))}
               </span>
-            )}
-          </div>
-        </section>
+            </div>
+            <label className='mt-4 flex cursor-pointer items-center justify-between gap-4 text-sm text-bone/70'>
+              In Despair (no Desperation dice)
+              <input type='checkbox' checked={despair} onChange={(e) => setDespair(e.target.checked)} className='size-4 accent-[var(--accent)]' />
+            </label>
+          </section>
+        )}
 
         <section aria-labelledby='history-title' className={`grow p-6 ${panel}`}>
           <h2 id='history-title' className='font-display text-2xl'>Recent rolls</h2>

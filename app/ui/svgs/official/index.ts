@@ -61,5 +61,11 @@ export { default as DiceSuccess } from './dice/success.svg';
 export { default as DiceTeeth } from './dice/teeth.svg';
 
 export { default as LogoAnkh } from './logos/ankh.svg';
+export { default as LogoHunterLong } from './logos/hunter-long.svg';
+export { default as LogoHunter } from './logos/hunter.svg';
 export { default as LogoVampireLong } from './logos/vampire-long.svg';
 export { default as LogoVampire } from './logos/vampire.svg';
+export { default as LogoWerewolfLong } from './logos/werewolf-long.svg';
+export { default as LogoWerewolf } from './logos/werewolf.svg';
+export { default as LogoWodCircle } from './logos/wod-circle.svg';
+export { default as LogoWod } from './logos/wod.svg';

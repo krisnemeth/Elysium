@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The old Vampire-only dashboard moved into the cross-game vault.
+  async redirects() {
+    return [
+      { source: '/dashboard', destination: '/vault/vampire', permanent: true },
+      { source: '/dashboard/characters', destination: '/vault/vampire/characters', permanent: true },
+      { source: '/dashboard/dice', destination: '/vault/vampire/dice', permanent: true },
+      { source: '/dashboard/sheets/:path*', destination: '/vault/new', permanent: true },
+    ];
+  },
   turbopack: {
     rules: {
       '*.svg': {

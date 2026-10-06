@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Jsans, Cormorant } from './fonts';
+import { Jsans, Cormorant, CinzelFont, SpecialElite, CourierPrime } from './fonts';
 import { themeScript } from './lib/theme';
 
 export const metadata: Metadata = {
@@ -40,7 +40,7 @@ export default function RootLayout({
     <html
       lang='en'
       data-scroll-behavior='smooth'
-      className={Cormorant.variable}
+      className={`${Cormorant.variable} ${CinzelFont.variable} ${SpecialElite.variable} ${CourierPrime.variable}`}
       // data-theme is set by themeScript before hydration.
       suppressHydrationWarning
     >

@@ -1,14 +1,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CLANS } from '@/app/lib/clans';
+import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
 import type { Character } from '@/app/lib/sample-characters';
 
 export default function CharacterRow({ character, style }: { character: Character; style?: React.CSSProperties }) {
-  const { Symbol, name: clanName } = CLANS[character.clan];
+  const clanName = factionName(character);
   return (
     <li style={style}>
       <Link
-        href='/dashboard/characters'
+        href={`/vault/${character.game}/characters`}
         className='group flex items-center gap-4 rounded-xl p-2 transition-[background-color,translate] duration-300 ease-(--ease-out-expo) hover:translate-x-1 hover:bg-bone/[0.05] focus-visible:outline-2 focus-visible:outline-accent'
       >
         <span className='relative size-12 shrink-0 overflow-hidden rounded-lg ring-1 ring-bone/10'>
@@ -24,9 +24,9 @@ export default function CharacterRow({ character, style }: { character: Characte
           <span className='block truncate font-display text-xl leading-tight'>{character.name}</span>
           <span className='block text-xs tracking-[0.15em] text-bone/45 uppercase'>{clanName}</span>
         </span>
-        <Symbol
-          aria-hidden
-          className='h-7 w-auto max-w-9 shrink-0 text-bone/35 transition-[color,scale] duration-500 ease-(--ease-spring) [--knockout:var(--color-ink)] group-hover:scale-110 group-hover:text-accent'
+        <FactionMark
+          character={character}
+          className='h-7 max-w-9 shrink-0 text-bone/35 transition-[color,scale] duration-500 ease-(--ease-spring) [--knockout:var(--color-ink)] group-hover:scale-110 group-hover:text-accent'
         />
       </Link>
     </li>

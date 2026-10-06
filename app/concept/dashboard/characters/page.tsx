@@ -4,7 +4,9 @@ import Stagger from '@/app/ui/kit/Stagger';
 import MaskedPortrait from '../../_components/MaskedPortrait';
 import Headline from '../../_app/Headline';
 import { cButton, fileNo } from '../../_app/styles';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import { CHARACTERS as ALL } from '@/app/lib/sample-characters';
+
+const CHARACTERS = ALL.filter((c) => c.game === 'vampire');
 import { CLANS } from '@/app/lib/clans';
 
 export const metadata: Metadata = { title: 'Dossiers' };
@@ -24,7 +26,7 @@ export default function Dossiers() {
       />
       <Stagger className='grid gap-x-8 gap-y-14 sm:grid-cols-2 xl:grid-cols-4'>
         {CHARACTERS.map((c, i) => {
-          const { Wordmark, Symbol, name: clan } = CLANS[c.clan];
+          const { Wordmark, Symbol, name: clan } = CLANS[c.clan!];
           return (
             <article key={c.slug} className='group flex flex-col'>
               <div className='relative'>

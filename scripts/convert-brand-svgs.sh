@@ -69,6 +69,12 @@ dice/teeth.svg|Dice Symbols - Vampire The Masquerade/Teeth.eps
 logos/ankh.svg|Ankhs - Vampire The Masquerade/VtM_ankh.eps
 logos/vampire.svg|Logos - Vampire The Masquerade/VampireLogoBIG.eps
 logos/vampire-long.svg|Logos - Vampire The Masquerade/VampireLongLogo.eps
+logos/werewolf.svg|../Werewolf The Apocalypse/Logos - Werewolf The Apocalypse/Werewolf_NewLogo.eps
+logos/werewolf-long.svg|../Werewolf The Apocalypse/Logos - Werewolf The Apocalypse/WEREWOLF_NewLogo_long.eps
+logos/hunter.svg|../Hunter The Reckoning/Logos - Hunter The Reckoning/Hunter_Logo.eps
+logos/hunter-long.svg|../Hunter The Reckoning/Logos - Hunter The Reckoning/Hunter_Logo_Long.eps
+logos/wod.svg|../World of Darkness/Logo_WoD_White.ai
+logos/wod-circle.svg|../World of Darkness/Circle_WoD_BW.ai
 "
 
 rm -rf "$OUT"

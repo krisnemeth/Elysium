@@ -1,15 +1,28 @@
 import { LogoAnkh } from '@/app/ui/svgs/official';
+import Glyph from '@/app/ui/dice/Glyph';
 
-// Section heading for the character sheet, flanked by ankhs.
+// The game's mark, chosen by the surrounding [data-game] (ankh by default).
+function Mark({ flip }: { flip?: boolean }) {
+  const rot = flip ? '-rotate-90' : 'rotate-90';
+  return (
+    <>
+      <LogoAnkh aria-hidden className={`h-4 w-auto ${rot} text-accent in-data-[game=hunter]:hidden in-data-[game=werewolf]:hidden`} />
+      <Glyph name='wta-claw.png' className={`hidden size-5 text-accent in-data-[game=werewolf]:inline-block ${flip ? '-scale-x-100' : ''}`} />
+      <Glyph name='htr-flame.png' className='hidden size-5 text-accent in-data-[game=hunter]:inline-block' />
+    </>
+  );
+}
+
+// Section heading for character sheets.
 export default function CategoryDividers({ title, id }: { title: string; id?: string }) {
   return (
     <div className='flex items-center gap-4'>
       <span className='h-px grow bg-linear-to-r from-transparent to-bone/20' />
-      <LogoAnkh aria-hidden className='h-4 w-auto rotate-90 text-accent' />
-      <h2 id={id} className='font-display text-3xl'>
+      <Mark />
+      <h2 id={id} className='text-center font-display text-3xl'>
         {title}
       </h2>
-      <LogoAnkh aria-hidden className='h-4 w-auto -rotate-90 text-accent' />
+      <Mark flip />
       <span className='h-px grow bg-linear-to-l from-transparent to-bone/20' />
     </div>
   );
