@@ -42,8 +42,12 @@ export default function HunterOverview() {
 
       <section aria-labelledby='board-title' className={`relative overflow-hidden p-4 md:p-6 ${panel}`}>
         <h2 id='board-title' className='sr-only'>Case board</h2>
-        {/* Corkboard */}
-        <div className='relative aspect-[4/5] overflow-hidden rounded-lg bg-[#8a6038] shadow-[inset_0_0_3rem_rgb(0_0_0/0.55)] sm:aspect-[16/9] [background-image:radial-gradient(rgb(0_0_0/0.18)_1px,transparent_1.5px),radial-gradient(rgb(255_255_255/0.08)_1px,transparent_1.5px)] [background-position:0_0,3px_4px] [background-size:7px_7px,9px_8px]'>
+        {/* Corkboard rim with a map pinned across it: woodland by the cabin, the city at the inn. */}
+        <div className='rounded-lg bg-[#8a6038] p-3 shadow-[inset_0_0_2rem_rgb(0_0_0/0.5)] [background-image:radial-gradient(rgb(0_0_0/0.2)_1px,transparent_1.5px),radial-gradient(rgb(255_255_255/0.1)_1px,transparent_1.5px)] [background-position:0_0,3px_4px] [background-size:7px_7px,9px_8px] md:p-4'>
+        <div className='relative aspect-[4/5] overflow-hidden rounded-sm shadow-[0_0.5rem_1.5rem_-0.5rem_rgb(0_0_0/0.6)] sm:aspect-[16/9]'>
+          <Image src='/maps/woodland.svg' alt='' fill unoptimized className='hidden object-cover dark:block' />
+          <Image src='/maps/city.svg' alt='' fill unoptimized className='object-cover dark:hidden' />
+          <div aria-hidden className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgb(60_40_20/0.35))]' />
           {/* Red string between the photos */}
           <svg aria-hidden className='absolute inset-0 size-full' viewBox='0 0 100 100' preserveAspectRatio='none'>
             <polyline
@@ -86,6 +90,7 @@ export default function HunterOverview() {
             <br />
             {open} open file{open === 1 ? '' : 's'}
           </div>
+        </div>
         </div>
       </section>
     </div>

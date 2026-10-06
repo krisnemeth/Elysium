@@ -14,14 +14,14 @@ export default function CellFiles({ files }: { files: Character[] }) {
           <article className='group relative mx-auto max-w-3xl'>
             {/* Folder tab */}
             <div
-              className='relative z-10 ml-6 inline-flex items-center gap-3 rounded-t-lg bg-[#c9a76a] px-4 py-1.5 font-display text-xs tracking-[0.15em] text-[#2b2119] uppercase'
+              className='relative z-10 ml-6 inline-flex items-center gap-3 rounded-t-lg bg-[#b38d55] px-4 py-1.5 font-display text-xs tracking-[0.15em] text-[#2b2119] uppercase'
               style={{ marginLeft: `${1.5 + (i % 4) * 4}rem` }}
             >
               File {String(i + 1).padStart(3, '0')} · {c.faction}
             </div>
             {/* Folder and the paper inside it */}
-            <div className='rounded-lg rounded-tl-none bg-[#c9a76a] p-2 shadow-[0_-0.5rem_2rem_-0.5rem_rgb(0_0_0/0.55)] transition-transform duration-500 ease-(--ease-out-expo) group-hover:-translate-y-1'>
-              <div className='relative grid gap-6 rounded-md bg-[#f7f1e3] p-5 text-[#2b2119] [background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_1.6rem,rgb(43_33_25/0.07)_1.6rem,rgb(43_33_25/0.07)_calc(1.6rem+1px))] grid-cols-[6.5rem_1fr] sm:grid-cols-[10rem_1fr] md:p-7'>
+            <div className='rounded-lg rounded-tl-none bg-[#b38d55] p-2 shadow-[0_-0.5rem_2rem_-0.5rem_rgb(0_0_0/0.55)] transition-transform duration-500 ease-(--ease-out-expo) group-hover:-translate-y-1'>
+              <div className='relative grid gap-6 rounded-md bg-[#c9a76a] p-5 text-[#2b2119] [background-image:repeating-linear-gradient(to_bottom,transparent_0,transparent_1.6rem,rgb(43_33_25/0.1)_1.6rem,rgb(43_33_25/0.1)_calc(1.6rem+1px))] grid-cols-[6.5rem_1fr] sm:grid-cols-[10rem_1fr] md:p-7'>
                 <div className='relative'>
                   <Image src={c.image.src} width={320} height={420} alt={`Photo of ${c.name}.`} className='w-full rotate-[-2deg] border-[6px] border-white object-cover shadow-md sepia-[0.3]' />
                   {/* Paper clip */}

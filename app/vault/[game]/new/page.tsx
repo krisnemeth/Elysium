@@ -26,8 +26,13 @@ export default async function NewSheet({ params }: PageProps<'/vault/[game]/new'
         <div className='flex justify-center py-4'>
           <Logo aria-label={title} role='img' className='h-auto w-64 text-bone/80 md:w-80' />
         </div>
-        {sections.map(({ id, label, body }) => (
-          <section key={id} id={id} aria-labelledby={`${id}-title`} className={`reveal scroll-mt-48 p-5 md:scroll-mt-24 md:p-8 ${panel}`}>
+        {sections.map(({ id, label, body }, i) => (
+          <section
+            key={id}
+            id={id}
+            aria-labelledby={`${id}-title`}
+            className={`reveal relative scroll-mt-48 p-5 md:scroll-mt-24 md:p-8 ${i === 0 ? 'taped' : ''} ${panel}`}
+          >
             <CategoryDividers id={`${id}-title`} title={label} />
             <div className='mt-8'>{body}</div>
           </section>

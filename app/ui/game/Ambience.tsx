@@ -96,7 +96,7 @@ function Hunter() {
         <Backdrop src='/art/htr-cabin.webp' className='opacity-25' />
         <div className='absolute inset-0 bg-[linear-gradient(to_bottom,rgb(18_13_9/0.4),var(--ink)_80%)]' />
         {/* A bare bulb swinging on its wire */}
-        <div className='absolute top-0 left-1/2 h-[70vh] w-[60vw] -translate-x-1/2 origin-top' style={{ animation: 'lamp-swing 7s ease-in-out infinite' }}>
+        <div className='absolute top-0 right-[6%] h-[70vh] w-[46vw] translate-x-1/2 origin-top md:right-[12%]' style={{ animation: 'lamp-swing 7s ease-in-out infinite' }}>
           <div className='mx-auto h-16 w-px bg-[#c7b49a]/40' />
           <div className='mx-auto size-3 rounded-full bg-[#ffd9a0] shadow-[0_0_2rem_0.75rem_rgb(255_190_110/0.5)]' style={{ animation: 'firelight 2.6s ease-in-out infinite' }} />
           <div className='mx-auto h-[60vh] w-full bg-[radial-gradient(ellipse_50%_80%_at_50%_0%,rgb(240_160_70/0.16),transparent_70%)] [clip-path:polygon(45%_0,55%_0,100%_100%,0_100%)]' />

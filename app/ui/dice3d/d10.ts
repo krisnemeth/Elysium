@@ -121,7 +121,7 @@ type Style = { face: string; glyph: string };
 // Colours of the official dice for each game.
 export const DICE_STYLES: Record<Game, Record<DieKind, Style>> = {
   vampire: {
-    regular: { face: '#2a2a2c', glyph: '#f3f0ea' },
+    regular: { face: '#161618', glyph: '#f3f0ea' },
     special: { face: '#c8102e', glyph: '#141010' },
   },
   werewolf: {
@@ -169,19 +169,47 @@ function loadImage(name: string) {
   return imageCache.get(name)!;
 }
 
-// Draws a glyph image in a solid colour (the image is used as a mask).
-function tinted(img: HTMLImageElement, color: string, size: number) {
+// The glyph's visible area (alpha bounding box), so every symbol is placed by
+// its actual shape rather than its image padding.
+function trimmed(img: HTMLImageElement) {
+  const size = 256;
   const c = document.createElement('canvas');
   c.width = c.height = size;
   const ctx = c.getContext('2d')!;
   const r = Math.min(size / img.width, size / img.height);
-  const w = img.width * r;
-  const h = img.height * r;
-  ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
-  ctx.globalCompositeOperation = 'source-in';
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, size, size);
-  return c;
+  ctx.drawImage(img, (size - img.width * r) / 2, (size - img.height * r) / 2, img.width * r, img.height * r);
+  const { data } = ctx.getImageData(0, 0, size, size);
+  let [x0, y0, x1, y1] = [size, size, 0, 0];
+  for (let y = 0; y < size; y++)
+    for (let x = 0; x < size; x++)
+      if (data[(y * size + x) * 4 + 3] > 24) {
+        x0 = Math.min(x0, x);
+        y0 = Math.min(y0, y);
+        x1 = Math.max(x1, x);
+        y1 = Math.max(y1, y);
+      }
+  return { canvas: c, x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+}
+
+// Largest circle inside the kite (its centre lies on the symmetry axis).
+function inscribedCircle(k: Kite2D) {
+  const edges: [[number, number], [number, number]][] = [
+    [k.apex, k.s1],
+    [k.s1, k.far],
+    [k.far, k.s2],
+    [k.s2, k.apex],
+  ];
+  const dist = (px: number, py: number, [a, b]: [[number, number], [number, number]]) => {
+    const [dx, dy] = [b[0] - a[0], b[1] - a[1]];
+    return Math.abs(dy * px - dx * py + b[0] * a[1] - b[1] * a[0]) / Math.hypot(dx, dy);
+  };
+  const x = k.apex[0];
+  let best = { y: 0, r: 0 };
+  for (let y = k.apex[1]; y < k.far[1]; y += 0.5) {
+    const r = Math.min(...edges.map((e) => dist(x, y, e)));
+    if (r > best.r) best = { y, r };
+  }
+  return { x, y: best.y, r: best.r };
 }
 
 const atlasCache = new Map<string, Promise<THREE.CanvasTexture>>();
@@ -201,30 +229,43 @@ export function diceAtlas(game: Game, kind: DieKind) {
         ctx.fillStyle = style.face;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Glyph sits where the kite is widest, as on the printed dice.
-        const sideY = (kite2d.s1[1] + kite2d.s2[1]) / 2;
-        const width = Math.abs(kite2d.s2[0] - kite2d.s1[0]);
-        const glyphSize = width * 0.8;
-
+        // Symbols sit in the largest circle that fits the face, scaled by
+        // their own outline. The printed dice carry no numbers.
+        const circle = inscribedCircle(kite2d);
         for (let value = 1; value <= 10; value++) {
-          const col = (value - 1) % ATLAS_COLS;
-          const row = Math.floor((value - 1) / ATLAS_COLS);
-          const ox = col * CELL;
-          const oy = row * CELL;
+          const ox = ((value - 1) % ATLAS_COLS) * CELL;
+          const oy = Math.floor((value - 1) / ATLAS_COLS) * CELL;
+
+          // A faint worn highlight along the face's edges.
+          ctx.save();
+          ctx.translate(ox, oy);
+          ctx.beginPath();
+          ctx.moveTo(...kite2d.apex);
+          ctx.lineTo(...kite2d.s1);
+          ctx.lineTo(...kite2d.far);
+          ctx.lineTo(...kite2d.s2);
+          ctx.closePath();
+          ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.restore();
+
           const name = glyphFor(game, kind, value);
-          if (name) {
-            const img = await loadImage(name);
-            const g = tinted(img, style.glyph, Math.round(glyphSize));
-            ctx.drawImage(g, ox + CELL / 2 - glyphSize / 2, oy + sideY - glyphSize * 0.7, glyphSize, glyphSize);
-          }
-          // Small numeral towards the far point, for readability.
-          ctx.fillStyle = style.glyph;
-          ctx.globalAlpha = 0.7;
-          ctx.font = `700 ${Math.round(CELL * 0.11)}px ui-sans-serif, system-ui, sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(String(value), ox + CELL / 2, oy + sideY + (kite2d.far[1] - sideY) * 0.42);
-          ctx.globalAlpha = 1;
+          if (!name) continue;
+          const g = trimmed(await loadImage(name));
+          // Bounding boxes have empty corners, so the box may poke slightly past the circle.
+          const scale = (circle.r * 2 * 1.1) / Math.hypot(g.w, g.h);
+          const w = g.w * scale;
+          const h = g.h * scale;
+          const tint = document.createElement('canvas');
+          tint.width = Math.ceil(w);
+          tint.height = Math.ceil(h);
+          const tctx = tint.getContext('2d')!;
+          tctx.drawImage(g.canvas, g.x, g.y, g.w, g.h, 0, 0, w, h);
+          tctx.globalCompositeOperation = 'source-in';
+          tctx.fillStyle = style.glyph;
+          tctx.fillRect(0, 0, w, h);
+          ctx.drawImage(tint, ox + circle.x - w / 2, oy + circle.y - h / 2);
         }
         const texture = new THREE.CanvasTexture(canvas);
         texture.colorSpace = THREE.SRGBColorSpace;

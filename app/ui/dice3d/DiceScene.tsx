@@ -6,6 +6,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { Die, Game } from '@/app/lib/dice/rules';
 import { d10, diceAtlas, faceTowards } from './d10';
 
@@ -101,8 +102,17 @@ function D10Mesh({
   const invalidate = useThree((s) => s.invalidate);
   const [hovered, setHovered] = useState(false);
 
+  // Resin dice: a smooth base under a glossy clear coat.
   const material = useMemo(
-    () => new THREE.MeshStandardMaterial({ roughness: 0.42, metalness: 0.08, flatShading: true }),
+    () =>
+      new THREE.MeshPhysicalMaterial({
+        roughness: 0.4,
+        metalness: 0,
+        clearcoat: 0.75,
+        clearcoatRoughness: 0.1,
+        envMapIntensity: 0.3,
+        flatShading: true,
+      }),
     [],
   );
   useEffect(() => {
@@ -208,6 +218,8 @@ export default function DiceScene({ game, dice, rollKey, rolled, accent, onSelec
   return (
     <Canvas
       shadows
+      // No tone mapping: keep the official dice colours true.
+      flat
       frameloop='demand'
       dpr={[1, 2]}
       camera={{ fov: 35, near: 0.1, far: 100 }}
@@ -219,11 +231,11 @@ export default function DiceScene({ game, dice, rollKey, rolled, accent, onSelec
     >
       <AspectWatcher onChange={setAspect} />
       <CameraRig cols={cols} rows={rows} />
-      <ambientLight intensity={0.45} />
-      <hemisphereLight args={['#ffffff', '#1a1a1a', 0.55]} />
+      <StudioEnvironment />
+      <ambientLight intensity={0.15} />
       <directionalLight
-        position={[-5, 10, 2]}
-        intensity={1.5}
+        position={[-5, 10, 4]}
+        intensity={1.3}
         castShadow
         shadow-mapSize={[1024, 1024]}
         shadow-camera-left={-12}
@@ -250,6 +262,23 @@ export default function DiceScene({ game, dice, rollKey, rolled, accent, onSelec
       ))}
     </Canvas>
   );
+}
+
+// Soft studio reflections for the clear coat.
+function StudioEnvironment() {
+  const { gl, scene, invalidate } = useThree();
+  useEffect(() => {
+    const pmrem = new THREE.PMREMGenerator(gl);
+    const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = env;
+    invalidate();
+    return () => {
+      scene.environment = null;
+      env.dispose();
+      pmrem.dispose();
+    };
+  }, [gl, scene, invalidate]);
+  return null;
 }
 
 function AspectWatcher({ onChange }: { onChange: (aspect: number) => void }) {
