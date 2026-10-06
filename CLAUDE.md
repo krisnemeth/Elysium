@@ -15,8 +15,8 @@
 | Layer | Technology |
 |---|---|
 | Framework | Next.js 16.3.8 (App Router, Turbopack) + React 19 |
-| Language | TypeScript 5 (strict) |
-| Styling | Tailwind CSS 3.3.0 |
+| Language | TypeScript 5.9 (strict) |
+| Styling | Tailwind CSS 4 (CSS-first config in `globals.css`, via `@tailwindcss/postcss`) |
 | Icons | react-icons 5.2.0 |
 | SVG components | @svgr/webpack 8.1.0 (via `turbopack.rules`) |
 | Linting | ESLint 9 flat config (`eslint.config.mjs`) |
@@ -34,7 +34,7 @@
 ├── app/
 │   ├── layout.tsx              # Root layout (fonts, dark theme)
 │   ├── page.tsx                # Landing/home page
-│   ├── globals.css             # Global dark-theme CSS
+│   ├── globals.css             # Tailwind entry + @theme config + global dark-theme CSS
 │   ├── fonts.ts                # Google Fonts config
 │   ├── lib/
 │   │   └── utils.ts            # formatDate utility
@@ -98,7 +98,7 @@
 │   └── (no api/ directory yet)
 ├── public/                     # Static assets (character/clan images, art)
 ├── package.json
-├── tailwind.config.ts          # Custom 3xl breakpoint (1600px)
+├── postcss.config.js           # @tailwindcss/postcss
 ├── next.config.mjs             # Turbopack rule: SVGs → React components via @svgr/webpack
 ├── tsconfig.json
 └── eslint.config.mjs           # ESLint flat config (core-web-vitals)
@@ -183,7 +183,7 @@ SUPABASE_SERVICE_ROLE_KEY=      # server-side only, never expose to client
 - **Glow buttons**: rose-600 blur shadow
 - **Checkboxes**: rotated 45° for diamond shape
 - **Borders**: dotted on text inputs
-- **Custom breakpoint**: `3xl` at 1600px (in addition to standard Tailwind breakpoints)
+- **Custom breakpoint**: `3xl` at 1600px, defined as `--breakpoint-3xl` in the `@theme` block of `globals.css`
 - **Fonts**: Josefin Slab (headings), Josefin Sans (body)
 
 ---
@@ -371,7 +371,18 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 - `next build` no longer runs lint and no longer prints per-route bundle sizes.
 - Bundled, version-matched docs live in `node_modules/next/dist/docs/` — check them before writing Next.js code.
 
-Remaining `npm audit` advisories (a `braces` DoS in Tailwind 3's watcher and `eslint-config-next`'s glob deps) are dev/build tooling only; clearing them requires the Tailwind 4 migration.
+## Tailwind 4 Notes
+
+Migrated from Tailwind 3 → 4 (2026-10-06); the UI was verified layout-identical to v3 on every route. There is no `tailwind.config.ts` — theme customisation lives in `@theme` in `app/globals.css`.
+
+- Use v4 names: `shadow-xs` (was `shadow-sm`), `rounded-xs` (was `rounded-sm`), `outline-hidden` (was `outline-none`), `bg-linear-to-*` (was `bg-gradient-to-*`), `grow`/`shrink`.
+- Opacity uses the slash syntax: `bg-black/80`, never `bg-opacity-*` (removed).
+- Bare `border` now defaults to `currentColor` — always pair it with a colour (e.g. `border-slate-300/50`).
+- Any spacing number is now valid (`h-68`, `w-100`…). In v3 these were silently ignored, so double-check intent before adding them.
+- `globals.css` restores two v3 defaults in `@layer base`: pointer cursor on buttons and gray-400 placeholders.
+- `hover:` only applies on devices that support hover (no sticky hover on touch).
+
+Remaining `npm audit` advisories are a `braces` DoS inside `eslint-config-next`'s lint-time glob dependency. No patched `braces` exists yet, so there is nothing to override; it never ships to users. Re-check when bumping `eslint-config-next`.
 
 ---
 

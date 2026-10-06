@@ -35,7 +35,7 @@ export default function ResonanceHunger() {
             type='text'
             value={resonance}
             onChange={handleResonanceChange}
-            className='mt-1 border-b-2 border-dotted  xl:w-80 px-2 py-0 border-slate-300 text-lg text-slate-300 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent col-span-6 xl:col-span-9'
+            className='mt-1 border-b-2 border-dotted  xl:w-80 px-2 py-0 border-slate-300 text-lg text-slate-300 bg-inherit shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent col-span-6 xl:col-span-9'
           />
         </div>
       </div>
@@ -55,7 +55,7 @@ export default function ResonanceHunger() {
                   type='checkbox'
                   checked={value}
                   onChange={handleHungerChange(index)}
-                  className={`border-2 border-slate-300 text-slate-300 shadow-sm rotate-45 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-2 w-3 h-3 inline-block cursor-pointer checked:bg-slate-300 ${
+                  className={`border-2 border-slate-300 text-slate-300 shadow-xs rotate-45 focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-2 w-3 h-3 inline-block cursor-pointer checked:bg-slate-300 ${
                     value ? 'bg-slate-300' : ''
                   }`}
                 />

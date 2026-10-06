@@ -17,9 +17,9 @@ export default function Footer() {
   return (
     <>
       {/* GRID */}
-      <div className='w-full md:my-2 lg:my-0 bg-gradient-to-t from-black to-violet-950 dark:to-red-950 bg-opacity-100 pb-10 pt-24 border'>
+      <div className='w-full md:my-2 lg:my-0 bg-linear-to-t from-black to-violet-950 dark:to-red-950 pb-10 pt-24 border border-gray-200'>
         <div className='grid grid-cols-1 lg:grid-cols-12 gap-2 md:gap-10 mx-2 mb-6 md:mb-0 px-4 md:px-10 '>
-          <div className='flex flex-col col-span-6 w-full h-full ml-1 text-center md:text-start border'>
+          <div className='flex flex-col col-span-6 w-full h-full ml-1 text-center md:text-start border border-gray-200'>
             <div className='flex flex-col h-full py-6'>
               <p className='text-xs md:text-base text-slate-300 md:mt-16'>
                 Manage your characters
@@ -60,8 +60,8 @@ export default function Footer() {
       </div>
 
       {/* FOOTER */}
-      <div className=' z-10 w-full text-slate-300/50 bg-clip-padding backdrop-filter backdrop-blur-lg bg-black bg-opacity-80 h-full md:h-full lg:h-56'>
-        <div className='grid grid-cols-12 md:mx-2 md:h-68 border rounded-xl border-slate-300/50'>
+      <div className=' z-10 w-full text-slate-300/50 bg-clip-padding backdrop-filter backdrop-blur-lg bg-black/80 h-full md:h-full lg:h-56'>
+        <div className='grid grid-cols-12 md:mx-2 border rounded-xl border-slate-300/50'>
           {/* COL 1 */}
           <div className='hidden md:flex flex-col col-span-3 items-start text-slate-300 px-4 py-2 m-2'>
             <p className='text-start text-sm'>Contact</p>
@@ -153,7 +153,7 @@ export default function Footer() {
                 <input
                   type='text'
                   id='username'
-                  className='text-xs text-slate-300 px-2 py-2 mt-0.5 border rounded-md w-full border-slate-300/50 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent'
+                  className='text-xs text-slate-300 px-2 py-2 mt-0.5 border rounded-md w-full border-slate-300/50 bg-inherit shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent'
                 />
               </div>
               <div className='mt-1 mb-5 '>
@@ -166,7 +166,7 @@ export default function Footer() {
                 <input
                   type='text'
                   id='password'
-                  className='text-xs text-slate-300 px-2 py-2 mt-0.5 border rounded-md w-full border-slate-300/50 bg-inherit shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent'
+                  className='text-xs text-slate-300 px-2 py-2 mt-0.5 border rounded-md w-full border-slate-300/50 bg-inherit shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent'
                 />
               </div>
               <GlowUpButtonMedium

@@ -12,7 +12,7 @@ export default function TenetsTouchstonesBane() {
         <textarea
           id='tenets'
           rows={8}
-          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
+          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
         ></textarea>
       </div>
       <div className='flex flex-col xl:border-r-2 border-slate-300'>
@@ -24,7 +24,7 @@ export default function TenetsTouchstonesBane() {
         <textarea
           id='tenets'
           rows={8}
-          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
+          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
         ></textarea>
       </div>
       <div className='flex flex-col'>
@@ -34,7 +34,7 @@ export default function TenetsTouchstonesBane() {
         <textarea
           id='tenets'
           rows={8}
-          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
+          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
         ></textarea>
       </div>
     </div>

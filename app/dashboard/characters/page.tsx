@@ -40,7 +40,7 @@ export default function Page() {
                 alt='Character Image'
                 width={220}
                 height={220}
-                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-sm object-cover'
+                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-xs object-cover'
               />
             }
             characterName='Trixx Laveau'
@@ -59,7 +59,7 @@ export default function Page() {
                 alt='Character Image'
                 width={220}
                 height={0}
-                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-sm object-cover'
+                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-xs object-cover'
               />
             }
             characterName='Agatha Ramalho'
@@ -78,7 +78,7 @@ export default function Page() {
                 alt='Character Image'
                 width={220}
                 height={0}
-                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-sm object-cover'
+                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-xs object-cover'
               />
             }
             characterName='Ailah Al-Malik'
@@ -95,7 +95,7 @@ export default function Page() {
                 alt='Character Image'
                 width={220}
                 height={0}
-                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-sm object-cover'
+                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-xs object-cover'
               />
             }
             characterName='Vic Vargas'
@@ -114,7 +114,7 @@ export default function Page() {
                 alt='Character Image'
                 width={220}
                 height={0}
-                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-sm object-cover'
+                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-xs object-cover'
               />
             }
             characterName="Ada O'Connor"
@@ -133,7 +133,7 @@ export default function Page() {
                 alt='Character Image'
                 width={220}
                 height={0}
-                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-sm object-cover'
+                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-xs object-cover'
               />
             }
             characterName='Claire Voyant'
@@ -152,7 +152,7 @@ export default function Page() {
                 alt='Character Image'
                 width={220}
                 height={0}
-                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-sm object-cover'
+                className='xl:h-52 bg-cover xl:bg-center bg-no-repeat rounded-xs object-cover'
               />
             }
             characterName='Chelsea Grimm'
@@ -169,7 +169,7 @@ export default function Page() {
                 alt='Character Image'
                 width={220}
                 height={220}
-                className='xl:h-52 bg-cover bg-center bg-no-repeat rounded-sm object-cover'
+                className='xl:h-52 bg-cover bg-center bg-no-repeat rounded-xs object-cover'
               />
             }
             characterName='Blake Janssen'

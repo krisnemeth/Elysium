@@ -34,7 +34,7 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-sm xl:h-14 xl:w-auto'
+                  className='rounded-xs xl:h-14 xl:w-auto'
                 />
               }
               characterName='Trixx Laveau'
@@ -47,7 +47,7 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-sm xl:h-14 xl:w-auto'
+                  className='rounded-xs xl:h-14 xl:w-auto'
                 />
               }
               characterName='Ailah Al-Malik'
@@ -60,7 +60,7 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-sm xl:h-14 xl:w-auto'
+                  className='rounded-xs xl:h-14 xl:w-auto'
                 />
               }
               characterName='Claire Voyant'
@@ -73,7 +73,7 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-sm xl:h-14 xl:w-auto'
+                  className='rounded-xs xl:h-14 xl:w-auto'
                 />
               }
               characterName='Agatha Ramalho'
@@ -86,7 +86,7 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-sm xl:h-14 xl:w-auto'
+                  className='rounded-xs xl:h-14 xl:w-auto'
                 />
               }
               characterName='Chelsea Grimm'
@@ -103,7 +103,7 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-sm xl:h-14 xl:w-auto'
+                  className='rounded-xs xl:h-14 xl:w-auto'
                 />
               }
               characterName="Ada O'Connor"
@@ -116,7 +116,7 @@ export default async function Page() {
                   width={'100'}
                   height={'100'}
                   alt='character image'
-                  className='rounded-sm xl:h-14 xl:w-auto'
+                  className='rounded-xs xl:h-14 xl:w-auto'
                 />
               }
               characterName='Vic Vargas'

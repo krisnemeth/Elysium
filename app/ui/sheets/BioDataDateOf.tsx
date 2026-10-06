@@ -30,7 +30,7 @@ export default function BioDataDateOf({
       <input
         type='date'
         id={id}
-        className='bg-inherit border-b-2 border-dotted border-slate-300 text-slate-300 shadow-sm focus:outline-none col-span-6 xl:col-span-8 cursor-text'
+        className='bg-inherit border-b-2 border-dotted border-slate-300 text-slate-300 shadow-xs focus:outline-hidden col-span-6 xl:col-span-8 cursor-text'
         placeholder={placeholder}
         value={value}
         onChange={handleChange}

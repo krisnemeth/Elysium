@@ -33,14 +33,14 @@ export default function HomePageArt() {
   return (
     <div className='absolute grid grid-cols-12 lg:gap-4 w-screen h-screen opacity-100 z-20'>
       <div className='flex flex-col items-center col-span-12 lg:col-span-12'>
-        <div className='image-container-left fixed border'>
+        <div className='image-container-left fixed border border-gray-200'>
           <Image
             src={'/HomePageArtLeftMobile.webp'}
             alt=''
             height={0}
             width={600}
             priority={true}
-            className='translate-x-0 translate-y-10 md:-translate-y-[50px] lg:translate-y-14 xl:translate-y-0 2xl:translate-x-[650px] 2xl:-translate-y-14 3xl:translate-x-[450px] 3xl:-translate-y-[170px] h-fit w-[400px] md:w-[850px] lg:w-[600px] xl:w-[700px] 2xl:w-[600px] 3xl:w-[1000px] '
+            className='translate-x-0 translate-y-10 md:translate-y-[-50px] lg:translate-y-14 xl:translate-y-0 2xl:translate-x-[650px] 2xl:-translate-y-14 3xl:translate-x-[450px] 3xl:translate-y-[-170px] h-fit w-[400px] md:w-[850px] lg:w-[600px] xl:w-[700px] 2xl:w-[600px] 3xl:w-[1000px] '
           />
         </div>
       </div>
@@ -75,7 +75,7 @@ export default function HomePageArt() {
             <div className='w-6 h-6 mb-28 -translate-x-1 -rotate-90'>
               <NosferatuTitle className='h-auto w-24 drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
             </div>
-            <div className='w-6 h-6 mb-24 -translate-x-0 -rotate-90'>
+            <div className='w-6 h-6 mb-24 translate-x-0 -rotate-90'>
               <VentrueTitle className='h-auto w-28 drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
             </div>
             <div className='w-6 h-6 mb-2 -translate-x-5 -rotate-90'>

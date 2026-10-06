@@ -1,6 +1,21 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --breakpoint-3xl: 1600px;
+}
+
+/* Keep Tailwind v3 defaults that v4 dropped. */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-gray-400);
+  }
+}
 
 :root {
   --foreground-hex: #000000;
@@ -25,10 +40,4 @@ body {
   background: radial-gradient(circle,
       var(--background-middle-hex),
       var(--background-end-hex)) var(--background-start-hex);
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
 }

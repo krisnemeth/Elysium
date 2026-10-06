@@ -25,7 +25,7 @@ export default function DisciplineInput({
       <div className='grid grid-cols-12 py-1 border-b-2 border-slate-300'>
         <div className='dropdown flex flex-col col-span-8 '>
           <select
-            className='mt-2 border-none w-44 text-base bg-inherit text-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300 focus:border-transparent rounded-md cursor-pointer'
+            className='mt-2 border-none w-44 text-base bg-inherit text-slate-300 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-slate-300 focus:border-transparent rounded-md cursor-pointer'
             value={dropdownValue}
             onChange={(e) => onDropdownChange(e.target.value)}
           >
@@ -46,7 +46,7 @@ export default function DisciplineInput({
               name={`${value}-${index}`}
               checked={value}
               onChange={(e) => onCheckboxChange(index, e.target.checked)}
-              className={`border-2 border-slate-300 text-slate-300 shadow-sm rotate-45 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-2 md:ml-1.5 w-3 h-3 mt-2 inline-block cursor-pointer checked:bg-slate-300 ${
+              className={`border-2 border-slate-300 text-slate-300 shadow-xs rotate-45 focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-2 md:ml-1.5 w-3 h-3 mt-2 inline-block cursor-pointer checked:bg-slate-300 ${
                 value ? 'bg-slate-300' : ''
               }`}
             />
@@ -70,7 +70,7 @@ export default function DisciplineInput({
               type='text'
               value={value}
               onChange={(e) => onTextInputChange(index, e.target.value)}
-              className=' mx-2 bg-inherit p-1 text-slate-300 shadow-sm col-span-11'
+              className=' mx-2 bg-inherit p-1 text-slate-300 shadow-xs col-span-11'
             />
           </div>
         ))}

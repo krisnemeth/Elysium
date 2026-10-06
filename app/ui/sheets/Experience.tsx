@@ -30,7 +30,7 @@ export default function Experience({
           name={name}
           value={value}
           onChange={onChange}
-          className='mt-1 border-b-2 border-dotted w-full px-2 py-0.5 border-slate-300 text-slate-300 bg-inherit shadow-sm focus:outline-none'
+          className='mt-1 border-b-2 border-dotted w-full px-2 py-0.5 border-slate-300 text-slate-300 bg-inherit shadow-xs focus:outline-hidden'
         />
       </div>
     </div>

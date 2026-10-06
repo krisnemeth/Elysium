@@ -26,7 +26,7 @@ export default function BloodPotencyCheckbox({
               type='checkbox'
               checked={value}
               onChange={handleBloodPotencyChange(index)}
-              className={`border-2 border-slate-300 text-slate-300 shadow-sm rotate-45 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-2 w-3 h-3 inline-block cursor-pointer checked:bg-slate-300 ${
+              className={`border-2 border-slate-300 text-slate-300 shadow-xs rotate-45 focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent rounded-md ml-2 w-3 h-3 inline-block cursor-pointer checked:bg-slate-300 ${
                 value ? 'bg-slate-300' : ''
               }`}
             />

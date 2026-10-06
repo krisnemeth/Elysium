@@ -16,7 +16,7 @@ export default function WelcomeText() {
             <Elysium1 className=' text-slate-300 w-64 md:w-[350px] lg:w-[350px] xl:w-[400px] 2xl:w-[800px] drop-shadow-[0_0_0.9rem_#000]' />
           </div>
 
-          <div className=' flex flex-row justify-center -translate-y-4 md:-translate-y-0 xl:-translate-y-6'>
+          <div className=' flex flex-row justify-center -translate-y-4 md:translate-y-0 xl:-translate-y-6'>
             <VtmAnkh className='text-xl text-rose-600/70 dark:text-black w-80 md:w-[700px] lg:w-[500px] xl:w-[600px] 2xl:w-[800px] drop-shadow-[0_0_0.9rem_#e11d48] dark:drop-shadow-[0_0_0.9rem_#000]' />
           </div>
         </div>

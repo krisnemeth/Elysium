@@ -16,7 +16,7 @@ export default function TextArea({ label, id, rows }: TextAreaInputProps) {
         <textarea
           id='notes'
           rows={rows}
-          className='w-full bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent resize-none'
+          className='w-full bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent resize-none'
         ></textarea>
       </div>
     </div>

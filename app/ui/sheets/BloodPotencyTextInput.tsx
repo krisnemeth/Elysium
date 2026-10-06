@@ -24,7 +24,7 @@ export default function BloodPotencyTextInput({
         name={name}
         value={value}
         onChange={onChange}
-        className='mt-1 border-b-2 w-full px-2 py-1 border-slate-300 text-slate-300 bg-inherit shadow-sm focus:outline-none'
+        className='mt-1 border-b-2 w-full px-2 py-1 border-slate-300 text-slate-300 bg-inherit shadow-xs focus:outline-hidden'
       />
     </div>
   );
