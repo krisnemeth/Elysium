@@ -1,7 +1,8 @@
 // Shared class strings for the app's surfaces and controls.
 
+// `panel` is also a plain class so themes can restyle cards (app/games.css).
 export const panel =
-  'rounded-2xl border border-bone/10 bg-ink/70 shadow-[0_1.5rem_3rem_-1.5rem_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.04)] backdrop-blur-xl';
+  'panel rounded-2xl border border-bone/10 bg-ink/70 shadow-[0_1.5rem_3rem_-1.5rem_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.04)] backdrop-blur-xl';
 
 export const focusRing =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent';

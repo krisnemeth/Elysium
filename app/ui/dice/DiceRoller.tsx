@@ -16,6 +16,7 @@ import {
 } from '@/app/lib/dice/rules';
 import { buttonGhost, buttonPrimary, panel } from '@/app/ui/kit/styles';
 import Glyph from './Glyph';
+import Paper from '@/app/ui/game/Paper';
 
 // The 3D tray only runs in the browser.
 const DiceScene = dynamic(() => import('@/app/ui/dice3d/DiceScene'), {
@@ -249,7 +250,9 @@ export default function DiceRoller({ game = 'vampire' }: { game?: Game }) {
 
   return (
     <div className='grid gap-5 xl:grid-cols-3'>
-      <div className={`taped relative flex flex-col gap-6 p-6 md:p-8 xl:col-span-2 ${panel}`}>
+      <Paper index={1} className='xl:col-span-2'>
+        {(torn) => (
+      <div className={`flex h-full flex-col gap-6 p-6 md:p-8 ${torn} ${panel}`}>
         <div className='flex flex-wrap items-end justify-center gap-x-10 gap-y-6 md:justify-between'>
           <Stepper label='Dice pool' value={pool} min={1} max={20} onChange={(v) => { setPool(v); resetRoll(); }} />
           <Stepper label={specialName} value={special} min={0} max={5} onChange={(v) => { setSpecial(v); resetRoll(); }} />
@@ -309,6 +312,8 @@ export default function DiceRoller({ game = 'vampire' }: { game?: Game }) {
           )}
         </div>
       </div>
+        )}
+      </Paper>
 
       <div className='flex flex-col gap-5'>
         {config.check && (

@@ -141,48 +141,65 @@
     radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) bottom right / 12px 12px no-repeat;
 }
 
-/* Hunter, The inn: a cork board with a thin wooden rim. */
+/* Hunter, The inn: a clipboard. Hardboard back, steel clip, ruled notepaper. */
 :root[data-theme='light'] [data-game='hunter'] .frame {
-  border: 4px solid #7a5532;
-  border-radius: 4px;
-  background-color: #cba174;
-  background-image:
-    radial-gradient(rgb(70 40 15 / 0.35) 1px, transparent 1.6px),
-    radial-gradient(rgb(255 235 200 / 0.25) 1px, transparent 1.6px),
-    radial-gradient(rgb(90 55 25 / 0.25) 1.5px, transparent 2.2px);
-  background-size: 7px 7px, 9px 8px, 13px 11px;
-  background-position: 0 0, 3px 4px, 6px 2px;
+  border: 9px solid #6e4b2c;
+  border-radius: 12px;
+  background-color: #fbf7ee;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 1.9rem,
+    rgb(90 120 150 / 0.16) 1.9rem calc(1.9rem + 1px)
+  );
   box-shadow:
-    inset 0 0 1.25rem rgb(60 35 12 / 0.45),
-    0 0.75rem 1.5rem -0.75rem rgb(60 40 20 / 0.45);
-  --color-bone: #140b04;
+    inset 0 0 0 1px rgb(0 0 0 / 0.08),
+    0 1rem 1.75rem -0.75rem rgb(60 40 20 / 0.5);
 }
-
-/*
-  Strips of tape, used sparingly: only where an element opts in with
-  .taped, and only in the inn.
-*/
-:root[data-theme='light'] [data-game='hunter'] .taped::before,
-:root[data-theme='light'] [data-game='hunter'] .taped::after {
+:root[data-theme='light'] [data-game='hunter'] .frame::before {
   content: '';
   position: absolute;
   z-index: 2;
-  top: -11px;
-  width: 84px;
+  top: -17px;
+  left: 50%;
+  width: 92px;
+  height: 26px;
+  translate: -50% 0;
+  pointer-events: none;
+  border-radius: 6px 6px 10px 10px;
+  background: linear-gradient(to bottom, #f2f2f2, #a9a9a9 45%, #d9d9d9 55%, #8e8e8e);
+  box-shadow: 0 3px 4px rgb(0 0 0 / 0.35), inset 0 1px 0 #fff;
+}
+
+/*
+  Taped paper (the inn only): strips of tape on two or three corners and
+  the odd torn-off corner, varied per card (see app/ui/game/Paper.tsx).
+*/
+.tape {
+  display: none;
+}
+:root[data-theme='light'] [data-game='hunter'] .tape {
+  display: block;
+  position: absolute;
+  z-index: 3;
   height: 24px;
   pointer-events: none;
   background: rgb(226 211 168 / 0.85);
-  border-inline: 1px solid rgb(150 125 80 / 0.25);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+  border-inline: 1px solid rgb(150 125 80 / 0.22);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
   clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 4% 94%, 0 45%);
 }
-:root[data-theme='light'] [data-game='hunter'] .taped::before {
-  left: -16px;
-  rotate: -34deg;
+:root[data-theme='light'] [data-game='hunter'] .torn-tl { clip-path: polygon(0 34px, 9px 27px, 6px 19px, 15px 13px, 13px 6px, 22px 4px, 34px 0, 100% 0, 100% 100%, 0 100%); }
+:root[data-theme='light'] [data-game='hunter'] .torn-tr { clip-path: polygon(0 0, calc(100% - 34px) 0, calc(100% - 22px) 4px, calc(100% - 13px) 6px, calc(100% - 15px) 13px, calc(100% - 6px) 19px, calc(100% - 9px) 27px, 100% 34px, 100% 100%, 0 100%); }
+:root[data-theme='light'] [data-game='hunter'] .torn-bl { clip-path: polygon(0 0, 100% 0, 100% 100%, 34px 100%, 22px calc(100% - 4px), 13px calc(100% - 6px), 15px calc(100% - 13px), 6px calc(100% - 19px), 9px calc(100% - 27px), 0 calc(100% - 34px)); }
+:root[data-theme='light'] [data-game='hunter'] .torn-br { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 34px), calc(100% - 9px) calc(100% - 27px), calc(100% - 6px) calc(100% - 19px), calc(100% - 15px) calc(100% - 13px), calc(100% - 13px) calc(100% - 6px), calc(100% - 22px) calc(100% - 4px), calc(100% - 34px) 100%, 0 100%); }
+
+/* Hunter's cards are solid, so the room behind them stays a backdrop. */
+:root[data-theme='dark'] [data-game='hunter'] .panel:not(.frame) {
+  background-color: rgb(24 17 11 / 0.92);
 }
-:root[data-theme='light'] [data-game='hunter'] .taped::after {
-  right: -16px;
-  rotate: 31deg;
+:root[data-theme='light'] [data-game='hunter'] .panel:not(.frame) {
+  background-color: #f8f1e2;
+  border-color: rgb(110 75 44 / 0.18);
 }
 
 /* -------------------------------------------------------------- ambience */
@@ -227,6 +244,27 @@
   0% { translate: 0 0; opacity: 0; }
   25%, 75% { opacity: 0.8; }
   100% { translate: var(--dx, 2rem) var(--dy, -3rem); opacity: 0; }
+}
+
+@keyframes rain {
+  to { background-position: -12px 140px; }
+}
+
+/* A double flash every few seconds. */
+@keyframes lightning {
+  0%, 88%, 91%, 93%, 100% { opacity: 0; }
+  89% { opacity: 0.9; }
+  92% { opacity: 0.6; }
+}
+@keyframes lightning-room {
+  0%, 88%, 91%, 93%, 100% { opacity: 0; }
+  89% { opacity: 0.12; }
+  92% { opacity: 0.07; }
+}
+
+@keyframes curtain {
+  0%, 100% { rotate: 0deg; }
+  50% { rotate: 1.6deg; }
 }
 
 @keyframes moon-glow {

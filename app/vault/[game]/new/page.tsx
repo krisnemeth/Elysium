@@ -6,6 +6,7 @@ import CategoryDividers from '@/app/ui/sheets/CategoryDividers';
 import SheetNav from '@/app/ui/sheets/SheetNav';
 import { GAME_SHEETS } from '@/app/ui/sheets/game-sheets';
 import { GAMES, isGame } from '@/app/lib/games';
+import Paper from '@/app/ui/game/Paper';
 
 export const metadata: Metadata = { title: 'New character sheet' };
 
@@ -27,15 +28,18 @@ export default async function NewSheet({ params }: PageProps<'/vault/[game]/new'
           <Logo aria-label={title} role='img' className='h-auto w-64 text-bone/80 md:w-80' />
         </div>
         {sections.map(({ id, label, body }, i) => (
-          <section
-            key={id}
-            id={id}
-            aria-labelledby={`${id}-title`}
-            className={`reveal relative scroll-mt-48 p-5 md:scroll-mt-24 md:p-8 ${i === 0 ? 'taped' : ''} ${panel}`}
-          >
-            <CategoryDividers id={`${id}-title`} title={label} />
-            <div className='mt-8'>{body}</div>
-          </section>
+          <Paper key={id} index={i}>
+            {(torn) => (
+              <section
+                id={id}
+                aria-labelledby={`${id}-title`}
+                className={`reveal scroll-mt-48 p-5 md:scroll-mt-24 md:p-8 ${torn} ${panel}`}
+              >
+                <CategoryDividers id={`${id}-title`} title={label} />
+                <div className='mt-8'>{body}</div>
+              </section>
+            )}
+          </Paper>
         ))}
       </form>
     </div>
