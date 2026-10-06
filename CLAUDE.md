@@ -6,7 +6,7 @@
 
 - Developer: Krisztian Nemeth — https://krisnemeth.dev
 - Repo: `krisnemeth/elysium`
-- Dev branch: `claude/project-analysis-refactor-plan-g3yB2`
+- Dev branch: `main`
 
 ---
 
@@ -14,7 +14,7 @@
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 14.1.0 (App Router) |
+| Framework | Next.js 14.2.35 (App Router) — Next.js 16 migration planned, see below |
 | Language | TypeScript 5 (strict) |
 | Styling | Tailwind CSS 3.3.0 |
 | Icons | react-icons 5.2.0 |
@@ -64,7 +64,7 @@
 │   │   │   ├── AttributeCheckBoxInput.tsx
 │   │   │   ├── Skills.tsx
 │   │   │   ├── SkillCheckBoxInput.tsx
-│   │   │   ├── LifeStats.tsx           # BUG: willpower & humanity use health state
+│   │   │   ├── LifeStats.tsx           # Health / Willpower / Humanity tracks
 │   │   │   ├── LifeStatsInput.tsx
 │   │   │   ├── Disciplines.tsx
 │   │   │   ├── DisciplineInput.tsx
@@ -105,6 +105,28 @@
 
 ---
 
+## Routes
+
+| Path | Purpose |
+|---|---|
+| `/` | Landing page — hero + features + footer |
+| `/dashboard` | Overview — hardcoded finished/draft character counts |
+| `/dashboard/characters` | Character gallery — 8 hardcoded characters with clan info |
+| `/dashboard/sheets` | Sheet hub — links to create Loresheets or Character Sheets |
+| `/dashboard/sheets/create` | Full VTM character sheet form (no submit action yet) |
+
+---
+
+## VTM Domain Concepts
+
+The app models V5 (5th Edition) mechanics:
+- **Clans:** Brujah, Ventrue, Malkavian, Tremere, Gangrel, Lasombra, Banu Haqim, Nosferatu, Toreador, Tzimisce, Ravnos, Salubri, Hecata + more
+- **Sects:** Camarilla, Anarch, Sabbat (SVGs exist for all three)
+- **Sheet sections:** Attributes, Skills, Disciplines, Blood Potency, Resonance, Hunger, Life Stats (Health/Willpower/Humanity), Tenets, Touchstones, Bane, Bio Data
+- **Loresheets:** A V5 mechanic — character history documents; planned but not yet implemented
+
+---
+
 ## Current State
 
 ### What Works (Frontend Only)
@@ -125,7 +147,7 @@
   - Merits & Flaws (13 rows: name + 5-checkbox rating)
 
 ### Known Bugs
-- **`app/ui/sheets/LifeStats.tsx` lines 69-78**: All three `<LifeStatsInput>` components pass `checkboxValues.health` and call `handleCheckboxChange('health', ...)` — willpower and humanity rows are broken.
+- None currently tracked. (Fixed: `LifeStats.tsx` willpower & humanity rows previously wrote to the health state.)
 
 ### What's Missing / Incomplete
 - No Supabase integration (database, auth)
@@ -169,7 +191,7 @@ SUPABASE_SERVICE_ROLE_KEY=      # server-side only, never expose to client
 
 ### Phase 0 — Bug Fixes (do first)
 
-1. **Fix `LifeStats.tsx`**: Change willpower and humanity inputs to use their own state keys and handlers.
+1. ~~**Fix `LifeStats.tsx`**: Change willpower and humanity inputs to use their own state keys and handlers.~~ ✅ Done
 2. **Complete `ResonanceHungerInput.tsx`**: Implement resonance text input + 5-checkbox hunger track (same pattern as other stat inputs).
 3. **Remove dead/commented code**: Clean up commented-out blocks in `sidenav.tsx` and elsewhere.
 
@@ -334,6 +356,25 @@ Use `@react-pdf/renderer` or `puppeteer` on a route handler to generate a print-
 The sidebar already has a Loresheet link. Implement:
 - `public.loresheets` table (user_id, title, content, character_id)
 - CRUD pages under `app/dashboard/loresheets/`
+
+---
+
+## Next.js 16 Migration (next major task)
+
+Next was bumped to 14.2.35 to patch critical/high CVEs; the 2 remaining low-risk advisories require Next.js 16. Planned steps:
+
+1. Update packages:
+   ```bash
+   npm install next@16.2.4 react@19 react-dom@19
+   npm install --save-dev @types/react@19 @types/react-dom@19 eslint@10 eslint-config-next@16.2.4 @eslint/eslintrc
+   ```
+2. Delete `.eslintrc.json`, create `eslint.config.mjs` (flat config with `@eslint/eslintrc` compat layer).
+3. Add `--no-turbopack` to the `dev` script in `package.json` to preserve `@svgr/webpack` SVG handling.
+4. Verify: `npm run lint` + `npm run build` + `npm run dev`.
+
+No application code changes are expected — only deps + config.
+
+When Supabase is added (Phase 1.3), note that Next.js 16 renames `middleware.ts` to `proxy.ts`.
 
 ---
 
