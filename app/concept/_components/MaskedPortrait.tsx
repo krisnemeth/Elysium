@@ -8,6 +8,8 @@ type Props = {
   sizes: string;
   preload?: boolean;
   className?: string;
+  // Optional second frame (same framing) shown when the mask drops.
+  revealSrc?: string;
 };
 
 /*
@@ -22,6 +24,7 @@ export default function MaskedPortrait({
   sizes,
   preload,
   className = '',
+  revealSrc,
 }: Props) {
   return (
     <div
@@ -37,6 +40,16 @@ export default function MaskedPortrait({
         preload={preload}
         className='h-full w-full object-cover brightness-110 contrast-[1.35] grayscale transition duration-700 ease-out group-hover/mask:scale-[1.03] group-hover/mask:brightness-100 group-hover/mask:contrast-100 group-hover/mask:grayscale-0 group-focus-visible/mask:brightness-100 group-focus-visible/mask:contrast-100 group-focus-visible/mask:grayscale-0'
       />
+      {revealSrc && (
+        <Image
+          src={revealSrc}
+          width={width}
+          height={height}
+          alt=''
+          sizes={sizes}
+          className='absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 ease-out group-hover/mask:scale-[1.03] group-hover/mask:opacity-100 group-focus-visible/mask:opacity-100'
+        />
+      )}
       <div className='absolute inset-0 bg-blood opacity-75 mix-blend-multiply transition-opacity duration-700 group-hover/mask:opacity-0 group-focus-visible/mask:opacity-0' />
       <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgb(10_9_9/0.7))]' />
     </div>

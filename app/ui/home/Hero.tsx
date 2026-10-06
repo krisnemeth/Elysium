@@ -1,3 +1,4 @@
+import type React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MdArrowOutward, MdKeyboardArrowDown } from 'react-icons/md';
@@ -18,8 +19,45 @@ import {
   BanuHaqimTitle,
 } from '@/app/ui/svgs';
 
-// Swap this when the new cover art is ready (portrait, roughly 9:16).
-const COVER_ART = { src: '/HomePageArtLeftMobile.webp', width: 1080, height: 1920 };
+type CoverArt = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  // Optional second frame faded in on scroll (same size and framing as src).
+  awakeSrc?: string;
+  // Distance from the top of the hero to the art, and from the art's top to
+  // the ankh's top as a fraction of --cover: puts the ankh loop behind the head.
+  top: string;
+  ankhOffset: number;
+  mask: string;
+};
+
+const COVERS = {
+  // Official World of Darkness illustration (Dark Pack): eyes open on scroll.
+  paleVampire: {
+    src: '/art/pale-vampire.webp',
+    awakeSrc: '/art/pale-vampire-2.webp',
+    width: 1200,
+    height: 1600,
+    alt: 'A pale vampire with long dark hair and blood on her lips.',
+    top: 'calc(var(--cover-top) + 12svh)',
+    ankhOffset: 0.16,
+    mask: '[mask-image:radial-gradient(closest-side_at_50%_46%,black_62%,transparent)]',
+  },
+  // The original 2023 cover art.
+  original: {
+    src: '/HomePageArtLeftMobile.webp',
+    width: 1080,
+    height: 1920,
+    alt: '',
+    top: 'var(--cover-top)',
+    ankhOffset: 0.35,
+    mask: '[mask-image:linear-gradient(to_bottom,black_75%,transparent)]',
+  },
+} satisfies Record<string, CoverArt>;
+
+const COVER: CoverArt = COVERS.paleVampire;
 
 // Left column reads bottom-to-top, right column top-to-bottom.
 const LEFT_CLANS = [
@@ -54,13 +92,14 @@ export default function Hero() {
   return (
     <section
       aria-labelledby='hero-title'
+      style={{ '--art-top': COVER.top, '--ankh-offset': COVER.ankhOffset } as React.CSSProperties}
       className='relative isolate grid h-[160svh] overflow-x-clip text-bone [--cover:min(100vw,78svh,48rem)] [--cover-top:2.5rem] md:[--cover-top:0rem]'
     >
       {/* Backdrop */}
       <div className='grain sticky top-0 -z-10 h-svh [grid-area:1/1] bg-[radial-gradient(ellipse_at_50%_40%,var(--background-middle-hex),var(--background-start-hex)_45%,var(--color-ink)_85%)]' />
 
       {/* Ankh, behind the portrait */}
-      <div className='z-0 flex justify-center self-start pt-[calc(var(--cover-top)+var(--cover)*0.35)] [grid-area:1/1]'>
+      <div className='z-0 flex justify-center self-start pt-[calc(var(--art-top)+var(--cover)*var(--ankh-offset))] [grid-area:1/1]'>
         <VtmAnkh
           aria-hidden
           className='ankh-wake h-auto w-[calc(var(--cover)*0.86)] text-accent/70 dark:text-black'
@@ -69,15 +108,27 @@ export default function Hero() {
 
       {/* Portrait */}
       <div className='pointer-events-none sticky top-0 z-10 flex h-svh justify-center overflow-hidden [grid-area:1/1]'>
-        <Image
-          src={COVER_ART.src}
-          width={COVER_ART.width}
-          height={COVER_ART.height}
-          alt=''
-          preload
-          sizes='(max-width: 768px) 100vw, 48rem'
-          className='portrait-recede mt-(--cover-top) h-auto w-(--cover) self-start [mask-image:linear-gradient(to_bottom,black_75%,transparent)]'
-        />
+        <div className={`portrait-recede relative mt-(--art-top) w-(--cover) self-start ${COVER.mask}`}>
+          <Image
+            src={COVER.src}
+            width={COVER.width}
+            height={COVER.height}
+            alt={COVER.alt}
+            preload
+            sizes='(max-width: 768px) 100vw, 48rem'
+            className='h-auto w-full'
+          />
+          {COVER.awakeSrc && (
+            <Image
+              src={COVER.awakeSrc}
+              width={COVER.width}
+              height={COVER.height}
+              alt=''
+              sizes='(max-width: 768px) 100vw, 48rem'
+              className='eyes-open absolute inset-0 h-full w-full opacity-0'
+            />
+          )}
+        </div>
       </div>
 
       {/* Clan spines */}

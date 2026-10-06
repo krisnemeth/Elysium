@@ -74,17 +74,18 @@ export default function Hero() {
 
         <figure className='md:col-span-5 md:pl-6'>
           <MaskedPortrait
-            src='/Female3.jpg'
-            width={671}
-            height={950}
-            alt="Portrait of Ada O'Connor, a Lasombra vampire with dark dreadlocks and violet lips."
+            src='/art/pale-vampire.webp'
+            revealSrc='/art/pale-vampire-2.webp'
+            width={1200}
+            height={1600}
+            alt='A pale vampire with long dark hair, eyes closed, blood on her lips.'
             sizes='(max-width: 768px) 100vw, 40vw'
             preload
             className='aspect-[3/4]'
           />
           <figcaption className='mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 font-c-mono text-[0.65rem] tracking-[0.2em] text-paper/50 uppercase'>
-            <span>Fig. 01 &mdash; Ada O&apos;Connor</span>
-            <span>Lasombra &middot; 10th gen.</span>
+            <span>Fig. 01 &mdash; After the feeding</span>
+            <span>Hover to wake her</span>
           </figcaption>
         </figure>
       </div>

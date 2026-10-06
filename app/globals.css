@@ -113,6 +113,12 @@ body {
   }
 }
 
+@keyframes eyes-open {
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes cover-fade {
   to {
     opacity: 0;
@@ -138,6 +144,12 @@ body {
       animation: portrait-recede linear both;
       animation-timeline: scroll(root);
       animation-range: 40svh 140svh;
+    }
+
+    .eyes-open {
+      animation: eyes-open linear both;
+      animation-timeline: scroll(root);
+      animation-range: 8svh 40svh;
     }
 
     .cover-fade {

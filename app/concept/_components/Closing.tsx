@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import cityNight from '@/public/art/city-night.webp';
 import Link from 'next/link';
 import { VtmAnkh } from '@/app/ui/svgs';
 import {
@@ -15,8 +16,17 @@ export default function Closing() {
     <>
       <section
         aria-labelledby='closing-title'
-        className='relative overflow-hidden border-t border-paper/15 px-5 py-28 md:px-10 md:py-40'
+        className='relative isolate overflow-hidden border-t border-paper/15 px-5 py-28 md:px-10 md:py-40'
       >
+        <Image
+          src={cityNight}
+          alt=''
+          placeholder='blur'
+          sizes='100vw'
+          className='pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-40 grayscale'
+        />
+        <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,var(--color-night),transparent_30%,transparent_60%,var(--color-night)),linear-gradient(to_right,var(--color-night)_10%,transparent)]' />
+        <div className='pointer-events-none absolute inset-0 -z-10 bg-blood/20 mix-blend-multiply' />
         <VtmAnkh
           aria-hidden
           className='pointer-events-none absolute -right-24 -bottom-40 h-auto w-[34rem] text-blood/15 md:right-10'
