@@ -1,44 +1,83 @@
 'use client';
 
-import { GiVampireCape, GiCastle } from 'react-icons/gi';
-import { FaFile } from 'react-icons/fa';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import clsx from 'clsx';
+import { GiCastle, GiVampireCape, GiScrollUnfurled, GiD10 } from 'react-icons/gi';
 
-const links = [
-  { name: 'Home', href: '/dashboard', icon: GiCastle },
+export const NAV_LINKS = [
+  { name: 'Overview', href: '/dashboard', icon: GiCastle },
   { name: 'Characters', href: '/dashboard/characters', icon: GiVampireCape },
-  {
-    name: 'Sheets',
-    href: '/dashboard/sheets',
-    icon: FaFile,
-  },
+  { name: 'Sheets', href: '/dashboard/sheets', icon: GiScrollUnfurled },
+  { name: 'Dice', href: '/dashboard/dice', icon: GiD10 },
 ];
-export default function NavLinks() {
+
+function isActive(pathname: string, href: string) {
+  return href === '/dashboard' ? pathname === href : pathname.startsWith(href);
+}
+
+// Vertical list for the desktop sidebar.
+export function SideNavLinks() {
   const pathname = usePathname();
   return (
-    <>
-      {links.map((link) => {
-        const LinkIcon = link.icon;
+    <ul className='flex flex-col gap-1'>
+      {NAV_LINKS.map(({ name, href, icon: Icon }) => {
+        const active = isActive(pathname, href);
         return (
-          <Link
-            key={link.name}
-            href={link.href}
-            className={clsx(
-              'flex h-[48px] grow items-center justify-center gap-2 bg-black p-3 text-base text-slate-300/80 font-medium hover:bg-rose-600 hover:border-rose-600 dark:hover:bg-red-800 dark:hover:border-red-800 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3 border border-slate-300/50 rounded-md',
-              {
-                'border-2 border-rose-600 dark:border-red-800':
-                  pathname === link.href,
-              }
-            )}
-          >
-            <LinkIcon className='w-4' />
-            <p className='hidden md:block  md:mt-1'>{link.name}</p>
-          </Link>
+          <li key={href}>
+            <Link
+              href={href}
+              aria-current={active ? 'page' : undefined}
+              className={`group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                active ? 'bg-bone/[0.07] text-bone' : 'text-bone/60 hover:bg-bone/[0.04] hover:text-bone'
+              }`}
+            >
+              <span
+                aria-hidden
+                className={`absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0.75rem_var(--accent)] transition-[scale,opacity] duration-500 ease-(--ease-spring) ${
+                  active ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
+                }`}
+              />
+              <Icon
+                aria-hidden
+                className={`size-5 transition-[color,scale] duration-300 ease-(--ease-spring) group-hover:scale-110 ${active ? 'text-accent' : ''}`}
+              />
+              {name}
+            </Link>
+          </li>
         );
       })}
-    </>
+    </ul>
+  );
+}
+
+// Bottom tab bar for phones.
+export function TabBarLinks() {
+  const pathname = usePathname();
+  return (
+    <ul className='grid grid-cols-4'>
+      {NAV_LINKS.map(({ name, href, icon: Icon }) => {
+        const active = isActive(pathname, href);
+        return (
+          <li key={href}>
+            <Link
+              href={href}
+              aria-current={active ? 'page' : undefined}
+              className={`flex flex-col items-center gap-1 py-2.5 text-[0.65rem] tracking-wide transition-colors duration-300 ${
+                active ? 'text-bone' : 'text-bone/50'
+              }`}
+            >
+              <span
+                className={`grid h-8 w-12 place-items-center rounded-full transition-[background-color,scale] duration-500 ease-(--ease-spring) ${
+                  active ? 'scale-100 bg-accent/90 text-white shadow-[0_0_1rem_-0.25rem_var(--accent)]' : 'scale-90'
+                }`}
+              >
+                <Icon aria-hidden className='size-5' />
+              </span>
+              {name}
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

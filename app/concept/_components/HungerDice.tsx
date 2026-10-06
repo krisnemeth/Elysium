@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { ComponentType, SVGProps } from 'react';
-import { rollPool, type Die, type Outcome, type RollResult } from '../_lib/hunger-dice';
+import { rollPool, type Die, type Outcome, type RollResult } from '@/app/lib/hunger-dice';
 import {
   DiceBestialFailure,
   DiceCritical,

@@ -378,6 +378,15 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 - `/concept`: experimental redesign. `_lib/hunger-dice.ts` implements V5 dice rules (crits, messy crits, bestial failures) as a pure function, reusable for the dashboard dice roller.
 - Scroll-driven effects use CSS `animation-timeline` in `globals.css`, with a static fallback and `prefers-reduced-motion` respected.
 
+## App UI (dashboard)
+
+- Shell: `app/dashboard/layout.tsx` (ambient backdrop + `ui/dashboard/sidenav.tsx`: glass sidebar on desktop, top bar + bottom tab bar on phones). `app/dashboard/template.tsx` animates every page in.
+- Shared kit in `app/ui/kit/`: `styles.ts` (panel, buttons, field classes), `PageHeader`, `Stagger` (cascading entrance), `DotRating` (V5 dot/box ratings, keyboard slider). Theme toggle: `app/ui/ThemeToggle.tsx`; theme script: `app/lib/theme.ts`.
+- Character sheet fields live in `app/ui/sheets/fields.tsx`; each sheet section component owns its own state (nothing is persisted yet).
+- Sample data: `app/lib/sample-characters.ts`; clan → official symbol/name logo: `app/lib/clans.ts`.
+- Dice roller: `/dashboard/dice` (`app/ui/dice/DiceRoller.tsx`) on the pure rules in `app/lib/hunger-dice.ts` (also used by `/concept`). Includes rouse checks and Willpower rerolls.
+- Motion keyframes and easing tokens (`--ease-spring`, `--ease-out-expo`) are in `globals.css`; all motion is disabled under `prefers-reduced-motion`.
+
 ## Licensing (Dark Pack)
 
 Elysium uses World of Darkness IP under the [Dark Pack Agreement](https://www.paradoxinteractive.com/games/world-of-darkness/community/dark-pack-agreement). Requirements:

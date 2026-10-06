@@ -1,60 +1,86 @@
-import GlowUpButtonMedium from '@/app/ui/glowUpButtonMedium';
-import { Metadata } from 'next';
-import React from 'react';
-import { FaPlus } from 'react-icons/fa';
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { MdArrowOutward } from 'react-icons/md';
+import PageHeader from '@/app/ui/kit/PageHeader';
+import Stagger from '@/app/ui/kit/Stagger';
+import { panel } from '@/app/ui/kit/styles';
+import study from '@/public/art/sheet-study.webp';
+import lore from '@/public/art/lore-dark.webp';
 
 export const metadata: Metadata = {
   title: 'Sheets',
 };
 
+const SHEETS = [
+  {
+    title: 'Character sheet',
+    body: 'Stats, skills, disciplines, merits, flaws and the trackers you mark during play. The mechanical heart of every character.',
+    image: study,
+    href: '/dashboard/sheets/create',
+    cta: 'Create a character sheet',
+  },
+  {
+    title: 'Loresheet',
+    body: 'Backstory, Embrace, relationships, lovers and ghouls, in as much detail as you like. The creative side of character development.',
+    image: lore,
+    href: null,
+    cta: 'Coming soon',
+  },
+];
+
 export default function Sheets() {
   return (
-    <div className='flex flex-col  h-full w-full text-slate-300/80'>
-      <div className='flex flex-col items-center mx-0 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
-        <h1 className='text-2xl text-slate-300/80'>Sheet Management</h1>
-      </div>
-      <div className='flex flex-col items-center mt-4'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 gap-4 w-full'>
-          <div className='flex flex-col w-full col-span-6 border border-slate-300/50 rounded-xl bg-black/80 shadow-md shadow-black'>
-            <div className='flex flex-col p-6'>
-              <h2 className='text-xl'>Lore Sheets</h2>
-              <h3 className='text-base mt-4 text-justify'>
-                Here, you can create new Loresheets for your characters, where
-                you can describe their backstories, embrace, relationships,
-                descriptions of them and their properties, lovers, ghouls
-                anything in great detail. This is the more detailed, creative
-                part of the character development.
-              </h3>
-              <div className='mt-6'>
-                <GlowUpButtonMedium
-                  buttonText='Create New'
-                  buttonIcon={<FaPlus className='inline h-3 ml-2' />}
-                  buttonHref='./sheets/create'
-                ></GlowUpButtonMedium>
+    <div className='flex flex-col gap-10'>
+      <PageHeader
+        eyebrow='Sheets'
+        title='What are you writing tonight?'
+        description='Every character has two sides: the numbers on the sheet and the story behind them.'
+      />
+      <Stagger className='grid gap-5 lg:grid-cols-2'>
+        {SHEETS.map(({ title, body, image, href, cta }) => {
+          const card = (
+            <>
+              <div className='relative aspect-[16/9] overflow-hidden'>
+                <Image
+                  src={image}
+                  alt=''
+                  placeholder='blur'
+                  sizes='(max-width: 1024px) 100vw, 36rem'
+                  className={`size-full object-cover transition-[scale,filter] duration-[1.4s] ease-(--ease-out-expo) group-hover:scale-105 ${href ? '' : 'grayscale'}`}
+                />
+                <div className='absolute inset-0 bg-linear-to-t from-ink via-ink/40 to-transparent' />
               </div>
-            </div>
-          </div>
-          <div className='flex flex-col w-full col-span-6 border border-slate-300/50 rounded-lg bg-black/80 shadow-md shadow-black'>
-            <div className='flex flex-col p-6'>
-              <h2 className='text-xl'>Character Sheets</h2>
-              <h3 className='text-base mt-4 text-justify'>
-                Here, you can create new Character Sheets for your characters,
-                where you can describe their stats, skills, disciplines, merits,
-                flaws, and other mechanical aspects of the character. This is
-                the more mechanical, but just as important part of the character
-                creation.
-              </h3>
-              <div className='mt-6'>
-                <GlowUpButtonMedium
-                  buttonText='Create New'
-                  buttonIcon={<FaPlus className='inline h-3 ml-2' />}
-                  buttonHref='./sheets/create'
-                ></GlowUpButtonMedium>
+              <div className='relative -mt-16 flex grow flex-col p-6'>
+                <h2 className='font-display text-4xl'>{title}</h2>
+                <p className='mt-3 max-w-[48ch] leading-relaxed text-pretty text-bone/65'>{body}</p>
+                <span
+                  className={`mt-6 inline-flex items-center gap-1.5 text-sm ${href ? 'text-bone transition-colors group-hover:text-accent' : 'text-bone/35'}`}
+                >
+                  {cta}
+                  {href && (
+                    <MdArrowOutward aria-hidden className='transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
+                  )}
+                </span>
               </div>
+            </>
+          );
+          const cls = `group flex flex-col overflow-hidden ${panel}`;
+          return href ? (
+            <Link
+              key={title}
+              href={href}
+              className={`${cls} transition-[translate,box-shadow,border-color] duration-500 ease-(--ease-out-expo) hover:-translate-y-1 hover:border-bone/25 hover:shadow-[0_2rem_4rem_-1.5rem_var(--accent-deep)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent`}
+            >
+              {card}
+            </Link>
+          ) : (
+            <div key={title} aria-disabled className={`${cls} opacity-80`}>
+              {card}
             </div>
-          </div>
-        </div>
-      </div>
+          );
+        })}
+      </Stagger>
     </div>
   );
 }

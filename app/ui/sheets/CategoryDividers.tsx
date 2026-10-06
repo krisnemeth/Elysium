@@ -1,16 +1,16 @@
-import React from 'react';
-import { VtmAnkh } from '../svgs';
+import { LogoAnkh } from '@/app/ui/svgs/official';
 
-interface CategoryDividersProps {
-  title: string;
-}
-
-export default function CategoryDividers({ title }: CategoryDividersProps) {
+// Section heading for the character sheet, flanked by ankhs.
+export default function CategoryDividers({ title, id }: { title: string; id?: string }) {
   return (
-    <div className='flex justify-center border-b border-slate-300 mx-1 md:mx-2 xl:mx-4'>
-      <VtmAnkh className='h-4 text-slate-300 rotate-90 mr-4 mt-4' />
-      <h2 className='text-slate-300 text-xl text-center py-3'>{title}</h2>
-      <VtmAnkh className='h-4 text-slate-300 -rotate-90 ml-4 mt-4' />
+    <div className='flex items-center gap-4'>
+      <span className='h-px grow bg-linear-to-r from-transparent to-bone/20' />
+      <LogoAnkh aria-hidden className='h-4 w-auto rotate-90 text-accent' />
+      <h2 id={id} className='font-display text-3xl'>
+        {title}
+      </h2>
+      <LogoAnkh aria-hidden className='h-4 w-auto -rotate-90 text-accent' />
+      <span className='h-px grow bg-linear-to-l from-transparent to-bone/20' />
     </div>
   );
 }

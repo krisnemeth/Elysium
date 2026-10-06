@@ -1,59 +1,56 @@
-import React, { useState } from 'react';
-import BioDataDateOf from './BioDataDateOf';
-import BioDataAge from './BioDataAge';
-import BioDataTextArea from './BioDataTextArea';
+'use client';
+import { useState } from 'react';
+import { TextAreaField, TextField } from './fields';
+
+function yearsBetween(from: string, to: Date) {
+  const start = new Date(from);
+  if (!from || Number.isNaN(start.getTime())) return null;
+  let years = to.getFullYear() - start.getFullYear();
+  const beforeBirthday =
+    to.getMonth() < start.getMonth() ||
+    (to.getMonth() === start.getMonth() && to.getDate() < start.getDate());
+  if (beforeBirthday) years -= 1;
+  return years;
+}
 
 export default function BioData() {
-  const [date, setDate] = useState({
-    birth: new Date(),
-    death: new Date(),
-  });
+  const [birth, setBirth] = useState('');
+  const [death, setDeath] = useState('');
+  const [text, setText] = useState<Record<string, string>>({});
 
-  // Calculate the difference in years between the two dates
-  const apparentAge = date.death.getFullYear() - date.birth.getFullYear();
-  const trueAge = new Date().getFullYear() - date.birth.getFullYear();
-
-  // Convert the Date objects to strings in the 'yyyy-mm-dd' format
-  const birthDateForInput = date.birth.toISOString().split('T')[0];
-  const deathDateForInput = date.death.toISOString().split('T')[0];
-
-  const handleDateChange = (id: string, newDate: Date) => {
-    if (isNaN(newDate.getTime())) {
-      // The input value is not a valid date
-      return;
-    }
-
-    setDate((prevDate) => ({ ...prevDate, [id]: newDate }));
-  };
+  // True age counts from birth to tonight; apparent age stops at the Embrace.
+  const trueAge = yearsBetween(birth, new Date());
+  const apparentAge = death ? yearsBetween(birth, new Date(death)) : null;
 
   return (
-    <div className='flex flex-col'>
-      <div className='text-center my-2 border-b-2 border-slate-300 mt-4'>
-        <h4 className='text-lg text-slate-300'>Biographical Data</h4>
+    <div className='flex flex-col gap-8'>
+      <div className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+        <TextField label='Date of birth' name='birth' type='date' value={birth} onChange={setBirth} />
+        <TextField label='Date of death' name='death' type='date' value={death} onChange={setDeath} />
+        {[
+          ['True age', trueAge],
+          ['Apparent age', apparentAge],
+        ].map(([label, age]) => (
+          <div key={label as string} className='flex items-baseline justify-between border-b border-bone/[0.07] py-2'>
+            <span className='text-[0.7rem] tracking-[0.2em] text-bone/55 uppercase'>{label}</span>
+            <span className='font-display text-3xl tabular-nums'>{age ?? '—'}</span>
+          </div>
+        ))}
       </div>
-      <BioDataDateOf
-        label='Date Of Birth'
-        id='birth'
-        placeholder='DD/MM/YYYY'
-        value={birthDateForInput}
-        onChange={(newDate) => handleDateChange('birth', newDate)}
-      />
-      <BioDataDateOf
-        label='Date Of Death'
-        id='death'
-        placeholder='DD/MM/YYYY'
-        value={deathDateForInput}
-        onChange={(newDate) => handleDateChange('death', newDate)}
-      />
-      <BioDataAge label='True Age' id='trueAge' age={trueAge} />
-      <BioDataAge label='Apparent Age' id='trueAge' age={apparentAge} />
-      <BioDataTextArea label='Appearance' id='appearance' rows={5} />
-      <BioDataTextArea
-        label='Distinguishing Features'
-        id='distinguishingFeatures'
-        rows={5}
-      />
-      <BioDataTextArea label='History' id='history' rows={8} />
+      {[
+        ['appearance', 'Appearance', 4],
+        ['features', 'Distinguishing features', 4],
+        ['history', 'History', 8],
+      ].map(([key, label, rows]) => (
+        <TextAreaField
+          key={key as string}
+          label={label as string}
+          name={key as string}
+          rows={rows as number}
+          value={text[key as string] ?? ''}
+          onChange={(v) => setText((s) => ({ ...s, [key as string]: v }))}
+        />
+      ))}
     </div>
   );
 }

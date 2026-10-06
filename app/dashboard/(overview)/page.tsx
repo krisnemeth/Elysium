@@ -1,251 +1,100 @@
-import Image from 'next/image';
-import { Metadata } from 'next';
-import OverviewCard from '@/app/ui/dashboard/OverviewCard';
-import CardList from '@/app/ui/dashboard/CardList';
-import CardListItem from '@/app/ui/dashboard/CardListItem';
-
-import {
-  BrujahLogo,
-  VentrueLogo,
-  MalkavianLogo,
-  TremereLogo,
-  GangrelLogo,
-  LasombraLogo,
-  BanuHaqimLogo,
-} from '@/app/ui/svgs';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { MdAdd, MdArrowOutward } from 'react-icons/md';
+import { GiD10, GiScrollUnfurled } from 'react-icons/gi';
+import PageHeader from '@/app/ui/kit/PageHeader';
+import Stagger from '@/app/ui/kit/Stagger';
+import CharacterRow from '@/app/ui/dashboard/CharacterRow';
+import { panel, buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
+import { CHARACTERS } from '@/app/lib/sample-characters';
 
 export const metadata: Metadata = {
-  title: 'Home',
+  title: 'Overview',
 };
 
-export default async function Page() {
+export default function Page() {
+  const finished = CHARACTERS.filter((c) => c.status === 'finished');
+  const drafts = CHARACTERS.filter((c) => c.status === 'draft');
+
+  const stats = [
+    { label: 'Characters finished', value: finished.length },
+    { label: 'Drafts in progress', value: drafts.length },
+    { label: 'Loresheets', value: 0 },
+  ];
+
   return (
-    <div className='flex flex-col'>
-      <div className='flex flex-col items-center mx-0 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
-        <h1 className='text-2xl text-slate-300/80'>Overview</h1>
-      </div>
-      <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 mt-4 mx-0'>
-        <OverviewCard cardTitle='Characters Finished:' Amount={6}>
-          <CardList>
-            <CardListItem
-              characterImage={
-                <Image
-                  src={'/Female1.jpg'}
-                  width={'100'}
-                  height={'100'}
-                  alt='character image'
-                  className='rounded-xs xl:h-14 xl:w-auto'
-                />
-              }
-              characterName='Trixx Laveau'
-              clanSymbol={<BrujahLogo className='text-slate-300 h-5' />}
-            />
-            <CardListItem
-              characterImage={
-                <Image
-                  src={'/Ventrue.jpg'}
-                  width={'100'}
-                  height={'100'}
-                  alt='character image'
-                  className='rounded-xs xl:h-14 xl:w-auto'
-                />
-              }
-              characterName='Ailah Al-Malik'
-              clanSymbol={<VentrueLogo className='text-slate-300 h-5' />}
-            />
-            <CardListItem
-              characterImage={
-                <Image
-                  src={'/Malkavian.jpg'}
-                  width={'100'}
-                  height={'100'}
-                  alt='character image'
-                  className='rounded-xs xl:h-14 xl:w-auto'
-                />
-              }
-              characterName='Claire Voyant'
-              clanSymbol={<MalkavianLogo className='text-slate-300 h-5' />}
-            />
-            <CardListItem
-              characterImage={
-                <Image
-                  src={'/Tremere.jpg'}
-                  width={'100'}
-                  height={'100'}
-                  alt='character image'
-                  className='rounded-xs xl:h-14 xl:w-auto'
-                />
-              }
-              characterName='Agatha Ramalho'
-              clanSymbol={<TremereLogo className='text-slate-300 h-5' />}
-            />
-            <CardListItem
-              characterImage={
-                <Image
-                  src={'/Gangrel.jpg'}
-                  width={'100'}
-                  height={'100'}
-                  alt='character image'
-                  className='rounded-xs xl:h-14 xl:w-auto'
-                />
-              }
-              characterName='Chelsea Grimm'
-              clanSymbol={<GangrelLogo className='text-slate-300 h-5' />}
-            />
-          </CardList>
-        </OverviewCard>
-        <OverviewCard cardTitle='Character Drafts:' Amount={2}>
-          <CardList>
-            <CardListItem
-              characterImage={
-                <Image
-                  src={'/Female3.jpg'}
-                  width={'100'}
-                  height={'100'}
-                  alt='character image'
-                  className='rounded-xs xl:h-14 xl:w-auto'
-                />
-              }
-              characterName="Ada O'Connor"
-              clanSymbol={<LasombraLogo className='text-slate-300 h-5' />}
-            />
-            <CardListItem
-              characterImage={
-                <Image
-                  src={'/Male1.jpg'}
-                  width={'100'}
-                  height={'100'}
-                  alt='character image'
-                  className='rounded-xs xl:h-14 xl:w-auto'
-                />
-              }
-              characterName='Vic Vargas'
-              clanSymbol={<BanuHaqimLogo className='text-slate-300 h-5' />}
-            />
-          </CardList>
-        </OverviewCard>
-        <OverviewCard cardTitle='Loresheets' Amount={0} />
+    <div className='flex flex-col gap-10'>
+      <PageHeader
+        eyebrow='Overview'
+        title='Good evening.'
+        description='Your coterie, as you left it. Pick up a draft, open a sheet or roll a few dice before the session.'
+        actions={
+          <>
+            <Link href='/dashboard/sheets/create' className={buttonPrimary}>
+              <MdAdd aria-hidden className='size-4 transition-transform duration-300 group-hover:rotate-90' />
+              New character
+            </Link>
+            <Link href='/dashboard/dice' className={buttonGhost}>
+              <GiD10 aria-hidden className='size-4 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
+              Roll dice
+            </Link>
+          </>
+        }
+      />
+
+      <Stagger className='grid grid-cols-3 gap-3 md:gap-4'>
+        {stats.map(({ label, value }) => (
+          <div key={label} className={`p-4 md:p-6 ${panel}`}>
+            <p className='font-display text-4xl leading-none tabular-nums md:text-6xl'>{value}</p>
+            <p className='mt-2 text-[0.6rem] tracking-[0.15em] text-bone/50 uppercase md:mt-3 md:text-xs md:tracking-[0.2em]'>{label}</p>
+          </div>
+        ))}
+      </Stagger>
+
+      <div className='grid gap-4 lg:grid-cols-5'>
+        <section aria-labelledby='finished-title' className={`p-5 lg:col-span-3 ${panel}`}>
+          <div className='flex items-baseline justify-between px-2'>
+            <h2 id='finished-title' className='font-display text-2xl'>Finished</h2>
+            <Link
+              href='/dashboard/characters'
+              className='group inline-flex items-center gap-1 text-xs tracking-[0.2em] text-bone/50 uppercase transition-colors hover:text-bone'
+            >
+              All characters
+              <MdArrowOutward aria-hidden className='transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
+            </Link>
+          </div>
+          <Stagger as='ul' className='mt-3 flex flex-col'>
+            {finished.map((c) => (
+              <CharacterRow key={c.slug} character={c} />
+            ))}
+          </Stagger>
+        </section>
+
+        <div className='flex flex-col gap-4 lg:col-span-2'>
+          <section aria-labelledby='drafts-title' className={`p-5 ${panel}`}>
+            <h2 id='drafts-title' className='px-2 font-display text-2xl'>Drafts</h2>
+            <Stagger as='ul' className='mt-3 flex flex-col'>
+              {drafts.map((c) => (
+                <CharacterRow key={c.slug} character={c} />
+              ))}
+            </Stagger>
+          </section>
+
+          <section
+            aria-labelledby='lore-title'
+            className={`relative flex grow flex-col items-center justify-center overflow-hidden p-8 text-center ${panel}`}
+          >
+            <GiScrollUnfurled aria-hidden className='size-10 text-accent/70' />
+            <h2 id='lore-title' className='mt-4 font-display text-2xl'>No loresheets yet</h2>
+            <p className='mt-2 max-w-[32ch] text-sm leading-relaxed text-bone/55'>
+              Loresheets will hold the histories, lovers and grudges your sheets have no room for.
+            </p>
+            <span className='mt-5 rounded-full border border-bone/15 px-3 py-1 text-[0.65rem] tracking-[0.2em] text-bone/45 uppercase'>
+              Coming soon
+            </span>
+          </section>
+        </div>
       </div>
     </div>
   );
 }
-
-// export default function Dashboard() {
-//   return (
-//     <>
-//       {/* <Navbar /> */}
-
-//       <main className='relative flex h-screen flex-col items-center'>
-//         {/* GRID */}
-//         <div className='flex items-center justify-center h-full'>
-//           <div className='grid grid-cols-12 gap-8 w-full h-full'>
-//             {/* RIGHT */}
-//             <div className='flex flex-col col-span-2 border-2 border-black backdrop-blur-md bg-black'>
-//               <div className=''>
-//                 <div className='flex justify-center'>
-//                   <Link href='/'>
-//                     <Image
-//                       className='relative  dark:invert py-2'
-//                       src='/VTM-LOGO.svg'
-//                       alt='Next.js Logo'
-//                       width={220}
-//                       height={37}
-//                       priority
-//                     />
-//                   </Link>
-//                 </div>
-//                 <div className='flex justify-center'>
-//                   <p className={`text-3xl dark:invert`}>Character Vault</p>
-//                 </div>
-//                 {/* <div className='border dark:border-red-800 mt-2'></div> */}
-//               </div>
-//               <div className='flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2'>
-//                 <div className='mt-5'>
-//                   <Link href='/characters'>
-//                     <button className='flex items-start border-b-2 border-t-2 border-black bg-red-800 w-full justify-between hover:bg-red-700 duration-500 ease-in-out '>
-//                       <span className='text-xl dark:invert px-4 py-2'>
-//                         Characters
-//                       </span>
-//                       <GiVampireCape className='dark:invert text-2xl mt-2 mx-4' />
-//                     </button>
-//                   </Link>
-//                   <Link href='/sheets'>
-//                     <button className='flex items-start border-b-2 border-t-2 border-black bg-red-800 w-full justify-between hover:bg-red-700 duration-500 ease-in-out '>
-//                       <span className='text-xl dark:invert px-4 py-2'>
-//                         Sheets
-//                       </span>
-//                       <FaFile className='dark:invert text-2xl mt-2 mx-4' />
-//                     </button>
-//                   </Link>
-//                   <Link href='/create'>
-//                     <button className='flex items-start border-b-2 border-t-2 border-black bg-red-800 w-full justify-between hover:bg-red-700 duration-500 ease-in-out '>
-//                       <span className='text-xl dark:invert px-4 py-2'>
-//                         Create New
-//                       </span>
-//                       <FaPlusSquare className='dark:invert text-2xl mt-2 mx-4' />
-//                     </button>
-//                   </Link>
-//                 </div>
-//                 <div className='flex items-center justify-center'>
-//                   <Image
-//                     className='relative dark:invert py-2'
-//                     src='/AnarchV5.svg'
-//                     alt='Clan Symbols that change on refresh.'
-//                     width={180}
-//                     height={37}
-//                     priority
-//                   />
-//                 </div>
-
-//                 <div>
-//                   <Link href='/create'>
-//                     <button className='flex items-start border-b-2 border-t-2 border-black bg-red-800 w-full justify-between hover:bg-red-700 duration-500 ease-in-out '>
-//                       <span className='text-xl dark:invert px-4 py-2'>
-//                         Log Out
-//                       </span>
-//                       <FaPowerOff className='dark:invert text-2xl mt-2 mx-4' />
-//                     </button>
-//                   </Link>
-//                 </div>
-//               </div>
-//             </div>
-
-//             {/* MIDDLE */}
-//             <div className='flex flex-col col-span-5 border-2 border-zinc-950 items-center justify-center backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
-//               <Image
-//                 className='relative dark:invert p-16'
-//                 src='/VTM-LOGO.svg'
-//                 alt='Next.js Logo'
-//                 width={500}
-//                 height={37}
-//                 priority
-//               />
-//             </div>
-//             {/* LEFT */}
-//             <div className='flex flex-col col-span-5 backdrop-blur-md bg-zinc-950/20 shadow-2xl'>
-//               <p className='px-16 pt-16 pb-4 dark:invert'>Welcome to the</p>
-//               <h1 className='text-6xl dark:invert px-16 pb-4'>
-//                 Character Vault
-//               </h1>
-//               <p className='text-lg text-justify dark:invert pb-4 px-16'>
-//                 This is a place where you can create, edit, and store your
-//                 characters for any Vampire: The Masquerade games. You can manage
-//                 existing character information, and in the future you will be
-//                 able to fill out, and update your character sheets during
-//                 sessions.
-//               </p>
-//               <p className='text-lg text-justify dark:invert px-16 pb-8'>
-//                 Create an account if you don't already have one and start your
-//                 journey into the Night.
-//               </p>
-//               <div className='flex items-start px-16 pb-16'>
-//                 <button className='dark:invert'>Get Started &rarr;</button>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//         <Footer />
-//       </main>
-//     </>
-//   );
-// }

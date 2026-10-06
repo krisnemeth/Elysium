@@ -1,44 +1,71 @@
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
+import PageHeader from '@/app/ui/kit/PageHeader';
+import { panel } from '@/app/ui/kit/styles';
+import { LogoVampire } from '@/app/ui/svgs/official';
 import CategoryDividers from '@/app/ui/sheets/CategoryDividers';
+import SheetNav from '@/app/ui/sheets/SheetNav';
+import TextInputFields from '@/app/ui/sheets/TextInputFields';
 import Attributes from '@/app/ui/sheets/Attributes';
 import Skills from '@/app/ui/sheets/Skills';
 import LifeStats from '@/app/ui/sheets/LifeStats';
-import TextInputFields from '@/app/ui/sheets/TextInputFields';
-
-import { Metadata } from 'next';
-import { VtmLogo } from '@/app/ui/svgs';
 import Disciplines from '@/app/ui/sheets/Disciplines';
 import ResonanceHunger from '@/app/ui/sheets/ResonanceHunger';
 import TenetsTouchstonesBane from '@/app/ui/sheets/TenetsTouchstonesBane';
 import MixedSection from '@/app/ui/sheets/MixedSection';
+import BloodPotency from '@/app/ui/sheets/BloodPotency';
+import BioData from '@/app/ui/sheets/BioData';
 
 export const metadata: Metadata = {
-  title: 'Create New Character',
+  title: 'New character sheet',
 };
+
+const SECTIONS: { id: string; label: string; body: ReactNode }[] = [
+  { id: 'profile', label: 'Profile', body: <TextInputFields /> },
+  { id: 'attributes', label: 'Attributes', body: <Attributes /> },
+  { id: 'skills', label: 'Skills', body: <Skills /> },
+  { id: 'trackers', label: 'Trackers', body: <LifeStats /> },
+  { id: 'disciplines', label: 'Disciplines', body: <Disciplines /> },
+  {
+    id: 'blood',
+    label: 'Blood',
+    body: (
+      <div className='flex flex-col gap-8'>
+        <ResonanceHunger />
+        <BloodPotency />
+      </div>
+    ),
+  },
+  { id: 'convictions', label: 'Convictions', body: <TenetsTouchstonesBane /> },
+  { id: 'merits', label: 'Merits & notes', body: <MixedSection /> },
+  { id: 'biography', label: 'Biography', body: <BioData /> },
+];
 
 export default function CreateSheet() {
   return (
-    <>
-      <div className='flex flex-col items-center mx-0 p-4 border border-slate-300/50 rounded-xl bg-black shadow-md shadow-black'>
-        <h1 className='text-2xl text-slate-300/80'>Character Sheet</h1>
-      </div>
-      <div className='w-full border border-slate-300/80 rounded-lg xl:px-0 2xl:px-44 shadow-xl shadow-black mt-2 md:mt-4'>
-        <div className='flex flex-col items-center mt-6 mb-6'>
-          <VtmLogo className='h-16 xl:h-28 text-slate-300/80' />
+    <div className='flex flex-col gap-8'>
+      <PageHeader
+        eyebrow='New character'
+        title='Character sheet'
+        description='Fill it in as you would the printed sheet. Click a dot to set a rating; use the arrow keys on a focused rating.'
+      />
+      <SheetNav sections={SECTIONS.map(({ id, label }) => ({ id, label }))} />
+      <form className='flex flex-col gap-6'>
+        <div className='flex justify-center py-4'>
+          <LogoVampire aria-label='Vampire: The Masquerade' role='img' className='h-auto w-64 text-bone/80 md:w-80' />
         </div>
-        <form action=''>
-          <TextInputFields />
-          <CategoryDividers title='Attributes' />
-          <Attributes />
-          <CategoryDividers title='Skills' />
-          <Skills />
-          <LifeStats />
-          <CategoryDividers title='Disciplines' />
-          <Disciplines />
-          <ResonanceHunger />
-          <TenetsTouchstonesBane />
-          <MixedSection />
-        </form>
-      </div>
-    </>
+        {SECTIONS.map(({ id, label, body }) => (
+          <section
+            key={id}
+            id={id}
+            aria-labelledby={`${id}-title`}
+            className={`reveal scroll-mt-36 p-5 md:scroll-mt-24 md:p-8 ${panel}`}
+          >
+            <CategoryDividers id={`${id}-title`} title={label} />
+            <div className='mt-8'>{body}</div>
+          </section>
+        ))}
+      </form>
+    </div>
   );
 }

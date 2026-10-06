@@ -1,78 +1,65 @@
 import Image from 'next/image';
-import { BrujahLogo } from '@/app/ui/svgs';
-import { BrujahTitle } from '@/app/ui/svgs';
-import React from 'react';
-import GlowUpButtonMedium from '../glowUpButtonMedium';
-
-type CardPreviewProps = {
-  characterImage: React.ReactNode;
-  characterName: string;
-  description: string;
-  clanLogo: React.ReactNode;
-  clanTitle: React.ReactNode;
-};
+import Link from 'next/link';
+import { MdArrowOutward } from 'react-icons/md';
+import { CLANS } from '@/app/lib/clans';
+import type { Character } from '@/app/lib/sample-characters';
+import { panel } from '@/app/ui/kit/styles';
 
 export default function CharacterCard({
-  characterImage,
-  characterName,
-  description,
-  clanLogo,
-  clanTitle,
-}: CardPreviewProps) {
+  character,
+  style,
+}: {
+  character: Character;
+  style?: React.CSSProperties;
+}) {
+  const { Symbol, Wordmark, name: clanName } = CLANS[character.clan];
   return (
-    <div className='flex flex-col col-span-6 text-slate-300/80 border border-slate-300/50 bg-black/80 rounded-2xl bg-clip-padding backdrop-filter backdrop-blur-lg shadow-md shadow-black w-full h-full xl:w-full'>
-      <div className='grid grid-cols-1 md:grid-cols-12 xl:grid-cols-12 gap-1 m-2 xl:m-4'>
-        <div className='flex flex-col max-w-full md:col-span-4 lg:col-span-3 xl:col-span-4 p-2 items-center border border-slate-300/50 rounded-lg'>
-          {characterImage}
-        </div>
-        <div className='flex flex-col  md:col-span-8 lg:col-span-9 xl:col-span-8 text-xs md:text-xl p-2'>
-          <div className='grid grid-cols-12 gap-0 mx-1 xl:mx-2 mt-2'>
-            <div className='flex flex-col col-span-4 xl:col-span-6 pt-1 items-start justify-end'>
-              <h3 className=''>Name:</h3>
-            </div>
-            <div className='flex flex-col col-span-8 xl:col-span-6 pt-1 items-end justify-end'>
-              <h3 className=''>{characterName}</h3>
-            </div>
-          </div>
-          <div className='grid grid-cols-12 gap-0 mx-1 xl:mx-2 mt-2'>
-            <div className='flex flex-col col-span-4 xl:col-span-6 pt-1 items-start justify-end'>
-              <h3 className=''>Clan:</h3>
-            </div>
-            <div className='flex flex-col col-span-8 xl:col-span-6 pt-1 items-end justify-end'>
-              <h3 className=''>{clanTitle}</h3>
-            </div>
-          </div>
-          <div className='grid grid-cols-12 gap-0 mx-1 xl:mx-2 mt-3'>
-            <div className='flex flex-col col-span-6 pt-1 items-start justify-end'>
-              <h3 className=''>Clan Symbol:</h3>
-            </div>
-            <div className='flex flex-col col-span-6 pt-1 items-end justify-end'>
-              <h3 className=''>{clanLogo}</h3>
-            </div>
-          </div>
-          <div className='flex flex-col col-span-2 mx-1 xl:mx-2 mt-6 border-t border-slate-300/50'>
-            <p className='text-xs md:text-base xl:text-sm text-justify mt-4'>
-              {description}
-            </p>
-          </div>
-        </div>
-        <div className='flex flex-col col-span-1 md:col-span-12 xl:col-span-12 mt-2'>
-          <div className='grid grid-cols-2 md:grid-cols-12 xl:grid-cols-12 gap-1'>
-            <div className='flex flex-col col-span-1 md:col-span-4 lg:col-span-3 xl:col-span-4'>
-              <GlowUpButtonMedium buttonHref='#' buttonText='View Character' />
-            </div>
-            <div className='flex flex-col col-span-1 md:col-span-4 lg:col-span-3 xl:col-span-4'>
-              <GlowUpButtonMedium buttonHref='#' buttonText='Loresheet' />
-            </div>
-            <div className='flex flex-col col-span-1 md:col-span-4 lg:col-span-3 xl:col-span-4'>
-              <GlowUpButtonMedium buttonHref='#' buttonText='Character Sheet' />
-            </div>
-            <div className='flex flex-col col-span-1 md:col-span-4 lg:col-span-3 xl:col-span-4'>
-              <GlowUpButtonMedium buttonHref='#' buttonText='Delete' />
-            </div>
-          </div>
+    <article
+      style={style}
+      className={`group relative flex flex-col overflow-hidden transition-[translate,box-shadow,border-color] duration-500 ease-(--ease-out-expo) hover:-translate-y-1 hover:border-bone/25 hover:shadow-[0_2rem_4rem_-1.5rem_var(--accent-deep)] ${panel}`}
+    >
+      <div className='relative aspect-[4/5] overflow-hidden'>
+        <Image
+          src={character.image.src}
+          width={character.image.width}
+          height={character.image.height}
+          alt={`Portrait of ${character.name}.`}
+          sizes='(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 22rem'
+          className='size-full object-cover transition-[scale,filter] duration-[1.2s] ease-(--ease-out-expo) group-hover:scale-105'
+        />
+        <div className='absolute inset-0 bg-linear-to-t from-ink via-ink/30 to-transparent' />
+        {character.status === 'draft' && (
+          <span className='absolute top-4 left-4 rounded-full border border-bone/20 bg-ink/60 px-3 py-1 text-[0.65rem] tracking-[0.2em] text-bone/80 uppercase backdrop-blur-md'>
+            Draft
+          </span>
+        )}
+        <Symbol
+          aria-hidden
+          className='absolute top-4 right-4 h-8 w-auto max-w-10 text-bone/70 drop-shadow-[0_0_0.75rem_rgb(0_0_0/0.8)] transition-[color,scale] duration-500 ease-(--ease-spring) [--knockout:transparent] group-hover:scale-110 group-hover:text-bone'
+        />
+        <div className='absolute inset-x-5 bottom-4'>
+          {Wordmark ? (
+            <Wordmark aria-label={clanName} role='img' className='h-5 w-auto max-w-full text-accent' />
+          ) : (
+            <p className='text-xs tracking-[0.25em] text-accent uppercase'>{clanName}</p>
+          )}
+          <h2 className='mt-2 font-display text-3xl leading-tight'>{character.name}</h2>
         </div>
       </div>
-    </div>
+
+      <div className='flex grow flex-col p-5 pt-3'>
+        <p className='text-sm leading-relaxed text-pretty text-bone/65'>{character.description}</p>
+        <div className='mt-auto flex items-center justify-between gap-3 pt-5'>
+          <Link
+            href='/dashboard/sheets/create'
+            className='group/link inline-flex items-center gap-1.5 text-sm text-bone transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent'
+          >
+            Open sheet
+            <MdArrowOutward aria-hidden className='transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5' />
+          </Link>
+          <span className='text-[0.65rem] tracking-[0.2em] text-bone/35 uppercase'>Loresheet soon</span>
+        </div>
+      </div>
+    </article>
   );
 }

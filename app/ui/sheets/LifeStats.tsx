@@ -1,82 +1,33 @@
 'use client';
-import React, { useState } from 'react';
-import LifeStatsInput from './LifeStatsInput';
+import { useState } from 'react';
+import DotRating from '@/app/ui/kit/DotRating';
+
+const TRACKS = [
+  { key: 'health', label: 'Health', shape: 'box', initial: 0 },
+  { key: 'willpower', label: 'Willpower', shape: 'box', initial: 0 },
+  { key: 'humanity', label: 'Humanity', shape: 'dot', initial: 7 },
+] as const;
 
 export default function LifeStats() {
-  const [checkboxValues, setCheckboxValues] = useState({
-    health: [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ],
-    willpower: [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ],
-    humanity: [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ],
-  });
-
-  const handleCheckboxChange = (
-    attribute: keyof typeof checkboxValues,
-    index: number
-  ) => {
-    setCheckboxValues({
-      ...checkboxValues,
-      [attribute]: checkboxValues[attribute].map((value, i) =>
-        i === index ? !value : value
-      ),
-    });
-  };
+  const [values, setValues] = useState<Record<string, number>>(
+    Object.fromEntries(TRACKS.map((t) => [t.key, t.initial])),
+  );
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-0 xl:px-6'>
-      <div className='flex flex-col mt-2'>
-        <LifeStatsInput
-          label='Health'
-          values={checkboxValues.health}
-          onChange={(index) => handleCheckboxChange('health', index)}
-        />
-      </div>
-      <div className='flex flex-col mt-2'>
-        <LifeStatsInput
-          label='Willpower'
-          values={checkboxValues.willpower}
-          onChange={(index) => handleCheckboxChange('willpower', index)}
-        />
-      </div>
-      <div className='flex flex-col mt-2'>
-        <LifeStatsInput
-          label='Humanity'
-          values={checkboxValues.humanity}
-          onChange={(index) => handleCheckboxChange('humanity', index)}
-        />
-      </div>
+    <div className='grid gap-6 md:grid-cols-3'>
+      {TRACKS.map((track) => (
+        <div key={track.key} className='flex flex-col items-center gap-2 rounded-xl border border-bone/10 bg-bone/[0.02] p-4'>
+          <span className='font-display text-2xl'>{track.label}</span>
+          <DotRating
+            label={track.label}
+            value={values[track.key]}
+            max={10}
+            shape={track.shape}
+            onChange={(v) => setValues((s) => ({ ...s, [track.key]: v }))}
+          />
+          <span className='text-xs text-bone/40 tabular-nums'>{values[track.key]} / 10</span>
+        </div>
+      ))}
     </div>
   );
 }
