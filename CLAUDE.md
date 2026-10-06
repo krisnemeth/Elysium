@@ -111,6 +111,7 @@
 | Path | Purpose |
 |---|---|
 | `/` | Landing page — hero + features + footer |
+| `/concept` | Concept landing page ("Nightly Edition"): editorial V5-style alternative, own fonts in `app/concept/fonts.ts` |
 | `/dashboard` | Overview — hardcoded finished/draft character counts |
 | `/dashboard/characters` | Character gallery — 8 hardcoded characters with clan info |
 | `/dashboard/sheets` | Sheet hub — links to create Loresheets or Character Sheets |
@@ -370,6 +371,12 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 - **Request APIs are async-only**: `await params`, `await searchParams`, `await cookies()`, `await headers()`.
 - `next build` no longer runs lint and no longer prints per-route bundle sizes.
 - Bundled, version-matched docs live in `node_modules/next/dist/docs/` — check them before writing Next.js code.
+
+## Landing Pages
+
+- `/` (`app/page.tsx`): book-cover hero (`app/ui/home/Hero.tsx`). The portrait and ankh are sized from one `--cover` width so the ankh halo stays behind the portrait at every viewport; the ankh rises on scroll because the backdrop/portrait layers are sticky. Swap cover art via `COVER_ART` in `Hero.tsx`.
+- `/concept`: experimental redesign. `_lib/hunger-dice.ts` implements V5 dice rules (crits, messy crits, bestial failures) as a pure function, reusable for the dashboard dice roller.
+- Scroll-driven effects use CSS `animation-timeline` in `globals.css`, with a static fallback and `prefers-reduced-motion` respected.
 
 ## Tailwind 4 Notes
 

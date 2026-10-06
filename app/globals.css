@@ -5,6 +5,11 @@
 
   --color-ink: #0d0a0b;
   --color-bone: #e7e1d8;
+
+  /* /concept page */
+  --color-blood: #c8102e;
+  --color-paper: #efe9e1;
+  --color-night: #0a0909;
 }
 
 /* Theme-aware tokens: light = "Neon Nights", dark = "Classic Masquerade". */
@@ -12,6 +17,11 @@
   --color-accent: var(--accent);
   --color-accent-deep: var(--accent-deep);
   --font-display: var(--font-cormorant), 'Times New Roman', serif;
+
+  /* /concept page */
+  --font-c-serif: var(--nf-instrument), Georgia, serif;
+  --font-c-sans: var(--nf-archivo), 'Arial Narrow', sans-serif;
+  --font-c-mono: var(--nf-jetbrains), ui-monospace, monospace;
 }
 
 /* Keep Tailwind v3 defaults that v4 dropped. */
@@ -135,5 +145,46 @@ body {
       animation-timeline: scroll(root);
       animation-range: 0 45svh;
     }
+  }
+}
+
+/* /concept page motion */
+@keyframes marquee {
+  to {
+    translate: -50% 0;
+  }
+}
+
+@keyframes drip {
+  from {
+    scale: 1 0;
+  }
+}
+
+@keyframes tumble {
+  0% {
+    rotate: -25deg;
+    scale: 0.6;
+    opacity: 0;
+  }
+  60% {
+    rotate: 8deg;
+    scale: 1.08;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .marquee {
+    animation: marquee 40s linear infinite;
+  }
+
+  .drip {
+    transform-origin: top;
+    animation: drip 1.8s cubic-bezier(0.7, 0, 0.2, 1) 0.3s both;
+  }
+
+  .tumble {
+    animation: tumble 0.5s cubic-bezier(0.3, 1.4, 0.5, 1) both;
   }
 }
