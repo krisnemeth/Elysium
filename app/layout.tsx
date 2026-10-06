@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Jsans, Cormorant } from './fonts';
+import { themeScript } from './lib/theme';
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -40,7 +41,12 @@ export default function RootLayout({
       lang='en'
       data-scroll-behavior='smooth'
       className={Cormorant.variable}
+      // data-theme is set by themeScript before hydration.
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className={Jsans.className}>{children}</body>
     </html>
   );

@@ -45,17 +45,17 @@ export default function VaultIndex() {
         {ENTRIES.map(({ word, detail, image }, i) => (
           <li
             key={word}
-            className='group relative overflow-hidden border-b border-paper/15'
+            className='group relative overflow-hidden border-b border-paper/15 transition-colors duration-500 hover:text-bone'
           >
             <div className='absolute inset-0 origin-left scale-x-0 bg-blood transition-transform duration-500 ease-out group-hover:scale-x-100' />
             <div className='relative grid items-center gap-4 px-5 py-6 md:grid-cols-12 md:px-10 md:py-4'>
-              <span className='font-c-mono text-xs text-paper/40 transition-colors group-hover:text-paper md:col-span-1'>
+              <span className='font-c-mono text-xs text-paper/40 transition-colors group-hover:text-bone md:col-span-1'>
                 {String(i + 1).padStart(2, '0')}
               </span>
               <p className='font-c-sans text-[clamp(3.5rem,11vw,9rem)] leading-[0.85] font-black uppercase transition-transform duration-500 [font-variation-settings:"wdth"_62] group-hover:translate-x-4 md:col-span-6'>
                 {word}
               </p>
-              <p className='max-w-[36ch] text-paper/60 transition duration-300 group-hover:text-paper md:col-span-4 lg:group-hover:opacity-0'>
+              <p className='max-w-[36ch] text-paper/60 transition duration-300 group-hover:text-bone md:col-span-4 lg:group-hover:opacity-0'>
                 {detail}
               </p>
             </div>

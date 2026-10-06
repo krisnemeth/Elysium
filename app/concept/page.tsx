@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function ConceptPage() {
   return (
     <div
-      className={`${serif.variable} ${grotesk.variable} ${mono.variable} min-h-svh bg-night font-c-sans text-paper antialiased selection:bg-blood selection:text-paper`}
+      className={`concept ${serif.variable} ${grotesk.variable} ${mono.variable} min-h-svh bg-night transition-colors duration-500 font-c-sans text-paper antialiased selection:bg-blood selection:text-paper`}
     >
       <Hero />
       <main>

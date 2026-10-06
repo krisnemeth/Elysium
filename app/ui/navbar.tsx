@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { MdArrowOutward } from 'react-icons/md';
 import { Elysium1 } from '@/app/ui/svgs';
+import ThemeToggle from '@/app/ui/ThemeToggle';
 
 const SECTIONS = [
   { href: '#features', label: 'Features' },
@@ -36,6 +37,11 @@ export default function Navbar() {
         </ul>
 
         <div className='flex items-center gap-1'>
+          <ThemeToggle
+            labels={{ light: 'Neon Nights', dark: 'Masquerade' }}
+            labelClassName='max-lg:sr-only'
+            className='mr-1 rounded-xl px-2 py-2 text-xs text-bone/70 transition-colors hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bone'
+          />
           <Link
             href='/dashboard'
             className='rounded-xl px-3 py-2 text-sm text-bone/80 transition-colors duration-200 hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bone'

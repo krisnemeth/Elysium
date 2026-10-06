@@ -1,9 +1,15 @@
 @import 'tailwindcss';
 
+/*
+  Themes are set on <html data-theme="light|dark"> by the inline script in
+  app/layout.tsx (system preference, overridden by the navbar toggle).
+  light = "Neon Nights", dark = "Classic Masquerade". `dark:` follows it.
+*/
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
 @theme {
   --breakpoint-3xl: 1600px;
 
-  --color-ink: #0d0a0b;
   --color-bone: #e7e1d8;
 
   /* /concept page */
@@ -14,6 +20,7 @@
 
 /* Theme-aware tokens: light = "Neon Nights", dark = "Classic Masquerade". */
 @theme inline {
+  --color-ink: var(--ink);
   --color-accent: var(--accent);
   --color-accent-deep: var(--accent-deep);
   --font-display: var(--font-cormorant), 'Times New Roman', serif;
@@ -44,21 +51,41 @@
   --background-middle-hex: #4C1D95;
   --background-end-hex: #000000;
 
+  --ink: #0d0717;
   --accent: #e11d48;
   --accent-deep: #4c1d95;
 }
 
+:root[data-theme='dark'] {
+  --foreground-hex: #000;
+  /* --background-start-hex: #000; */
+  --background-start-hex: #450a0a;
+  --background-middle-hex: #991b1b;
+  --background-end-hex: #000000;
+
+  --ink: #0d0a0b;
+  --accent: #c81e2b;
+  --accent-deep: #7f1d1d;
+}
+
+/* Before the theme script runs (or without JS), follow the system setting. */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-hex: #000;
-    /* --background-start-hex: #000; */
+  :root:not([data-theme]) {
     --background-start-hex: #450a0a;
     --background-middle-hex: #991b1b;
-    --background-end-hex: #000000;
-
+    --ink: #0d0a0b;
     --accent: #c81e2b;
     --accent-deep: #7f1d1d;
   }
+}
+
+/*
+  /concept: dark is the "Nightly edition"; light is a "Daylight edition",
+  printed-page look: night and paper swap places.
+*/
+[data-theme='light'] .concept {
+  --color-night: #efe9e1;
+  --color-paper: #0a0909;
 }
 
 body {

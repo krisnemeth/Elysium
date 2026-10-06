@@ -133,7 +133,7 @@ export default function HungerDice() {
                 setResult(rollPool(pool, hunger, difficulty));
                 setRollId((n) => n + 1);
               }}
-              className='ml-auto bg-blood px-8 py-3 font-c-sans text-sm font-bold tracking-[0.2em] text-paper uppercase transition duration-300 [font-variation-settings:"wdth"_85] hover:bg-paper hover:text-night focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper active:scale-[0.97]'
+              className='ml-auto bg-blood px-8 py-3 font-c-sans text-sm font-bold tracking-[0.2em] text-bone uppercase transition duration-300 [font-variation-settings:"wdth"_85] hover:bg-paper hover:text-night focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper active:scale-[0.97]'
             >
               Roll
             </button>
@@ -156,7 +156,7 @@ export default function HungerDice() {
                   className={[
                     'relative grid size-14 place-items-center md:size-16',
                     die ? 'tumble' : '',
-                    isHunger ? 'bg-blood text-paper' : 'border border-paper/40 text-paper',
+                    isHunger ? 'bg-blood text-bone' : 'border border-paper/40 text-paper',
                     die && !success && !skull ? 'opacity-35' : '',
                     die?.value === 10 ? 'ring-2 ring-paper ring-offset-2 ring-offset-night' : '',
                   ].join(' ')}
