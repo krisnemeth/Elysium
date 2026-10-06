@@ -1,37 +1,32 @@
 import { Metadata } from 'next';
+import Navbar from '@/app/ui/navbar';
+import Hero from '@/app/ui/home/Hero';
+import Features from '@/app/ui/home/Features';
+import Clans from '@/app/ui/home/Clans';
+import CallToAction from '@/app/ui/home/CallToAction';
+import Footer from '@/app/ui/home/Footer';
 
 export const metadata: Metadata = {
   title: 'Elysium',
 };
 
-import Navbar from '@/app/ui/navbar';
-import Footer from '@/app/ui/home/Footer';
-import HomePageArt from './ui/home/HomePageArt';
-import WelcomeText from './ui/home/WelcomeText';
-import Image from 'next/image';
-import Features from './ui/home/Features';
-
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main className='z-10 relative flex h-screen flex-col items-center xl:overscroll-contain mx-1'>
-        <HomePageArt />
-        <WelcomeText />
-      </main>
-      <section
-        id='features'
-        className='z-30 relative flex w-screen h-full bg-black'
+      <a
+        href='#main'
+        className='sr-only z-[60] rounded-md bg-bone px-4 py-2 text-ink focus:not-sr-only focus:fixed focus:top-3 focus:left-3'
       >
-        <div className='absolute flex flex-col items-center w-screen lg:w-full bg-linear-to-t from-black from-90% shadow-xl shadow-black'>
-          <Features />
-          <Footer />
-        </div>
-      </section>
-
-      {/* <section className='footer z-30 relative flex w-screen h-screen lg:flex lg:w-screen lg:h-screen bg-linear-to-b from-violet-950 dark:from-red-950 from-5% dark:to-black to-black to-90%'>
-        <Footer />
-      </section> */}
+        Skip to content
+      </a>
+      <Navbar />
+      <main id='main' className='bg-ink'>
+        <Hero />
+        <Features />
+        <Clans />
+        <CallToAction />
+      </main>
+      <Footer />
     </>
   );
 }

@@ -2,6 +2,16 @@
 
 @theme {
   --breakpoint-3xl: 1600px;
+
+  --color-ink: #0d0a0b;
+  --color-bone: #e7e1d8;
+}
+
+/* Theme-aware tokens: light = "Neon Nights", dark = "Classic Masquerade". */
+@theme inline {
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --font-display: var(--font-cormorant), 'Times New Roman', serif;
 }
 
 /* Keep Tailwind v3 defaults that v4 dropped. */
@@ -23,6 +33,9 @@
   --background-start-hex: #2e1065;
   --background-middle-hex: #4C1D95;
   --background-end-hex: #000000;
+
+  --accent: #e11d48;
+  --accent-deep: #4c1d95;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,6 +45,9 @@
     --background-start-hex: #450a0a;
     --background-middle-hex: #991b1b;
     --background-end-hex: #000000;
+
+    --accent: #c81e2b;
+    --accent-deep: #7f1d1d;
   }
 }
 
@@ -40,4 +56,84 @@ body {
   background: radial-gradient(circle,
       var(--background-middle-hex),
       var(--background-end-hex)) var(--background-start-hex);
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Film grain to break up flat gradients. */
+@utility grain {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/*
+  Scroll-driven motion. Browsers without animation-timeline (or users who
+  prefer reduced motion) get the static end state.
+*/
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 2rem;
+  }
+}
+
+@keyframes ankh-wake {
+  from {
+    filter: drop-shadow(0 0 0.9rem #000);
+  }
+  to {
+    filter: drop-shadow(0 0 2.5rem var(--accent));
+  }
+}
+
+@keyframes portrait-recede {
+  to {
+    scale: 0.94;
+    filter: brightness(0.55);
+  }
+}
+
+@keyframes cover-fade {
+  to {
+    opacity: 0;
+    translate: 0 -3rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+
+    .ankh-wake {
+      animation: ankh-wake linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 90svh;
+    }
+
+    .portrait-recede {
+      animation: portrait-recede linear both;
+      animation-timeline: scroll(root);
+      animation-range: 40svh 140svh;
+    }
+
+    .cover-fade {
+      animation: cover-fade linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 45svh;
+    }
+  }
 }
