@@ -38,10 +38,10 @@ export default function Closing() {
         </blockquote>
 
         <Link
-          href='/dashboard'
+          href='/concept/dashboard'
           className='group relative mt-20 inline-flex items-baseline gap-6 font-c-sans text-[clamp(3.5rem,12vw,11rem)] leading-[0.85] font-black uppercase [font-variation-settings:"wdth"_62] focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-blood'
         >
-          <span className='transition-colors duration-500 group-hover:text-bone bg-[linear-gradient(var(--color-blood),var(--color-blood))] bg-[length:0%_100%] bg-no-repeat transition-[background-size] duration-500 ease-out group-hover:bg-[length:100%_100%]'>
+          <span className='transition-colors duration-500 group-hover:text-chalk bg-[linear-gradient(var(--color-blood),var(--color-blood))] bg-[length:0%_100%] bg-no-repeat transition-[background-size] duration-500 ease-out group-hover:bg-[length:100%_100%]'>
             Enter Elysium
           </span>
           <span className='font-c-serif text-[0.5em] font-normal transition-transform duration-500 group-hover:translate-x-3'>

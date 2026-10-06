@@ -20,7 +20,7 @@ export default function Marquee() {
   );
 
   return (
-    <div className='overflow-hidden bg-blood py-4 font-c-sans text-2xl font-extrabold tracking-[0.04em] text-bone uppercase [font-variation-settings:"wdth"_70] md:text-4xl'>
+    <div className='overflow-hidden bg-blood py-4 font-c-sans text-2xl font-extrabold tracking-[0.04em] text-chalk uppercase [font-variation-settings:"wdth"_70] md:text-4xl'>
       <div className='marquee flex w-max'>
         {run(false)}
         {run(true)}

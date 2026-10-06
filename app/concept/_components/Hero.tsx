@@ -32,7 +32,7 @@ export default function Hero() {
             className='tracking-[0.2em] text-paper/70 uppercase transition-colors hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blood'
           />
           <Link
-            href='/dashboard'
+            href='/concept/dashboard'
             className='text-paper transition-colors hover:text-blood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blood'
           >
             Enter the vault &rarr;
@@ -64,8 +64,8 @@ export default function Hero() {
           </p>
           <div className='mt-10 flex flex-wrap items-center gap-4'>
             <Link
-              href='/dashboard'
-              className='group inline-flex items-center gap-3 bg-blood px-7 py-4 font-c-sans text-sm font-bold tracking-[0.15em] text-bone uppercase transition duration-300 [font-variation-settings:"wdth"_85] hover:bg-paper hover:text-night focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper active:scale-[0.98]'
+              href='/concept/dashboard'
+              className='group inline-flex items-center gap-3 bg-blood px-7 py-4 font-c-sans text-sm font-bold tracking-[0.15em] text-chalk uppercase transition duration-300 [font-variation-settings:"wdth"_85] hover:bg-paper hover:text-night focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper active:scale-[0.98]'
             >
               Begin your chronicle
               <span className='transition-transform duration-300 group-hover:translate-x-1'>

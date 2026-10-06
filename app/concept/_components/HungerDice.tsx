@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type React from 'react';
 import type { ComponentType, SVGProps } from 'react';
 import { rollPool, type Die, type Outcome, type RollResult } from '@/app/lib/hunger-dice';
 import {
@@ -9,6 +10,7 @@ import {
   DiceMessyCritical,
   DiceSuccess,
 } from '@/app/ui/svgs/official';
+import D10 from '@/app/ui/dice/D10';
 
 type Symbol = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -133,7 +135,7 @@ export default function HungerDice() {
                 setResult(rollPool(pool, hunger, difficulty));
                 setRollId((n) => n + 1);
               }}
-              className='ml-auto bg-blood px-8 py-3 font-c-sans text-sm font-bold tracking-[0.2em] text-bone uppercase transition duration-300 [font-variation-settings:"wdth"_85] hover:bg-paper hover:text-night focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper active:scale-[0.97]'
+              className='ml-auto bg-blood px-8 py-3 font-c-sans text-sm font-bold tracking-[0.2em] text-chalk uppercase transition duration-300 [font-variation-settings:"wdth"_85] hover:bg-paper hover:text-night focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-paper active:scale-[0.97]'
             >
               Roll
             </button>
@@ -141,7 +143,7 @@ export default function HungerDice() {
 
           <ul
             aria-label='Dice'
-            className='mt-10 flex min-h-36 flex-wrap content-start gap-3'
+            className='mt-10 flex min-h-36 flex-wrap content-start gap-x-3 gap-y-4'
           >
             {Array.from({ length: pool }, (_, i) => {
               const die = result?.dice[i];
@@ -154,24 +156,26 @@ export default function HungerDice() {
                   key={`${rollId}-${i}`}
                   style={{ animationDelay: `${i * 40}ms` }}
                   className={[
-                    'relative grid size-14 place-items-center md:size-16',
-                    die ? 'tumble' : '',
-                    isHunger ? 'bg-blood text-bone' : 'border border-paper/40 text-paper',
-                    die && !success && !skull ? 'opacity-35' : '',
-                    die?.value === 10 ? 'ring-2 ring-paper ring-offset-2 ring-offset-night' : '',
+                    'relative w-14 md:w-16',
+                    die ? 'tumble' : 'opacity-30',
+                    die && !success && !skull ? 'opacity-40 saturate-50' : '',
                   ].join(' ')}
                 >
                   <span className='sr-only'>
                     {isHunger ? 'Hunger die: ' : 'Die: '}
                     {die?.value ?? 'not rolled'}
                   </span>
-                  {Face && <Face aria-hidden className='h-9 w-auto md:h-10' />}
-                  {die ? (
-                    <span aria-hidden className='absolute right-1 bottom-0.5 font-c-mono text-[0.6rem] opacity-60'>
+                  <D10
+                    hunger={isHunger}
+                    className='w-full'
+                    style={{ '--die-hunger': 'var(--color-blood)', '--die-regular': '#2b2727' } as React.CSSProperties}
+                  >
+                    {Face && <Face aria-hidden className='h-6 w-auto md:h-7' />}
+                  </D10>
+                  {die && (
+                    <span aria-hidden className='absolute inset-x-0 top-[58%] text-center font-c-mono text-[0.55rem] text-chalk/60'>
                       {die.value}
                     </span>
-                  ) : (
-                    <span aria-hidden className='text-paper/30'>&middot;</span>
                   )}
                 </li>
               );

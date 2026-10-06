@@ -11,6 +11,7 @@ import {
   DiceSuccess,
 } from '@/app/ui/svgs/official';
 import { buttonGhost, buttonPrimary, panel } from '@/app/ui/kit/styles';
+import D10 from './D10';
 
 type Svg = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -100,18 +101,17 @@ function DieFace({
         onClick={onSelect}
         style={{ animationDelay: rolling ? `${index * -60}ms` : `${index * 55}ms` }}
         className={[
-          'relative grid size-16 place-items-center rounded-2xl transition-[opacity,box-shadow,translate] duration-300 md:size-20',
+          'relative block w-16 transition-[opacity,filter,translate] duration-300 ease-(--ease-out-expo) md:w-20',
           rolling ? 'die-spin' : 'die-land',
-          die.hunger
-            ? 'bg-accent text-white shadow-[0_0.75rem_1.5rem_-0.75rem_var(--accent)]'
-            : 'border border-bone/25 bg-bone/[0.05] text-bone',
-          !rolling && !success && !(die.hunger && die.value === 1) ? 'opacity-40' : '',
-          selected ? '-translate-y-2 ring-2 ring-bone ring-offset-2 ring-offset-ink' : '',
-          selectable ? 'cursor-pointer hover:-translate-y-1' : 'cursor-default',
+          !rolling && !success && !(die.hunger && die.value === 1) ? 'opacity-45 saturate-50' : '',
+          selected ? '-translate-y-3 drop-shadow-[0_0_0.6rem_var(--color-bone)]' : '',
+          selectable ? 'cursor-pointer hover:-translate-y-1.5' : 'cursor-default',
         ].join(' ')}
       >
-        <FaceIcon die={die} className='h-10 w-auto md:h-12' />
-        <span aria-hidden className='absolute right-2 bottom-1 text-[0.6rem] tabular-nums opacity-60'>
+        <D10 hunger={die.hunger} className='w-full'>
+          <FaceIcon die={die} className='h-7 w-auto md:h-9' />
+        </D10>
+        <span aria-hidden className='absolute inset-x-0 top-[58%] text-center text-[0.6rem] tabular-nums opacity-55'>
           {die.value}
         </span>
       </button>
@@ -222,13 +222,12 @@ export default function DiceRoller() {
           <Stepper label='Difficulty' value={difficulty} min={1} max={10} onChange={(v) => { setDifficulty(v); setResult(null); }} />
         </div>
 
-        <ul aria-label='Dice' aria-busy={rolling} className='flex min-h-44 flex-wrap content-center justify-center gap-3'>
+        <ul aria-label='Dice' aria-busy={rolling} className='flex min-h-44 flex-wrap content-center justify-center gap-x-3 gap-y-5'>
           {dice.map((die, i) =>
             die.value === 0 ? (
-              <li
-                key={`idle-${i}`}
-                className={`size-16 rounded-2xl md:size-20 ${die.hunger ? 'bg-accent/25' : 'border border-dashed border-bone/20'}`}
-              />
+              <li key={`idle-${i}`} className='w-16 opacity-30 md:w-20'>
+                <D10 hunger={die.hunger} className='w-full' />
+              </li>
             ) : (
               <DieFace
                 key={`${i}-${rolling ? 'r' : 's'}`}
@@ -287,11 +286,14 @@ export default function DiceRoller() {
               Rouse the blood
             </button>
             {rouse && (
-              <span
-                key={rouse.id}
-                className={`die-land grid size-12 place-items-center rounded-xl text-white ${rouse.value >= 6 ? 'border border-bone/25 bg-bone/[0.05] text-bone' : 'bg-accent'}`}
-              >
-                {rouse.value >= 6 ? <DiceSuccess aria-hidden className='h-7 w-auto' /> : <span className='font-display text-2xl'>{rouse.value}</span>}
+              <span key={rouse.id} className='die-land relative block w-12'>
+                <D10 className='w-full'>
+                  {rouse.value >= 6 ? (
+                    <DiceSuccess aria-hidden className='h-5 w-auto' />
+                  ) : (
+                    <span className='font-display text-lg leading-none'>{rouse.value}</span>
+                  )}
+                </D10>
               </span>
             )}
           </div>

@@ -16,6 +16,8 @@
   --color-blood: #c8102e;
   --color-paper: #efe9e1;
   --color-night: #0a0909;
+  /* Always-light text, e.g. on red, regardless of theme. */
+  --color-chalk: #efe9e1;
 }
 
 /* Theme-aware tokens: light = "Neon Nights", dark = "Classic Masquerade". */
@@ -86,6 +88,26 @@
 [data-theme='light'] .concept {
   --color-night: #efe9e1;
   --color-paper: #0a0909;
+}
+
+/*
+  The shared app UI (sheet, dice roller, kit) is written against ink/bone/
+  accent tokens; inside /concept they map onto the editorial palette, the
+  display font becomes Instrument Serif, and corners go square.
+*/
+.concept {
+  --ink: var(--color-night);
+  --color-bone: var(--color-paper);
+  --accent: var(--color-blood);
+  --accent-deep: color-mix(in oklab, var(--color-blood) 45%, var(--color-night));
+  --font-cormorant: var(--nf-instrument);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --die-regular: #2b2727;
+  --die-hunger: var(--color-blood);
 }
 
 body {

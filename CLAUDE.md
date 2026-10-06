@@ -387,6 +387,19 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 - Dice roller: `/dashboard/dice` (`app/ui/dice/DiceRoller.tsx`) on the pure rules in `app/lib/hunger-dice.ts` (also used by `/concept`). Includes rouse checks and Willpower rerolls.
 - Motion keyframes and easing tokens (`--ease-spring`, `--ease-out-expo`) are in `globals.css`; all motion is disabled under `prefers-reduced-motion`.
 
+## Planned: one theme per game
+
+Idea (not started): three World of Darkness games as full themes (layout, visuals and tone, not just colours), each with a dark and light variant:
+- **Vampire: The Masquerade**: the current revamp direction. Both variants stay dark.
+- **Werewolf: The Apocalypse**: its own visual world and palette. Both variants stay dark.
+- **Hunter: The Reckoning**: the `/concept` case-file editorial style. Can have a true light mode.
+
+Design the theme system around game + variant (e.g. `data-game` + `data-theme`). Assets in `brand-assets/`: Werewolf dice, tribe/auspice/other glyphs and logos; Hunter dice and logos; illustrations are Vampire-only.
+
+## Concept app (/concept)
+
+`/concept` (landing) and `/concept/dashboard/*` (board, dossiers, sheets, new file, dice) are the editorial "case files" alternative, likely the future Hunter theme. `app/concept/layout.tsx` applies the fonts and the `.concept` token remap in `globals.css` (ink→night, bone→paper, accent→blood, display font→Instrument Serif, square corners), so the shared sheet sections (`app/ui/sheets/sections.tsx`) and `DiceRoller` render in the concept style unchanged. Use `text-chalk` for text that must stay light (e.g. on red) in Daylight mode. Dice are drawn by `app/ui/dice/D10.tsx` (V5 d10 shape, themed via `--die-regular`/`--die-hunger`).
+
 ## Licensing (Dark Pack)
 
 Elysium uses World of Darkness IP under the [Dark Pack Agreement](https://www.paradoxinteractive.com/games/world-of-darkness/community/dark-pack-agreement). Requirements:

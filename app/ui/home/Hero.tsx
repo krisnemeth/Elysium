@@ -2,22 +2,21 @@ import type React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MdArrowOutward, MdKeyboardArrowDown } from 'react-icons/md';
+import { Elysium1, VtmAnkh } from '@/app/ui/svgs';
 import {
-  Elysium1,
-  VtmAnkh,
-  ToreadorTitle,
-  VentrueTitle,
-  NosferatuTitle,
-  BrujahTitle,
-  MalkavianTitle,
-  GangrelTitle,
-  LasombraTitle,
-  RavnosTitle,
-  TzimisceTitle,
-  TremereTitle,
-  HecataTitle,
-  BanuHaqimTitle,
-} from '@/app/ui/svgs';
+  ClanNameBanuHaqim,
+  ClanNameBrujah,
+  ClanNameGangrel,
+  ClanNameHecata,
+  ClanNameLasombra,
+  ClanNameMalkavian,
+  ClanNameNosferatu,
+  ClanNameRavnos,
+  ClanNameToreador,
+  ClanNameTremere,
+  ClanNameTzimisce,
+  ClanNameVentrue,
+} from '@/app/ui/svgs/official';
 
 type CoverArt = {
   src: string;
@@ -59,23 +58,9 @@ const COVERS = {
 
 const COVER: CoverArt = COVERS.paleVampire;
 
-// Left column reads bottom-to-top, right column top-to-bottom.
-const LEFT_CLANS = [
-  { Title: ToreadorTitle, width: 'w-24' },
-  { Title: VentrueTitle, width: 'w-28' },
-  { Title: NosferatuTitle, width: 'w-24' },
-  { Title: BrujahTitle, width: 'w-16' },
-  { Title: MalkavianTitle, width: 'w-24' },
-  { Title: GangrelTitle, width: 'w-20' },
-];
-const RIGHT_CLANS = [
-  { Title: LasombraTitle, width: 'w-24' },
-  { Title: RavnosTitle, width: 'w-20' },
-  { Title: TzimisceTitle, width: 'w-20' },
-  { Title: TremereTitle, width: 'w-20' },
-  { Title: HecataTitle, width: 'w-20' },
-  { Title: BanuHaqimTitle, width: 'w-28' },
-];
+// Official clan name logos. Left column reads bottom-to-top, right top-to-bottom.
+const LEFT_CLANS = [ClanNameToreador, ClanNameVentrue, ClanNameNosferatu, ClanNameBrujah, ClanNameMalkavian, ClanNameGangrel];
+const RIGHT_CLANS = [ClanNameLasombra, ClanNameRavnos, ClanNameTzimisce, ClanNameTremere, ClanNameHecata, ClanNameBanuHaqim];
 
 /*
   --cover is the portrait width. The ankh is sized and placed relative to it
@@ -137,13 +122,13 @@ export default function Hero() {
         className='pointer-events-none sticky top-0 z-20 hidden h-svh text-accent/70 [grid-area:1/1] md:block dark:text-bone/50'
       >
         <div className='absolute top-[84svh] left-7 flex w-[68svh] origin-top-left -rotate-90 items-center justify-between'>
-          {LEFT_CLANS.map(({ Title, width }, i) => (
-            <Title key={i} className={`h-auto ${width} drop-shadow-[0_0_0.6rem_var(--accent)] dark:drop-shadow-[0_0_0.6rem_#000]`} />
+          {LEFT_CLANS.map((Name, i) => (
+            <Name key={i} className='h-4 w-auto max-w-28 drop-shadow-[0_0_0.6rem_var(--accent)] dark:drop-shadow-[0_0_0.6rem_#000]' />
           ))}
         </div>
         <div className='absolute top-[16svh] left-[calc(100%-1.75rem)] flex w-[68svh] origin-top-left rotate-90 items-center justify-between'>
-          {RIGHT_CLANS.map(({ Title, width }, i) => (
-            <Title key={i} className={`h-auto ${width} drop-shadow-[0_0_0.6rem_var(--accent)] dark:drop-shadow-[0_0_0.6rem_#000]`} />
+          {RIGHT_CLANS.map((Name, i) => (
+            <Name key={i} className='h-4 w-auto max-w-28 drop-shadow-[0_0_0.6rem_var(--accent)] dark:drop-shadow-[0_0_0.6rem_#000]' />
           ))}
         </div>
         <span className='absolute bottom-0 left-[2.375rem] h-[12svh] w-px bg-current' />

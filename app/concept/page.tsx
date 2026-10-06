@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { serif, grotesk, mono } from './fonts';
 import Hero from './_components/Hero';
 import Marquee from './_components/Marquee';
 import Dossier from './_components/Dossier';
@@ -17,9 +16,7 @@ export const metadata: Metadata = {
 // Concept landing page: an editorial take on the V5 art direction.
 export default function ConceptPage() {
   return (
-    <div
-      className={`concept ${serif.variable} ${grotesk.variable} ${mono.variable} min-h-svh bg-night transition-colors duration-500 font-c-sans text-paper antialiased selection:bg-blood selection:text-paper`}
-    >
+    <>
       <Hero />
       <main>
         <Marquee />
@@ -29,6 +26,6 @@ export default function ConceptPage() {
         <Coterie />
         <Closing />
       </main>
-    </div>
+    </>
   );
 }
