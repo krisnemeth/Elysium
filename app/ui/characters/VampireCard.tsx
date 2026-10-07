@@ -47,22 +47,9 @@ function Footer({ c }: { c: Character }) {
 const CROCKETS = 'M19.2 136.5Q11.2 132.5 12.5 125.3 M380.8 136.5Q388.8 132.5 387.5 125.3 M54.1 88.8Q47.7 82.5 51.2 76.1 M345.9 88.8Q352.3 82.5 348.8 76.1 M101.5 50.6Q96.6 43.1 101.4 37.6 M298.5 50.6Q303.4 43.1 298.6 37.6 M148.9 24.3Q145.1 16.1 150.5 11.4 M251.1 24.3Q254.9 16.1 249.5 11.4';
 const KNOTS = [[12.5, 125.3], [51.2, 76.1], [101.4, 37.6], [150.5, 11.4], [387.5, 125.3], [348.8, 76.1], [298.6, 37.6], [249.5, 11.4]] as const;
 
-// A slim pinnacle where the arch meets the side (in viewBox units).
-function Pinnacle({ x }: { x: number }) {
-  return (
-    <g>
-      <path d={`M${x - 4} 205V150M${x + 4} 205V150`} />
-      <path d={`M${x - 5} 150L${x} 112L${x + 5} 150Z`} fill='currentColor' fillOpacity='0.25' />
-      <path d={`M${x - 3} 138l-3 -2M${x + 3} 138l3 -2M${x - 2} 126l-3 -2M${x + 2} 126l3 -2`} />
-      <circle cx={x} cy={108} r={2.2} fill='currentColor' />
-    </g>
-  );
-}
-
 /*
   The card's outline: straight sides that rise into a pointed arch, drawn as
-  a fine double line with crockets, a finial at the peak and a pinnacle at
-  each shoulder. Drawn in a 400x500 box that matches the portrait's 4:5, so it
+  a fine double line with crockets and a finial at the peak. Drawn in a 400x500 box that matches the portrait's 4:5, so it
   scales without distorting.
 */
 function GothicFrame() {
@@ -72,8 +59,6 @@ function GothicFrame() {
         <path d='M1 500V200C1 95 120 30 200 3C280 30 399 95 399 200V500' vectorEffect='non-scaling-stroke' />
         <path d='M7 500V203C7 101 123 37 200 10C277 37 393 101 393 203V500' stroke='var(--color-bone)' strokeOpacity='0.18' strokeWidth='0.8' vectorEffect='non-scaling-stroke' />
         <path d={CROCKETS} strokeWidth='1.2' vectorEffect='non-scaling-stroke' />
-        <Pinnacle x={1} />
-        <Pinnacle x={399} />
         <path d='M200 3V-9' vectorEffect='non-scaling-stroke' />
       </g>
       <g fill='currentColor'>
