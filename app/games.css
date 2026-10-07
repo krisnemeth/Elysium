@@ -293,41 +293,6 @@
   -webkit-mask: var(--arch) center / 100% 100% no-repeat;
 }
 
-/* Neon Nights: brick wall, and glowing tubes. */
-.neon-bricks {
-  background-color: #120a16;
-  background-image:
-    linear-gradient(rgb(0 0 0 / 0.55) 2px, transparent 2px),
-    linear-gradient(90deg, rgb(0 0 0 / 0.55) 2px, transparent 2px),
-    linear-gradient(90deg, rgb(0 0 0 / 0.55) 2px, transparent 2px);
-  background-size: 100% 22px, 56px 44px, 56px 44px;
-  background-position: 0 0, 0 0, 28px 22px;
-}
-.neon-tube {
-  border: 2px solid color-mix(in oklab, var(--tube) 35%, white);
-  box-shadow:
-    0 0 2px color-mix(in oklab, var(--tube) 60%, white),
-    0 0 10px var(--tube),
-    0 0 26px color-mix(in oklab, var(--tube) 70%, transparent),
-    inset 0 0 8px color-mix(in oklab, var(--tube) 60%, transparent);
-  transition: box-shadow 0.5s, filter 0.5s;
-}
-.group:hover .neon-tube {
-  filter: brightness(1.25) saturate(1.2);
-}
-.neon-text {
-  color: color-mix(in oklab, var(--tube) 25%, white);
-  text-shadow:
-    0 0 2px #fff,
-    0 0 8px var(--tube),
-    0 0 20px var(--tube),
-    0 0 42px color-mix(in oklab, var(--tube) 60%, transparent);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .neon-flicker-slow { animation: neon-flicker 9s steps(1, end) infinite; }
-  .neon-flicker-late { animation: neon-flicker 13s steps(1, end) 4s infinite; }
-}
-
 /* Masquerade card: the card's own top follows a pointed arch. */
 .gothic-arch-outer {
   --arch-outer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500' preserveAspectRatio='none'%3E%3Cpath d='M0 500V200C0 95 120 30 200 3C280 30 400 95 400 200V500Z'/%3E%3C/svg%3E");
