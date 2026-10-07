@@ -24,7 +24,9 @@ export default async function Vault() {
             <p className='text-xs tracking-[0.3em] text-accent uppercase'>Your vault</p>
             <h1 className='mt-3 font-display text-6xl leading-[0.95] tracking-tight'>Every creature, one vault.</h1>
             <p className='mt-4 max-w-[56ch] leading-relaxed text-bone/65'>
-              {CHARACTERS.length} characters across three games. Step into a game to see its dashboard, or start someone new.
+              {CHARACTERS.length === 0
+                ? 'Nobody here yet. Pick a game and create your first character; it saves as you go.'
+                : `${CHARACTERS.length} character${CHARACTERS.length === 1 ? '' : 's'} across three games. Step into a game to see its dashboard, or start someone new.`}
             </p>
           </div>
           <Link href='/vault/new' className='group inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-bone px-6 py-3 text-sm font-semibold text-ink transition hover:-translate-y-0.5 active:scale-[0.98] md:self-auto'>
@@ -42,6 +44,14 @@ export default async function Vault() {
                 <p className='mt-4 text-xs tracking-[0.2em] text-bone/50 uppercase'>
                   {list.length} {list.length === 1 ? noun.one : noun.many}
                 </p>
+                {list.length === 0 && (
+                  <p className='mt-4 text-sm leading-relaxed text-bone/55'>
+                    No {noun.many} yet.{' '}
+                    <Link href={gamePath(g, '/new')} className='text-bone underline underline-offset-4 hover:text-accent'>
+                      Create one
+                    </Link>
+                  </p>
+                )}
                 <ul className='mt-4 flex flex-col'>
                   {list.map((c) => (
                     <li key={c.slug}>

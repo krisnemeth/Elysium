@@ -78,6 +78,17 @@ export default function HunterOverview({ characters: cell }: { characters: Chara
             );
           })}
 
+          {cell.length === 0 && (
+            <div className='absolute top-1/2 left-1/2 w-[70%] max-w-xs -translate-x-1/2 -translate-y-1/2 -rotate-2 bg-[#fdf6e3] px-5 pt-6 pb-5 text-center text-[#2b2119] shadow-[0_0.75rem_1.5rem_-0.5rem_rgb(0_0_0/0.7)]'>
+              <span aria-hidden className='absolute -top-1.5 left-1/2 size-3.5 -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_35%_35%,#ff6b5e,#a3100f)] shadow-[0_2px_3px_rgb(0_0_0/0.5)]' />
+              <p className='font-display text-lg'>No files on the board.</p>
+              <p className='mt-1 text-xs leading-relaxed opacity-75'>Open a file on your first hunter and pin them up here.</p>
+              <Link href='/vault/hunter/new' className='mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#a3100f] underline underline-offset-4 hover:no-underline'>
+                <MdAdd aria-hidden /> Open the first file
+              </Link>
+            </div>
+          )}
+
           {/* Sticky notes */}
           <div className='absolute right-[4%] bottom-[5%] w-[34%] max-w-40 rotate-[4deg] bg-[#f3d36b] p-3 font-display text-xs text-[#3a2a10] shadow-[0_0.5rem_1rem_-0.5rem_rgb(0_0_0/0.6)] sm:w-[16%]'>
             Desperation: 1<br />
@@ -85,7 +96,7 @@ export default function HunterOverview({ characters: cell }: { characters: Chara
             <span className='opacity-70'>Don&apos;t go back to the bell tower.</span>
           </div>
           <div className='absolute bottom-[8%] left-[4%] w-[30%] max-w-36 -rotate-[5deg] bg-[#fdf6e3] p-3 font-display text-xs text-[#3a2a10] shadow-[0_0.5rem_1rem_-0.5rem_rgb(0_0_0/0.6)] sm:w-[14%]'>
-            {cell.length} hunters
+            {cell.length} hunter{cell.length === 1 ? '' : 's'}
             <br />
             {open} open file{open === 1 ? '' : 's'}
           </div>

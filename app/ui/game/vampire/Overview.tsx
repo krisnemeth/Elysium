@@ -3,6 +3,7 @@ import { MdAdd, MdArrowOutward } from 'react-icons/md';
 import { GiD10, GiScrollUnfurled } from 'react-icons/gi';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
+import EmptyState from '@/app/ui/kit/EmptyState';
 import CharacterRow from '@/app/ui/dashboard/CharacterRow';
 import { panel, buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
 import type { Character } from '@/app/lib/sample-characters';
@@ -59,21 +60,33 @@ export default function VampireOverview({ characters: mine }: { characters: Char
               <MdArrowOutward aria-hidden className='transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
             </Link>
           </div>
-          <Stagger as='ul' className='mt-3 flex flex-col'>
-            {finished.map((c) => (
-              <CharacterRow key={c.slug} character={c} />
-            ))}
-          </Stagger>
+          {finished.length > 0 ? (
+            <Stagger as='ul' className='mt-3 flex flex-col'>
+              {finished.map((c) => (
+                <CharacterRow key={c.slug} character={c} />
+              ))}
+            </Stagger>
+          ) : mine.length === 0 ? (
+            <EmptyState bare title='The night is young.' action={{ href: '/vault/vampire/new', label: 'Create your first Kindred' }}>
+              No Kindred in your coterie yet. Start a sheet and it will wait here, saved as you go.
+            </EmptyState>
+          ) : (
+            <p className='px-2 py-6 text-sm text-bone/50'>Nothing finished yet. Mark a draft as finished from its sheet.</p>
+          )}
         </section>
 
         <div className='flex flex-col gap-4 lg:col-span-2'>
           <section aria-labelledby='drafts-title' className={`p-5 ${panel}`}>
             <h2 id='drafts-title' className='px-2 font-display text-2xl'>Drafts</h2>
-            <Stagger as='ul' className='mt-3 flex flex-col'>
-              {drafts.map((c) => (
-                <CharacterRow key={c.slug} character={c} />
-              ))}
-            </Stagger>
+            {drafts.length > 0 ? (
+              <Stagger as='ul' className='mt-3 flex flex-col'>
+                {drafts.map((c) => (
+                  <CharacterRow key={c.slug} character={c} />
+                ))}
+              </Stagger>
+            ) : (
+              <p className='px-2 py-6 text-sm text-bone/50'>No drafts in progress. New characters start here.</p>
+            )}
           </section>
 
           <section
