@@ -39,15 +39,24 @@ The app was front-end only with sample data. This group makes characters persist
 
 ## Group 3 — Friends, groups and Storytellers
 
-- **Friends**: players find and connect with each other inside the app.
-- **Sessions**: friends start a session together, led either by a Storyteller
-  account or by the Storyteller bot.
-- **Storyteller bot**: leads the group through a story arc. The players make a
-  few choices up front; the rest is randomly generated. Every arc includes NPCs
-  from all three games, as most VtM chronicles do anyway.
-- Shared coteries / packs / cells; the Storyteller sees everyone's sheets.
-- Shared dice log: rolls appear live for the group.
-- Chronicle notes and a session log.
+- ✅ **Friends** (`/vault/friends`): add people by an 8-character friend code
+  (nobody can be searched for), accept or decline requests, set your display name.
+- ✅ **Chronicles** (`/vault/chronicles`): a play group with a main game, led by
+  a Storyteller account or the Storyteller bot. Invite friends, join, and bring
+  one of your characters (from any game).
+- ✅ **Storyteller access**: the Storyteller reads the sheets players bring,
+  read-only (`/vault/chronicles/[id]/characters/[characterId]`).
+- ✅ **Storyteller bot**: pick a tone and a setting; the bot builds a five-act
+  story with original NPCs from all three games (plus a mortal), suggested
+  rolls and game pressure. Any member chooses how the group proceeds; the
+  narration goes into the session log. Original writing only, see
+  `plans/dark-pack-compliance.md`.
+- ✅ **Shared dice log**: rolls made in play mode can be shared to a chronicle
+  and appear live for everyone (Supabase Realtime).
+- ✅ **Notes and session log**: shared notes, session entries and private notes
+  (visible to the author and the Storyteller).
+- Later: more bot material (threats, twists, places), per-scene NPC portraits,
+  rolling straight from the chronicle page.
 
 ## Group 4 — Story and polish
 

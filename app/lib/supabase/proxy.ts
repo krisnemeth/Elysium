@@ -4,7 +4,7 @@ import { hasSupabase, SUPABASE_KEY, SUPABASE_URL } from './env';
 
 // Pages that need a signed-in user. Everything else (landing pages, the
 // game choice, auth pages) stays public.
-const PROTECTED = /^\/vault\/(vampire|werewolf|hunter)(\/|$)|^\/vault\/?$|^\/account/;
+const PROTECTED = /^\/vault(\/|$)|^\/account/;
 
 /*
   Refreshes the Supabase session cookie on every request and sends signed-out

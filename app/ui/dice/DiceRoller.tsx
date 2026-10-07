@@ -175,6 +175,7 @@ export default function DiceRoller({
   onDespairChange,
   onWillpowerReroll,
   poolNote,
+  onResult,
 }: {
   game?: Game;
   pool?: number;
@@ -189,6 +190,8 @@ export default function DiceRoller({
   onWillpowerReroll?: () => void;
   // Explains where the pool came from, e.g. "Strength 3 + Brawl 2".
   poolNote?: string;
+  // Every roll and reroll, e.g. to share it with a chronicle.
+  onResult?: (result: RollResult, info: { reroll: boolean; difficulty: number }) => void;
 }) {
   const config = GAMES[game];
   const specialName = SPECIAL_DIE_NAME[game];
@@ -223,6 +226,7 @@ export default function DiceRoller({
 
   const finish = (r: RollResult, label?: string) => {
     setResult(r);
+    onResult?.(r, { reroll: Boolean(label), difficulty });
     const text = outcomeText(game, r.outcome);
     log({
       label: label ? `${label}: ${text.title}` : text.title,

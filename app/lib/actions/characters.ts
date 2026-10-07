@@ -122,7 +122,7 @@ export async function setPortrait(id: string, game: Game, formData: FormData): P
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims) return { ok: false, error: 'You’re signed out. Log in again to upload.' };
 
-  const { data: character } = await supabase.from('characters').select('id, portrait').eq('id', id).maybeSingle();
+  const { data: character } = await supabase.from('characters').select('id, portrait').eq('id', id).eq('user_id', claims.claims.sub).maybeSingle();
   if (!character) return { ok: false, error: 'This character no longer exists, or isn’t yours.' };
 
   const path = `${claims.claims.sub}/${id}/${crypto.randomUUID()}.${EXTENSIONS[file.type]}`;
@@ -143,7 +143,14 @@ export async function setPortrait(id: string, game: Game, formData: FormData): P
 // Back to the starter's original art, or the game's default figure.
 export async function removePortrait(id: string, game: Game): Promise<PortraitResult> {
   const supabase = await createClient();
-  const { data: character } = await supabase.from('characters').select('id, portrait, starter_key').eq('id', id).maybeSingle();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (!claims?.claims) return { ok: false, error: 'You’re signed out.' };
+  const { data: character } = await supabase
+    .from('characters')
+    .select('id, portrait, starter_key')
+    .eq('id', id)
+    .eq('user_id', claims.claims.sub)
+    .maybeSingle();
   if (!character) return { ok: false, error: 'This character no longer exists, or isn’t yours.' };
 
   const fallback = (character.starter_key && STARTER_PORTRAITS.get(character.starter_key)) || null;

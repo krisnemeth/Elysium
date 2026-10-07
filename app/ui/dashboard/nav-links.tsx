@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GiCastle, GiVampireCape, GiQuillInk, GiD10, GiBatWing, GiWolfHowl, GiCrossbow } from 'react-icons/gi';
+import { GiCastle, GiVampireCape, GiQuillInk, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire } from 'react-icons/gi';
+import { MdPeopleOutline } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 
 const linksFor = (game: Game) => [
@@ -10,6 +11,12 @@ const linksFor = (game: Game) => [
   { name: GAMES[game].noun.many === 'Hunters' ? 'Cell' : 'Characters', href: gamePath(game, '/characters'), icon: GiVampireCape },
   { name: 'New sheet', href: gamePath(game, '/new'), icon: GiQuillInk },
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
+];
+
+// Shared across games: the tables you play at and the people you play with.
+const TABLE_LINKS = [
+  { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire },
+  { name: 'Friends', href: '/vault/friends', icon: MdPeopleOutline },
 ];
 
 function isActive(pathname: string, href: string, game: Game) {
@@ -44,6 +51,18 @@ export function SideNavLinks({ game }: { game: Game }) {
           </li>
         );
       })}
+      <li aria-hidden className='mx-4 my-2 border-t border-bone/10' />
+      {TABLE_LINKS.map(({ name, href, icon: Icon }) => (
+        <li key={href}>
+          <Link
+            href={href}
+            className='group flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-bone/60 transition-colors duration-300 hover:bg-bone/[0.04] hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+          >
+            <Icon aria-hidden className='size-5 transition-[scale] duration-300 ease-(--ease-spring) group-hover:scale-110' />
+            {name}
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 }
@@ -52,8 +71,8 @@ export function SideNavLinks({ game }: { game: Game }) {
 export function TabBarLinks({ game }: { game: Game }) {
   const pathname = usePathname();
   return (
-    <ul className='grid grid-cols-4'>
-      {linksFor(game).map(({ name, href, icon: Icon }) => {
+    <ul className='grid grid-cols-5'>
+      {[...linksFor(game), TABLE_LINKS[0]].map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>
