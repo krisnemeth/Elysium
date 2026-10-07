@@ -278,3 +278,74 @@
     animation: none !important;
   }
 }
+
+/* ------------------------------------------------------------ character cards */
+
+/* Vampire cards carry both looks; the theme picks one. */
+.vtm-neon { display: none; }
+:root[data-theme='light'] .vtm-neon { display: block; }
+:root[data-theme='light'] .vtm-masq { display: none; }
+
+/* Masquerade: a pointed (lancet) arch, stretched to the window's box. */
+.gothic-arch {
+  --arch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100V36C0 16 26 5 50 0C74 5 100 16 100 36V100Z'/%3E%3C/svg%3E");
+  mask: var(--arch) center / 100% 100% no-repeat;
+  -webkit-mask: var(--arch) center / 100% 100% no-repeat;
+}
+
+/* Leaded quarry glass in the arch head. */
+.gothic-leading {
+  background:
+    repeating-linear-gradient(45deg, transparent 0 13px, rgb(0 0 0 / 0.55) 13px 14.5px),
+    repeating-linear-gradient(-45deg, transparent 0 13px, rgb(0 0 0 / 0.55) 13px 14.5px);
+  mask: linear-gradient(to bottom, black 0 30%, transparent 40%);
+  -webkit-mask: linear-gradient(to bottom, black 0 30%, transparent 40%);
+}
+
+/* Neon Nights: brick wall, and glowing tubes. */
+.neon-bricks {
+  background-color: #120a16;
+  background-image:
+    linear-gradient(rgb(0 0 0 / 0.55) 2px, transparent 2px),
+    linear-gradient(90deg, rgb(0 0 0 / 0.55) 2px, transparent 2px),
+    linear-gradient(90deg, rgb(0 0 0 / 0.55) 2px, transparent 2px);
+  background-size: 100% 22px, 56px 44px, 56px 44px;
+  background-position: 0 0, 0 0, 28px 22px;
+}
+.neon-tube {
+  border: 2px solid color-mix(in oklab, var(--tube) 35%, white);
+  box-shadow:
+    0 0 2px color-mix(in oklab, var(--tube) 60%, white),
+    0 0 10px var(--tube),
+    0 0 26px color-mix(in oklab, var(--tube) 70%, transparent),
+    inset 0 0 8px color-mix(in oklab, var(--tube) 60%, transparent);
+  transition: box-shadow 0.5s, filter 0.5s;
+}
+.group:hover .neon-tube {
+  filter: brightness(1.25) saturate(1.2);
+}
+.neon-text {
+  color: color-mix(in oklab, var(--tube) 25%, white);
+  text-shadow:
+    0 0 2px #fff,
+    0 0 8px var(--tube),
+    0 0 20px var(--tube),
+    0 0 42px color-mix(in oklab, var(--tube) 60%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .neon-flicker-slow { animation: neon-flicker 9s steps(1, end) infinite; }
+  .neon-flicker-late { animation: neon-flicker 13s steps(1, end) 4s infinite; }
+  .candle-glow { animation: firelight 3.2s ease-in-out infinite; }
+}
+
+/* Werewolf: claw marks raked across the card on hover. */
+.claw-mark {
+  transform-origin: top right;
+  scale: 1 0;
+  transition: scale 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.group:hover .claw-mark { scale: 1 1; }
+.group:hover .claw-mark:nth-child(2) { transition-delay: 0.05s; }
+.group:hover .claw-mark:nth-child(3) { transition-delay: 0.1s; }
+.wta-leaves { display: block; }
+:root[data-theme='light'] .wta-leaves { display: none; }

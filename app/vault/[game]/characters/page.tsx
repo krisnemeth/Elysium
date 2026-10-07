@@ -6,7 +6,7 @@ import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
 import { buttonPrimary } from '@/app/ui/kit/styles';
 import EmptyState from '@/app/ui/kit/EmptyState';
-import CharacterCard from '@/app/ui/characters/CharacterCard';
+import VampireCard from '@/app/ui/characters/VampireCard';
 import Pack from '@/app/ui/game/werewolf/Pack';
 import CellFiles from '@/app/ui/game/hunter/CellFiles';
 import { getCharacters, toCharacter } from '@/app/lib/data/characters';
@@ -56,7 +56,7 @@ export default async function Characters({ params }: PageProps<'/vault/[game]/ch
       ) : (
         <Stagger className='grid gap-5 sm:grid-cols-2 xl:grid-cols-3'>
           {list.map((c) => (
-            <CharacterCard key={c.slug} character={c} />
+            <VampireCard key={c.slug} character={c} />
           ))}
         </Stagger>
       )}
