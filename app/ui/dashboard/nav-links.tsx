@@ -16,8 +16,8 @@ const linksFor = (game: Game) => [
 
 const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
 const accountLinks = (game: Game) => [
-  { name: 'Friends', href: gamePath(game, '/friends'), icon: MdPeopleOutline },
   { name: 'Settings', href: gamePath(game, '/settings'), icon: MdOutlineSettings },
+  { name: 'Friends', href: gamePath(game, '/friends'), icon: MdPeopleOutline },
 ];
 
 function isActive(pathname: string, href: string, game: Game) {

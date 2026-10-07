@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FaPowerOff } from 'react-icons/fa';
 import { Elysium1 } from '@/app/ui/svgs';
-import ThemeSwitch from '@/app/ui/dashboard/ThemeSwitch';
+import ThemePicker from '@/app/ui/dashboard/ThemePicker';
 import { signOut } from '@/app/lib/actions/auth';
 import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
 import { panel } from '@/app/ui/kit/styles';
@@ -48,11 +48,11 @@ export default function SideNav({ game }: { game: Game }) {
           <div className='flex grow items-center justify-center px-2'>
             <Logo aria-label={GAMES[game].title} role='img' className='h-auto w-full max-w-40 text-bone/40' />
           </div>
-          <div aria-hidden className='mx-4 mb-2 border-t border-bone/10' />
+          <ThemePicker game={game} />
+          <div aria-hidden className='mx-4 my-2 border-t border-bone/10' />
           <SideNavLinks game={game} group='account' />
         </nav>
-        <div className='mt-1 flex flex-col gap-1'>
-          <ThemeSwitch game={game} />
+        <div className='mt-1'>
           <LogOut />
         </div>
       </aside>
@@ -65,7 +65,7 @@ export default function SideNav({ game }: { game: Game }) {
               <Elysium1 aria-hidden className='h-auto w-24 text-bone/90' />
             </Link>
             <div className='flex items-center gap-1'>
-              <ThemeSwitch game={game} compact />
+              <ThemePicker game={game} compact />
               <LogOut compact />
             </div>
           </div>
