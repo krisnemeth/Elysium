@@ -56,7 +56,7 @@ export default async function Vault() {
                   {list.map((c) => (
                     <li key={c.slug}>
                       <Link href={gamePath(g, `/characters/${c.slug}`)} className='group flex items-center gap-3 rounded-xl p-2 transition hover:translate-x-1 hover:bg-bone/[0.05]'>
-                        <Image src={c.image.src} width={80} height={100} alt='' className='size-11 rounded-lg object-cover' />
+                        <Image src={c.image.src} unoptimized={c.image.unoptimized} width={80} height={100} alt='' className='size-11 rounded-lg object-cover' />
                         <span className='min-w-0 grow'>
                           <span className='block truncate font-display text-lg leading-tight'>{c.name}</span>
                           <span className='block text-[0.65rem] tracking-[0.15em] text-bone/45 uppercase'>{factionName(c)}</span>

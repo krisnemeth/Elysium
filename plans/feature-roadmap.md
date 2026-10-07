@@ -22,7 +22,7 @@ The app was front-end only with sample data. This group makes characters persist
 5. ✅ **Starter characters** — every new account gets 3 per game (Trixx, Blake,
    Claire; Grey-Fang, Rosa, Old Tom; Dez, Father Ruiz, Vesna), built to the
    5th-edition creation rules with full backstories.
-6. **Character image upload** — players upload their own portrait (Supabase
+6. ✅ **Character image upload** — players upload their own portrait (Supabase
    Storage, private per user), replacing the default game figure.
 7. **Later setup:** Google and Discord sign-in (OAuth apps in the Supabase
    dashboard; the buttons are already in place), custom SMTP for auth emails,
@@ -34,6 +34,7 @@ The app was front-end only with sample data. This group makes characters persist
   Desperation and Willpower mid-session.
 - **Dice from the sheet**: pick e.g. Strength + Brawl to build the pool; the
   game's special dice come from the current tracker value.
+- **Dice graphics improvements**: perfect the dice graphics to match the real dice as close as possible. Explore the idea of dice tray backgrounds in 3D. 
 - **XP log**: record spends, with costs worked out from the rules.
 
 ## Group 3 — Friends, groups and Storytellers
@@ -71,3 +72,4 @@ The app was front-end only with sample data. This group makes characters persist
 
 
 May need to rename the app now that it holds all 3 games? Elysium is a VTM phrase, not sure if it applies to the other 2. Need to brainstorm about some names.
+Exploring Storyteller mode: A turn based view of the session connected player characters in current scenes. live dice roll feed

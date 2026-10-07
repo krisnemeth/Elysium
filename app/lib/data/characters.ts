@@ -5,6 +5,7 @@ import type { ClanKey } from '@/app/lib/clans';
 import { CLANS } from '@/app/lib/clans';
 import { GAMES, type Game } from '@/app/lib/games';
 import type { Sheet } from '@/app/lib/sheets/types';
+import { isUploadedPortrait } from '@/app/lib/portraits';
 
 export type CharacterRecord = {
   id: string;
@@ -32,7 +33,12 @@ export function toCharacter(row: CharacterRecord): Character {
     faction: row.faction ?? '',
     clan: isClan ? (row.faction as ClanKey) : undefined,
     status: row.status,
-    image: { src: row.portrait ?? GAMES[row.game].figure.src, width: 600, height: 800 },
+    image: {
+      src: row.portrait ?? GAMES[row.game].figure.src,
+      width: 600,
+      height: 800,
+      unoptimized: isUploadedPortrait(row.portrait),
+    },
     description: row.summary ?? '',
   };
 }

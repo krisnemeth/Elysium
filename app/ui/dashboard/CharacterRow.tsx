@@ -14,6 +14,7 @@ export default function CharacterRow({ character, style }: { character: Characte
         <span className='relative size-12 shrink-0 overflow-hidden rounded-lg ring-1 ring-bone/10'>
           <Image
             src={character.image.src}
+            unoptimized={character.image.unoptimized}
             width={96}
             height={96}
             alt=''

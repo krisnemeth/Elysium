@@ -182,7 +182,7 @@ export default function Home() {
               <li key={c.slug} className='group w-40 shrink-0 snap-start'>
                 <Link href={gamePath(c.game, '/characters')} className='block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone'>
                   <span className='relative block overflow-hidden rounded-xl'>
-                    <Image src={c.image.src} width={320} height={420} alt={`Portrait of ${c.name}.`} className='aspect-[3/4] w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0' />
+                    <Image src={c.image.src} unoptimized={c.image.unoptimized} width={320} height={420} alt={`Portrait of ${c.name}.`} className='aspect-[3/4] w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0' />
                     <span className='absolute top-2 left-2 rounded-full px-2 py-0.5 text-[0.6rem] tracking-[0.15em] text-white uppercase' style={{ background: GLOW[c.game] }}>
                       {GAMES[c.game].name}
                     </span>

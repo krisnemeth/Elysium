@@ -20,7 +20,7 @@ export default async function EditCharacter({ params }: PageProps<'/vault/[game]
   return (
     <div className='flex flex-col gap-8'>
       <PageHeader eyebrow={`Editing · ${GAMES[game].name}`} title={character.name || 'Unnamed'} description={character.summary ?? undefined} />
-      <CharacterEditor game={game} id={character.id} initialSheet={character.sheet} initialStatus={character.status}>
+      <CharacterEditor game={game} id={character.id} initialSheet={character.sheet} initialStatus={character.status} portrait={character.portrait}>
         <SheetForm game={game} />
       </CharacterEditor>
     </div>

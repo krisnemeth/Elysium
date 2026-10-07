@@ -7,6 +7,8 @@ import type { Game } from '@/app/lib/games';
 import type { Sheet } from '@/app/lib/sheets/types';
 import { createCharacter, setCharacterStatus, updateCharacter } from '@/app/lib/actions/characters';
 import { buttonGhost } from '@/app/ui/kit/styles';
+import PortraitPicker from '@/app/ui/characters/PortraitPicker';
+import { GAMES } from '@/app/lib/games';
 import { SheetProvider } from './SheetContext';
 
 type SaveState = 'saved' | 'dirty' | 'saving' | 'error';
@@ -22,12 +24,14 @@ export default function CharacterEditor({
   id: initialId,
   initialSheet,
   initialStatus = 'draft',
+  portrait,
   children,
 }: {
   game: Game;
   id: string | null;
   initialSheet: Sheet;
   initialStatus?: 'draft' | 'finished';
+  portrait?: string | null;
   children: ReactNode;
 }) {
   const [sheet, setSheet] = useState(initialSheet);
@@ -155,6 +159,11 @@ export default function CharacterEditor({
           </>
         )}
       </div>
+      {id && (
+        <div className='mb-6'>
+          <PortraitPicker id={id} game={game} name={sheet.profile.name ?? ''} src={portrait ?? GAMES[game].figure.src} />
+        </div>
+      )}
       {children}
     </SheetProvider>
   );

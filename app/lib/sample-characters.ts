@@ -10,7 +10,8 @@ export type Character = {
   faction: string;
   clan?: ClanKey;
   status: 'finished' | 'draft';
-  image: { src: string; width: number; height: number };
+  // Uploaded portraits are already sized in the browser, so they skip next/image optimisation.
+  image: { src: string; width: number; height: number; unoptimized?: boolean };
   description: string;
 };
 

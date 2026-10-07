@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Portrait uploads are capped at 2 MB, plus room for the form encoding.
+  experimental: {
+    serverActions: { bodySizeLimit: '2.2mb' },
+  },
   // The old Vampire-only dashboard moved into the cross-game vault.
   async redirects() {
     return [

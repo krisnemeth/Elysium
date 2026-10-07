@@ -23,6 +23,7 @@ export default function CharacterCard({
       <div className='relative aspect-[4/5] overflow-hidden'>
         <Image
           src={character.image.src}
+          unoptimized={character.image.unoptimized}
           width={character.image.width}
           height={character.image.height}
           alt={`Portrait of ${character.name}.`}

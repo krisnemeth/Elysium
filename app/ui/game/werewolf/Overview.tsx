@@ -88,7 +88,7 @@ export default function WerewolfOverview({ characters: pack }: { characters: Cha
                 <Link href={`/vault/werewolf/characters/${c.slug}`} className='group flex w-40 flex-col items-center text-center focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent'>
                   <span className='relative block'>
                     <span className='block size-36 overflow-hidden rounded-full ring-2 ring-bone/15 transition duration-700 ease-(--ease-out-expo) group-hover:-translate-y-2 group-hover:shadow-[0_0_2.5rem_-0.25rem_var(--accent)] group-hover:ring-accent'>
-                      <Image src={c.image.src} width={288} height={384} alt={`Portrait of ${c.name}.`} className='size-full object-cover transition-transform duration-1000 group-hover:scale-110' />
+                      <Image src={c.image.src} unoptimized={c.image.unoptimized} width={288} height={384} alt={`Portrait of ${c.name}.`} className='size-full object-cover transition-transform duration-1000 group-hover:scale-110' />
                     </span>
                     <span className='absolute -right-1 bottom-1 grid size-11 place-items-center rounded-full bg-ink ring-1 ring-bone/20'>
                       <FactionMark character={c} className='size-7 text-accent' />
