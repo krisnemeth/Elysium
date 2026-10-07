@@ -68,3 +68,6 @@ The app was front-end only with sample data. This group makes characters persist
 - **Open scene work**: darker Hunter cabin, candlelit attic inn, clipboard
   notepaper with aligned lines, the Werewolf cave's light source, new Vampire
   scenes. One scene at a time, checking in after each.
+
+
+May need to rename the app now that it holds all 3 games? Elysium is a VTM phrase, not sure if it applies to the other 2. Need to brainstorm about some names.

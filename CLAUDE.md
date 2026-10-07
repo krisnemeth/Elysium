@@ -168,13 +168,14 @@ The app models V5 (5th Edition) mechanics:
 
 ---
 
-## Environment Variables (to be added)
+## Environment Variables
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=      # server-side only, never expose to client
+SUPABASE_URL=
+SUPABASE_PUBLISHABLE_KEY=
 ```
+
+Supabase is only called on the server (Server Components, Server Actions, `proxy.ts`), so these have no `NEXT_PUBLIC_` prefix; Vercel won't save a Sensitive variable with that prefix. `app/lib/supabase/env.ts` also accepts the `NEXT_PUBLIC_` names. Locally they're in `.env.local`; on Vercel, under the project's environment variables (Production, Preview, Development). No secret / service-role key is used.
 
 ---
 
