@@ -6,7 +6,7 @@ import { GiD10, GiWolfHowl } from 'react-icons/gi';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
 import { panel, buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import type { Character } from '@/app/lib/sample-characters';
 import { AUSPICES, glyphUrl } from '@/app/lib/factions';
 import { FactionMark } from '@/app/ui/game/FactionMark';
 
@@ -25,8 +25,7 @@ function Moon({ lit }: { lit: number }) {
   );
 }
 
-export default function WerewolfOverview() {
-  const pack = CHARACTERS.filter((c) => c.game === 'werewolf');
+export default function WerewolfOverview({ characters: pack }: { characters: Character[] }) {
   const drafts = pack.filter((c) => c.status === 'draft').length;
 
   return (
@@ -78,7 +77,7 @@ export default function WerewolfOverview() {
         <Stagger as='ul' className='mt-6 flex flex-wrap justify-center gap-10 md:justify-start'>
           {pack.map((c) => (
             <li key={c.slug}>
-              <Link href='/vault/werewolf/characters' className='group flex w-40 flex-col items-center text-center focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent'>
+              <Link href={`/vault/werewolf/characters/${c.slug}`} className='group flex w-40 flex-col items-center text-center focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent'>
                 <span className='relative block'>
                   <span className='block size-36 overflow-hidden rounded-full ring-2 ring-bone/15 transition duration-700 ease-(--ease-out-expo) group-hover:-translate-y-2 group-hover:shadow-[0_0_2.5rem_-0.25rem_var(--accent)] group-hover:ring-accent'>
                     <Image src={c.image.src} width={288} height={384} alt={`Portrait of ${c.name}.`} className='size-full object-cover transition-transform duration-1000 group-hover:scale-110' />

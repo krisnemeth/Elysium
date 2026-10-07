@@ -4,7 +4,7 @@ import { MdAdd } from 'react-icons/md';
 import { GiD10 } from 'react-icons/gi';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import { buttonPrimary, buttonGhost, panel } from '@/app/ui/kit/styles';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import type { Character } from '@/app/lib/sample-characters';
 
 // Pin positions on the board (percent) and tilt, for up to six photos.
 const PINS = [
@@ -16,8 +16,7 @@ const PINS = [
   { x: 80, y: 56, r: 3 },
 ];
 
-export default function HunterOverview() {
-  const cell = CHARACTERS.filter((c) => c.game === 'hunter');
+export default function HunterOverview({ characters: cell }: { characters: Character[] }) {
   const open = cell.filter((c) => c.status === 'draft').length;
 
   return (
@@ -65,7 +64,7 @@ export default function HunterOverview() {
             return (
               <Link
                 key={c.slug}
-                href='/vault/hunter/characters'
+                href={`/vault/hunter/characters/${c.slug}`}
                 className='group absolute w-[30%] max-w-44 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent sm:w-[18%]'
                 style={{ left: `${p.x}%`, top: `${p.y}%`, rotate: `${p.r}deg` }}
               >

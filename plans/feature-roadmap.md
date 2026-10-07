@@ -46,3 +46,11 @@ the environment variables on Vercel.
 - **Open scene work**: darker Hunter cabin, candlelit attic inn, clipboard
   notepaper with aligned lines, the Werewolf cave's light source, new Vampire
   scenes. One scene at a time, checking in after each.
+
+Lore sheets as a feature
+when clicking sheets, user should get offered a choice of new char sheet or lore sheet. if lore sheet, then is it for location or PC or NPC.
+character sheets should have two appraches. the current, which is kind of the classic way digitized, almost like filling the paper-based char sheet. I'd like a stepped, guided beginner friendly approach, where new players are encouraged and guided through the process, with tutorials, tooltips, hints, and gated progress (meaning until they fill stuff in properly they can't progress, but friendly alerts should let them know). the stepped way would be pages without vertical scroll. then once the steps are all completed, they wuld essentially land on the classic sheet, but all filled in now. Once landing on the classic sheet, there should be tooltip explanation for everything hovered, unless turned off. They should be able to adjust these settings on their profile/setting page.
+Character image upload
+Storyteller bot
+We'll need friends inside the app, so players can connect with each other, and start a session either with a storyteller account in the lead, or with the Storyteller bot that will lead them through a chosen story arc that is built with a few choices, but then random-generated. These always include NPCs from all 3 games, as most VTM sessions do anyway.
+

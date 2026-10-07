@@ -23,7 +23,7 @@ export default function Pack({ members }: { members: Character[] }) {
             <h2 className='font-display text-2xl'>{c.name}</h2>
             <p className='mt-1 text-[0.65rem] tracking-[0.25em] text-accent uppercase'>{c.faction}</p>
             <p className='mt-3 text-sm leading-relaxed text-pretty text-bone/65'>{c.description}</p>
-            <Link href='/vault/werewolf/new' className='mt-4 inline-block text-sm text-bone transition-colors hover:text-accent'>
+            <Link href={`/vault/werewolf/characters/${c.slug}`} className='mt-4 inline-block text-sm text-bone transition-colors hover:text-accent'>
               Open sheet &rarr;
             </Link>
           </div>

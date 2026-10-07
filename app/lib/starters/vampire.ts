@@ -7,6 +7,16 @@ import type { Starter } from '../sheets/types';
 // Health = Stamina + 3, Willpower = Composure + Resolve, Humanity 7 (adjusted
 // by predator type), Hunger 1, Blood Potency 1 for a 12th-generation neonate.
 
+// What Blood Potency 1 gives a 12th-generation neonate.
+const BLOOD_POTENCY_1 = {
+  bloodSurge: 'Add 2 dice',
+  mendAmount: '1 point of Superficial damage',
+  powerBonus: 'None',
+  rouseReroll: 'Level 1 Disciplines',
+  baneSeverity: '2',
+  feedingPenalty: 'None',
+};
+
 const GLASGOW_TENETS =
   'Elysium is neutral ground: no violence, no feeding, no Disciplines on the unwilling inside it.\nThe Masquerade comes before every grudge.\nNo one is Embraced without the Prince’s leave, Anarch or not.';
 
@@ -32,6 +42,7 @@ export const VAMPIRES: Starter[] = [
         clan: 'Brujah',
         generation: '12th',
         sect: 'Anarch',
+        ...BLOOD_POTENCY_1,
       },
       attributes: { Strength: 4, Dexterity: 3, Stamina: 3, Charisma: 2, Manipulation: 2, Composure: 1, Intelligence: 2, Wits: 3, Resolve: 2 },
       skills: {
@@ -59,7 +70,7 @@ export const VAMPIRES: Starter[] = [
       trackers: { health: 6, willpower: 3, humanity: 6, hunger: 1 },
       bloodPotency: 1,
       bane:
-        'Violence: when she rolls to resist a fury frenzy, she subtracts dice equal to her Bane Severity (1).',
+        'Violence: when she rolls to resist a fury frenzy, she subtracts dice equal to her Bane Severity (2).',
       tenets: GLASGOW_TENETS,
       advantages: [
         { name: 'Contacts', dots: 3, kind: 'background', note: 'Criminal underworld: fences, bouncers, a getaway driver', source: 'Predator type' },
@@ -106,6 +117,7 @@ export const VAMPIRES: Starter[] = [
         clan: 'Nosferatu',
         generation: '12th',
         sect: 'Camarilla',
+        ...BLOOD_POTENCY_1,
       },
       attributes: { Strength: 2, Dexterity: 3, Stamina: 2, Charisma: 1, Manipulation: 2, Composure: 2, Intelligence: 4, Wits: 3, Resolve: 3 },
       skills: {
@@ -127,7 +139,7 @@ export const VAMPIRES: Starter[] = [
       trackers: { health: 5, willpower: 5, humanity: 7, hunger: 1 },
       bloodPotency: 1,
       bane:
-        'Repulsiveness: he can never pass for human. Rolls to disguise himself as human fail, and his Charisma-based social rolls with mortals suffer a penalty equal to his Bane Severity (1).',
+        'Repulsiveness: he can never pass for human. Rolls to disguise himself as human fail, and his Charisma-based social rolls with mortals suffer a penalty equal to his Bane Severity (2).',
       tenets: GLASGOW_TENETS,
       advantages: [
         { name: 'Resources', dots: 1, kind: 'background', note: 'Selling information', source: 'Predator type' },
@@ -173,6 +185,7 @@ export const VAMPIRES: Starter[] = [
         clan: 'Malkavian',
         generation: '12th',
         sect: 'Camarilla',
+        ...BLOOD_POTENCY_1,
       },
       attributes: { Strength: 1, Dexterity: 2, Stamina: 2, Charisma: 3, Manipulation: 2, Composure: 2, Intelligence: 3, Wits: 4, Resolve: 3 },
       skills: {
@@ -203,7 +216,7 @@ export const VAMPIRES: Starter[] = [
       trackers: { health: 5, willpower: 5, humanity: 8, hunger: 1 },
       bloodPotency: 1,
       bane:
-        'Fractured Perspective: when she suffers a Bestial Failure or a Compulsion, her derangement takes hold, and she takes a penalty equal to her Bane Severity (1) to one category of dice pools for the scene.',
+        'Fractured Perspective: when she suffers a Bestial Failure or a Compulsion, her derangement takes hold, and she takes a penalty equal to her Bane Severity (2) to one category of dice pools for the scene.',
       tenets: GLASGOW_TENETS,
       advantages: [
         { name: 'Herd', dots: 2, kind: 'background', note: 'Regular clients who come back for readings, and give' },

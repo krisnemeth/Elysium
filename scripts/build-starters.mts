@@ -78,6 +78,7 @@ for (const s of STARTERS) {
     extra.forEach((d) => check(s.name, predator.disciplines.includes(d.name) && d.dots === 1, `${d.name} is not from the clan or predator type`));
     check(s.name, sheet.trackers.humanity === 7 + predator.humanity, `Humanity must be ${7 + predator.humanity}`);
     check(s.name, sheet.trackers.hunger === 1 && sheet.bloodPotency === 1, 'start at Hunger 1, Blood Potency 1');
+    check(s.name, sheet.profile.baneSeverity === '2' && (sheet.bane ?? '').includes('Bane Severity (2)'), 'Blood Potency 1 means Bane Severity 2');
     const required = Object.entries(sheet.skills).filter(([k, v]) => REQUIRED_SPECIALTY.includes(k) && v!.dots > 0);
     required.forEach(([k, v]) => check(s.name, Boolean(v!.specialty), `${k} needs a specialty`));
     check(s.name, specialties.some(([k]) => predator.specialty.includes(k)), 'needs the predator type specialty');
@@ -130,6 +131,12 @@ on conflict (key) do update set
   portrait = excluded.portrait,
   summary = excluded.summary,
   sheet = excluded.sheet;
+
+-- Refresh starter copies nobody has edited yet.
+update public.characters c
+set sheet = s.sheet, name = s.name, faction = s.faction, portrait = s.portrait, summary = s.summary
+from public.starter_characters s
+where c.starter_key = s.key and c.updated_at = c.created_at;
 
 -- Give existing accounts the starters they don't have yet.
 insert into public.characters (user_id, game, name, faction, portrait, summary, status, sheet, starter_key)

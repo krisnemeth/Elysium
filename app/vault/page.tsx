@@ -6,11 +6,12 @@ import Navbar from '@/app/ui/navbar';
 import Stagger from '@/app/ui/kit/Stagger';
 import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
 import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import { getCharacters, toCharacter } from '@/app/lib/data/characters';
 
 export const metadata: Metadata = { title: 'Your vault' };
 
-export default function Vault() {
+export default async function Vault() {
+  const CHARACTERS = (await getCharacters()).map(toCharacter);
   return (
     <div data-game='wod' className='min-h-svh bg-ink text-bone transition-colors duration-500'>
       <Navbar
@@ -44,7 +45,7 @@ export default function Vault() {
                 <ul className='mt-4 flex flex-col'>
                   {list.map((c) => (
                     <li key={c.slug}>
-                      <Link href={gamePath(g, '/characters')} className='group flex items-center gap-3 rounded-xl p-2 transition hover:translate-x-1 hover:bg-bone/[0.05]'>
+                      <Link href={gamePath(g, `/characters/${c.slug}`)} className='group flex items-center gap-3 rounded-xl p-2 transition hover:translate-x-1 hover:bg-bone/[0.05]'>
                         <Image src={c.image.src} width={80} height={100} alt='' className='size-11 rounded-lg object-cover' />
                         <span className='min-w-0 grow'>
                           <span className='block truncate font-display text-lg leading-tight'>{c.name}</span>

@@ -5,11 +5,10 @@ import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
 import CharacterRow from '@/app/ui/dashboard/CharacterRow';
 import { panel, buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import type { Character } from '@/app/lib/sample-characters';
 
 // Vampire dashboard overview (the revamp design).
-export default function VampireOverview() {
-  const mine = CHARACTERS.filter((c) => c.game === 'vampire');
+export default function VampireOverview({ characters: mine }: { characters: Character[] }) {
   const finished = mine.filter((c) => c.status === 'finished');
   const drafts = mine.filter((c) => c.status === 'draft');
 

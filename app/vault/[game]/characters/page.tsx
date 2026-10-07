@@ -8,7 +8,7 @@ import { buttonPrimary } from '@/app/ui/kit/styles';
 import CharacterCard from '@/app/ui/characters/CharacterCard';
 import Pack from '@/app/ui/game/werewolf/Pack';
 import CellFiles from '@/app/ui/game/hunter/CellFiles';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import { getCharacters, toCharacter } from '@/app/lib/data/characters';
 import { GAMES, gamePath, isGame } from '@/app/lib/games';
 
 export const metadata: Metadata = { title: 'Characters' };
@@ -18,7 +18,7 @@ const TITLES = { vampire: 'Your coterie.', werewolf: 'Your pack.', hunter: 'The 
 export default async function Characters({ params }: PageProps<'/vault/[game]/characters'>) {
   const { game } = await params;
   if (!isGame(game)) notFound();
-  const list = CHARACTERS.filter((c) => c.game === game);
+  const list = (await getCharacters(game)).map(toCharacter);
   const { noun } = GAMES[game];
 
   return (

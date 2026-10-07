@@ -384,8 +384,9 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 
 - Shell: `app/dashboard/layout.tsx` (ambient backdrop + `ui/dashboard/sidenav.tsx`: glass sidebar on desktop, top bar + bottom tab bar on phones). `app/dashboard/template.tsx` animates every page in.
 - Shared kit in `app/ui/kit/`: `styles.ts` (panel, buttons, field classes), `PageHeader`, `Stagger` (cascading entrance), `DotRating` (V5 dot/box ratings, keyboard slider). Theme toggle: `app/ui/ThemeToggle.tsx`; theme script: `app/lib/theme.ts`.
-- Character sheet fields live in `app/ui/sheets/fields.tsx`; each sheet section component owns its own state (nothing is persisted yet).
-- Sample data: `app/lib/sample-characters.ts`; clan → official symbol/name logo: `app/lib/clans.ts`.
+- Character sheets: one `Sheet` object (`app/lib/sheets/types.ts`) held by `app/ui/sheets/CharacterEditor.tsx`, which autosaves it (900 ms debounce) through the server actions in `app/lib/actions/characters.ts`. Sections (`app/ui/sheets/sections/`) read and write it via `useSheet()` / `useSheetFields()` from `SheetContext.tsx`; per-game section lists are in `game-sheets.tsx`. Inputs are in `fields.tsx`.
+- Characters live in Supabase (`public.characters`, RLS: owner only); reads go through `app/lib/data/characters.ts`. New accounts get copies of the 9 starters (`app/lib/starters/`, validated and turned into a migration by `node scripts/build-starters.mts <file>`).
+- Sample data (landing and `/concept` only): `app/lib/sample-characters.ts`; clan → official symbol/name logo: `app/lib/clans.ts`.
 - Dice roller: `/dashboard/dice` (`app/ui/dice/DiceRoller.tsx`) on the pure rules in `app/lib/hunger-dice.ts` (also used by `/concept`). Includes rouse checks and Willpower rerolls.
 - Motion keyframes and easing tokens (`--ease-spring`, `--ease-out-expo`) are in `globals.css`; all motion is disabled under `prefers-reduced-motion`.
 

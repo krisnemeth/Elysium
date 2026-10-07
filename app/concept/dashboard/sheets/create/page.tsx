@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import Headline from '../../../_app/Headline';
 import SheetNav from '@/app/ui/sheets/SheetNav';
-import { SHEET_SECTIONS } from '@/app/ui/sheets/sections';
+import { GAME_SHEETS } from '@/app/ui/sheets/game-sheets';
+import LocalSheet from '@/app/ui/sheets/LocalSheet';
+
+const SHEET_SECTIONS = GAME_SHEETS.vampire;
 import { LogoVampire } from '@/app/ui/svgs/official';
 
 export const metadata: Metadata = { title: 'New file' };
@@ -16,6 +19,7 @@ export default function NewFile() {
         aside={<LogoVampire aria-label='Vampire: The Masquerade' role='img' className='h-auto w-56 text-paper/80' />}
       />
       <SheetNav sections={SHEET_SECTIONS.map(({ id, label }) => ({ id, label }))} />
+      <LocalSheet game='vampire'>
       <form className='flex flex-col'>
         {SHEET_SECTIONS.map(({ id, label, body }, i) => (
           <section key={id} id={id} aria-labelledby={`${id}-title`} className='reveal scroll-mt-48 border-t border-paper/20 py-12 md:grid md:grid-cols-12 md:gap-10'>
@@ -27,6 +31,7 @@ export default function NewFile() {
           </section>
         ))}
       </form>
+      </LocalSheet>
     </div>
   );
 }
