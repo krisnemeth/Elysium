@@ -1,16 +1,29 @@
-import React from 'react';
-import { VtmAnkh } from '../svgs';
+import { LogoAnkh } from '@/app/ui/svgs/official';
+import Glyph from '@/app/ui/dice/Glyph';
 
-interface CategoryDividersProps {
-  title: string;
+// The game's mark, chosen by the surrounding [data-game] (ankh by default).
+function Mark({ flip }: { flip?: boolean }) {
+  const rot = flip ? '-rotate-90' : 'rotate-90';
+  return (
+    <>
+      <LogoAnkh aria-hidden className={`h-4 w-auto ${rot} text-accent in-data-[game=hunter]:hidden in-data-[game=werewolf]:hidden`} />
+      <Glyph name='wta-claw.png' className={`hidden size-5 text-accent in-data-[game=werewolf]:inline-block ${flip ? '-scale-x-100' : ''}`} />
+      <Glyph name='htr-flame.png' className='hidden size-5 text-accent in-data-[game=hunter]:inline-block' />
+    </>
+  );
 }
 
-export default function CategoryDividers({ title }: CategoryDividersProps) {
+// Section heading for character sheets.
+export default function CategoryDividers({ title, id }: { title: string; id?: string }) {
   return (
-    <div className='flex justify-center border-b border-slate-300 mx-1 md:mx-2 xl:mx-4'>
-      <VtmAnkh className='h-4 text-slate-300 rotate-90 mr-4 mt-4' />
-      <h2 className='text-slate-300 text-xl text-center py-3'>{title}</h2>
-      <VtmAnkh className='h-4 text-slate-300 -rotate-90 ml-4 mt-4' />
+    <div className='flex items-center gap-4'>
+      <span className='h-px grow bg-linear-to-r from-transparent to-bone/20' />
+      <Mark />
+      <h2 id={id} className='text-center font-display text-3xl'>
+        {title}
+      </h2>
+      <Mark flip />
+      <span className='h-px grow bg-linear-to-l from-transparent to-bone/20' />
     </div>
   );
 }

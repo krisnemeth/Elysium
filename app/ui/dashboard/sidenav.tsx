@@ -1,62 +1,89 @@
 import Link from 'next/link';
-import NavLinks from '@/app/ui/dashboard/nav-links';
 import { FaPowerOff } from 'react-icons/fa';
-import {
-  VtmLogo,
-  VtmAnkh,
-  Elysium1,
-  AnarchLogo,
-  SabbatLogo,
-} from '@/app/ui/svgs';
-import { GiDove, GiD10 } from 'react-icons/gi';
-// import { signOut } from '@/auth';
+import { Elysium1 } from '@/app/ui/svgs';
+import ThemeToggle from '@/app/ui/ThemeToggle';
+import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
+import { panel } from '@/app/ui/kit/styles';
+import { GAMES, type Game } from '@/app/lib/games';
 
-export default function SideNav() {
+function LogOut({ compact = false }: { compact?: boolean }) {
   return (
-    <div className='z-50 fixed top-0 md:relative flex bg-black md:h-full w-full flex-col px-2 pb-2 xl:py-2 md:px-2 border border-slate-300/50 rounded-xl'>
-      {/* md:flex-col md:items-center md:justify-center */}
-      <div className='mb-2 flex items-center justify-between md:justify-center bg-black h-14 md:h-16 rounded-md translate-y-2'>
-        <div className='logo text-slate-300'>
-          <Link href='/'>
-            <Elysium1 className=' text-slate-300/80 drop-shadow-[0_0_0.3rem_#ffffff70] w-36 md:w-28 lg:w-40' />
-            {/* <GiDove className='text-2xl md:text-3xl mb-1 mr-2 md:mr-2' />
-            <p className='relative text-2xl md:text-3xl md:ml-2'>Elysium</p> */}
-          </Link>
-        </div>
-        {/* <div className='flex items-start md:hidden text-slate-300'>
-          <VtmAnkh className=' text-slate-300/80 drop-shadow-[0_0_0.3rem_#ffffff70] w-5  mb-2 ml-2' />
-          <AnarchLogo className=' text-slate-300/80 drop-shadow-[0_0_0.3rem_#ffffff70] w-6  mb-2 ml-2' />
-          <SabbatLogo className=' text-slate-300/80 drop-shadow-[0_0_0.3rem_#ffffff70] w-12  mb-2' />
-        </div> */}
-      </div>
+    <form
+      action={async () => {
+        'use server';
+        // await signOut();
+      }}
+    >
+      <button
+        className={`flex items-center gap-3 rounded-xl text-sm text-bone/60 transition-colors duration-300 hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+          compact ? 'p-2' : 'w-full px-4 py-3 hover:bg-bone/[0.04]'
+        }`}
+      >
+        <FaPowerOff aria-hidden className='size-4' />
+        <span className={compact ? 'sr-only' : ''}>Log out</span>
+      </button>
+    </form>
+  );
+}
 
-      <div className='bottom-0 flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2 mt-2'>
-        <NavLinks />
-        <div className='hidden h-auto w-full grow bg-black md:block rounded-md'>
-          <div className='flex flex-col items-center justify-center mt-12'>
-            <VtmAnkh className='text-xl text-rose-600/70 dark:text-red-800/70 w-28' />
-          </div>
-        </div>
-        <div>
-          <Link href='https://vtm-diceroll.netlify.app/' target='_blank'>
-            <button className='flex h-[48px] w-full grow items-center rounded-md justify-center gap-2 bg-black p-3 text-base text-slate-300 border border-slate-300/50 dark:hover:bg-red-800 dark:hover:border-red-800 hover:bg-rose-600 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3 '>
-              <GiD10 className='w-6' />
-              <div className='hidden md:block mt-1'>Dice Roller</div>
-            </button>
-          </Link>
-        </div>
-        <form
-          action={async () => {
-            'use server';
-            // await signOut();
-          }}
+// The same navigation for every game; each game and mode gives it a different frame (.frame).
+export default function SideNav({ game }: { game: Game }) {
+  const { Logo, modes } = GAMES[game];
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className={`frame fixed inset-y-4 left-4 z-40 hidden w-60 flex-col p-4 md:flex ${panel}`}>
+        <Link
+          href='/vault'
+          aria-label='Your vault'
+          className='mt-2 flex justify-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent'
         >
-          <button className='flex h-[48px] w-full grow items-center rounded-md justify-center gap-2 bg-black p-3 text-base text-slate-300 border border-slate-300/50 dark:hover:bg-red-800 dark:hover:border-red-800 hover:bg-rose-600 duration-500 ease-in-out md:flex-none md:justify-start md:p-2 md:px-3 '>
-            <FaPowerOff className='w-6' />
-            <div className='hidden md:block mt-1'>Log Out</div>
-          </button>
-        </form>
-      </div>
-    </div>
+          <Elysium1 aria-hidden className='h-auto w-32 text-bone/90 drop-shadow-[0_0_0.6rem_var(--accent)]' />
+        </Link>
+
+        <div className='mt-6 mb-6'>
+          <GameSwitcher game={game} />
+        </div>
+
+        <nav aria-label='Dashboard'>
+          <SideNavLinks game={game} />
+        </nav>
+
+        <div className='flex grow items-center justify-center px-2'>
+          <Logo aria-label={GAMES[game].title} role='img' className='h-auto w-full max-w-40 text-bone/40' />
+        </div>
+
+        <div className='flex flex-col gap-1 border-t border-bone/10 pt-3'>
+          <ThemeToggle
+            labels={modes}
+            className='rounded-xl px-4 py-3 text-sm text-bone/60 transition-colors duration-300 hover:bg-bone/[0.04] hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+          />
+          <LogOut />
+        </div>
+      </aside>
+
+      {/* Phone top bar */}
+      <header className='fixed inset-x-0 top-0 z-40 px-3 pt-3 md:hidden'>
+        <div className={`frame flex flex-col gap-2 px-3 py-2 ${panel}`}>
+          <div className='flex h-10 items-center justify-between'>
+            <Link href='/vault' aria-label='Your vault'>
+              <Elysium1 aria-hidden className='h-auto w-24 text-bone/90' />
+            </Link>
+            <div className='flex items-center gap-1'>
+              <ThemeToggle labels={modes} labelClassName='sr-only' className='rounded-xl p-2 text-bone/70' />
+              <LogOut compact />
+            </div>
+          </div>
+          <GameSwitcher game={game} compact />
+        </div>
+      </header>
+
+      {/* Phone tab bar */}
+      <nav aria-label='Dashboard' className='fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden'>
+        <div className={`frame ${panel}`}>
+          <TabBarLinks game={game} />
+        </div>
+      </nav>
+    </>
   );
 }

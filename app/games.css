@@ -1,0 +1,280 @@
+/*
+  Per-game themes. A game's pages render inside [data-game="vampire|werewolf|
+  hunter"]; the mode comes from <html data-theme="dark|light">. Each game x
+  mode sets the palette and fonts, a frame for the shared navigation, and a
+  looping ambient animation (see app/ui/game/Ambience.tsx).
+
+  Vampire uses the root tokens (Masquerade / Neon Nights).
+*/
+
+/* ---------------------------------------------------------------- tokens */
+
+[data-game='werewolf'] {
+  /* Moonlit forest */
+  --ink: #0a110e;
+  --color-bone: #e3e9df;
+  --accent: #e0562e;
+  --accent-deep: #1d3a2a;
+  --font-cormorant: var(--font-cinzel);
+}
+:root[data-theme='light'] [data-game='werewolf'] {
+  /* The cave */
+  --ink: #16110c;
+  --color-bone: #efe5d3;
+  --accent: #ef8a3c;
+  --accent-deep: #4d2f17;
+}
+
+[data-game='hunter'] {
+  /* The cabin */
+  --ink: #120d09;
+  --color-bone: #f1e6d2;
+  --accent: #f08a24;
+  --accent-deep: #4a2a12;
+  --font-cormorant: var(--font-special-elite);
+  font-family: var(--font-courier), ui-monospace, monospace;
+}
+:root[data-theme='light'] [data-game='hunter'] {
+  /* The inn: a genuinely light room */
+  --ink: #f2e9d8;
+  --color-bone: #2b2119;
+  --accent: #b9530f;
+  --accent-deep: #e2c79c;
+}
+
+/* The overarching World of Darkness pages (landing, vault hub, game choice). */
+[data-game='wod'] {
+  --ink: #0c0c0d;
+  --color-bone: #ece8e1;
+  --accent: #c0182f;
+  --accent-deep: #2b2b30;
+}
+:root[data-theme='light'] [data-game='wod'] {
+  --ink: #ece8e1;
+  --color-bone: #141414;
+  --accent: #a50f24;
+  --accent-deep: #cfc8bc;
+}
+
+/* ---------------------------------------------------------------- frames */
+
+/* Frames draw with ::before/::after, so the element must be positioned
+   (the sidebar and bars are fixed; the landing navbar is relative). */
+.frame {
+  isolation: isolate;
+}
+
+/* Vampire, Masquerade: gothic double rule with ornamented corners. */
+:root[data-theme='dark'] [data-game='vampire'] .frame,
+:root:not([data-theme]) [data-game='vampire'] .frame {
+  border-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  outline: 1px solid color-mix(in oklab, var(--color-bone) 10%, transparent);
+  outline-offset: 4px;
+}
+:root[data-theme='dark'] [data-game='vampire'] .frame::before,
+:root:not([data-theme]) [data-game='vampire'] .frame::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  pointer-events: none;
+  z-index: 1;
+  background: var(--accent);
+  --c-tl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg transform='rotate(0 20 20)'%3E%3Cpath d='M2 38V14C2 7 7 2 14 2h24' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cpath d='M8 38V18c0-6 4-10 10-10h20' fill='none' stroke='black' stroke-width='1'/%3E%3Ccircle cx='14' cy='14' r='3'/%3E%3Cpath d='M2 2l8 8M2 2h6M2 2v6' stroke='black' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  --c-tr: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg transform='rotate(90 20 20)'%3E%3Cpath d='M2 38V14C2 7 7 2 14 2h24' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cpath d='M8 38V18c0-6 4-10 10-10h20' fill='none' stroke='black' stroke-width='1'/%3E%3Ccircle cx='14' cy='14' r='3'/%3E%3Cpath d='M2 2l8 8M2 2h6M2 2v6' stroke='black' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  --c-br: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg transform='rotate(180 20 20)'%3E%3Cpath d='M2 38V14C2 7 7 2 14 2h24' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cpath d='M8 38V18c0-6 4-10 10-10h20' fill='none' stroke='black' stroke-width='1'/%3E%3Ccircle cx='14' cy='14' r='3'/%3E%3Cpath d='M2 2l8 8M2 2h6M2 2v6' stroke='black' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  --c-bl: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg transform='rotate(270 20 20)'%3E%3Cpath d='M2 38V14C2 7 7 2 14 2h24' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cpath d='M8 38V18c0-6 4-10 10-10h20' fill='none' stroke='black' stroke-width='1'/%3E%3Ccircle cx='14' cy='14' r='3'/%3E%3Cpath d='M2 2l8 8M2 2h6M2 2v6' stroke='black' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  mask:
+    var(--c-tl) top left / 34px no-repeat,
+    var(--c-tr) top right / 34px no-repeat,
+    var(--c-bl) bottom left / 34px no-repeat,
+    var(--c-br) bottom right / 34px no-repeat;
+  -webkit-mask:
+    var(--c-tl) top left / 34px no-repeat,
+    var(--c-tr) top right / 34px no-repeat,
+    var(--c-bl) bottom left / 34px no-repeat,
+    var(--c-br) bottom right / 34px no-repeat;
+}
+
+/* Vampire, Neon Nights: a flickering neon tube. */
+:root[data-theme='light'] [data-game='vampire'] .frame {
+  border: 1.5px solid color-mix(in oklab, var(--accent) 85%, white);
+  box-shadow:
+    0 0 0.4rem var(--accent),
+    0 0 1.4rem color-mix(in oklab, var(--accent) 60%, transparent),
+    inset 0 0 0.6rem color-mix(in oklab, var(--accent) 45%, transparent);
+  animation: neon-flicker 7s steps(1, end) infinite;
+}
+
+/* Werewolf, Moonlit forest: a border of leaves and vines. */
+:root[data-theme='dark'] [data-game='werewolf'] .frame,
+:root:not([data-theme]) [data-game='werewolf'] .frame {
+  border: 14px solid transparent;
+  border-radius: 0;
+  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%234f7a4c' stroke-width='2'%3E%3Cpath d='M7 7C30 3 40 11 60 7s30-4 53 0M7 113c23 4 33-4 53 0s30 4 53 0M7 7c-4 23 4 33 0 53s-4 30 0 53M113 7c4 23-4 33 0 53s4 30 0 53'/%3E%3C/g%3E%3Cg fill='%2338603a'%3E%3Cellipse cx='22' cy='7' rx='6' ry='2.5' transform='rotate(-30 22 7)'/%3E%3Cellipse cx='48' cy='9' rx='6' ry='2.5' transform='rotate(25 48 9)'/%3E%3Cellipse cx='75' cy='5' rx='6' ry='2.5' transform='rotate(-25 75 5)'/%3E%3Cellipse cx='100' cy='9' rx='6' ry='2.5' transform='rotate(30 100 9)'/%3E%3Cellipse cx='22' cy='113' rx='6' ry='2.5' transform='rotate(30 22 113)'/%3E%3Cellipse cx='48' cy='111' rx='6' ry='2.5' transform='rotate(-25 48 111)'/%3E%3Cellipse cx='75' cy='115' rx='6' ry='2.5' transform='rotate(25 75 115)'/%3E%3Cellipse cx='100' cy='111' rx='6' ry='2.5' transform='rotate(-30 100 111)'/%3E%3Cellipse cx='7' cy='22' rx='2.5' ry='6' transform='rotate(30 7 22)'/%3E%3Cellipse cx='9' cy='48' rx='2.5' ry='6' transform='rotate(-25 9 48)'/%3E%3Cellipse cx='5' cy='75' rx='2.5' ry='6' transform='rotate(25 5 75)'/%3E%3Cellipse cx='9' cy='100' rx='2.5' ry='6' transform='rotate(-30 9 100)'/%3E%3Cellipse cx='113' cy='22' rx='2.5' ry='6' transform='rotate(-30 113 22)'/%3E%3Cellipse cx='111' cy='48' rx='2.5' ry='6' transform='rotate(25 111 48)'/%3E%3Cellipse cx='115' cy='75' rx='2.5' ry='6' transform='rotate(-25 115 75)'/%3E%3Cellipse cx='111' cy='100' rx='2.5' ry='6' transform='rotate(30 111 100)'/%3E%3Ccircle cx='7' cy='7' r='4'/%3E%3Ccircle cx='113' cy='7' r='4'/%3E%3Ccircle cx='7' cy='113' r='4'/%3E%3Ccircle cx='113' cy='113' r='4'/%3E%3C/g%3E%3C/svg%3E") 30 round;
+}
+
+/* Werewolf, The cave: rough-hewn stone. */
+:root[data-theme='light'] [data-game='werewolf'] .frame {
+  border: 12px solid transparent;
+  border-radius: 0;
+  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.08' numOctaves='4' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .38 0 0 0 0 .33 0 0 0 1.6 -.4'/%3E%3C/filter%3E%3Crect width='90' height='90' fill='%23443b31'/%3E%3Crect width='90' height='90' filter='url(%23s)'/%3E%3Cpath d='M0 30h90M0 60h90M30 0v30M60 30v30M30 60v30' stroke='%23211b15' stroke-width='2'/%3E%3C/svg%3E") 30 round;
+  box-shadow: inset 0 0 1.5rem rgb(0 0 0 / 0.6);
+}
+
+/* Hunter, The cabin: weathered timber with nail heads. */
+:root[data-theme='dark'] [data-game='hunter'] .frame,
+:root:not([data-theme]) [data-game='hunter'] .frame {
+  border: 12px solid transparent;
+  border-radius: 0;
+  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='3' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .22 0 0 0 0 .12 0 0 0 1.4 -.25'/%3E%3C/filter%3E%3Crect width='90' height='90' fill='%233a2414'/%3E%3Crect width='90' height='90' filter='url(%23w)'/%3E%3C/svg%3E") 30 stretch;
+}
+:root[data-theme='dark'] [data-game='hunter'] .frame::after,
+:root:not([data-theme]) [data-game='hunter'] .frame::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) top left / 12px 12px no-repeat,
+    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) top right / 12px 12px no-repeat,
+    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) bottom left / 12px 12px no-repeat,
+    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) bottom right / 12px 12px no-repeat;
+}
+
+/* Hunter, The inn: a clipboard. Hardboard back, steel clip, ruled notepaper. */
+:root[data-theme='light'] [data-game='hunter'] .frame {
+  border: 9px solid #6e4b2c;
+  border-radius: 12px;
+  background-color: #fbf7ee;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 1.9rem,
+    rgb(90 120 150 / 0.16) 1.9rem calc(1.9rem + 1px)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.08),
+    0 1rem 1.75rem -0.75rem rgb(60 40 20 / 0.5);
+}
+:root[data-theme='light'] [data-game='hunter'] .frame::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: -17px;
+  left: 50%;
+  width: 92px;
+  height: 26px;
+  translate: -50% 0;
+  pointer-events: none;
+  border-radius: 6px 6px 10px 10px;
+  background: linear-gradient(to bottom, #f2f2f2, #a9a9a9 45%, #d9d9d9 55%, #8e8e8e);
+  box-shadow: 0 3px 4px rgb(0 0 0 / 0.35), inset 0 1px 0 #fff;
+}
+
+/*
+  Taped paper (the inn only): strips of tape on two or three corners and
+  the odd torn-off corner, varied per card (see app/ui/game/Paper.tsx).
+*/
+.tape {
+  display: none;
+}
+:root[data-theme='light'] [data-game='hunter'] .tape {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  height: 24px;
+  pointer-events: none;
+  background: rgb(226 211 168 / 0.85);
+  border-inline: 1px solid rgb(150 125 80 / 0.22);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
+  clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 4% 94%, 0 45%);
+}
+:root[data-theme='light'] [data-game='hunter'] .torn-tl { clip-path: polygon(0 34px, 9px 27px, 6px 19px, 15px 13px, 13px 6px, 22px 4px, 34px 0, 100% 0, 100% 100%, 0 100%); }
+:root[data-theme='light'] [data-game='hunter'] .torn-tr { clip-path: polygon(0 0, calc(100% - 34px) 0, calc(100% - 22px) 4px, calc(100% - 13px) 6px, calc(100% - 15px) 13px, calc(100% - 6px) 19px, calc(100% - 9px) 27px, 100% 34px, 100% 100%, 0 100%); }
+:root[data-theme='light'] [data-game='hunter'] .torn-bl { clip-path: polygon(0 0, 100% 0, 100% 100%, 34px 100%, 22px calc(100% - 4px), 13px calc(100% - 6px), 15px calc(100% - 13px), 6px calc(100% - 19px), 9px calc(100% - 27px), 0 calc(100% - 34px)); }
+:root[data-theme='light'] [data-game='hunter'] .torn-br { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 34px), calc(100% - 9px) calc(100% - 27px), calc(100% - 6px) calc(100% - 19px), calc(100% - 15px) calc(100% - 13px), calc(100% - 13px) calc(100% - 6px), calc(100% - 22px) calc(100% - 4px), calc(100% - 34px) 100%, 0 100%); }
+
+/* Hunter's cards are solid, so the room behind them stays a backdrop. */
+:root[data-theme='dark'] [data-game='hunter'] .panel:not(.frame) {
+  background-color: rgb(24 17 11 / 0.92);
+}
+:root[data-theme='light'] [data-game='hunter'] .panel:not(.frame) {
+  background-color: #f8f1e2;
+  border-color: rgb(110 75 44 / 0.18);
+}
+
+/* -------------------------------------------------------------- ambience */
+
+@keyframes neon-flicker {
+  0%, 18%, 22%, 62%, 64%, 100% { opacity: 1; }
+  20%, 63% { opacity: 0.55; }
+}
+
+@keyframes drift-x {
+  from { translate: -15% 0; }
+  to { translate: 15% 0; }
+}
+
+@keyframes float-up {
+  0% { translate: 0 0; opacity: 0; }
+  20%, 80% { opacity: 1; }
+  100% { translate: var(--dx, 1rem) -6rem; opacity: 0; }
+}
+
+@keyframes firelight {
+  0%, 100% { opacity: 0.55; scale: 1; }
+  12% { opacity: 0.7; }
+  27% { opacity: 0.48; scale: 1.03; }
+  43% { opacity: 0.75; }
+  58% { opacity: 0.5; scale: 0.98; }
+  76% { opacity: 0.68; }
+}
+
+@keyframes drip {
+  0%, 70% { translate: 0 0; opacity: 0; scale: 1 0.6; }
+  72% { opacity: 1; scale: 1 1; }
+  100% { translate: 0 60vh; opacity: 0.8; scale: 0.8 1.4; }
+}
+
+@keyframes lamp-swing {
+  0%, 100% { rotate: -6deg; }
+  50% { rotate: 6deg; }
+}
+
+@keyframes motes {
+  0% { translate: 0 0; opacity: 0; }
+  25%, 75% { opacity: 0.8; }
+  100% { translate: var(--dx, 2rem) var(--dy, -3rem); opacity: 0; }
+}
+
+@keyframes rain {
+  to { background-position: -12px 140px; }
+}
+
+/* A double flash every few seconds. */
+@keyframes lightning {
+  0%, 88%, 91%, 93%, 100% { opacity: 0; }
+  89% { opacity: 0.9; }
+  92% { opacity: 0.6; }
+}
+@keyframes lightning-room {
+  0%, 88%, 91%, 93%, 100% { opacity: 0; }
+  89% { opacity: 0.12; }
+  92% { opacity: 0.07; }
+}
+
+@keyframes curtain {
+  0%, 100% { rotate: 0deg; }
+  50% { rotate: 1.6deg; }
+}
+
+@keyframes moon-glow {
+  0%, 100% { opacity: 0.85; scale: 1; }
+  50% { opacity: 1; scale: 1.04; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-game] .frame,
+  .ambience * {
+    animation: none !important;
+  }
+}

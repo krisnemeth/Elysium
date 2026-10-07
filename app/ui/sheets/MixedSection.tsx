@@ -1,73 +1,41 @@
 'use client';
+import { useState } from 'react';
+import { RatingRow, TextAreaField } from './fields';
 
-import React from 'react';
-import MeritsFlawsInput from '@/app/ui/sheets/MeritsFlawsInput';
-import BloodPotency from './BloodPotency';
-import TextArea from './TextArea';
-import BioData from './BioData';
+type Merit = { name: string; level: number };
 
 export default function MixedSection() {
-  const [rows, setRows] = React.useState(
-    Array(13).fill({ textInputValue: '', checkboxValues: Array(5).fill(false) })
+  const [merits, setMerits] = useState<Merit[]>(() =>
+    Array.from({ length: 10 }, () => ({ name: '', level: 0 })),
   );
-
-  const handleTextInputChange = (rowIndex: number, value: string) => {
-    setRows((prevRows) =>
-      prevRows.map((row, index) =>
-        index === rowIndex ? { ...row, textInputValue: value } : row
-      )
-    );
-  };
-
-  const handleCheckboxChange = (
-    rowIndex: number,
-    checkboxIndex: number,
-    value: boolean
-  ) => {
-    setRows((prevRows) =>
-      prevRows.map((row, index) =>
-        index === rowIndex
-          ? {
-              ...row,
-              checkboxValues: row.checkboxValues.map(
-                (checkboxValue: boolean, i: number) =>
-                  i === checkboxIndex ? value : checkboxValue
-              ),
-            }
-          : row
-      )
-    );
-  };
+  const [notes, setNotes] = useState('');
+  const update = (i: number, patch: Partial<Merit>) =>
+    setMerits((m) => m.map((row, j) => (j === i ? { ...row, ...patch } : row)));
 
   return (
-    <div className='border-t-2 border-slate-300 my-6 mx-0 px-2 xl:mx-6 xl:px-6'>
-      <div className='grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 gap-2'>
-        <div className='flex flex-col col-span-6 my-4 lg:border-r border-slate-300'>
-          <div className='text-center mt-2 mb-4 border-b-2 border-slate-300 mr-2'>
-            <h4 className='text-lg text-slate-300'>
-              Backgrounds, Merits & Flaws
-            </h4>
-          </div>
-          {rows.map((row, index) => (
-            <MeritsFlawsInput
-              key={index}
-              textInputValue={row.textInputValue}
-              checkboxValues={row.checkboxValues}
-              handleTextInputChange={(value) =>
-                handleTextInputChange(index, value)
-              }
-              handleCheckboxChange={(checkboxIndex, value) =>
-                handleCheckboxChange(index, checkboxIndex, value)
-              }
+    <div className='grid gap-8 lg:grid-cols-2'>
+      <div>
+        <h3 className='mb-2 text-xs tracking-[0.25em] text-accent uppercase'>
+          Backgrounds, merits & flaws
+        </h3>
+        {merits.map((merit, i) => (
+          <RatingRow
+            key={i}
+            label={`#${i + 1}`}
+            value={merit.level}
+            onChange={(level) => update(i, { level })}
+          >
+            <input
+              aria-label={`Background, merit or flaw ${i + 1}`}
+              placeholder='Name'
+              value={merit.name}
+              onChange={(e) => update(i, { name: e.target.value })}
+              className='w-full bg-transparent text-sm text-bone placeholder:text-bone/20 focus:outline-none'
             />
-          ))}
-          <TextArea label='Notes' id='notes' rows={22} />
-        </div>
-        <div className='flex flex-col col-span-6 my-4'>
-          <BloodPotency />
-          <BioData />
-        </div>
+          </RatingRow>
+        ))}
       </div>
+      <TextAreaField label='Notes' name='notes' rows={14} value={notes} onChange={setNotes} />
     </div>
   );
 }

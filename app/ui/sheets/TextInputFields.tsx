@@ -1,109 +1,59 @@
 'use client';
-import React, { useState } from 'react';
-import TextInput from '@/app/ui/sheets/TextInput';
-import TextInputDropdown from '@/app/ui/sheets/TextInputDropdown';
+import { useState } from 'react';
+import { SelectField, TextField } from './fields';
+import { CLANS } from '@/app/lib/clans';
+
+const PREDATOR_TYPES = [
+  'Alleycat',
+  'Bagger',
+  'Blood Leech',
+  'Cleaver',
+  'Consensualist',
+  'Farmer',
+  'Osiris',
+  'Sandman',
+  'Scene Queen',
+  'Siren',
+];
+
+const CLAN_NAMES = Object.values(CLANS).map((c) => c.name);
+
+const FIELDS = [
+  ['name', 'Name'],
+  ['concept', 'Concept'],
+  ['sire', 'Sire'],
+  ['player', 'Player'],
+  ['ambition', 'Ambition'],
+  ['clan', 'Clan'],
+  ['chronicle', 'Chronicle'],
+  ['predator', 'Predator'],
+  ['generation', 'Generation'],
+] as const;
+
+type Key = (typeof FIELDS)[number][0];
 
 export default function TextInputFields() {
-  const [dropdownValue, setDropdownValue] = useState('');
-  const [textInputValues, setTextInputValues] = useState({
-    name: '',
-    player: '',
-    chronicle: '',
-    concept: '',
-    ambition: '',
-    predator: '',
-    sire: '',
-    clan: '',
-    generation: '',
-  });
-
-  const handleFormChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setTextInputValues((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleDropdownChange = (value: string) => {
-    setDropdownValue(value);
-  };
+  const [values, setValues] = useState<Record<Key, string>>(
+    Object.fromEntries(FIELDS.map(([key]) => [key, ''])) as Record<Key, string>,
+  );
+  const set = (key: Key) => (value: string) => setValues((v) => ({ ...v, [key]: value }));
 
   return (
-    <div className='grid grid-cols-1 md:grid-cols-3 gap-2 xl:gap-4 px-1 md:px-0 xl:px-4'>
-      <div className='flex flex-col'>
-        <TextInput
-          label='Name'
-          name='name'
-          value={textInputValues.name}
-          onChange={handleFormChange}
-        />
-        <TextInput
-          label='Player'
-          name='player'
-          value={textInputValues.player}
-          onChange={handleFormChange}
-        />
-        <TextInput
-          label='Chronicle'
-          name='chronicle'
-          value={textInputValues.chronicle}
-          onChange={handleFormChange}
-        />
-      </div>
-      <div className='flex flex-col'>
-        <TextInput
-          label='Concept'
-          name='concept'
-          value={textInputValues.concept}
-          onChange={handleFormChange}
-        />
-        <TextInput
-          label='Ambition'
-          name='ambition'
-          value={textInputValues.ambition}
-          onChange={handleFormChange}
-        />
-        <TextInputDropdown
-          label='Predator'
-          options={[
-            '',
-            'Alleycat',
-            'Bagger',
-            'Blood Leech',
-            'Cleaver',
-            'Consensualist',
-            'Farmer',
-            'Osiris',
-            'Sandman',
-            'Scene Queen',
-            'Siren',
-          ]}
-          name='predator'
-          value={dropdownValue}
-          onChange={handleDropdownChange}
-        />
-      </div>
-      <div className='flex flex-col'>
-        <TextInput
-          label='Sire'
-          name='sire'
-          value={textInputValues.sire}
-          onChange={handleFormChange}
-        />
-        <TextInput
-          label='Clan'
-          name='clan'
-          value={textInputValues.clan}
-          onChange={handleFormChange}
-        />
-        <TextInput
-          label='Generation'
-          name='generation'
-          value={textInputValues.generation}
-          onChange={handleFormChange}
-        />
-      </div>
+    <div className='grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3'>
+      {FIELDS.map(([key, label]) =>
+        key === 'predator' || key === 'clan' ? (
+          <SelectField
+            key={key}
+            label={label}
+            name={key}
+            value={values[key]}
+            options={key === 'clan' ? CLAN_NAMES : PREDATOR_TYPES}
+            onChange={set(key)}
+          />
+        ) : (
+          <TextField key={key} label={label} name={key} value={values[key]} onChange={set(key)} />
+        ),
+      )}
     </div>
   );
 }

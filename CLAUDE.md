@@ -111,6 +111,7 @@
 | Path | Purpose |
 |---|---|
 | `/` | Landing page — hero + features + footer |
+| `/concept` | Concept landing page ("Nightly Edition"): editorial V5-style alternative, own fonts in `app/concept/fonts.ts` |
 | `/dashboard` | Overview — hardcoded finished/draft character counts |
 | `/dashboard/characters` | Character gallery — 8 hardcoded characters with clan info |
 | `/dashboard/sheets` | Sheet hub — links to create Loresheets or Character Sheets |
@@ -370,6 +371,57 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 - **Request APIs are async-only**: `await params`, `await searchParams`, `await cookies()`, `await headers()`.
 - `next build` no longer runs lint and no longer prints per-route bundle sizes.
 - Bundled, version-matched docs live in `node_modules/next/dist/docs/` — check them before writing Next.js code.
+
+## Landing Pages
+
+- `/` (`app/page.tsx`): book-cover hero (`app/ui/home/Hero.tsx`). The portrait and ankh are sized from one `--cover` width so the ankh halo stays behind the portrait at every viewport; the ankh rises on scroll because the backdrop/portrait layers are sticky. Swap cover art via `COVER_ART` in `Hero.tsx`.
+- `/concept`: experimental redesign. `_lib/hunger-dice.ts` implements V5 dice rules (crits, messy crits, bestial failures) as a pure function, reusable for the dashboard dice roller.
+- Scroll-driven effects use CSS `animation-timeline` in `globals.css`, with a static fallback and `prefers-reduced-motion` respected.
+
+## App UI (dashboard)
+
+- Shell: `app/dashboard/layout.tsx` (ambient backdrop + `ui/dashboard/sidenav.tsx`: glass sidebar on desktop, top bar + bottom tab bar on phones). `app/dashboard/template.tsx` animates every page in.
+- Shared kit in `app/ui/kit/`: `styles.ts` (panel, buttons, field classes), `PageHeader`, `Stagger` (cascading entrance), `DotRating` (V5 dot/box ratings, keyboard slider). Theme toggle: `app/ui/ThemeToggle.tsx`; theme script: `app/lib/theme.ts`.
+- Character sheet fields live in `app/ui/sheets/fields.tsx`; each sheet section component owns its own state (nothing is persisted yet).
+- Sample data: `app/lib/sample-characters.ts`; clan → official symbol/name logo: `app/lib/clans.ts`.
+- Dice roller: `/dashboard/dice` (`app/ui/dice/DiceRoller.tsx`) on the pure rules in `app/lib/hunger-dice.ts` (also used by `/concept`). Includes rouse checks and Willpower rerolls.
+- Motion keyframes and easing tokens (`--ease-spring`, `--ease-out-expo`) are in `globals.css`; all motion is disabled under `prefers-reduced-motion`.
+
+## Games, themes and routes
+
+Elysium is a cross-game vault for Vampire: The Masquerade, Werewolf: The Apocalypse and Hunter: The Reckoning (5th editions).
+
+| Route | What |
+|---|---|
+| `/` | World of Darkness landing (neutral `data-game='wod'` style) |
+| `/vampire` | The Vampire book-cover landing (the earlier revamp) |
+| `/vault` | All characters across games |
+| `/vault/new` | Choose a game before creating a character |
+| `/vault/[game]` (+ `/characters`, `/new`, `/dice`) | Each game's dashboard, sheet and dice |
+| `/concept`, `/concept/dashboard/*` | Editorial "case files" prototype (kept for reference) |
+| `/dashboard/*` | Redirects to `/vault/vampire/*` (next.config.mjs) |
+
+- **Themes = game × mode.** `app/vault/[game]/layout.tsx` sets `data-game` on a wrapper; the mode is `<html data-theme>` (toggle). `app/games.css` holds per-game tokens, fonts (Werewolf: Cinzel; Hunter: Special Elite + Courier Prime), the six `.frame` borders (gothic, neon, leaves, stone, timber, paper & tape) and ambient keyframes. Vampire uses the root tokens. Hunter's light mode ("the inn") is a true light theme; the others stay dark.
+- **Ambience:** `app/ui/game/Ambience.tsx`, one backdrop + looping element per game and mode.
+- **Same navigation everywhere:** `app/ui/navbar.tsx` (site) and `app/ui/dashboard/sidenav.tsx` (dashboards, with the game switcher); the theme frame comes from `.frame`.
+- **Game config:** `app/lib/games.ts` (names, logos, nouns, mode names). Factions: `app/lib/factions.ts`. Sheets per game: `app/ui/sheets/game-sheets.tsx` (Werewolf/Hunter built from `generic.tsx`).
+- **Dice:** rules for all three games in `app/lib/dice/rules.ts` (tested cases in git history: Hunger, Rage/Brutal, Desperation/Overreach/Despair). `app/ui/dice/DiceRoller.tsx` takes `game`. 3D dice: `app/ui/dice3d/` (React Three Fiber + three.js): `d10.ts` builds a true pentagonal trapezohedron and per-game face textures from the official glyphs in `public/dice/glyphs/`; `DiceScene.tsx` throws them and lands each on the rolled value. The `react-hooks/immutability` lint rule is disabled in that file because R3F mutates three.js objects in the render loop.
+- Werewolf tribe/auspice glyphs: `public/werewolf/*.png` (used as CSS masks). Sample portraits: `public/portraits/`.
+
+## Licensing (Dark Pack)
+
+Elysium uses World of Darkness IP under the [Dark Pack Agreement](https://www.paradoxinteractive.com/games/world-of-darkness/community/dark-pack-agreement). Requirements:
+- Show the verbatim copyright notice, a "not official World of Darkness material" notice, and the Dark Pack logo. All three live in `app/lib/dark-pack.ts` and are rendered in both landing page footers; don't paraphrase the notice.
+- The rights holder named in the notice is Paradox Interactive AB. White Wolf is Paradox's World of Darkness brand, not a separate rights holder.
+- Character generators/apps must stay free: no in-app purchases, paywalls or other monetised transactions. Donations (Patreon, ko-fi) are allowed.
+- The official asset pack is linked from the agreement page under "Download free materials". It's extracted (git-ignored, ~490 MB) in `brand-assets/`: VtM clan/sect/discipline/dice symbols and logos, plus ~300 official illustrations (characters, antagonists, locations, scenes). See `brand-assets/README.md`.
+
+## Official SVGs
+
+`app/ui/svgs/official/` holds 57 SVGs generated from the official EPS/AI artwork: 16 clan symbols (incl. Ministry, Salubri, Caitiff, Thin-blood), 14 clan name logos, Camarilla/Anarch/Sabbat symbols and names, 12 discipline badges, 6 dice symbols, the ankh and V5 logos. Import named components from `@/app/ui/svgs/official` (e.g. `ClanBrujah`, `ClanNameBrujah`, `DisciplineAuspex`, `DiceMessyCritical`).
+- Shapes use `currentColor`, so style them with `text-*`. White inner details use `var(--knockout, #fff)`; set `--knockout` (e.g. to the background colour) to recolour or "cut out" those details.
+- Regenerate with `scripts/convert-brand-svgs.sh` (needs `brew install ghostscript poppler`). Each file's ids are prefixed so inline SVGs don't share clip-path ids; `next.config.mjs` disables svgr's `cleanupIds` to keep them.
+- The older hand-sourced SVGs in `app/ui/svgs/` are still used by the hero and dashboard; prefer the official set for new work.
 
 ## Tailwind 4 Notes
 

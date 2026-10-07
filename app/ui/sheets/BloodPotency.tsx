@@ -1,133 +1,42 @@
 'use client';
-import React, { useState } from 'react';
-import BloodPotencyTextInput from './BloodPotencyTextInput';
-import Experience from './Experience';
-import BloodPotencyCheckbox from './BloodPotencyCheckbox';
+import { useState } from 'react';
+import DotRating from '@/app/ui/kit/DotRating';
+import { TextField } from './fields';
+
+const STATS = [
+  ['bloodSurge', 'Blood Surge'],
+  ['mendAmount', 'Mend Amount'],
+  ['powerBonus', 'Power Bonus'],
+  ['rouseReRoll', 'Rouse Re-Roll'],
+  ['feedingPenalty', 'Feeding Penalty'],
+  ['baneSeverity', 'Bane Severity'],
+] as const;
 
 export default function BloodPotency() {
-  const [bloodPotency, setBloodPotency] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
-
-  const [bloodPotencyValues, setBloodPotencyValues] = useState({
-    bloodSurge: '',
-    powerBonus: '',
-    feedingPenalty: '',
-    mendAmount: '',
-    rouseReRoll: '',
-    baneSeverity: '',
-  });
-
-  const [experience, setExperience] = useState({
-    totalExperience: '',
-    spentExperience: '',
-  });
-
-  const handleBloodPotencyChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const value = event.target.checked;
-
-      setBloodPotency((prevBloodPotency) =>
-        prevBloodPotency.map((prevValue, i) =>
-          i === index ? value : prevValue
-        )
-      );
-    };
-
-  const handleBloodPotencyValueChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = event.target;
-    setBloodPotencyValues((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  const handleExperienceChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = event.target;
-    setExperience((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+  const [potency, setPotency] = useState(1);
+  const [stats, setStats] = useState<Record<string, string>>({});
+  const [xp, setXp] = useState({ total: '', spent: '' });
 
   return (
-    <div className='my-2'>
-      <BloodPotencyCheckbox
-        bloodPotency={bloodPotency}
-        handleBloodPotencyChange={handleBloodPotencyChange}
-      />
-      <div className='grid grid-cols-12 mt-4 mx-0 xl:mx-4'>
-        <div className='flex flex-col col-span-6 border-r-2 border-slate-300'>
-          <BloodPotencyTextInput
-            label='Blood Surge'
-            name='bloodSurge'
-            value={bloodPotencyValues.bloodSurge}
-            onChange={handleBloodPotencyValueChange}
-          />
-          <BloodPotencyTextInput
-            label='Power Bonus'
-            name='powerBonus'
-            value={bloodPotencyValues.powerBonus}
-            onChange={handleBloodPotencyValueChange}
-          />
-          <BloodPotencyTextInput
-            label='Feeding Penalty'
-            name='feedingPenalty'
-            value={bloodPotencyValues.feedingPenalty}
-            onChange={handleBloodPotencyValueChange}
-          />
-        </div>
-        <div className='flex flex-col col-span-6'>
-          <BloodPotencyTextInput
-            label='Mend Amount'
-            name='mendAmount'
-            value={bloodPotencyValues.mendAmount}
-            onChange={handleBloodPotencyValueChange}
-          />
-          <BloodPotencyTextInput
-            label='Rouse Re-Roll'
-            name='rouseReRoll'
-            value={bloodPotencyValues.rouseReRoll}
-            onChange={handleBloodPotencyValueChange}
-          />
-          <BloodPotencyTextInput
-            label='Bane Severity'
-            name='baneSeverity'
-            value={bloodPotencyValues.baneSeverity}
-            onChange={handleBloodPotencyValueChange}
-          />
-        </div>
+    <div className='flex flex-col gap-8'>
+      <div className='flex flex-wrap items-center justify-between gap-4 rounded-xl border border-bone/10 bg-bone/[0.02] px-4 py-3'>
+        <span className='font-display text-2xl'>Blood Potency</span>
+        <DotRating label='Blood Potency' value={potency} onChange={setPotency} max={10} />
       </div>
-      <div className='grid-grid-cols-12 mx-0 xl:mx-2 my-2'>
-        <div className='flex flex-col col-span-12'>
-          <Experience
-            label='Total Experience'
-            name='totalExperience'
-            value={experience.totalExperience}
-            onChange={handleExperienceChange}
+      <div className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+        {STATS.map(([key, label]) => (
+          <TextField
+            key={key}
+            label={label}
+            name={key}
+            value={stats[key] ?? ''}
+            onChange={(v) => setStats((s) => ({ ...s, [key]: v }))}
           />
-        </div>
-        <div className='flex flex-col col-span-12'>
-          <Experience
-            label='Spent Experience'
-            name='spentExperience'
-            value={experience.spentExperience}
-            onChange={handleExperienceChange}
-          />
-        </div>
+        ))}
+      </div>
+      <div className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+        <TextField label='Total experience' name='xpTotal' type='number' value={xp.total} onChange={(total) => setXp((x) => ({ ...x, total }))} />
+        <TextField label='Spent experience' name='xpSpent' type='number' value={xp.spent} onChange={(spent) => setXp((x) => ({ ...x, spent }))} />
       </div>
     </div>
   );

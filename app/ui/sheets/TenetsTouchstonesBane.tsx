@@ -1,42 +1,27 @@
-import React from 'react';
+'use client';
+import { useState } from 'react';
+import { TextAreaField } from './fields';
+
+const FIELDS = [
+  ['tenets', 'Chronicle Tenets'],
+  ['touchstones', 'Touchstones & Convictions'],
+  ['bane', 'Clan Bane'],
+] as const;
 
 export default function TenetsTouchstonesBane() {
+  const [values, setValues] = useState<Record<string, string>>({});
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 mx-2 xl:mx-6 my-6'>
-      <div className='flex flex-col xl:border-r-2 border-slate-300'>
-        <div className='border-b-2 border-slate-300'>
-          <h4 className='text-center text-lg text-slate-300'>
-            Chronicle Tenets
-          </h4>
-        </div>
-        <textarea
-          id='tenets'
-          rows={8}
-          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
-        ></textarea>
-      </div>
-      <div className='flex flex-col xl:border-r-2 border-slate-300'>
-        <div className='border-b-2 border-slate-300'>
-          <h4 className='text-center text-lg text-slate-300'>
-            Touchstones & Convictions
-          </h4>
-        </div>
-        <textarea
-          id='tenets'
-          rows={8}
-          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
-        ></textarea>
-      </div>
-      <div className='flex flex-col'>
-        <div className='border-b-2 border-slate-300'>
-          <h4 className='text-center text-lg text-slate-300'>Clan Bane</h4>
-        </div>
-        <textarea
-          id='tenets'
-          rows={8}
-          className='bg-inherit border-2 border-slate-300 border-dotted text-slate-300 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-rose-500 focus:border-transparent m-2 resize-none'
-        ></textarea>
-      </div>
+    <div className='grid gap-6 lg:grid-cols-3'>
+      {FIELDS.map(([key, label]) => (
+        <TextAreaField
+          key={key}
+          label={label}
+          name={key}
+          rows={7}
+          value={values[key] ?? ''}
+          onChange={(v) => setValues((s) => ({ ...s, [key]: v }))}
+        />
+      ))}
     </div>
   );
 }
