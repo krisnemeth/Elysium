@@ -36,7 +36,7 @@ export default function CellFiles({ files }: { files: Character[] }) {
                     <dd>{c.status === 'draft' ? 'Open' : 'Active'}</dd>
                   </dl>
                   <p className='mt-4 text-sm leading-relaxed'>{c.description}</p>
-                  <Link href='/vault/hunter/new' className='mt-5 self-start border-b border-[#2b2119]/40 pb-0.5 text-sm uppercase transition-colors hover:border-accent hover:text-accent'>
+                  <Link href={`/vault/hunter/characters/${c.slug}`} className='mt-5 self-start border-b border-[#2b2119]/40 pb-0.5 text-sm uppercase transition-colors hover:border-accent hover:text-accent'>
                     Open file &rarr;
                   </Link>
                 </div>

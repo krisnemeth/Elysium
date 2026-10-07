@@ -6,19 +6,17 @@ import Navbar from '@/app/ui/navbar';
 import Stagger from '@/app/ui/kit/Stagger';
 import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
 import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import { getCharacters, toCharacter } from '@/app/lib/data/characters';
 
 export const metadata: Metadata = { title: 'Your vault' };
 
-export default function Vault() {
+export default async function Vault() {
+  const CHARACTERS = (await getCharacters()).map(toCharacter);
   return (
     <div data-game='wod' className='min-h-svh bg-ink text-bone transition-colors duration-500'>
       <Navbar
         sections={GAMES_ORDER.map((g) => ({ href: gamePath(g), label: GAMES[g].name }))}
-        signUpHref='/vault/new'
-        logInHref='/'
         themeLabels={{ light: 'Light', dark: 'Dark' }}
-        ctaLabel='New character'
       />
       <main id='main' className='page-in mx-auto max-w-6xl px-6 pt-32 pb-24'>
         <header className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
@@ -26,7 +24,9 @@ export default function Vault() {
             <p className='text-xs tracking-[0.3em] text-accent uppercase'>Your vault</p>
             <h1 className='mt-3 font-display text-6xl leading-[0.95] tracking-tight'>Every creature, one vault.</h1>
             <p className='mt-4 max-w-[56ch] leading-relaxed text-bone/65'>
-              {CHARACTERS.length} characters across three games. Step into a game to see its dashboard, or start someone new.
+              {CHARACTERS.length === 0
+                ? 'Nobody here yet. Pick a game and create your first character; it saves as you go.'
+                : `${CHARACTERS.length} character${CHARACTERS.length === 1 ? '' : 's'} across three games. Step into a game to see its dashboard, or start someone new.`}
             </p>
           </div>
           <Link href='/vault/new' className='group inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-bone px-6 py-3 text-sm font-semibold text-ink transition hover:-translate-y-0.5 active:scale-[0.98] md:self-auto'>
@@ -44,10 +44,18 @@ export default function Vault() {
                 <p className='mt-4 text-xs tracking-[0.2em] text-bone/50 uppercase'>
                   {list.length} {list.length === 1 ? noun.one : noun.many}
                 </p>
+                {list.length === 0 && (
+                  <p className='mt-4 text-sm leading-relaxed text-bone/55'>
+                    No {noun.many} yet.{' '}
+                    <Link href={gamePath(g, '/new')} className='text-bone underline underline-offset-4 hover:text-accent'>
+                      Create one
+                    </Link>
+                  </p>
+                )}
                 <ul className='mt-4 flex flex-col'>
                   {list.map((c) => (
                     <li key={c.slug}>
-                      <Link href={gamePath(g, '/characters')} className='group flex items-center gap-3 rounded-xl p-2 transition hover:translate-x-1 hover:bg-bone/[0.05]'>
+                      <Link href={gamePath(g, `/characters/${c.slug}`)} className='group flex items-center gap-3 rounded-xl p-2 transition hover:translate-x-1 hover:bg-bone/[0.05]'>
                         <Image src={c.image.src} width={80} height={100} alt='' className='size-11 rounded-lg object-cover' />
                         <span className='min-w-0 grow'>
                           <span className='block truncate font-display text-lg leading-tight'>{c.name}</span>

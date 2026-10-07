@@ -2,11 +2,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { MdAdd } from 'react-icons/md';
-import { GiD10, GiWolfHowl } from 'react-icons/gi';
+import { GiD10, GiPawPrint, GiWolfHowl } from 'react-icons/gi';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
+import EmptyState from '@/app/ui/kit/EmptyState';
 import { panel, buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
-import { CHARACTERS } from '@/app/lib/sample-characters';
+import type { Character } from '@/app/lib/sample-characters';
 import { AUSPICES, glyphUrl } from '@/app/lib/factions';
 import { FactionMark } from '@/app/ui/game/FactionMark';
 
@@ -25,8 +26,7 @@ function Moon({ lit }: { lit: number }) {
   );
 }
 
-export default function WerewolfOverview() {
-  const pack = CHARACTERS.filter((c) => c.game === 'werewolf');
+export default function WerewolfOverview({ characters: pack }: { characters: Character[] }) {
   const drafts = pack.filter((c) => c.status === 'draft').length;
 
   return (
@@ -75,27 +75,35 @@ export default function WerewolfOverview() {
             {pack.length} Garou · {drafts} draft{drafts === 1 ? '' : 's'}
           </Link>
         </div>
-        <Stagger as='ul' className='mt-6 flex flex-wrap justify-center gap-10 md:justify-start'>
-          {pack.map((c) => (
-            <li key={c.slug}>
-              <Link href='/vault/werewolf/characters' className='group flex w-40 flex-col items-center text-center focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent'>
-                <span className='relative block'>
-                  <span className='block size-36 overflow-hidden rounded-full ring-2 ring-bone/15 transition duration-700 ease-(--ease-out-expo) group-hover:-translate-y-2 group-hover:shadow-[0_0_2.5rem_-0.25rem_var(--accent)] group-hover:ring-accent'>
-                    <Image src={c.image.src} width={288} height={384} alt={`Portrait of ${c.name}.`} className='size-full object-cover transition-transform duration-1000 group-hover:scale-110' />
+        {pack.length === 0 ? (
+          <div className='mt-6'>
+            <EmptyState icon={<GiPawPrint aria-hidden />} title='No Garou answer the howl.' action={{ href: '/vault/werewolf/new', label: 'Create your first Garou' }}>
+              Your pack is empty. Bring the first wolf in; their sheet saves as you go.
+            </EmptyState>
+          </div>
+        ) : (
+          <Stagger as='ul' className='mt-6 flex flex-wrap justify-center gap-10 md:justify-start'>
+            {pack.map((c) => (
+              <li key={c.slug}>
+                <Link href={`/vault/werewolf/characters/${c.slug}`} className='group flex w-40 flex-col items-center text-center focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent'>
+                  <span className='relative block'>
+                    <span className='block size-36 overflow-hidden rounded-full ring-2 ring-bone/15 transition duration-700 ease-(--ease-out-expo) group-hover:-translate-y-2 group-hover:shadow-[0_0_2.5rem_-0.25rem_var(--accent)] group-hover:ring-accent'>
+                      <Image src={c.image.src} width={288} height={384} alt={`Portrait of ${c.name}.`} className='size-full object-cover transition-transform duration-1000 group-hover:scale-110' />
+                    </span>
+                    <span className='absolute -right-1 bottom-1 grid size-11 place-items-center rounded-full bg-ink ring-1 ring-bone/20'>
+                      <FactionMark character={c} className='size-7 text-accent' />
+                    </span>
                   </span>
-                  <span className='absolute -right-1 bottom-1 grid size-11 place-items-center rounded-full bg-ink ring-1 ring-bone/20'>
-                    <FactionMark character={c} className='size-7 text-accent' />
+                  <span className='mt-4 font-display text-lg leading-tight'>{c.name}</span>
+                  <span className='text-[0.65rem] tracking-[0.2em] text-bone/50 uppercase'>
+                    {c.faction}
+                    {c.status === 'draft' && ' · draft'}
                   </span>
-                </span>
-                <span className='mt-4 font-display text-lg leading-tight'>{c.name}</span>
-                <span className='text-[0.65rem] tracking-[0.2em] text-bone/50 uppercase'>
-                  {c.faction}
-                  {c.status === 'draft' && ' · draft'}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </Stagger>
+                </Link>
+              </li>
+            ))}
+          </Stagger>
+        )}
       </section>
 
       <section className={`flex flex-col items-center gap-3 p-8 text-center ${panel}`}>

@@ -53,7 +53,7 @@ export default function CharacterCard({
         <p className='text-sm leading-relaxed text-pretty text-bone/65'>{character.description}</p>
         <div className='mt-auto flex items-center justify-between gap-3 pt-5'>
           <Link
-            href={`/vault/${character.game}/new`}
+            href={`/vault/${character.game}/characters/${character.slug}`}
             className='group/link inline-flex items-center gap-1.5 text-sm text-bone transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent'
           >
             Open sheet
