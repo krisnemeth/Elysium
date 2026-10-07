@@ -59,8 +59,6 @@ export default function Home() {
           { href: '#atmospheres', label: 'Themes' },
           { href: '#dice', label: 'Dice' },
         ]}
-        signUpHref='/vault/new'
-        logInHref='/vault'
         themeLabels={{ light: 'Light', dark: 'Dark' }}
       />
 

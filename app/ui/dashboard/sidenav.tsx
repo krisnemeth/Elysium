@@ -2,18 +2,14 @@ import Link from 'next/link';
 import { FaPowerOff } from 'react-icons/fa';
 import { Elysium1 } from '@/app/ui/svgs';
 import ThemeToggle from '@/app/ui/ThemeToggle';
+import { signOut } from '@/app/lib/actions/auth';
 import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
 import { panel } from '@/app/ui/kit/styles';
 import { GAMES, type Game } from '@/app/lib/games';
 
 function LogOut({ compact = false }: { compact?: boolean }) {
   return (
-    <form
-      action={async () => {
-        'use server';
-        // await signOut();
-      }}
-    >
+    <form action={signOut}>
       <button
         className={`flex items-center gap-3 rounded-xl text-sm text-bone/60 transition-colors duration-300 hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
           compact ? 'p-2' : 'w-full px-4 py-3 hover:bg-bone/[0.04]'

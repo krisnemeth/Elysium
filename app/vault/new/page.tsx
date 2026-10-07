@@ -17,10 +17,7 @@ export default function ChooseGame() {
     <div data-game='wod' className='flex min-h-svh flex-col bg-ink text-bone transition-colors duration-500'>
       <Navbar
         sections={[{ href: '/vault', label: 'Your vault' }]}
-        signUpHref='/vault'
-        logInHref='/'
         themeLabels={{ light: 'Light', dark: 'Dark' }}
-        ctaLabel='Your vault'
       />
       <main id='main' className='page-in flex grow flex-col px-4 pt-28 pb-8 md:px-6'>
         <header className='mx-auto max-w-3xl text-center'>
