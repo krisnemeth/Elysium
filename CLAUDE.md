@@ -6,7 +6,9 @@
 
 - Developer: Krisztian Nemeth — https://krisnemeth.dev
 - Repo: `krisnemeth/elysium`
-- Dev branch: `main`
+- Dev branch: `main` (the multi-game World of Darkness vault)
+- `legacy`: a frozen backup of the original 2023/24 Vampire-only app (as of 2026-10-07, after the Next 16 / Tailwind 4 / Node 24 upgrades). Never delete, rewrite or merge into it; it's protected on GitHub against deletion and force-pushes.
+- Roadmap: `plans/feature-roadmap.md`
 
 ---
 
