@@ -130,3 +130,12 @@ element per theme, the rest quiet; text panels calm and readable everywhere.
 **Tools worth trying:** augmented-ui (CSS cut-corner/neon frames) for Neon
 Nights, Rough.js (hand-drawn borders) for Hunter, CSS `border-image` 9-slice
 SVGs for ornate rectangular frames. Gothic ornament needs artwork, not a library.
+
+**3D dice** (`app/ui/dice3d/`): improve greatly on the dice's colour intensity
+and surface texture. Today they read flat and pale (especially the special
+dice). Ideas: richer, more saturated per-game materials (deep blood-red
+Hunger dice, ember Rage dice, Desperation dice with a sharper accent);
+physically based materials with some roughness and clearcoat; subtle surface
+texture (resin swirl, stone grain, worn bone) via normal/roughness maps;
+engraved, slightly recessed glyphs that catch the light; better lighting and a
+soft environment map so edges and faces read clearly in every theme.
