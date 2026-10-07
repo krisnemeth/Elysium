@@ -1,27 +1,31 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { acceptFriend, removeFriend } from '@/app/lib/actions/social';
 import { getFriends, getMe } from '@/app/lib/data/social';
+import { isGame } from '@/app/lib/games';
+import PageHeader from '@/app/ui/kit/PageHeader';
 import { panel } from '@/app/ui/kit/styles';
-import SocialShell from '@/app/ui/social/SocialShell';
-import { ActionButton, AddFriendForm, DisplayNameForm, FriendCode } from '@/app/ui/social/forms';
+import { ActionButton, AddFriendForm, FriendCode } from '@/app/ui/social/forms';
 
 export const metadata: Metadata = { title: 'Friends' };
 
 const small = 'rounded-full border border-bone/20 px-4 py-1.5 text-xs text-bone/80 transition hover:border-bone/50 hover:text-bone';
 const smallPrimary = 'rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:brightness-110';
 
-export default async function Friends() {
+export default async function Friends({ params }: PageProps<'/vault/[game]/friends'>) {
+  const { game } = await params;
+  if (!isGame(game)) notFound();
   const [me, friends] = await Promise.all([getMe(), getFriends()]);
   const incoming = friends.filter((f) => f.status === 'pending' && f.direction === 'incoming');
   const outgoing = friends.filter((f) => f.status === 'pending' && f.direction === 'outgoing');
   const accepted = friends.filter((f) => f.status === 'accepted');
 
   return (
-    <SocialShell eyebrow='Friends' title='Your circle.' description='Add the people you play with, then bring them into a chronicle.'>
+    <div className='flex flex-col gap-10'>
+      <PageHeader eyebrow='Friends' title='Your circle.' description='Add the people you play with, then bring them into a chronicle.' />
       <div className='grid gap-5 lg:grid-cols-2'>
-        <section aria-label='You' className={`flex flex-col gap-8 p-6 ${panel}`}>
+        <section aria-label='Your friend code' className={`flex flex-col gap-8 p-6 ${panel}`}>
           {me && <FriendCode code={me.friend_code} />}
-          {me && <DisplayNameForm name={me.display_name} />}
         </section>
         <section aria-label='Add a friend' className={`flex flex-col gap-6 p-6 ${panel}`}>
           <AddFriendForm />
@@ -73,6 +77,6 @@ export default async function Friends() {
           )}
         </section>
       </div>
-    </SocialShell>
+    </div>
   );
 }

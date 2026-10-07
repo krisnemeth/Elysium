@@ -59,10 +59,10 @@ function GothicFrame() {
       <g fill='none' stroke='currentColor' strokeWidth='1.5' vectorEffect='non-scaling-stroke' strokeLinecap='round'>
         <path d='M1 500V200C1 95 120 30 200 3C280 30 399 95 399 200V500' vectorEffect='non-scaling-stroke' />
         <path d='M7 500V203C7 101 123 37 200 10C277 37 393 101 393 203V500' stroke='var(--color-bone)' strokeOpacity='0.18' strokeWidth='0.8' vectorEffect='non-scaling-stroke' />
-        <path d={CROCKETS} strokeWidth='1.2' vectorEffect='non-scaling-stroke' />
-        <path d='M200 3V-9' vectorEffect='non-scaling-stroke' />
+        <path className='frame-ornament' d={CROCKETS} strokeWidth='1.2' vectorEffect='non-scaling-stroke' />
+        <path className='frame-ornament' d='M200 3V-9' vectorEffect='non-scaling-stroke' />
       </g>
-      <g fill='currentColor'>
+      <g fill='currentColor' className='frame-ornament'>
         {KNOTS.map(([x, y]) => (
           <circle key={`${x}-${y}`} cx={x} cy={y} r={1.6} />
         ))}

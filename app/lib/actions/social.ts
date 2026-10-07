@@ -62,7 +62,11 @@ export async function savePreferences(_: ActionState, form: FormData): Promise<A
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims) return { error: 'You’re signed out.' };
-  const preferences = { tooltips: form.get('tooltips') === 'on', guidance: form.get('guidance') === 'on' };
+  const preferences = {
+    tooltips: form.get('tooltips') === 'on',
+    guidance: form.get('guidance') === 'on',
+    simpleFrames: form.get('simpleFrames') === 'on',
+  };
   const { error } = await supabase.from('profiles').update({ preferences }).eq('id', claims.claims.sub);
   if (error) return { error: 'Couldn’t save your settings.' };
   revalidatePath('/vault', 'layout');

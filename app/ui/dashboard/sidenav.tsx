@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FaPowerOff } from 'react-icons/fa';
 import { Elysium1 } from '@/app/ui/svgs';
-import ThemeToggle from '@/app/ui/ThemeToggle';
+import ThemeSwitch from '@/app/ui/dashboard/ThemeSwitch';
 import { signOut } from '@/app/lib/actions/auth';
 import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
 import { panel } from '@/app/ui/kit/styles';
@@ -24,7 +24,7 @@ function LogOut({ compact = false }: { compact?: boolean }) {
 
 // The same navigation for every game; each game and mode gives it a different frame (.frame).
 export default function SideNav({ game }: { game: Game }) {
-  const { Logo, modes } = GAMES[game];
+  const { Logo } = GAMES[game];
   return (
     <>
       {/* Desktop sidebar */}
@@ -41,19 +41,18 @@ export default function SideNav({ game }: { game: Game }) {
           <GameSwitcher game={game} />
         </div>
 
-        <nav aria-label='Dashboard'>
+        <nav aria-label='Dashboard' className='flex grow flex-col'>
           <SideNavLinks game={game} />
+          <div aria-hidden className='mx-4 my-2 border-t border-bone/10' />
+          <SideNavLinks game={game} group='chronicles' />
+          <div className='flex grow items-center justify-center px-2'>
+            <Logo aria-label={GAMES[game].title} role='img' className='h-auto w-full max-w-40 text-bone/40' />
+          </div>
+          <div aria-hidden className='mx-4 mb-2 border-t border-bone/10' />
+          <SideNavLinks game={game} group='account' />
         </nav>
-
-        <div className='flex grow items-center justify-center px-2'>
-          <Logo aria-label={GAMES[game].title} role='img' className='h-auto w-full max-w-40 text-bone/40' />
-        </div>
-
-        <div className='flex flex-col gap-1 border-t border-bone/10 pt-3'>
-          <ThemeToggle
-            labels={modes}
-            className='rounded-xl px-4 py-3 text-sm text-bone/60 transition-colors duration-300 hover:bg-bone/[0.04] hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
-          />
+        <div className='mt-1 flex flex-col gap-1'>
+          <ThemeSwitch game={game} />
           <LogOut />
         </div>
       </aside>
@@ -66,7 +65,7 @@ export default function SideNav({ game }: { game: Game }) {
               <Elysium1 aria-hidden className='h-auto w-24 text-bone/90' />
             </Link>
             <div className='flex items-center gap-1'>
-              <ThemeToggle labels={modes} labelClassName='sr-only' className='rounded-xl p-2 text-bone/70' />
+              <ThemeSwitch game={game} compact />
               <LogOut compact />
             </div>
           </div>

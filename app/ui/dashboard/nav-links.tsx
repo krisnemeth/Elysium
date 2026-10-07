@@ -14,11 +14,10 @@ const linksFor = (game: Game) => [
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
 ];
 
-// Shared across games: the tables you play at and the people you play with.
-const TABLE_LINKS = [
-  { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire },
-  { name: 'Friends', href: '/vault/friends', icon: MdPeopleOutline },
-  { name: 'Settings', href: '/vault/settings', icon: MdOutlineSettings },
+const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
+const accountLinks = (game: Game) => [
+  { name: 'Friends', href: gamePath(game, '/friends'), icon: MdPeopleOutline },
+  { name: 'Settings', href: gamePath(game, '/settings'), icon: MdOutlineSettings },
 ];
 
 function isActive(pathname: string, href: string, game: Game) {
@@ -26,11 +25,12 @@ function isActive(pathname: string, href: string, game: Game) {
 }
 
 // Vertical list for the desktop sidebar.
-export function SideNavLinks({ game }: { game: Game }) {
+export function SideNavLinks({ game, group = 'main' }: { game: Game; group?: 'main' | 'chronicles' | 'account' }) {
   const pathname = usePathname();
+  const links = group === 'main' ? linksFor(game) : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
   return (
     <ul className='flex flex-col gap-1'>
-      {linksFor(game).map(({ name, href, icon: Icon }) => {
+      {links.map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>
@@ -53,18 +53,6 @@ export function SideNavLinks({ game }: { game: Game }) {
           </li>
         );
       })}
-      <li aria-hidden className='mx-4 my-2 border-t border-bone/10' />
-      {TABLE_LINKS.map(({ name, href, icon: Icon }) => (
-        <li key={href}>
-          <Link
-            href={href}
-            className='group flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-bone/60 transition-colors duration-300 hover:bg-bone/[0.04] hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
-          >
-            <Icon aria-hidden className='size-5 transition-[scale] duration-300 ease-(--ease-spring) group-hover:scale-110' />
-            {name}
-          </Link>
-        </li>
-      ))}
     </ul>
   );
 }
@@ -74,7 +62,7 @@ export function TabBarLinks({ game }: { game: Game }) {
   const pathname = usePathname();
   return (
     <ul className='grid grid-cols-5'>
-      {[...linksFor(game).filter((l) => !l.href.endsWith('/loresheets')), TABLE_LINKS[0]].map(({ name, href, icon: Icon }) => {
+      {[...linksFor(game).filter((l) => !l.href.endsWith('/loresheets')), CHRONICLES].map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>

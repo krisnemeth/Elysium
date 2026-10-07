@@ -8,6 +8,7 @@ import { buttonPrimary } from '@/app/ui/kit/styles';
 const OPTIONS: { key: keyof Preferences; title: string; body: string }[] = [
   { key: 'tooltips', title: 'Explain traits on the sheet', body: 'Hover over (or tab to) a trait’s name to see what it means.' },
   { key: 'guidance', title: 'Tips in guided creation', body: 'Short tutorials and hints on each step of the guided character builder.' },
+  { key: 'simpleFrames', title: 'Simple frames', body: 'Plain borders instead of each theme’s ornamented frames (leaves, Gothic corners, timber…). The scenes stay.' },
 ];
 
 export default function SettingsForm({ preferences }: { preferences: Preferences }) {
