@@ -9,7 +9,10 @@ import {
   ACTS,
   AFFILIATIONS,
   APPROACHES,
+  CLUE_FINDS,
   CONSEQUENCES,
+  SEARCH_EMPTY,
+  SENSES,
   ENDINGS,
   FIRST_NAMES,
   LAST_NAMES,
@@ -28,7 +31,10 @@ import {
 } from './content';
 
 export type BotSetup = { tone: Tone; setting: SettingKind; focus: Game };
-export type BotState = BotSetup & { seed: number; path: Approach[] };
+// A group decision: one of the approaches (moves to the next act) or a
+// search for clues (stays in the scene).
+export type Choice = Approach | 'search';
+export type BotState = BotSetup & { seed: number; path: Choice[] };
 
 export type Npc = {
   role: Role;
@@ -52,10 +58,13 @@ export type Arc = {
 export type Scene = {
   act: number; // 0-based
   title: string;
+  location: string;
   narration: string[];
+  // Clues found in this scene so far, in order.
+  clues: string[];
   tests: string[];
   pressure: string[];
-  choices: { id: Approach; label: string }[];
+  choices: { id: Choice; label: string; test?: string }[];
   finished: boolean;
 };
 
@@ -157,44 +166,110 @@ const TONE_OPENERS: Record<Tone, string[]> = {
   action: ['Sirens somewhere close. Not for you, yet.', 'You have maybe an hour before this gets loud.'],
 };
 
-// The scene for the current act, shaped by the choices made so far.
-export function sceneFor(state: BotState, act = state.path.length): Scene {
+const SEARCHES_PER_ACT = 2;
+// The order in which searches uncover people. The patron is met in the hook,
+// the culprit at the reckoning.
+const CLUE_ORDER = ['informant', 'victim', 'rival'] as const;
+
+// Where the story stands after a list of choices.
+export function progress(path: Choice[]) {
+  const approaches = path.filter((c) => c !== 'search') as Approach[];
+  const act = Math.min(approaches.length, ACT_COUNT - 1);
+  let searchesThisAct = 0;
+  for (let i = path.length - 1; i >= 0 && path[i] === 'search'; i--) searchesThisAct++;
+  const searches = path.filter((c) => c === 'search').length;
+  return { act, approaches, searchesThisAct, searches };
+}
+
+// Which NPCs the group has met so far (secrets stay hidden until the end).
+export function knownNpcs(state: BotState) {
+  const { act, searches } = progress(state.path);
+  const roles = new Set<string>(['patron', ...CLUE_ORDER.slice(0, searches)]);
+  if (ACTS[act].key === 'clash' || ACTS[act].key === 'after') roles.add('culprit');
+  return roles;
+}
+
+// The scene for an act, shaped by the choices made before and during it.
+export function sceneFor(state: BotState, act = progress(state.path).act): Scene {
   const arc = buildArc(state);
-  // Each act gets its own stream so earlier choices don't reshuffle the NPCs.
-  const r = rng(state.seed + 7919 * (act + 1) + state.path.slice(0, act).reduce((n, a) => (n * 31 + APPROACH_ORDER.indexOf(a) + 1) % 1_000_003, 17));
+  const { approaches } = progress(state.path);
+  // Choices before this act, and the searches made in it.
+  const before: Choice[] = [];
+  let seen = 0;
+  for (const c of state.path) {
+    if (seen >= act) break;
+    before.push(c);
+    if (c !== 'search') seen++;
+  }
+  const during: Choice[] = [];
+  for (const c of state.path.slice(before.length)) {
+    if (c !== 'search') break;
+    during.push(c);
+  }
+  const r = rng(state.seed + 7919 * (act + 1) + before.reduce((n, a) => (n * 31 + APPROACH_ORDER.indexOf(a as Approach) + 2) % 1_000_003, 17));
   const place = pick(r, SETTINGS[state.setting].places);
   const f = (t: string) => fill(t, arc, place);
-  const previous = state.path[act - 1];
+  const previous = approaches[act - 1];
+  const key = ACTS[act].key;
   const narration: string[] = [];
+  const location = `${place[0].toUpperCase()}${place.slice(1)}, in ${arc.district}. ${pick(r, SENSES)}`;
 
   if (act === 0) {
     narration.push(pick(r, TONE_OPENERS[state.tone]), f(arc.premise), arc.stakes);
-  } else if (act < ACT_COUNT) {
+  } else {
     if (previous) narration.push(f(pick(r, APPROACHES[previous].lines)), f(pick(r, CONSEQUENCES[previous])));
-    if (ACTS[act].key === 'twist') narration.push(f(pick(r, TWISTS)));
-    if (ACTS[act].key === 'clash') {
+    if (key === 'twist') narration.push(f(pick(r, TWISTS)));
+    if (key === 'clash') {
       const threat = THREATS[state.focus].find((t) => t.title === arc.title)!;
       narration.push(`It comes to a head at ${f(threat.climax)}.`, `${arc.npcs.find((n) => n.role === 'culprit')!.name} is waiting.`);
     }
-    if (ACTS[act].key === 'after') narration.push(f(pick(r, ENDINGS)));
-    if (ACTS[act].key === 'dig') narration.push(`The trail leads to ${place}.`);
+    if (key === 'after') narration.push(f(pick(r, ENDINGS)));
   }
 
+  // Clues found by this act's searches, using the global search count.
+  const searchesBefore = before.filter((c) => c === 'search').length;
+  const clues = during.map((_, i) => {
+    const role = CLUE_ORDER[searchesBefore + i];
+    if (!role) return SEARCH_EMPTY;
+    const npc = arc.npcs.find((n) => n.role === role)!;
+    const cr = rng(state.seed + 104729 * (searchesBefore + i + 1));
+    return pick(cr, CLUE_FINDS[role]!).replaceAll('{npc}', npc.name).replaceAll('{aff}', npc.affiliation);
+  });
+
   const finished = act >= ACT_COUNT - 1;
-  const options = shuffle(r, Object.keys(APPROACHES) as Approach[]).slice(0, 3);
+  const options = shuffle(r, APPROACH_ORDER).slice(0, 3);
   const games: Game[] = ['vampire', 'werewolf', 'hunter'];
+  const canSearch = !finished && during.length < SEARCHES_PER_ACT && searchesBefore + during.length < CLUE_ORDER.length;
+  const searchTest = `Wits + Awareness or Intelligence + Investigation, difficulty ${2 + Math.min(act, 2)}`;
+  const choices: Scene['choices'] = finished
+    ? []
+    : [
+        ...(canSearch ? [{ id: 'search' as const, label: 'Search for clues', test: searchTest }] : []),
+        ...options.map((o) => ({ id: o, label: APPROACHES[o].label, test: `${pick(r, APPROACHES[o].tests)}, difficulty ${2 + Math.min(act, 3)}` })),
+      ];
   return {
-    act: Math.min(act, ACT_COUNT - 1),
-    title: ACTS[Math.min(act, ACT_COUNT - 1)].title,
+    act,
+    title: ACTS[act].title,
+    location,
     narration,
-    tests: finished ? [] : options.map((o) => `${APPROACHES[o].label}: ${pick(r, APPROACHES[o].tests)}, difficulty ${2 + Math.min(act, 3)}`),
+    clues,
+    tests: choices.map((c) => `${c.label}: ${c.test}`),
     pressure: finished ? [] : [pick(r, PRESSURE[pick(r, games)])],
-    choices: finished ? [] : options.map((id) => ({ id, label: APPROACHES[id].label })),
+    choices,
     finished,
   };
 }
 
 // The whole story so far, act by act.
 export function storySoFar(state: BotState) {
-  return Array.from({ length: Math.min(state.path.length + 1, ACT_COUNT) }, (_, act) => sceneFor(state, act));
+  const { act } = progress(state.path);
+  return Array.from({ length: act + 1 }, (_, a) => sceneFor(state, a));
+}
+
+// What the bot writes in the session log after a group decision.
+export function logEntry(state: BotState): { title: string; body: string } {
+  const last = state.path[state.path.length - 1];
+  const scene = sceneFor(state);
+  if (last === 'search') return { title: `${scene.title} · a clue`, body: scene.clues[scene.clues.length - 1] ?? SEARCH_EMPTY };
+  return { title: scene.finished ? `${scene.title} · The end` : scene.title, body: [scene.location, ...scene.narration].join('\n\n') };
 }

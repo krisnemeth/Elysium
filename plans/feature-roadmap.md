@@ -55,8 +55,14 @@ The app was front-end only with sample data. This group makes characters persist
   and appear live for everyone (Supabase Realtime).
 - ✅ **Notes and session log**: shared notes, session entries and private notes
   (visible to the author and the Storyteller).
-- Later: more bot material (threats, twists, places), per-scene NPC portraits,
-  rolling straight from the chronicle page.
+- ✅ **Voting**: every player votes on the bot's options (live tallies); the
+  story moves on when everyone has voted or the creator ends the vote.
+- ✅ **Scenes and clues**: each act is a scene at a described location; searching
+  turns up clues, and NPCs only appear once a clue reveals them.
+- ✅ **At the table**: your character's card (key roll values, full sheet in a
+  dialog), condition tracking and dice on the chronicle page; a dice roller for
+  the Storyteller.
+- Next: the story engine proposal in `plans/storyteller-engine.md`.
 
 ## Group 4 — Story and polish
 
@@ -81,3 +87,4 @@ The app was front-end only with sample data. This group makes characters persist
 - Later: loresheets shared with a chronicle; Werewolf breed and Hunter
   specifics in guided creation; a true server-generated PDF if browser
   printing isn't enough.
+- Storyteller's tones will have to be different, and Players should choose a storyteller identity for the chronicle. these should be varied bots with different styles of storytelling. it helps players pick one, based on a characterized approach.

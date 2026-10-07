@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useActionState, useEffect, useId, useRef, useState, useTransition } from 'react';
 import clsx from 'clsx';
-import { addNote, chooseBotPath, inviteFriend, setChronicleCharacter } from '@/app/lib/actions/social';
-import type { Approach } from '@/app/lib/storyteller/content';
+import { addNote, callBotVote, inviteFriend, setChronicleCharacter, voteBotChoice } from '@/app/lib/actions/social';
+import type { Choice } from '@/app/lib/storyteller/generate';
 import type { PartyMember, Roll } from '@/app/lib/data/social';
 import { GAMES, type Game } from '@/app/lib/games';
 import { SPECIAL_DIE_NAME } from '@/app/lib/dice/rules';
@@ -92,31 +92,77 @@ export function InviteFriends({ chronicleId, friends }: { chronicleId: string; f
 
 // ------------------------------------------------------------------ Storyteller bot
 
-export function BotChoices({ chronicleId, step, choices }: { chronicleId: string; step: number; choices: { id: Approach; label: string }[] }) {
+export function BotVote({
+  chronicleId,
+  step,
+  choices,
+  votes,
+  members,
+  me,
+  isOwner,
+}: {
+  chronicleId: string;
+  step: number;
+  choices: { id: Choice; label: string; test?: string }[];
+  votes: { user_id: string; choice: string }[];
+  // Joined members, by id, with display names.
+  members: { id: string; name: string }[];
+  me: string;
+  isOwner: boolean;
+}) {
   const [pending, start] = useTransition();
   const [error, setError] = useState('');
+  const mine = votes.find((v) => v.user_id === me)?.choice;
+  const names = new Map(members.map((m) => [m.id, m.id === me ? 'You' : m.name]));
+  const waiting = members.filter((m) => !votes.some((v) => v.user_id === m.id));
+  const run = (fn: () => Promise<{ error?: string }>) =>
+    start(async () => {
+      const r = await fn();
+      setError(r.error ?? '');
+    });
+
   return (
     <div className='flex flex-col gap-3'>
-      <p className={fieldLabel}>What does the group do?</p>
-      <div className='flex flex-wrap gap-3'>
-        {choices.map((c) => (
-          <button
-            key={c.id}
-            type='button'
-            disabled={pending}
-            className={buttonPrimary}
-            onClick={() =>
-              start(async () => {
-                const r = await chooseBotPath(chronicleId, step, c.id);
-                setError(r.error ?? '');
-              })
-            }
-          >
-            {c.label}
+      <p className={fieldLabel}>What does the group do? Everyone votes.</p>
+      <ul className='grid gap-2 sm:grid-cols-2'>
+        {choices.map((c) => {
+          const voters = votes.filter((v) => v.choice === c.id);
+          const chosen = mine === c.id;
+          return (
+            <li key={c.id}>
+              <button
+                type='button'
+                disabled={pending}
+                aria-pressed={chosen}
+                onClick={() => run(() => voteBotChoice(chronicleId, step, c.id))}
+                className={clsx(
+                  'flex h-full w-full flex-col items-start gap-1 rounded-xl border p-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60',
+                  chosen ? 'border-accent bg-accent/15' : 'border-bone/15 hover:border-bone/40',
+                )}
+              >
+                <span className='flex w-full items-baseline justify-between gap-2'>
+                  <span className='font-display text-lg'>{c.label}</span>
+                  {voters.length > 0 && <span className='text-xs text-accent tabular-nums'>{voters.length}</span>}
+                </span>
+                {c.test && <span className='text-xs text-bone/55'>Roll: {c.test}</span>}
+                {voters.length > 0 && <span className='text-xs text-bone/70'>{voters.map((v) => names.get(v.user_id) ?? 'Someone').join(', ')}</span>}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <div className='flex flex-wrap items-center gap-3 text-xs text-bone/55'>
+        <span role='status'>
+          {votes.length} of {members.length} voted
+          {waiting.length > 0 && ` · waiting for ${waiting.map((m) => names.get(m.id)).join(', ')}`}
+        </span>
+        {isOwner && votes.length > 0 && waiting.length > 0 && (
+          <button type='button' disabled={pending} onClick={() => run(() => callBotVote(chronicleId, step))} className='rounded-full border border-bone/20 px-3 py-1 text-bone/80 hover:border-bone/50 hover:text-bone'>
+            End the vote now
           </button>
-        ))}
+        )}
       </div>
-      <p className='text-xs text-bone/45'>Talk it over first: whoever clicks decides for the group. Make the suggested rolls in play mode.</p>
+      <p className='text-xs text-bone/40'>You can change your vote until everyone has voted. Ties go to the chronicle’s creator.</p>
       {error && <p role='status' className='text-sm text-accent'>{error}</p>}
     </div>
   );
@@ -165,13 +211,18 @@ export function NoteComposer({ chronicleId, isStoryteller }: { chronicleId: stri
 
 type Live = { url: string; anonKey: string };
 
-// Reloads the page's server data when notes (including the bot's) change.
+// Reloads the page's server data when notes (including the bot's) or votes change.
 export function LiveRefresh({ chronicleId, live }: { chronicleId: string; live: Live }) {
   const router = useRouter();
-  useEffect(
-    () => subscribe(live.url, live.anonKey, `notes:${chronicleId}`, 'chronicle_notes', `chronicle_id=eq.${chronicleId}`, () => router.refresh()),
-    [chronicleId, live.url, live.anonKey, router],
-  );
+  useEffect(() => {
+    const filter = `chronicle_id=eq.${chronicleId}`;
+    const stopNotes = subscribe(live.url, live.anonKey, `notes:${chronicleId}`, 'chronicle_notes', filter, () => router.refresh());
+    const stopVotes = subscribe(live.url, live.anonKey, `votes:${chronicleId}`, 'chronicle_votes', filter, () => router.refresh());
+    return () => {
+      stopNotes();
+      stopVotes();
+    };
+  }, [chronicleId, live.url, live.anonKey, router]);
   return null;
 }
 

@@ -44,6 +44,7 @@ export default function PlaySheet({
   name,
   initialSheet,
   chronicles = [],
+  embeddedIn,
 }: {
   game: Game;
   id: string;
@@ -51,6 +52,8 @@ export default function PlaySheet({
   initialSheet: Sheet;
   // Chronicles this character is in: rolls can be shared to one of them.
   chronicles?: { id: string; name: string }[];
+  // Shown on a chronicle's page: no header, and every roll goes to that chronicle.
+  embeddedIn?: string;
 }) {
   const { sheet, update, state, error, retry } = useCharacterSave(game, id, initialSheet);
   const t = sheet.trackers;
@@ -96,11 +99,15 @@ export default function PlaySheet({
 
   const specialKey = game === 'vampire' ? 'hunger' : game === 'werewolf' ? 'rage' : 'desperation';
   const shareId = useId();
-  const [shareTo, setShareTo] = useState(chronicles[0]?.id ?? '');
+  const [chosenShare, setShareTo] = useState(chronicles[0]?.id ?? '');
+  const shareTo = embeddedIn ?? chosenShare;
   const rollLabel = [first, second?.label].filter(Boolean).join(' + ');
 
   return (
     <div className='flex flex-col gap-8'>
+      {embeddedIn ? (
+        <SaveStatus className='self-start' state={state} error={error} onRetry={() => void retry()} />
+      ) : (
       <header className='flex flex-wrap items-center gap-3'>
         <Link href={`/vault/${game}/characters/${id}`} className='inline-flex items-center gap-1.5 text-sm text-bone/60 transition-colors hover:text-bone'>
           <MdArrowBack aria-hidden /> {name}
@@ -110,6 +117,7 @@ export default function PlaySheet({
         </Link>
         <SaveStatus className='ml-auto' state={state} error={error} onRetry={() => void retry()} />
       </header>
+      )}
 
       <section aria-labelledby='condition-title' className='flex flex-col gap-4'>
         <h2 id='condition-title' className='font-display text-3xl'>Condition</h2>
@@ -214,7 +222,9 @@ export default function PlaySheet({
             <span className='hidden sm:block' />
           )}
         </div>
-        {chronicles.length > 0 && (
+        {embeddedIn ? (
+          <p className='text-sm text-bone/55'>Rolls here appear in the chronicle’s dice log for everyone.</p>
+        ) : chronicles.length > 0 && (
           <div className='flex flex-wrap items-center gap-3 text-sm text-bone/70'>
             <label htmlFor={shareId}>Share rolls with</label>
             <select id={shareId} value={shareTo} onChange={(e) => setShareTo(e.target.value)} className='cursor-pointer rounded-lg border border-bone/15 bg-transparent px-3 py-1.5 [&_option]:bg-ink'>

@@ -306,3 +306,35 @@ export const ENDINGS: string[] = [
   'You walked away. Not everyone did. {district} will remember who stood up.',
   'Dawn comes grey and ordinary, and somewhere {culprit}’s people are already regrouping.',
 ];
+
+// ------------------------------------------------------------------ scenes and clues
+
+// One line of atmosphere for a scene's location. Original writing.
+export const SENSES: string[] = [
+  'The air tastes of rust and old rain.',
+  'Somewhere close, a radio is playing to nobody.',
+  'Every surface is cold, as if the heating died years ago.',
+  'There is a smell under the bleach that the bleach is losing to.',
+  'Footsteps echo a little too long before they fade.',
+  'A single light flickers, and the shadows flinch with it.',
+  'It is quiet in the way places are quiet just after an argument.',
+  'Water drips steadily from somewhere you cannot see.',
+];
+
+// What a search turns up, one per role. {npc} is the name, {aff} the allegiance.
+export const CLUE_FINDS: Partial<Record<'informant' | 'victim' | 'rival', string[]>> = {
+  informant: [
+    'Tucked behind a loose brick: a stack of cheap business cards, all the same name. {npc}, {aff}. Someone has written “ask about the dates” on the back of one.',
+    'A bartender slides you a napkin with a number on it. “{npc} sees everything round here,” they say. {npc} is {aff}.',
+  ],
+  victim: [
+    'A torn photograph, the face scratched out but the name on the back still clear: {npc}. They were {aff}, and they were here the night it started.',
+    'A coat on a hook that nobody has come back for. In the pocket, a hospital wristband: {npc}, {aff}.',
+  ],
+  rival: [
+    'Fresh scuff marks and a dropped lighter, engraved with initials. They belong to {npc}, {aff}, who has been here before you, and recently.',
+    'Someone else has been asking the same questions. Everyone you talk to describes the same person: {npc}, {aff}.',
+  ],
+};
+
+export const SEARCH_EMPTY = 'You turn the place over again. Whatever it had to tell you, it has told you.';

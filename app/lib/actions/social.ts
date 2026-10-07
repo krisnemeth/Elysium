@@ -4,8 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/app/lib/supabase/server';
 import { isGame, type Game } from '@/app/lib/games';
-import { TONES, SETTINGS, type Approach, type SettingKind, type Tone } from '@/app/lib/storyteller/content';
-import { ACT_COUNT, newBotState, sceneFor, type BotState } from '@/app/lib/storyteller/generate';
+import { TONES, SETTINGS, type SettingKind, type Tone } from '@/app/lib/storyteller/content';
+import { logEntry, newBotState, sceneFor, type BotState, type Choice } from '@/app/lib/storyteller/generate';
 import type { RollResult } from '@/app/lib/dice/rules';
 
 export type ActionState = { ok?: boolean; error?: string; message?: string };
@@ -98,7 +98,7 @@ export async function createChronicle(_: ActionState, form: FormData): Promise<A
   if (bot) {
     // The bot opens the first scene in the session log.
     const scene = sceneFor(bot, 0);
-    await supabase.from('chronicle_notes').insert({ chronicle_id: id, kind: 'bot', title: scene.title, body: scene.narration.join('\n\n') });
+    await supabase.from('chronicle_notes').insert({ chronicle_id: id, kind: 'bot', title: scene.title, body: [scene.location, ...scene.narration].join('\n\n') });
   }
   revalidatePath('/vault/chronicles');
   redirect(chroniclePath(id as string));
@@ -203,25 +203,41 @@ export async function deleteNote(chronicleId: string, noteId: string) {
 
 // ------------------------------------------------------------------ Storyteller bot
 
-export async function chooseBotPath(chronicleId: string, expected: number, choice: Approach): Promise<ActionState> {
+// Writes the bot's narration once a vote has been decided.
+async function afterDecision(supabase: Awaited<ReturnType<typeof createClient>>, chronicleId: string, winner: string | null) {
+  if (!winner) return;
+  const { data } = await supabase.from('chronicles').select('bot').eq('id', chronicleId).maybeSingle();
+  const bot = data?.bot as BotState | null;
+  if (!bot) return;
+  const entry = logEntry(bot);
+  await supabase.from('chronicle_notes').insert({ chronicle_id: chronicleId, kind: 'bot', title: entry.title, body: entry.body });
+}
+
+async function botAt(chronicleId: string, step: number) {
   const supabase = await createClient();
-  const { data: chronicle } = await supabase.from('chronicles').select('bot, storyteller').eq('id', chronicleId).maybeSingle();
-  const bot = chronicle?.bot as BotState | null;
-  if (!bot || chronicle?.storyteller !== 'bot') return { error: 'This chronicle has no Storyteller bot.' };
-  if (bot.path.length !== expected) return { error: 'Someone else chose first. Here’s where the story went.' };
+  const { data } = await supabase.from('chronicles').select('bot, storyteller').eq('id', chronicleId).maybeSingle();
+  const bot = data?.storyteller === 'bot' ? (data.bot as BotState | null) : null;
+  return { supabase, bot, current: bot?.path.length === step };
+}
+
+export async function voteBotChoice(chronicleId: string, step: number, choice: Choice): Promise<ActionState> {
+  const { supabase, bot, current } = await botAt(chronicleId, step);
+  if (!bot) return { error: 'This chronicle has no Storyteller bot.' };
+  if (!current) return { error: 'The group has already moved on. Here’s where the story went.' };
   if (!sceneFor(bot).choices.some((c) => c.id === choice)) return { error: 'That isn’t one of the options.' };
+  const { data: winner, error } = await supabase.rpc('cast_vote', { cid: chronicleId, at_step: step, pick: choice });
+  if (error) return { error: 'Couldn’t record your vote. Try again.' };
+  await afterDecision(supabase, chronicleId, winner as string | null);
+  revalidatePath(chroniclePath(chronicleId));
+  return { ok: true };
+}
 
-  const { data: advanced } = await supabase.rpc('advance_bot', { cid: chronicleId, expected, choice });
-  if (!advanced) return { error: 'Someone else chose first. Here’s where the story went.' };
-
-  const next: BotState = { ...bot, path: [...bot.path, choice] };
-  const scene = sceneFor(next);
-  await supabase.from('chronicle_notes').insert({
-    chronicle_id: chronicleId,
-    kind: 'bot',
-    title: next.path.length >= ACT_COUNT - 1 ? `${scene.title} · The end` : scene.title,
-    body: scene.narration.join('\n\n'),
-  });
+export async function callBotVote(chronicleId: string, step: number): Promise<ActionState> {
+  const { supabase, bot, current } = await botAt(chronicleId, step);
+  if (!bot || !current) return { error: 'The group has already moved on.' };
+  const { data: winner } = await supabase.rpc('call_vote', { cid: chronicleId, at_step: step });
+  if (!winner) return { error: 'Nobody has voted yet, or only the chronicle’s creator can call it.' };
+  await afterDecision(supabase, chronicleId, winner as string);
   revalidatePath(chroniclePath(chronicleId));
   return { ok: true };
 }

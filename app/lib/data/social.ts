@@ -162,3 +162,11 @@ export async function getChroniclesForCharacter(characterId: string) {
     name: (r.chronicles as unknown as { name: string } | null)?.name ?? 'Chronicle',
   }));
 }
+
+export type Vote = { user_id: string; choice: string; created_at: string };
+
+export async function getVotes(chronicleId: string, step: number) {
+  const supabase = await createClient();
+  const { data } = await supabase.from('chronicle_votes').select('user_id, choice, created_at').eq('chronicle_id', chronicleId).eq('step', step);
+  return (data ?? []) as Vote[];
+}

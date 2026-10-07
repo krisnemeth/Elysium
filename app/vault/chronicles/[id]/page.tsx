@@ -5,16 +5,19 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import { deleteChronicle, deleteNote, leaveChronicle, removeMember, respondToInvite } from '@/app/lib/actions/social';
-import { getCharacters } from '@/app/lib/data/characters';
-import { getChronicle, getFriends, getNotes, getRolls } from '@/app/lib/data/social';
+import { getCharacter, getCharacters } from '@/app/lib/data/characters';
+import { getChronicle, getFriends, getNotes, getRolls, getVotes } from '@/app/lib/data/social';
 import { GAMES } from '@/app/lib/games';
 import { isUploadedPortrait } from '@/app/lib/portraits';
-import { ACT_COUNT, buildArc, sceneFor, storySoFar } from '@/app/lib/storyteller/generate';
+import { ACT_COUNT, buildArc, knownNpcs, sceneFor, storySoFar } from '@/app/lib/storyteller/generate';
 import { SUPABASE_KEY, SUPABASE_URL } from '@/app/lib/supabase/env';
 import { panel } from '@/app/ui/kit/styles';
 import SocialShell from '@/app/ui/social/SocialShell';
 import { ActionButton } from '@/app/ui/social/forms';
-import { BotChoices, CharacterPicker, InviteFriends, LiveRefresh, LiveRolls, NoteComposer } from '@/app/ui/chronicles/parts';
+import { BotVote, CharacterPicker, InviteFriends, LiveRefresh, LiveRolls, NoteComposer } from '@/app/ui/chronicles/parts';
+import ChronicleCharacter from '@/app/ui/chronicles/ChronicleCharacter';
+import StorytellerDice from '@/app/ui/chronicles/StorytellerDice';
+import PlaySheet from '@/app/ui/play/PlaySheet';
 
 export async function generateMetadata({ params }: PageProps<'/vault/chronicles/[id]'>): Promise<Metadata> {
   const { id } = await params;
@@ -64,6 +67,12 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
   const arc = bot ? buildArc(bot) : null;
   const scene = bot ? sceneFor(bot) : null;
   const earlier = bot ? storySoFar(bot).slice(0, -1) : [];
+  const known = bot ? knownNpcs(bot) : new Set<string>();
+  const [votes, myCharacter] = await Promise.all([
+    bot ? getVotes(c.id, bot.path.length) : Promise.resolve([]),
+    membership.character_id ? getCharacter(membership.character_id) : Promise.resolve(null),
+  ]);
+  const joined = party.filter((p) => p.status === 'joined').map((p) => ({ id: p.user_id, name: p.display_name }));
 
   return (
     <SocialShell
@@ -87,23 +96,27 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         <div className='flex flex-col gap-5 lg:col-span-2'>
           {bot && arc && scene && (
             <Panel title={`${arc.title} · Act ${scene.act + 1} of ${ACT_COUNT}: ${scene.title}`}>
+              <p className='text-sm leading-relaxed text-bone/60 italic'>{scene.location}</p>
               <div className='flex flex-col gap-3 text-lg leading-relaxed text-pretty text-bone/85'>
                 {scene.narration.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
               </div>
-              {!!scene.pressure.length && <p className='border-l-2 border-accent/60 pl-4 text-sm text-bone/65'>{scene.pressure.join(' ')}</p>}
-              {!!scene.tests.length && (
-                <ul className='flex flex-col gap-1 text-sm text-bone/70'>
-                  {scene.tests.map((t) => (
-                    <li key={t}>{t}</li>
+              {scene.clues.length > 0 && (
+                <ul className='flex flex-col gap-2'>
+                  {scene.clues.map((clue, i) => (
+                    <li key={i} className='rounded-xl border border-accent/30 bg-accent/[0.06] p-3 text-sm leading-relaxed text-bone/85'>
+                      <span className='mr-2 text-[0.6rem] tracking-[0.2em] text-accent uppercase'>Clue</span>
+                      {clue}
+                    </li>
                   ))}
                 </ul>
               )}
+              {!!scene.pressure.length && <p className='border-l-2 border-accent/60 pl-4 text-sm text-bone/65'>{scene.pressure.join(' ')}</p>}
               {scene.finished ? (
                 <p className='font-display text-xl text-accent'>The story is told. Start a new chronicle for the next one.</p>
               ) : (
-                <BotChoices chronicleId={c.id} step={bot.path.length} choices={scene.choices} />
+                <BotVote chronicleId={c.id} step={bot.path.length} choices={scene.choices} votes={votes} members={joined} me={me} isOwner={isOwner} />
               )}
               {earlier.length > 0 && (
                 <details className='group border-t border-bone/10 pt-4'>
@@ -112,10 +125,9 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
                     {earlier.map((s) => (
                       <li key={s.act}>
                         <p className='font-display text-lg'>{s.title}</p>
-                        {s.narration.map((p, i) => (
+                        {[s.location, ...s.narration, ...s.clues].map((p, i) => (
                           <p key={i} className='mt-1 text-sm leading-relaxed text-bone/65'>{p}</p>
                         ))}
-                        {bot.path[s.act] && <p className='mt-1 text-xs tracking-[0.15em] text-accent uppercase'>Chosen: {s.choices.find((x) => x.id === bot.path[s.act])?.label ?? bot.path[s.act]}</p>}
                       </li>
                     ))}
                   </ol>
@@ -127,7 +139,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
           {arc && (
             <Panel title='Who’s who'>
               <ul className='grid gap-4 sm:grid-cols-2'>
-                {arc.npcs.map((n) => (
+                {arc.npcs.filter((n) => known.has(n.role)).map((n) => (
                   <li key={n.name} className='rounded-xl border border-bone/10 bg-bone/[0.02] p-4'>
                     <p className='text-[0.65rem] tracking-[0.2em] text-accent uppercase'>{n.roleLabel}</p>
                     <p className='mt-1 font-display text-xl'>{n.name}</p>
@@ -137,7 +149,24 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
                   </li>
                 ))}
               </ul>
-              {!scene?.finished && <p className='text-xs text-bone/40'>Everyone is hiding something. Their secrets come out when the story ends.</p>}
+              <p className='text-xs text-bone/40'>
+                {arc.npcs.length - known.size > 0 && `${arc.npcs.length - known.size} more ${arc.npcs.length - known.size === 1 ? 'person is' : 'people are'} involved. Search for clues to find them. `}
+                {!scene?.finished && 'Everyone is hiding something; secrets come out when the story ends.'}
+              </p>
+            </Panel>
+          )}
+
+          {myCharacter ? (
+            <Panel title='Play'>
+              <PlaySheet game={myCharacter.game} id={myCharacter.id} name={myCharacter.name || 'Unnamed'} initialSheet={myCharacter.sheet} embeddedIn={c.id} />
+            </Panel>
+          ) : isStoryteller ? (
+            <Panel title='Storyteller’s dice'>
+              <StorytellerDice chronicleId={c.id} game={c.game} />
+            </Panel>
+          ) : (
+            <Panel title='Play'>
+              <p className='text-sm text-bone/60'>Choose the character you’re bringing (under The party) to get your sheet and dice here.</p>
             </Panel>
           )}
 
@@ -171,6 +200,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         </div>
 
         <div className='flex flex-col gap-5'>
+          {myCharacter && <ChronicleCharacter record={myCharacter} />}
           <Panel title='The party'>
             <ul className='flex flex-col gap-3'>
               {party.map((p) => (
