@@ -44,74 +44,22 @@ function Footer({ c }: { c: Character }) {
 
 // ------------------------------------------------------------------ Masquerade
 
-// Tracery in the arch head: a ring of four lobes (a quatrefoil) in stone.
-function Quatrefoil({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox='0 0 60 60' aria-hidden className={className}>
-      <g fill='none' stroke='currentColor' strokeWidth='2.2'>
-        <circle cx='30' cy='30' r='27' />
-        <circle cx='30' cy='17' r='11' />
-        <circle cx='43' cy='30' r='11' />
-        <circle cx='30' cy='43' r='11' />
-        <circle cx='17' cy='30' r='11' />
-      </g>
-      <circle cx='30' cy='30' r='3.5' fill='currentColor' />
-    </svg>
-  );
-}
-
-// A slim column with a capital at the arch's springing line.
-function Colonnette({ side }: { side: 'left' | 'right' }) {
-  return (
-    <span aria-hidden className={`absolute top-[33%] bottom-0 ${side === 'left' ? '-left-[7px]' : '-right-[7px]'} flex w-[6px] flex-col items-center`}>
-      <span className='h-2 w-[10px] rounded-t-sm bg-bone/35' />
-      <span className='w-[4px] grow bg-linear-to-r from-bone/15 via-bone/35 to-bone/10' />
-    </span>
-  );
-}
-
+// The portrait fills a lancet-arched window; ornament stays on the card's edge
+// (.gothic-card in app/games.css), in the sidebar frame's style.
 function Masquerade({ c }: { c: Character }) {
   const Wordmark = c.clan ? CLANS[c.clan].Wordmark : undefined;
   return (
-    <div className='vtm-masq flex h-full flex-col p-5'>
-      {/* Window: moulding and colonnettes around a lancet whose head holds
-          stained glass and tracery; the portrait is below the transom. */}
-      <div className='relative mx-2 mt-1 aspect-[3/4.3]'>
-        {/* Outer moulding: slightly larger arches behind the opening. */}
-        <div aria-hidden className='gothic-arch absolute -inset-[9px] bg-linear-to-b from-bone/25 via-bone/10 to-bone/5' />
-        <div aria-hidden className='gothic-arch absolute -inset-[5px] bg-ink' />
-        <div aria-hidden className='gothic-arch absolute -inset-[3px] bg-accent/50 shadow-[0_0_1.5rem_var(--accent)]' />
-        <Colonnette side='left' />
-        <Colonnette side='right' />
-
-        <div className='gothic-arch absolute inset-0 overflow-hidden bg-ink'>
-          {/* Arch head: coloured glass, leaded, lit by the moon. */}
-          <div aria-hidden className='absolute inset-x-0 top-0 h-[29%] bg-[radial-gradient(ellipse_at_50%_20%,color-mix(in_oklab,var(--accent)_75%,white),var(--accent)_35%,var(--accent-deep)_75%)] opacity-80 transition-opacity duration-700 group-hover:opacity-100' />
-          <div aria-hidden className='gothic-leading absolute inset-x-0 top-0 h-[29%] [mask-image:none]' />
-          <div aria-hidden className='absolute inset-x-0 top-0 h-[29%] bg-[radial-gradient(ellipse_at_50%_0%,rgb(220_225_255/0.35),transparent_70%)]' />
-
-          {/* Light below the transom. */}
-          <div className='absolute inset-x-0 top-[29%] bottom-0'>
-            <Portrait c={c} className='brightness-90 saturate-[0.85] group-hover:brightness-100 group-hover:saturate-100' />
-            <div aria-hidden className='absolute inset-0 bg-[linear-gradient(to_bottom,rgb(190_200_255/0.14),transparent_35%)]' />
-            <div aria-hidden className='candle-glow absolute -bottom-10 left-1/2 h-32 w-3/4 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(255_170_80/0.4),transparent)] mix-blend-screen' />
-            <div aria-hidden className='absolute inset-0 bg-linear-to-t from-ink via-ink/15 to-transparent' />
-          </div>
-        </div>
-
-        {/* Transom: the stone bar between the glass and the light below. */}
-        <span aria-hidden className='absolute inset-x-0 top-[28%] h-[7px] bg-linear-to-b from-bone/40 to-bone/15 shadow-[0_3px_6px_rgb(0_0_0/0.8)]' />
-        <Quatrefoil className='absolute top-[7%] left-1/2 w-[30%] -translate-x-1/2 text-[#d9d2c5]/80 drop-shadow-[0_0_4px_rgb(0_0_0/0.9)]' />
-        {/* Sill */}
-        <span aria-hidden className='absolute -inset-x-[14px] -bottom-[10px] h-[10px] rounded-sm bg-linear-to-b from-bone/30 to-bone/5 shadow-[0_6px_12px_-4px_rgb(0_0_0/0.9)]' />
-
+    <div className='vtm-masq gothic-card flex h-full flex-col rounded-[inherit] border p-2.5'>
+      <div className='gothic-arch relative aspect-[4/5] overflow-hidden bg-ink'>
+        <Portrait c={c} />
+        <div aria-hidden className='absolute inset-0 bg-linear-to-t from-ink via-ink/10 to-transparent' />
         <FactionMark
           character={c}
-          className='absolute right-3 bottom-4 h-8 max-w-10 text-bone/75 drop-shadow-[0_0_0.75rem_rgb(0_0_0/0.9)] transition-[color,scale] duration-500 ease-(--ease-spring) [--knockout:transparent] group-hover:scale-110 group-hover:text-bone'
+          className='absolute right-3 bottom-3 h-8 max-w-10 text-bone/75 drop-shadow-[0_0_0.75rem_rgb(0_0_0/0.9)] transition-[color,scale] duration-500 ease-(--ease-spring) [--knockout:transparent] group-hover:scale-110 group-hover:text-bone'
         />
       </div>
 
-      <div className='mt-7 flex grow flex-col'>
+      <div className='flex grow flex-col px-3 pt-3 pb-2'>
         {Wordmark ? (
           <Wordmark aria-label={factionName(c)} role='img' className='h-5 w-auto max-w-full self-start text-accent' />
         ) : (

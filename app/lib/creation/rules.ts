@@ -210,3 +210,62 @@ export function finalSheet(game: Game, w: Wizard): Sheet {
 }
 
 export const attributeGroups = Object.entries(ATTRIBUTES) as [string, readonly Attribute[]][];
+
+// ------------------------------------------------------------------ tracker
+
+export type BudgetItem = { label: string; have: number; want: number };
+
+const sum = (values: number[]) => values.reduce((n, v) => n + v, 0);
+const levelItems = (values: number[], spread: Record<number, number>) =>
+  Object.keys(spread)
+    .map(Number)
+    .sort((a, b) => b - a)
+    .map((level) => ({ label: `at ${level}`, have: values.filter((v) => v === level).length, want: spread[level] }));
+
+// What the points tracker shows for a step: placed versus allowed.
+export function budget(game: Game, step: StepKey, w: Wizard): BudgetItem[] {
+  const s = w.sheet;
+  switch (step) {
+    case 'attributes': {
+      const values = Object.values(s.attributes);
+      const total = sum(Object.entries(ATTRIBUTE_SPREAD).map(([lvl, n]) => Number(lvl) * n));
+      return [{ label: 'Dots', have: sum(values), want: total }, ...levelItems(values, ATTRIBUTE_SPREAD)];
+    }
+    case 'skills': {
+      if (!w.spread) return [];
+      const spread = SKILL_SPREADS[w.spread].spread as Record<number, number>;
+      const values = Object.values(SKILLS).flat().map((sk) => s.skills[sk]?.dots ?? 0);
+      const total = sum(Object.entries(spread).map(([lvl, n]) => Number(lvl) * n));
+      return [{ label: 'Dots', have: sum(values), want: total }, ...levelItems(values.filter((v) => v > 0), spread)];
+    }
+    case 'specialties': {
+      const { total } = specialtiesNeeded(game, s);
+      return [{ label: 'Specialties', have: Object.values(s.skills).filter((v) => v?.specialty?.trim()).length, want: total }];
+    }
+    case 'renown': {
+      const r = s.renown ?? { glory: 0, honor: 0, wisdom: 0 };
+      return [
+        { label: 'Renown', have: r.glory + r.honor + r.wisdom, want: 3 },
+        { label: 'Gifts', have: (s.gifts ?? []).filter((g) => g.name.trim()).length, want: 3 },
+      ];
+    }
+    case 'edges': {
+      const edges = (s.edges ?? []).filter((e) => e.name.trim());
+      return [
+        { label: 'Edges', have: edges.length, want: edges.length >= 2 ? 2 : edges.length === 1 && edges[0].perks.filter((p) => p.trim()).length >= 2 ? 1 : 2 },
+        { label: 'Perks', have: edges.reduce((n, e) => n + e.perks.filter((p) => p.trim()).length, 0), want: edges.length >= 2 ? 1 : 2 },
+      ];
+    }
+    case 'advantages': {
+      const { merits, flaws } = advantageBudget(s);
+      return [
+        { label: 'Merits & backgrounds', have: merits, want: 7 },
+        { label: 'Flaws', have: flaws, want: 2 },
+      ];
+    }
+    case 'disciplines':
+      return clanDisciplines(s).length ? [{ label: 'Clan Disciplines', have: [w.clanTwo, w.clanOne].filter(Boolean).length, want: 2 }] : [];
+    default:
+      return [];
+  }
+}

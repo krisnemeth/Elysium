@@ -14,6 +14,7 @@ import {
   SKILL_SPREADS,
   STEPS,
   advantageBudget,
+  budget,
   clanDisciplines,
   finalSheet,
   predatorOptions,
@@ -354,7 +355,7 @@ export default function GuidedCreation({ game }: { game: Game }) {
             Merits and backgrounds: <span className={merits === 7 ? 'text-bone' : 'text-accent'}>{merits} of 7</span> · Flaws:{' '}
             <span className={flaws === 2 ? 'text-bone' : 'text-accent'}>{flaws} of 2</span>
           </p>
-          <Advantages predatorSource={game === 'vampire'} />
+          <Advantages predatorSource={game === 'vampire'} game={game} />
         </div>
       );
       break;
@@ -385,27 +386,37 @@ export default function GuidedCreation({ game }: { game: Game }) {
   }
 
   const last = step === steps.length - 1;
+  const tracker = budget(game, key, w);
 
   return (
     <SheetProvider value={{ sheet: w.sheet, update }}>
       {/* Fits the screen on tablets and up; the step body scrolls only if it must. */}
       <div className={`flex flex-col gap-4 p-5 md:h-[calc(100svh-6.5rem)] md:p-7 ${panel}`}>
         <header className='flex flex-col gap-3'>
-          <div className='flex items-center justify-between gap-3'>
+          <div className='flex flex-wrap items-start justify-between gap-3'>
             <p className='text-xs tracking-[0.25em] text-accent uppercase'>
               New {GAMES[game].noun.one} · step {step + 1} of {steps.length}
             </p>
-            <button
-              type='button'
-              onClick={() => {
-                persist(game, null);
-                setShown([]);
-                setState({ w: start(game), step: 0 });
-              }}
-              className='text-xs text-bone/45 underline-offset-2 hover:text-bone hover:underline'
-            >
-              Start over
-            </button>
+            {/* Points tracker: what's placed against what this step allows. */}
+            {tracker.length > 0 && (
+              <ul aria-label='Points' className='flex flex-wrap justify-end gap-1.5'>
+                {tracker.map((t) => {
+                  const done = t.have === t.want;
+                  return (
+                    <li
+                      key={t.label}
+                      className={clsx(
+                        'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs tabular-nums transition-colors',
+                        done ? 'border-accent/50 bg-accent/15 text-bone' : t.have > t.want ? 'border-accent text-accent' : 'border-bone/20 text-bone/75',
+                      )}
+                    >
+                      {done && <MdCheck aria-hidden className='size-3.5 text-accent' />}
+                      <span className='text-bone/55'>{t.label}</span> {t.have}/{t.want}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
           <ol className='flex gap-1.5' aria-label='Progress'>
             {steps.map((s, i) => (
@@ -447,6 +458,17 @@ export default function GuidedCreation({ game }: { game: Game }) {
         <footer className='flex items-center justify-between gap-3 border-t border-bone/10 pt-4'>
           <button type='button' onClick={() => go(step - 1)} disabled={step === 0} className={buttonGhost}>
             <MdArrowBack aria-hidden /> Back
+          </button>
+          <button
+            type='button'
+            onClick={() => {
+              persist(game, null);
+              setShown([]);
+              setState({ w: start(game), step: 0 });
+            }}
+            className='text-xs text-bone/45 underline-offset-2 hover:text-bone hover:underline'
+          >
+            Start over
           </button>
           {last ? (
             <button type='button' onClick={create} disabled={pending} className={buttonPrimary}>

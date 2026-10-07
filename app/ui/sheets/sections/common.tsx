@@ -1,11 +1,14 @@
 'use client';
 
+import { useId } from 'react';
 import { MdAdd, MdClose } from 'react-icons/md';
 import DotRating from '@/app/ui/kit/DotRating';
 import { fieldLabel } from '@/app/ui/kit/styles';
 import { ATTRIBUTES, SKILLS, type Advantage, type Sheet } from '@/app/lib/sheets/types';
 import { RatingRow, SelectField, TextAreaField, TextField } from '../fields';
 import Explain from '../Explain';
+import { advantageNames } from '@/app/lib/sheets/advantage-names';
+import type { Game } from '@/app/lib/games';
 import { useSheet, useSheetFields } from '../SheetContext';
 import { glyphUrl } from '@/app/lib/factions';
 
@@ -115,8 +118,11 @@ const KINDS: Advantage['kind'][] = ['background', 'merit', 'flaw'];
 
 // `predatorSource`: let a row be marked as coming from the predator type
 // (guided creation), which keeps it out of the starting budget.
-export function Advantages({ predatorSource = false }: { predatorSource?: boolean } = {}) {
+export function Advantages({ predatorSource = false, game }: { predatorSource?: boolean; game?: Game } = {}) {
   const { sheet, update } = useSheet();
+  // Suggested names per kind; any name can still be typed.
+  const listId = useId();
+  const names = game ? advantageNames(game) : null;
   const set = (i: number, patch: Partial<Advantage>) =>
     update((d) => {
       d.advantages[i] = { ...d.advantages[i], ...patch };
@@ -137,7 +143,14 @@ export function Advantages({ predatorSource = false }: { predatorSource?: boolea
                 <option key={k} value={k}>{k}</option>
               ))}
             </select>
-            <input aria-label={`Advantage ${i + 1} name`} placeholder='Name' value={a.name} onChange={(e) => set(i, { name: e.target.value })} className={`${smallInput} min-w-24 flex-1`} />
+            <input
+              aria-label={`Advantage ${i + 1} name`}
+              placeholder={names ? 'Choose or type a name' : 'Name'}
+              list={names ? `${listId}-${a.kind}` : undefined}
+              value={a.name}
+              onChange={(e) => set(i, { name: e.target.value })}
+              className={`${smallInput} min-w-24 flex-1`}
+            />
             <DotRating label={a.name || `Advantage ${i + 1}`} value={a.dots} onChange={(dots) => set(i, { dots })} size='sm' />
             <button type='button' aria-label={`Remove ${a.name || 'advantage'}`} className={removeButton} onClick={() => update((d) => void d.advantages.splice(i, 1))}>
               <MdClose aria-hidden />
@@ -163,6 +176,14 @@ export function Advantages({ predatorSource = false }: { predatorSource?: boolea
           </li>
         ))}
       </ul>
+      {names &&
+        KINDS.map((k) => (
+          <datalist key={k} id={`${listId}-${k}`}>
+            {names[k].map((n) => (
+              <option key={n} value={n} />
+            ))}
+          </datalist>
+        ))}
       <button type='button' className={addButton} onClick={() => update((d) => void d.advantages.push({ name: '', dots: 1, kind: 'background' }))}>
         <MdAdd aria-hidden /> Add advantage or flaw
       </button>
