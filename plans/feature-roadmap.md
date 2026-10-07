@@ -88,3 +88,40 @@ The app was front-end only with sample data. This group makes characters persist
   specifics in guided creation; a true server-generated PDF if browser
   printing isn't enough.
 - Storyteller's tones will have to be different, and Players should choose a storyteller identity for the chronicle. these should be varied bots with different styles of storytelling. it helps players pick one, based on a characterized approach.
+
+## Future theme rework (notes, 2026-10-07)
+
+Not scheduled yet. Do one theme at a time and check in after each.
+
+**Guiding rule:** themes are a game-native kind of customisation, but keep the
+texture in check so it doesn't feel too "gamey". Ornament lives on frames and
+edges only, never inside reading areas or portraits; one strong signature
+element per theme, the rest quiet; text panels calm and readable everywhere.
+Consider a "Simple frames" option in Settings to turn ornament down (also an
+accessibility win).
+
+**Character card shapes** (each theme its own silhouette, not too on the nose):
+- Vampire, Masquerade: Gothic arch (done; richer ornament would come from real
+  SVG artwork, e.g. drawn in Figma/Inkscape or commissioned).
+- Vampire, Neon Nights: neon rectangle (kept). **Revisit: some card details
+  aren't right yet.**
+- Werewolf, Moonlit forest: a tall oval (a gap in the canopy, a moon on its
+  side), with a thin ring showing the auspice's moon phase as a lit arc.
+- Werewolf, The cave: a standing stone: tall, slightly tapered, chamfered top
+  corners, the tribe glyph at the top like a petroglyph.
+- Hunter, The cabin: an evidence bag: portrait behind glossy plastic, a
+  red-striped label strip with name, creed and an evidence number.
+- Hunter, The inn: an instant photo: white border, handwritten-style caption,
+  a strip of tape. (The current case files stay available for one of them.)
+
+**Sidebar textures:**
+- Werewolf, Moonlit forest: dark bark grain with a thin moss line, instead of
+  the leaf border; let the scene do the talking.
+- Werewolf, The cave: keep stone; add a faint carved line and a slight wet
+  sheen near the top.
+- Hunter, The cabin: darker, rougher plank with nail heads.
+- Hunter, The inn: painted wood or old wallpaper.
+
+**Tools worth trying:** augmented-ui (CSS cut-corner/neon frames) for Neon
+Nights, Rough.js (hand-drawn borders) for Hunter, CSS `border-image` 9-slice
+SVGs for ornate rectangular frames. Gothic ornament needs artwork, not a library.
