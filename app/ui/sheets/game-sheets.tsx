@@ -4,6 +4,7 @@ import { AUSPICES, CREEDS, DRIVES, TRIBES } from '@/app/lib/factions';
 import { Advantages, Attributes, Biography, Convictions, Profile, Skills, TextBlocks, Trackers } from './sections/common';
 import { Blood, Disciplines, VampireProfile, VampireTrackers } from './sections/vampire';
 import { Edges, GiftsAndRites, Renown } from './sections/werewolf-hunter';
+import { Experience } from './sections/experience';
 
 export type SheetSection = { id: string; label: string; body: ReactNode };
 
@@ -38,6 +39,7 @@ const VAMPIRE: SheetSection[] = [
       </div>
     ),
   },
+  { id: 'experience', label: 'Experience', body: <Experience game='vampire' /> },
   { id: 'biography', label: 'Biography', body: <Biography milestone='Embrace' apparent='Apparent age' /> },
 ];
 
@@ -102,6 +104,7 @@ const WEREWOLF: SheetSection[] = [
       </div>
     ),
   },
+  { id: 'experience', label: 'Experience', body: <Experience game='werewolf' /> },
   { id: 'biography', label: 'Biography', body: <Biography milestone='First Change' /> },
 ];
 
@@ -162,6 +165,7 @@ const HUNTER: SheetSection[] = [
       </div>
     ),
   },
+  { id: 'experience', label: 'Experience', body: <Experience game='hunter' /> },
   { id: 'biography', label: 'Biography', body: <Biography milestone='the Reckoning' /> },
 ];
 

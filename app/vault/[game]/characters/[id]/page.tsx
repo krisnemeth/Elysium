@@ -7,6 +7,8 @@ import { MdArrowBack, MdEdit } from 'react-icons/md';
 import { getCharacter, toCharacter } from '@/app/lib/data/characters';
 import { GAMES, isGame } from '@/app/lib/games';
 import { ATTRIBUTES, SKILLS } from '@/app/lib/sheets/types';
+import { xpTotals } from '@/app/lib/xp/costs';
+import { GiD10 } from 'react-icons/gi';
 import { buttonGhost, buttonPrimary, panel } from '@/app/ui/kit/styles';
 import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
 import Dots from '@/app/ui/characters/Dots';
@@ -85,6 +87,7 @@ export default async function CharacterPage({ params }: PageProps<'/vault/[game]
   const skillRows = Object.entries(SKILLS).map(([group, list]) => [group, list.filter((sk) => s.skills[sk]?.dots)] as const);
   const advantages = s.advantages.filter((a) => a.kind !== 'flaw');
   const flaws = s.advantages.filter((a) => a.kind === 'flaw');
+  const xp = xpTotals(s);
 
   return (
     <div className='flex flex-col gap-8'>
@@ -123,7 +126,9 @@ export default async function CharacterPage({ params }: PageProps<'/vault/[game]
             <Link href={`/vault/${game}/characters/${id}/edit`} className={buttonPrimary}>
               <MdEdit aria-hidden className='size-4' /> Edit sheet
             </Link>
-            <Link href={`/vault/${game}/dice`} className={buttonGhost}>Roll dice</Link>
+            <Link href={`/vault/${game}/characters/${id}/play`} className={buttonGhost}>
+              <GiD10 aria-hidden className='size-4' /> Play
+            </Link>
             <DeleteCharacter id={id} game={game} name={c.name} />
           </div>
         </div>
@@ -151,12 +156,20 @@ export default async function CharacterPage({ params }: PageProps<'/vault/[game]
           <ul className='flex flex-col gap-3'>
             {Object.entries(TRACK_LABELS)
               .filter(([k]) => k in s.trackers)
-              .map(([k, [l, max, shape]]) => (
-                <li key={k} className='flex items-center justify-between gap-4 text-sm'>
-                  <span>{l}</span>
-                  <Dots label={l} value={s.trackers[k]} max={max} shape={shape} />
-                </li>
-              ))}
+              .map(([k, [l, max, shape]]) => {
+                const dmg = k === 'health' || k === 'willpower' ? s.damage?.[k] : undefined;
+                const marked = dmg ? [dmg.superficial && `${dmg.superficial} superficial`, dmg.aggravated && `${dmg.aggravated} aggravated`].filter(Boolean).join(', ') : '';
+                return (
+                  <li key={k} className='flex items-center justify-between gap-4 text-sm'>
+                    <span>
+                      {l}
+                      {marked && <span className='block text-xs text-accent'>{marked}</span>}
+                      {k === 'humanity' && !!s.stains && <span className='block text-xs text-accent'>{s.stains} {s.stains === 1 ? 'stain' : 'stains'}</span>}
+                    </span>
+                    <Dots label={l} value={s.trackers[k]} max={max} shape={shape} />
+                  </li>
+                );
+              })}
             {s.bloodPotency !== undefined && (
               <li className='flex items-center justify-between gap-4 text-sm'>
                 <span>Blood Potency</span>
@@ -244,6 +257,34 @@ export default async function CharacterPage({ params }: PageProps<'/vault/[game]
             </ul>
           </Block>
         )}
+
+        <Block title='Experience'>
+          <dl className='grid grid-cols-3 gap-3 text-center'>
+            {[
+              ['Available', xp.available],
+              ['Earned', xp.earned],
+              ['Spent', xp.spent],
+            ].map(([l, v]) => (
+              <div key={l}>
+                <dd className='font-display text-3xl tabular-nums'>{v}</dd>
+                <dt className={label}>{l}</dt>
+              </div>
+            ))}
+          </dl>
+          {!!s.xp?.length && (
+            <ol className='mt-5 flex flex-col'>
+              {[...s.xp].reverse().slice(0, 5).map((e) => (
+                <li key={e.id} className='flex items-baseline justify-between gap-3 border-b border-bone/[0.07] py-2 text-sm'>
+                  <span>{e.note}</span>
+                  <span className={`shrink-0 tabular-nums ${e.kind === 'spent' ? 'text-accent' : 'text-bone/70'}`}>
+                    {e.kind === 'spent' ? '−' : '+'}
+                    {e.amount}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </Block>
 
         <Block title='Advantages & flaws'>
           <ul className='flex flex-col gap-2'>

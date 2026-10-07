@@ -47,11 +47,16 @@ export type Sheet = {
   };
   notes?: string;
 
+  // Play state, marked during a session.
+  damage?: Partial<Record<'health' | 'willpower', Damage>>;
+  xp?: XpEntry[];
+
   // Vampire
   disciplines?: { name: string; dots: number; powers: string[] }[];
   bloodPotency?: number;
   bane?: string;
   tenets?: string;
+  stains?: number; // Humanity
 
   // Werewolf
   renown?: { glory: number; honor: number; wisdom: number };
@@ -62,6 +67,22 @@ export type Sheet = {
 
   // Hunter
   edges?: { name: string; perks: string[] }[];
+  despair?: boolean;
+};
+
+// Boxes marked on a Health or Willpower track (its size is in `trackers`).
+export type Damage = { superficial: number; aggravated: number };
+
+export type XpEntry = {
+  id: string;
+  date: string; // ISO date
+  kind: 'earned' | 'spent';
+  amount: number;
+  note: string;
+  // Spends bought through the XP log raise this trait from `from` to `to`.
+  trait?: string;
+  from?: number;
+  to?: number;
 };
 
 export type Starter = {

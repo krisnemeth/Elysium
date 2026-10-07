@@ -177,10 +177,6 @@ export function Blood() {
           <TextField key={key} label={label} name={key} value={profile(key)} onChange={setProfile(key)} />
         ))}
       </div>
-      <div className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
-        <TextField label='Total experience' name='xpTotal' type='number' value={profile('xpTotal')} onChange={setProfile('xpTotal')} />
-        <TextField label='Spent experience' name='xpSpent' type='number' value={profile('xpSpent')} onChange={setProfile('xpSpent')} />
-      </div>
     </div>
   );
 }

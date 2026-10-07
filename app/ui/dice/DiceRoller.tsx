@@ -154,14 +154,49 @@ const idleDice = (game: Game, pool: number, special: number): Die[] => {
   ];
 };
 
-export default function DiceRoller({ game = 'vampire' }: { game?: Game }) {
+// Every value can be controlled (play mode binds them to the sheet); left
+// uncontrolled, the roller keeps its own state as on the dice page.
+type Controlled<T> = { value?: T; onChange?: (value: T) => void };
+
+function useMaybeControlled<T>(initial: T, { value, onChange }: Controlled<T>) {
+  const [own, setOwn] = useState(initial);
+  return [value ?? own, (v: T) => (onChange ? onChange(v) : setOwn(v))] as const;
+}
+
+export default function DiceRoller({
+  game = 'vampire',
+  pool: poolProp,
+  onPoolChange,
+  special: specialProp,
+  onSpecialChange,
+  danger: dangerProp,
+  onDangerChange,
+  despair: despairProp,
+  onDespairChange,
+  onWillpowerReroll,
+  poolNote,
+}: {
+  game?: Game;
+  pool?: number;
+  onPoolChange?: (v: number) => void;
+  special?: number;
+  onSpecialChange?: (v: number) => void;
+  danger?: number;
+  onDangerChange?: (v: number) => void;
+  despair?: boolean;
+  onDespairChange?: (v: boolean) => void;
+  // Called when Willpower is spent on a reroll (play mode marks the damage).
+  onWillpowerReroll?: () => void;
+  // Explains where the pool came from, e.g. "Strength 3 + Brawl 2".
+  poolNote?: string;
+}) {
   const config = GAMES[game];
   const specialName = SPECIAL_DIE_NAME[game];
-  const [pool, setPool] = useState(5);
-  const [special, setSpecial] = useState(game === 'hunter' ? 0 : 1);
+  const [pool, setPool] = useMaybeControlled(5, { value: poolProp, onChange: onPoolChange });
+  const [special, setSpecial] = useMaybeControlled(game === 'hunter' ? 0 : 1, { value: specialProp, onChange: onSpecialChange });
   const [difficulty, setDifficulty] = useState(3);
-  const [danger, setDanger] = useState(0);
-  const [despair, setDespair] = useState(false);
+  const [danger, setDanger] = useMaybeControlled(0, { value: dangerProp, onChange: onDangerChange });
+  const [despair, setDespair] = useMaybeControlled(false, { value: despairProp, onChange: onDespairChange });
   const [result, setResult] = useState<RollResult | null>(null);
   const [rollKey, setRollKey] = useState(0);
   const [rolled, setRolled] = useState<number[]>([]);
@@ -212,19 +247,20 @@ export default function DiceRoller({ game = 'vampire' }: { game?: Game }) {
     throwDice(selected);
     setSelected([]);
     setRerolled(true);
+    onWillpowerReroll?.();
     finish(r, 'Willpower reroll');
   };
 
   const check = () => {
     const value = Math.floor(Math.random() * 10) + 1;
     const ok = value >= 6;
-    if (!ok) setSpecial((s) => (game === 'vampire' ? Math.min(5, s + 1) : Math.max(0, s - 1)));
+    if (!ok) setSpecial(game === 'vampire' ? Math.min(5, special + 1) : Math.max(0, special - 1));
     log({ label: ok ? config.check!.calm : config.check!.bad, detail: `Rolled ${value}`, grim: !ok });
   };
 
   const choose = (choice: 'overreach' | 'despair') => {
     setChoiceMade(true);
-    if (choice === 'overreach') setDanger((d) => Math.min(5, d + 1));
+    if (choice === 'overreach') setDanger(Math.min(5, danger + 1));
     else setDespair(true);
     log({ label: choice === 'overreach' ? 'Overreach: Danger +1' : 'Chose Despair', detail: '', grim: true });
   };
@@ -254,7 +290,10 @@ export default function DiceRoller({ game = 'vampire' }: { game?: Game }) {
         {(torn) => (
       <div className={`flex h-full flex-col gap-6 p-6 md:p-8 ${torn} ${panel}`}>
         <div className='flex flex-wrap items-end justify-center gap-x-10 gap-y-6 md:justify-between'>
-          <Stepper label='Dice pool' value={pool} min={1} max={20} onChange={(v) => { setPool(v); resetRoll(); }} />
+          <div className='flex flex-col items-center gap-1'>
+            <Stepper label='Dice pool' value={pool} min={1} max={20} onChange={(v) => { setPool(v); resetRoll(); }} />
+            {poolNote && <span className='max-w-48 text-center text-xs text-bone/45'>{poolNote}</span>}
+          </div>
           <Stepper label={specialName} value={special} min={0} max={5} onChange={(v) => { setSpecial(v); resetRoll(); }} />
           <Stepper label='Difficulty' value={difficulty} min={1} max={10} onChange={setDifficulty} />
         </div>
@@ -324,7 +363,8 @@ export default function DiceRoller({ game = 'vampire' }: { game?: Game }) {
           </section>
         )}
 
-        {game === 'hunter' && (
+        {/* Play mode shows Danger and Despair with the character's condition instead. */}
+        {game === 'hunter' && dangerProp === undefined && (
           <section aria-labelledby='cell-title' className={`p-6 ${panel}`}>
             <h2 id='cell-title' className='font-display text-2xl'>The cell</h2>
             <div className='mt-4 flex items-center justify-between'>
