@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
+import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { signIn, signUp, type AuthState } from '@/app/lib/actions/auth';
 
 const input =
@@ -10,6 +11,7 @@ const label = 'mb-1.5 block text-[0.7rem] tracking-[0.2em] text-bone/55 uppercas
 
 export default function EmailForm({ mode, next }: { mode: 'login' | 'signup'; next?: string }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(mode === 'login' ? signIn : signUp, {});
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <form action={action} className='flex flex-col gap-4'>
@@ -26,16 +28,28 @@ export default function EmailForm({ mode, next }: { mode: 'login' | 'signup'; ne
       </div>
       <div>
         <label htmlFor='password' className={label}>Password</label>
-        <input
-          id='password'
-          name='password'
-          type='password'
-          required
-          minLength={mode === 'signup' ? 8 : undefined}
-          autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-          className={input}
-          placeholder={mode === 'signup' ? 'At least 8 characters' : undefined}
-        />
+        <div className='relative'>
+          <input
+            id='password'
+            name='password'
+            type={showPassword ? 'text' : 'password'}
+            required
+            minLength={mode === 'signup' ? 8 : undefined}
+            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+            placeholder={mode === 'signup' ? 'At least 8 characters' : undefined}
+            className={`${input} pr-12`}
+          />
+          <button
+            type='button'
+            onClick={() => setShowPassword((s) => !s)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-pressed={showPassword}
+            aria-controls='password'
+            className='absolute inset-y-0 right-1 my-auto grid size-10 place-items-center rounded-lg text-bone/50 transition-colors hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent'
+          >
+            {showPassword ? <MdVisibilityOff aria-hidden className='size-5' /> : <MdVisibility aria-hidden className='size-5' />}
+          </button>
+        </div>
       </div>
 
       <p aria-live='polite' className='min-h-5 text-sm text-accent'>{state.error}</p>
