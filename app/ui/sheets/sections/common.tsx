@@ -5,6 +5,7 @@ import DotRating from '@/app/ui/kit/DotRating';
 import { fieldLabel } from '@/app/ui/kit/styles';
 import { ATTRIBUTES, SKILLS, type Advantage, type Sheet } from '@/app/lib/sheets/types';
 import { RatingRow, SelectField, TextAreaField, TextField } from '../fields';
+import Explain from '../Explain';
 import { useSheet, useSheetFields } from '../SheetContext';
 import { glyphUrl } from '@/app/lib/factions';
 
@@ -18,20 +19,20 @@ const removeButton =
   'grid size-7 shrink-0 place-items-center rounded-full text-bone/30 transition-colors hover:bg-bone/[0.06] hover:text-bone focus-visible:outline-2 focus-visible:outline-accent';
 
 // `glyph`: show the option's Werewolf glyph beside the select.
-export type ProfileField = { key: string; label: string; options?: readonly string[]; glyph?: boolean };
+export type ProfileField = { key: string; label: string; term?: string; options?: readonly string[]; glyph?: boolean };
 
 export function Profile({ fields }: { fields: ProfileField[] }) {
   const { profile, setProfile } = useSheetFields();
   return (
     <div className='grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3'>
       {fields.map((f) => {
-        if (!f.options) return <TextField key={f.key} label={f.label} name={f.key} value={profile(f.key)} onChange={setProfile(f.key)} />;
+        if (!f.options) return <TextField key={f.key} label={f.label} term={f.term} name={f.key} value={profile(f.key)} onChange={setProfile(f.key)} />;
         const value = profile(f.key);
         const url = value && f.glyph ? glyphUrl(value) : null;
         return (
           <div key={f.key} className='flex items-end gap-3'>
             <div className='grow'>
-              <SelectField label={f.label} name={f.key} value={value} options={[...f.options]} onChange={setProfile(f.key)} />
+              <SelectField label={f.label} term={f.term} name={f.key} value={value} options={[...f.options]} onChange={setProfile(f.key)} />
             </div>
             {f.glyph && (
               <span
@@ -64,7 +65,7 @@ export function Attributes() {
   );
 }
 
-export function Skills() {
+export function Skills({ specialties = true }: { specialties?: boolean } = {}) {
   const { sheet, setSkill } = useSheetFields();
   return (
     <div className='grid gap-8 lg:grid-cols-3'>
@@ -73,13 +74,15 @@ export function Skills() {
           <h3 className={groupTitle}>{group}</h3>
           {skills.map((s) => (
             <RatingRow key={s} label={s} value={sheet.skills[s]?.dots ?? 0} onChange={(dots) => setSkill(s, { dots })}>
-              <input
-                aria-label={`${s} specialty`}
-                placeholder='Specialty'
-                value={sheet.skills[s]?.specialty ?? ''}
-                onChange={(e) => setSkill(s, { specialty: e.target.value || undefined })}
-                className={`${smallInput} text-bone/80 italic`}
-              />
+              {specialties && (
+                <input
+                  aria-label={`${s} specialty`}
+                  placeholder='Specialty'
+                  value={sheet.skills[s]?.specialty ?? ''}
+                  onChange={(e) => setSkill(s, { specialty: e.target.value || undefined })}
+                  className={`${smallInput} text-bone/80 italic`}
+                />
+              )}
             </RatingRow>
           ))}
         </div>
@@ -96,7 +99,7 @@ export function Trackers({ tracks }: { tracks: TrackSpec[] }) {
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
       {tracks.map((t) => (
         <div key={t.key} className='flex flex-col items-center gap-2 rounded-xl border border-bone/10 bg-bone/[0.02] p-4 text-center'>
-          <span className='font-display text-2xl'>{t.label}</span>
+          <Explain label={t.label} className='font-display text-2xl' />
           <DotRating label={t.label} value={tracker(t.key)} max={t.max} shape={t.shape} onChange={setTracker(t.key)} />
           <span className='text-xs text-bone/45 tabular-nums'>
             {tracker(t.key)} / {t.max}
@@ -110,7 +113,9 @@ export function Trackers({ tracks }: { tracks: TrackSpec[] }) {
 
 const KINDS: Advantage['kind'][] = ['background', 'merit', 'flaw'];
 
-export function Advantages() {
+// `predatorSource`: let a row be marked as coming from the predator type
+// (guided creation), which keeps it out of the starting budget.
+export function Advantages({ predatorSource = false }: { predatorSource?: boolean } = {}) {
   const { sheet, update } = useSheet();
   const set = (i: number, patch: Partial<Advantage>) =>
     update((d) => {
@@ -137,6 +142,17 @@ export function Advantages() {
             <button type='button' aria-label={`Remove ${a.name || 'advantage'}`} className={removeButton} onClick={() => update((d) => void d.advantages.splice(i, 1))}>
               <MdClose aria-hidden />
             </button>
+            {predatorSource && (
+              <label className='flex basis-full cursor-pointer items-center gap-2 pl-31 text-xs text-bone/55'>
+                <input
+                  type='checkbox'
+                  checked={a.source === 'Predator type'}
+                  onChange={(e) => set(i, { source: e.target.checked ? 'Predator type' : undefined })}
+                  className='accent-[var(--accent)]'
+                />
+                From predator type (doesn’t count toward the 7 and 2)
+              </label>
+            )}
             <input
               aria-label={`Advantage ${i + 1} note`}
               placeholder='Note'

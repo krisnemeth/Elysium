@@ -2,8 +2,9 @@ import { cache } from 'react';
 import { createClient } from '@/app/lib/supabase/server';
 import type { Game } from '@/app/lib/games';
 import type { BotState } from '@/app/lib/storyteller/generate';
+import { DEFAULT_PREFERENCES, readPreferences, type Preferences } from '@/app/lib/preferences';
 
-export type Profile = { id: string; display_name: string; friend_code: string };
+export type Profile = { id: string; display_name: string; friend_code: string; preferences: Preferences };
 
 export type Friend = {
   friendshipId: string;
@@ -72,9 +73,11 @@ export const getMe = cache(async (): Promise<Profile | null> => {
   const id = await userId();
   if (!id) return null;
   const supabase = await createClient();
-  const { data } = await supabase.from('profiles').select('id, display_name, friend_code').eq('id', id).maybeSingle();
-  return data as Profile | null;
+  const { data } = await supabase.from('profiles').select('id, display_name, friend_code, preferences').eq('id', id).maybeSingle();
+  return data ? ({ ...data, preferences: readPreferences(data.preferences) } as Profile) : null;
 });
+
+export const getPreferences = cache(async (): Promise<Preferences> => (await getMe())?.preferences ?? DEFAULT_PREFERENCES);
 
 export const getFriends = cache(async (): Promise<Friend[]> => {
   const me = await userId();

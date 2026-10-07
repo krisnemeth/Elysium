@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { GiD10 } from 'react-icons/gi';
-import { MdEdit } from 'react-icons/md';
+import { MdEdit, MdPictureAsPdf } from 'react-icons/md';
 import { getCharacter } from '@/app/lib/data/characters';
 import { GAMES, isGame } from '@/app/lib/games';
 import { buttonGhost, buttonPrimary } from '@/app/ui/kit/styles';
@@ -33,6 +33,9 @@ export default async function CharacterPage({ params }: PageProps<'/vault/[game]
           </Link>
           <Link href={`/vault/${game}/characters/${id}/play`} className={buttonGhost}>
             <GiD10 aria-hidden className='size-4' /> Play
+          </Link>
+          <Link href={`/vault/print/${id}`} className={buttonGhost}>
+            <MdPictureAsPdf aria-hidden className='size-4' /> PDF
           </Link>
           <DeleteCharacter id={id} game={game} name={record.name} />
         </>

@@ -8,7 +8,7 @@ import type { Starter } from '../sheets/types';
 // by predator type), Hunger 1, Blood Potency 1 for a 12th-generation neonate.
 
 // What Blood Potency 1 gives a 12th-generation neonate.
-const BLOOD_POTENCY_1 = {
+export const BLOOD_POTENCY_1 = {
   bloodSurge: 'Add 2 dice',
   mendAmount: '1 point of Superficial damage',
   powerBonus: 'None',

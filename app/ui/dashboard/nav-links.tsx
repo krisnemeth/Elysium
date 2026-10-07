@@ -2,14 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GiCastle, GiVampireCape, GiQuillInk, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire } from 'react-icons/gi';
-import { MdPeopleOutline } from 'react-icons/md';
+import { GiCastle, GiVampireCape, GiQuillInk, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
+import { MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 
 const linksFor = (game: Game) => [
   { name: 'Overview', href: gamePath(game), icon: GiCastle },
   { name: GAMES[game].noun.many === 'Hunters' ? 'Cell' : 'Characters', href: gamePath(game, '/characters'), icon: GiVampireCape },
   { name: 'New sheet', href: gamePath(game, '/new'), icon: GiQuillInk },
+  { name: 'Loresheets', href: gamePath(game, '/loresheets'), icon: GiScrollUnfurled },
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
 ];
 
@@ -17,6 +18,7 @@ const linksFor = (game: Game) => [
 const TABLE_LINKS = [
   { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire },
   { name: 'Friends', href: '/vault/friends', icon: MdPeopleOutline },
+  { name: 'Settings', href: '/vault/settings', icon: MdOutlineSettings },
 ];
 
 function isActive(pathname: string, href: string, game: Game) {
@@ -72,7 +74,7 @@ export function TabBarLinks({ game }: { game: Game }) {
   const pathname = usePathname();
   return (
     <ul className='grid grid-cols-5'>
-      {[...linksFor(game), TABLE_LINKS[0]].map(({ name, href, icon: Icon }) => {
+      {[...linksFor(game).filter((l) => !l.href.endsWith('/loresheets')), TABLE_LINKS[0]].map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>

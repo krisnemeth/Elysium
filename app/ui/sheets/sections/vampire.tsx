@@ -18,6 +18,7 @@ import {
   DisciplineThinBloodAlchemy,
 } from '@/app/ui/svgs/official';
 import { SelectField, TextField } from '../fields';
+import Explain from '../Explain';
 import { useSheet, useSheetFields } from '../SheetContext';
 import { Profile } from './common';
 
@@ -55,7 +56,7 @@ export function VampireTrackers() {
     <div className='grid gap-6 md:grid-cols-3'>
       {tracks.map((t) => (
         <div key={t.key} className='flex flex-col items-center gap-2 rounded-xl border border-bone/10 bg-bone/[0.02] p-4'>
-          <span className='font-display text-2xl'>{t.label}</span>
+          <Explain label={t.label} className='font-display text-2xl' />
           <DotRating label={t.label} value={tracker(t.key)} max={10} shape={t.shape} onChange={setTracker(t.key)} />
           <span className='text-xs text-bone/40 tabular-nums'>{tracker(t.key)} / 10</span>
         </div>
@@ -155,12 +156,12 @@ export function Blood() {
       <div className='grid items-end gap-8 md:grid-cols-2'>
         <SelectField label='Resonance' name='resonance' value={profile('resonance')} options={RESONANCES} onChange={setProfile('resonance')} />
         <div className='flex items-center justify-between gap-4 rounded-xl border border-bone/10 bg-bone/[0.02] px-4 py-3'>
-          <span className='font-display text-2xl'>Hunger</span>
+          <Explain label='Hunger' className='font-display text-2xl' />
           <DotRating label='Hunger' value={tracker('hunger')} onChange={setTracker('hunger')} shape='box' />
         </div>
       </div>
       <div className='flex flex-wrap items-center justify-between gap-4 rounded-xl border border-bone/10 bg-bone/[0.02] px-4 py-3'>
-        <span className='font-display text-2xl'>Blood Potency</span>
+        <Explain label='Blood Potency' className='font-display text-2xl' />
         <DotRating
           label='Blood Potency'
           value={sheet.bloodPotency ?? 0}

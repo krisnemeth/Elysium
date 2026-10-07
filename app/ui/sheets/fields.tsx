@@ -2,6 +2,7 @@
 
 import { useId, type ReactNode } from 'react';
 import DotRating from '@/app/ui/kit/DotRating';
+import Explain from './Explain';
 import { fieldInput, fieldLabel } from '@/app/ui/kit/styles';
 
 // Building blocks for the character sheet form.
@@ -13,6 +14,7 @@ export function TextField({
   onChange,
   type = 'text',
   placeholder,
+  term,
 }: {
   label: string;
   name: string;
@@ -20,12 +22,14 @@ export function TextField({
   onChange: (value: string) => void;
   type?: 'text' | 'date' | 'number';
   placeholder?: string;
+  // Glossary key, when it differs from the label (e.g. Hunter’s Drive vs the Drive skill).
+  term?: string;
 }) {
   const id = useId();
   return (
     <div className='group/field flex flex-col gap-1'>
       <label htmlFor={id} className={`${fieldLabel} transition-colors duration-300 group-focus-within/field:text-accent`}>
-        {label}
+        <Explain label={label} term={term} />
       </label>
       <input
         id={id}
@@ -47,6 +51,7 @@ export function SelectField({
   options,
   onChange,
   hideLabel = false,
+  term,
 }: {
   label: string;
   name: string;
@@ -54,6 +59,8 @@ export function SelectField({
   options: string[];
   onChange: (value: string) => void;
   hideLabel?: boolean;
+  // Glossary key, when it differs from the label (e.g. Hunter’s Drive vs the Drive skill).
+  term?: string;
 }) {
   const id = useId();
   return (
@@ -62,7 +69,7 @@ export function SelectField({
         htmlFor={id}
         className={hideLabel ? 'sr-only' : `${fieldLabel} transition-colors duration-300 group-focus-within/field:text-accent`}
       >
-        {label}
+        <Explain label={label} term={term} />
       </label>
       <select
         id={id}
@@ -104,7 +111,7 @@ export function TextAreaField({
         htmlFor={id}
         className={hideLabel ? 'sr-only' : `${fieldLabel} transition-colors duration-300 group-focus-within/field:text-accent`}
       >
-        {label}
+        <Explain label={label} />
       </label>
       <textarea
         id={id}
@@ -136,7 +143,7 @@ export function RatingRow({
 }) {
   return (
     <div className='flex items-center gap-3 border-b border-bone/[0.07] py-1.5 transition-colors duration-300 hover:border-bone/20'>
-      <span className='w-28 shrink-0 text-sm text-bone/80'>{label}</span>
+      <Explain label={label} className='w-28 shrink-0 text-sm text-bone/80' />
       <div className='min-w-0 grow'>{children}</div>
       <DotRating label={label} value={value} onChange={onChange} max={max} shape={shape} size='sm' />
     </div>

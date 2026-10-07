@@ -60,25 +60,24 @@ The app was front-end only with sample data. This group makes characters persist
 
 ## Group 4 — Story and polish
 
-- **Loresheets** (backstory pages, currently stubbed). Choosing "new sheet"
-  offers a character sheet or a loresheet; a loresheet then asks whether it's
-  for a location, a PC or an NPC.
-- **Two ways to make a character**:
-  - *Classic*: the current sheet, the paper character sheet digitised.
-  - *Guided*: a stepped, beginner-friendly flow with tutorials, tooltips and
-    hints. Each step is a page with no vertical scroll. Progress is gated:
-    you can't move on until the step is filled in properly, and friendly
-    alerts explain what's missing. Finishing the steps lands you on the
-    classic sheet, fully filled in.
-- **Sheet tooltips**: on the classic sheet, hovering anything explains it,
-  unless turned off.
-- **Profile / settings page**: tooltips and guidance on/off (and other
-  preferences as they come up).
-- **PDF export** of a sheet that looks like the official printed one.
+- ✅ **New sheet** (`/vault/[game]/new`) offers a character (Guided or Classic)
+  or a loresheet (Location, Player character or NPC).
+- ✅ **Loresheets** (`/vault/[game]/loresheets`): the player's own write-ups,
+  autosaved; a PC loresheet can link to one of your characters. Shown on the
+  Vampire dashboard.
+- ✅ **Guided creation** (`/vault/[game]/new/guided`): one step per screen (fits
+  without scrolling on tablet and desktop), short tutorials, and gated progress
+  with friendly "almost there" alerts. Finishing creates the character and
+  lands on the classic sheet, filled in. Rules in `app/lib/creation/rules.ts`.
+- ✅ **Sheet tooltips**: hover or tab to a trait's name for a plain-language
+  explanation (`app/lib/sheets/glossary.ts`, our own wording).
+- ✅ **Settings** (`/vault/settings`): display name, tooltips and guided tips on/off.
+- ✅ **PDF**: a printable A4 sheet (`/vault/print/[id]`), saved as PDF from the
+  browser's print dialog. Our own layout with the game logo, not a copy of the
+  official sheet.
 - **Open scene work**: darker Hunter cabin, candlelit attic inn, clipboard
   notepaper with aligned lines, the Werewolf cave's light source, new Vampire
   scenes. One scene at a time, checking in after each.
-
-
-May need to rename the app now that it holds all 3 games? Elysium is a VTM phrase, not sure if it applies to the other 2. Need to brainstorm about some names.
-Exploring Storyteller mode: A turn based view of the session connected player characters in current scenes. live dice roll feed
+- Later: loresheets shared with a chronicle; Werewolf breed and Hunter
+  specifics in guided creation; a true server-generated PDF if browser
+  printing isn't enough.

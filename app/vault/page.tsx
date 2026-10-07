@@ -15,7 +15,7 @@ export default async function Vault() {
   return (
     <div data-game='wod' className='min-h-svh bg-ink text-bone transition-colors duration-500'>
       <Navbar
-        sections={[...GAMES_ORDER.map((g) => ({ href: gamePath(g), label: GAMES[g].name })), { href: '/vault/chronicles', label: 'Chronicles' }, { href: '/vault/friends', label: 'Friends' }]}
+        sections={[...GAMES_ORDER.map((g) => ({ href: gamePath(g), label: GAMES[g].name })), { href: '/vault/chronicles', label: 'Chronicles' }, { href: '/vault/friends', label: 'Friends' }, { href: '/vault/settings', label: 'Settings' }]}
         themeLabels={{ light: 'Light', dark: 'Dark' }}
       />
       <main id='main' className='page-in mx-auto max-w-6xl px-6 pt-32 pb-24'>

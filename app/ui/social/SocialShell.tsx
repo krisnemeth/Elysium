@@ -6,6 +6,7 @@ export const SOCIAL_SECTIONS = [
   { href: '/vault', label: 'Your vault' },
   { href: '/vault/chronicles', label: 'Chronicles' },
   { href: '/vault/friends', label: 'Friends' },
+  { href: '/vault/settings', label: 'Settings' },
 ];
 
 // Pages that span all three games (vault, chronicles, friends) share this frame.

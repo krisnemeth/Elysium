@@ -58,6 +58,17 @@ export async function removeFriend(friendshipId: string) {
   revalidatePath('/vault/friends');
 }
 
+export async function savePreferences(_: ActionState, form: FormData): Promise<ActionState> {
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (!claims?.claims) return { error: 'You’re signed out.' };
+  const preferences = { tooltips: form.get('tooltips') === 'on', guidance: form.get('guidance') === 'on' };
+  const { error } = await supabase.from('profiles').update({ preferences }).eq('id', claims.claims.sub);
+  if (error) return { error: 'Couldn’t save your settings.' };
+  revalidatePath('/vault', 'layout');
+  return { ok: true, message: 'Settings saved.' };
+}
+
 // ------------------------------------------------------------------ chronicles
 
 export async function createChronicle(_: ActionState, form: FormData): Promise<ActionState> {

@@ -122,7 +122,7 @@ const HUNTER: SheetSection[] = [
           { key: 'chronicle', label: 'Chronicle' },
           { key: 'ambition', label: 'Ambition' },
           { key: 'creed', label: 'Creed', options: CREEDS },
-          { key: 'drive', label: 'Drive', options: DRIVES },
+          { key: 'drive', label: 'Drive', term: 'Hunter’s Drive', options: DRIVES },
           { key: 'desire', label: 'Desire' },
         ]}
       />
