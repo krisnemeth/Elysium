@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { GiD10 } from 'react-icons/gi';
 import { MdAdd, MdRemove, MdRefresh } from 'react-icons/md';
 import {
@@ -193,6 +193,7 @@ export default function DiceRoller({
   const [rollKey, setRollKey] = useState(0);
   const [rolled, setRolled] = useState<number[]>([]);
   const [settled, setSettled] = useState(true);
+  const settleTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [selected, setSelected] = useState<number[]>([]);
   const [rerolled, setRerolled] = useState(false);
   const [choiceMade, setChoiceMade] = useState(false);
@@ -211,8 +212,10 @@ export default function DiceRoller({
     setRolled(indexes);
     setRollKey((k) => k + 1);
     setSettled(false);
+    // The scene says when the last die stops (onSettled); this is the backstop.
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setTimeout(() => setSettled(true), reduced ? 0 : settleMs(indexes.length));
+    clearTimeout(settleTimer.current);
+    settleTimer.current = setTimeout(() => setSettled(true), reduced ? 0 : settleMs(indexes.length));
   };
 
   const finish = (r: RollResult, label?: string) => {
@@ -294,7 +297,18 @@ export default function DiceRoller({
         </div>
 
         <div className='relative -mx-2 h-72 md:h-96'>
-          <DiceScene game={game} dice={sceneDice} rollKey={rollKey} rolled={rolled} onSelect={toggle} />
+          <DiceScene
+            game={game}
+            dice={sceneDice}
+            rollKey={rollKey}
+            rolled={rolled}
+            onSelect={toggle}
+            onSettled={(key) => {
+              if (key !== rollKey) return;
+              clearTimeout(settleTimer.current);
+              setSettled(true);
+            }}
+          />
         </div>
 
         {/* Screen reader and keyboard access to the dice */}

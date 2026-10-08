@@ -1,10 +1,12 @@
 import * as THREE from 'three';
-import { THROW_SECONDS, THROW_STAGGER_MS } from './timing';
+import { MAX_THROW_SECONDS, THROW_STAGGER_MS } from './timing';
 
 /*
   One throw, simulated up front. The dice fly in over the near wall, fall,
   bounce off the floor, the walls and each other, and slide to a stop with
-  friction, wherever that happens to be, as real dice would.
+  friction, wherever and whenever that happens, as real dice would: each die
+  gets its own throw and grip, so some roll on long after others have
+  stopped.
 
   Spin is physical too: in the air a die keeps the spin it was thrown with;
   on the floor, friction makes it roll with its motion. To land on the rolled
@@ -28,9 +30,9 @@ export type Bounds = { halfWidth: number; halfDepth: number };
 const HZ = 120;
 const DT = 1 / HZ;
 const GRAVITY = 28;
-// Sliding friction on the floor (units/s²), and how far a die reaches from
-// its centre: against the walls, and against another die.
-const FRICTION = 7;
+// How far a die reaches from its centre: against the walls, and against
+// another die. Below STOP speed on the floor, a die comes to rest.
+const STOP = 0.25;
 const WALL_REACH = 0.95;
 const DIE_RADIUS = 0.85;
 const UP = new THREE.Vector3(0, 1, 0);
@@ -47,7 +49,10 @@ type Body = {
   w: THREE.Vector3;
   q: THREE.Quaternion;
   delay: number;
-  steps: number;
+  // Sliding friction on the floor (units/s²), different for every die.
+  friction: number;
+  // Steps until this die came to rest (or the cap), once it has.
+  end: number;
   out: DiePath;
 };
 
@@ -62,58 +67,65 @@ export function planThrow(rolled: number[], bounds: Bounds, restY: number, radiu
   const bz = bounds.halfDepth - WALL_REACH;
   const random = Math.random;
 
+  const cap = Math.ceil(MAX_THROW_SECONDS * HZ);
   const bodies: Body[] = rolled.map((index, k) => {
-    const duration = THROW_SECONDS + random() * 0.35;
-    const steps = Math.ceil(duration * HZ);
     const delay = (k * THROW_STAGGER_MS) / 1000;
     return {
       index,
-      p: new THREE.Vector3((random() * 2 - 1) * bx * 0.85, restY + 2 + random() * 0.8, bz),
-      v: new THREE.Vector3((random() * 2 - 1) * 4, 0.5 + random(), -(5 + random() * 5)),
-      w: new THREE.Vector3(random() - 0.5, random() - 0.5, random() - 0.5).setLength(12 + random() * 10),
+      p: new THREE.Vector3((random() * 2 - 1) * bx * 0.85, restY + 2 + random() * 1.2, bz),
+      v: new THREE.Vector3((random() * 2 - 1) * 5, 1 + random() * 1.5, -(3.5 + random() * 7)),
+      w: new THREE.Vector3(random() - 0.5, random() - 0.5, random() - 0.5).setLength(14 + random() * 12),
       q: new THREE.Quaternion(),
       delay,
-      steps,
-      out: { delay, duration, path: new Float32Array((steps + 1) * 3), spin: new Float32Array((steps + 1) * 4), rest: new THREE.Vector3() },
+      friction: 3.5 + random() * 4.5,
+      end: -1,
+      out: { delay, duration: 0, path: new Float32Array((cap + 1) * 3), spin: new Float32Array((cap + 1) * 4), rest: new THREE.Vector3() },
     };
   });
 
   const bounce = (pos: number, vel: number, limit: number): [number, number] =>
-    pos > limit ? [limit, -Math.abs(vel) * 0.5] : pos < -limit ? [-limit, Math.abs(vel) * 0.5] : [pos, vel];
+    pos > limit ? [limit, -Math.abs(vel) * 0.65] : pos < -limit ? [-limit, Math.abs(vel) * 0.65] : [pos, vel];
   const n = new THREE.Vector3();
   const roll = new THREE.Vector3();
   const dq = new THREE.Quaternion();
   const localStep = (b: Body, tick: number) => tick - Math.round(b.delay * HZ);
 
-  const total = Math.max(...bodies.map((b) => Math.round(b.delay * HZ) + b.steps));
+  const total = Math.max(...bodies.map((b) => Math.round(b.delay * HZ))) + cap;
   for (let tick = 0; tick <= total; tick++) {
-    const active = bodies.filter((b) => localStep(b, tick) >= 0 && localStep(b, tick) <= b.steps);
+    const active = bodies.filter((b) => b.end < 0 && localStep(b, tick) >= 0);
+    const resting = [...still, ...bodies.filter((b) => b.end >= 0).map((b) => b.p)];
 
     for (const b of active) {
       const local = localStep(b, tick);
       if (local === 0) continue;
-      const settle = smoothstep(0.65, 1, local / b.steps);
+      // Past the cap's last half second, the floor grips harder, so even the
+      // longest roll ends in time.
+      const late = smoothstep(cap - HZ / 2, cap, local);
       b.v.y -= GRAVITY * DT;
       b.p.addScaledVector(b.v, DT);
-      const grounded = b.p.y <= restY;
-      if (grounded) {
+      if (b.p.y <= restY) {
         b.p.y = restY;
         if (b.v.y < 0) {
-          b.v.y = -b.v.y * 0.35 < 1 ? 0 : -b.v.y * 0.35;
-          b.v.x *= 0.85;
-          b.v.z *= 0.85;
+          b.v.y = -b.v.y * 0.5 < 1.2 ? 0 : -b.v.y * 0.5;
+          b.v.x *= 0.88;
+          b.v.z *= 0.88;
         }
-        // Friction, firmer towards the end so every die comes to rest.
         const speed = Math.hypot(b.v.x, b.v.z);
-        const slow = speed > 0 ? Math.max(0, 1 - ((FRICTION + settle * 30) * DT) / speed) : 0;
+        const slow = speed > 0 ? Math.max(0, 1 - ((b.friction + late * 40) * DT) / speed) : 0;
         b.v.x *= slow;
         b.v.z *= slow;
         // Rolling: friction turns the spin towards the motion.
         roll.crossVectors(UP, roll.set(b.v.x, 0, b.v.z)).divideScalar(radius);
         b.w.lerp(roll, 0.2);
+        if (b.v.y === 0 && speed * slow < STOP) {
+          b.v.set(0, 0, 0);
+          b.w.set(0, 0, 0);
+          b.end = local;
+        }
       } else {
         b.w.multiplyScalar(0.997);
       }
+      if (local >= cap) b.end = local;
       [b.p.x, b.v.x] = bounce(b.p.x, b.v.x, bx);
       [b.p.z, b.v.z] = bounce(b.p.z, b.v.z, bz);
       const angle = b.w.length() * DT;
@@ -128,7 +140,7 @@ export function planThrow(rolled: number[], bounds: Bounds, restY: number, radiu
     for (let i = 0; i < active.length; i++) {
       const a = active[i];
       if (localStep(a, tick) === 0) continue;
-      const others: { p: THREE.Vector3; v?: THREE.Vector3 }[] = [...active.slice(i + 1), ...still.map((p) => ({ p }))];
+      const others: { p: THREE.Vector3; v?: THREE.Vector3 }[] = [...active.slice(i + 1), ...resting.map((p) => ({ p }))];
       for (const o of others) {
         n.set(o.p.x - a.p.x, 0, o.p.z - a.p.z);
         const d = n.length();
@@ -164,13 +176,16 @@ export function planThrow(rolled: number[], bounds: Bounds, restY: number, radiu
 
   const plan = new Map<number, DiePath>();
   for (const b of bodies) {
-    b.out.rest.set(b.p.x, restY, b.p.z);
+    const steps = b.end < 0 ? cap : b.end;
+    const out = b.out;
+    out.path = out.path.slice(0, (steps + 1) * 3);
+    out.spin = out.spin.slice(0, (steps + 1) * 4);
+    out.duration = steps / HZ;
+    out.rest.set(b.p.x, restY, b.p.z);
     // Make sure the last steps sit on the floor.
-    for (let i = 0; i <= b.steps; i++) {
-      const w = smoothstep(0.85, 1, i / b.steps);
-      b.out.path[i * 3 + 1] += (restY - b.out.path[b.steps * 3 + 1]) * w;
-    }
-    plan.set(b.index, b.out);
+    const lastY = out.path[steps * 3 + 1];
+    for (let i = 0; i <= steps; i++) out.path[i * 3 + 1] += (restY - lastY) * smoothstep(0.85, 1, i / steps);
+    plan.set(b.index, out);
   }
   return plan;
 }

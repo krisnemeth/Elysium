@@ -21,6 +21,8 @@ type Props = {
   rollKey: number;
   rolled: number[];
   onSelect?: (index: number) => void;
+  // Called with the rollKey once every thrown die has stopped.
+  onSettled?: (rollKey: number) => void;
 };
 
 const SPACING = 2.4;
@@ -291,7 +293,7 @@ function D10Mesh({
   3D dice tray: real d10s thrown onto a table, each landing on the value the
   rules engine rolled. Rendering is on demand, so it idles at zero cost.
 */
-export default function DiceScene({ game, dice, rollKey, rolled, onSelect }: Props) {
+export default function DiceScene({ game, dice, rollKey, rolled, onSelect, onSettled }: Props) {
   const [aspect, setAspect] = useState(2);
   const { cols, rows, slots } = layout(Math.max(1, dice.length), aspect);
   const tray = traySize(cols, rows);
@@ -299,9 +301,9 @@ export default function DiceScene({ game, dice, rollKey, rolled, onSelect }: Pro
   // One simulation per throw, made when the first die asks for it. Dice
   // stay where they fell until the pool changes; before any roll they wait
   // in neat rows (`slots`).
-  const latest = useRef({ rolled, tray });
+  const latest = useRef({ rolled, tray, onSettled });
   useLayoutEffect(() => {
-    latest.current = { rolled, tray };
+    latest.current = { rolled, tray, onSettled };
   });
   const { planFor, restOf } = useMemo(() => {
     let cached: { key: number; plan: Map<number, DiePath> } | null = null;
@@ -314,6 +316,8 @@ export default function DiceScene({ game, dice, rollKey, rolled, onSelect }: Pro
           const plan = planThrow(rolled, tray, REST_Y, REST_Y - FLOOR_Y, still);
           for (const [i, path] of plan) rests.set(i, path.rest);
           cached = { key, plan };
+          const last = Math.max(...[...plan.values()].map((p) => p.delay + p.duration));
+          setTimeout(() => latest.current.onSettled?.(key), last * 1000 + 150);
         }
         return cached.plan;
       },

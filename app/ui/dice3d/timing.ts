@@ -1,7 +1,11 @@
-// How long a throw takes, shared by the 3D scene and the roller (which
-// reveals the outcome once the dice have landed). Kept free of three.js so
-// the roller can import it without pulling in the scene.
-export const THROW_SECONDS = 1.9;
+// Throw timing, shared by the 3D scene and the roller. Kept free of three.js
+// so the roller can import it without pulling in the scene.
+
+// Each die rolls until friction stops it, so throws vary; none runs longer
+// than this.
+export const MAX_THROW_SECONDS = 3.4;
 export const THROW_STAGGER_MS = 45;
 
-export const settleMs = (count: number) => THROW_SECONDS * 1000 + 350 + count * THROW_STAGGER_MS;
+// The scene reports when the last die stops; this is the fallback (e.g. when
+// the canvas isn't drawing), long enough for any throw.
+export const settleMs = (count: number) => MAX_THROW_SECONDS * 1000 + 250 + count * THROW_STAGGER_MS;
