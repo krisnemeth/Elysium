@@ -29,7 +29,7 @@ export default function SideNav({ game }: { game: Game }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className={`group/side frame fixed inset-y-4 left-4 z-40 hidden w-60 flex-col overflow-y-auto p-4 md:flex ${panel}`}>
+      <aside className={`group/side frame fixed inset-y-4 left-4 z-40 hidden w-60 flex-col p-4 md:flex ${panel}`}>
         <Link
           href='/vault'
           aria-label='Your vault'
@@ -42,7 +42,8 @@ export default function SideNav({ game }: { game: Game }) {
           <GameSwitcher game={game} />
         </div>
 
-        <nav aria-label='Dashboard' className='flex grow flex-col'>
+        {/* Scrolls inside the sidebar if needed; the sidebar itself must not clip, or the frame's corner ornaments (drawn outside its edge) get cut off. */}
+        <nav aria-label='Dashboard' className='flex min-h-0 grow flex-col overflow-y-auto'>
           <SideNavLinks game={game} />
           <div aria-hidden className='mx-4 my-2 border-t border-bone/10' />
           <SideNavLinks game={game} group='chronicles' />
