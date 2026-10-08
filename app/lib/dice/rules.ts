@@ -35,6 +35,16 @@ export type RollResult = {
   outcome: Outcome;
 };
 
+// The official dice sets cap what one throw can hold. Vampire: 13 black and
+// 5 Hunger dice (Hunger replaces black dice in the pool). Werewolf: 12 green
+// and 5 Rage (Rage replaces green). Hunter: 10 orange, plus up to 5
+// Desperation dice added on top of the pool.
+export const DICE_SET: Record<Game, { pool: number; special: number }> = {
+  vampire: { pool: 18, special: 5 },
+  werewolf: { pool: 17, special: 5 },
+  hunter: { pool: 10, special: 5 },
+};
+
 export const SPECIAL_DIE_NAME: Record<Game, string> = {
   vampire: 'Hunger',
   werewolf: 'Rage',

@@ -27,7 +27,7 @@ export default function SocialShell({
 }) {
   return (
     <div data-game={game} className='min-h-svh bg-ink text-bone transition-colors duration-500'>
-      <Navbar sections={SOCIAL_SECTIONS} themeLabels={{ light: 'Light', dark: 'Dark' }} />
+      <Navbar sections={SOCIAL_SECTIONS} />
       <main id='main' className='page-in mx-auto max-w-6xl px-4 pt-28 pb-24 md:px-6 md:pt-32'>
         <header className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
           <div>
