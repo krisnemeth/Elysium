@@ -1,12 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type MouseEvent } from 'react';
-import { MdArrowOutward, MdCheck, MdClose, MdDarkMode, MdLightMode, MdMenu } from 'react-icons/md';
-import clsx from 'clsx';
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
+import { MdArrowOutward, MdClose, MdMenu } from 'react-icons/md';
 import { signOut } from '@/app/lib/actions/auth';
-import type { Theme } from '@/app/lib/theme';
-import { readTheme, serverTheme, subscribeTheme, switchTheme } from '@/app/lib/theme-switch';
+import ForceDark from '@/app/ui/ForceDark';
 import { Elysium1 } from '@/app/ui/svgs';
 import { IslandBackdrop, IslandSection, useIsland } from '@/app/ui/kit/Island';
 
@@ -27,37 +25,25 @@ function scrollToSection(id: string) {
 }
 
 /*
-  The site navbar as a "dynamic island": the theme button and (on phones) the
-  menu button grow the pill itself to show their panel, with the page blurred
-  behind. In-page section links scroll smoothly, and a dot by each link
+  The site navbar as a "dynamic island": on phones the menu button grows the
+  pill itself, with the page blurred behind. Site pages are dark only
+  (ForceDark), so there's no theme switch here. In-page section links scroll smoothly, and a dot by each link
   crossfades to show which section you're in.
 */
 export default function SiteIsland({
   sections: allSections,
-  themeLabels,
   signedIn,
 }: {
   sections: Section[];
-  themeLabels: Record<Theme, string>;
   signedIn: boolean;
 }) {
   const [menu, setMenu] = useState(false);
-  const [themes, setThemes] = useState(false);
-  const theme = useSyncExternalStore(subscribeTheme, readTheme, serverTheme);
   const menuButton = useRef<HTMLButtonElement>(null);
-  const themeTrigger = useRef<HTMLButtonElement | null>(null);
   const dots = useRef<(HTMLSpanElement | null)[]>([]);
-  const expanded = menu || themes;
+  const expanded = menu;
 
-  const closeAll = useCallback(() => {
-    setMenu(false);
-    setThemes(false);
-  }, []);
-  const onEscape = useCallback(() => {
-    if (themes) setThemes(false);
-    else setMenu(false);
-  }, [themes]);
-  useIsland({ open: expanded, onEscape, onBreakpoint: closeAll, trigger: themes ? themeTrigger : menuButton });
+  const closeAll = useCallback(() => setMenu(false), []);
+  useIsland({ open: expanded, onEscape: closeAll, onBreakpoint: closeAll, trigger: menuButton });
 
   // Never repeat a destination the buttons already offer (the call to action, Log in).
   const ctaHref = signedIn ? '/vault' : '/signup';
@@ -114,21 +100,11 @@ export default function SiteIsland({
     scrollToSection(href.slice(1));
   };
 
-  const toggleThemes = (e: MouseEvent<HTMLButtonElement>) => {
-    themeTrigger.current = e.currentTarget;
-    setThemes((t) => !t);
-  };
-
-  const ThemeIcon = theme === 'light' ? MdLightMode : MdDarkMode;
-  const themeButton = (className = '') => (
-    <button type='button' aria-label='Theme' aria-expanded={themes} aria-controls='site-themes' onClick={toggleThemes} className={clsx('grid size-9 place-items-center rounded-xl text-bone/75 transition-colors hover:bg-bone/[0.06] hover:text-bone', themes && 'bg-bone/[0.08]', focus, className)}>
-      <ThemeIcon aria-hidden className='size-5' />
-    </button>
-  );
   let hashIndex = -1;
 
   return (
     <header className='fixed inset-x-0 top-0 z-50 px-2 pt-2 md:px-4 md:pt-3'>
+      <ForceDark />
       <IslandBackdrop open={expanded} onClose={closeAll} />
       <div className='frame relative mx-auto flex max-w-6xl flex-col rounded-2xl border border-bone/15 bg-ink/70 px-2 shadow-[0_8px_32px_-8px_rgb(0_0_0/0.6),inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur-xl'>
         <nav aria-label='Main' className='flex h-14 items-center justify-between pl-2'>
@@ -163,7 +139,6 @@ export default function SiteIsland({
                 );
               })}
             </ul>
-            {themeButton('hidden md:grid')}
             <div className='hidden items-center md:flex'>
               {signedIn ? (
                 <form action={signOut}>
@@ -189,10 +164,7 @@ export default function SiteIsland({
               aria-label={menu ? 'Close menu' : 'Menu'}
               aria-expanded={menu}
               aria-controls='site-menu'
-              onClick={() => {
-                setMenu((m) => !m);
-                setThemes(false);
-              }}
+              onClick={() => setMenu((m) => !m)}
               className={`ml-1 grid size-9 place-items-center rounded-xl text-bone/80 transition-colors hover:bg-bone/[0.06] md:hidden ${focus}`}
             >
               {menu ? <MdClose aria-hidden className='size-6' /> : <MdMenu aria-hidden className='size-6' />}
@@ -208,7 +180,7 @@ export default function SiteIsland({
                 {label}
               </a>
             ))}
-            <div className='mt-1 flex items-center justify-between gap-2 border-t border-bone/10 px-1 pt-3'>
+            <div className='mt-1 flex items-center gap-2 border-t border-bone/10 px-1 pt-3'>
               {signedIn ? (
                 <form action={signOut}>
                   <button className={quiet}>Log out</button>
@@ -218,39 +190,10 @@ export default function SiteIsland({
                   Log in
                 </Link>
               )}
-              {themeButton()}
             </div>
           </div>
         </IslandSection>
 
-        {/* Theme options: grows the pill below whatever is showing. */}
-        <IslandSection open={themes} id='site-themes'>
-          <div role='group' aria-label='Theme' className='flex flex-col gap-1 border-t border-bone/10 px-1 pt-2 pb-3 md:flex-row md:justify-end md:border-0 md:pt-0'>
-            {(['dark', 'light'] as const).map((t) => {
-              const Icon = t === 'light' ? MdLightMode : MdDarkMode;
-              const active = theme === t;
-              return (
-                <button
-                  key={t}
-                  type='button'
-                  aria-pressed={active}
-                  onClick={() => {
-                    switchTheme(t);
-                    setThemes(false);
-                  }}
-                  className={clsx(
-                    'flex items-center gap-2 rounded-xl px-3 py-3.5 text-left text-base text-bone/85 transition-colors hover:bg-bone/[0.06] md:px-4 md:py-2 md:text-sm',
-                    active && 'bg-bone/[0.08] text-bone',
-                  )}
-                >
-                  <Icon aria-hidden className='size-4' />
-                  {themeLabels[t]}
-                  {active && <MdCheck aria-hidden className='size-4 text-accent' />}
-                </button>
-              );
-            })}
-          </div>
-        </IslandSection>
       </div>
     </header>
   );

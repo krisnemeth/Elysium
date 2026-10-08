@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { MdArrowOutward } from 'react-icons/md';
 import Navbar from '@/app/ui/navbar';
+import SectionBackdrop from '@/app/ui/home/SectionBackdrop';
 import Stagger from '@/app/ui/kit/Stagger';
 import { LogoWod } from '@/app/ui/svgs/official';
 import { Elysium1 } from '@/app/ui/svgs';
@@ -59,7 +60,6 @@ export default function Home() {
           { href: '#atmospheres', label: 'Themes' },
           { href: '#dice', label: 'Dice' },
         ]}
-        themeLabels={{ light: 'Light', dark: 'Dark' }}
       />
 
       <main id='main'>
@@ -127,7 +127,8 @@ export default function Home() {
         </section>
 
         {/* The three games */}
-        <section id='worlds' aria-labelledby='worlds-title' className='scroll-mt-20 px-6 py-28 md:py-36'>
+        <section id='worlds' aria-labelledby='worlds-title' className='relative isolate scroll-mt-20 px-6 py-28 [text-shadow:0_0.15rem_1.25rem_rgb(0_0_0/0.85)] md:py-36'>
+          <SectionBackdrop src='/locations/location-3.webp' position='center 60%' />
           <div className='mx-auto max-w-6xl'>
             <header className='reveal max-w-2xl'>
               <LogoWod aria-label='World of Darkness' role='img' className='h-auto w-40 text-bone/70' />
@@ -195,7 +196,8 @@ export default function Home() {
         </section>
 
         {/* Six atmospheres */}
-        <section id='atmospheres' aria-labelledby='atmo-title' className='scroll-mt-20 px-6 py-28 md:py-36'>
+        <section id='atmospheres' aria-labelledby='atmo-title' className='relative isolate scroll-mt-20 px-6 py-28 [text-shadow:0_0.15rem_1.25rem_rgb(0_0_0/0.85)] md:py-36'>
+          <SectionBackdrop src='/locations/location-30.webp' />
           <div className='mx-auto max-w-6xl'>
             <h2 id='atmo-title' className='reveal max-w-3xl font-display text-5xl leading-[0.95] tracking-tight text-balance md:text-6xl'>
               Every game has its own room, by night and by day.
@@ -225,7 +227,8 @@ export default function Home() {
         </section>
 
         {/* Dice */}
-        <section id='dice' aria-labelledby='dice-title' className='scroll-mt-20 border-t border-bone/10 px-6 py-28'>
+        <section id='dice' aria-labelledby='dice-title' className='relative isolate scroll-mt-20 border-t border-bone/10 px-6 py-28 [text-shadow:0_0.15rem_1.25rem_rgb(0_0_0/0.85)]'>
+          <SectionBackdrop src='/locations/location-53.webp' position='center 40%' />
           <div className='mx-auto max-w-6xl'>
             <h2 id='dice-title' className='reveal max-w-3xl font-display text-5xl leading-[0.95] tracking-tight text-balance md:text-6xl'>
               The real dice, rolled in 3D.

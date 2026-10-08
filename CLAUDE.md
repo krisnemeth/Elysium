@@ -121,7 +121,8 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 
 ## Landing Pages
 
-- `/` (`app/page.tsx`): the World of Darkness landing: three games side by side, then sections #worlds, #atmospheres and #dice (the navbar dots follow them).
+- `/` (`app/page.tsx`): the World of Darkness landing: three games side by side, then sections #worlds, #atmospheres and #dice (the navbar dots follow them), each over a location illustration from the asset pack (`public/locations/`, `app/ui/home/SectionBackdrop.tsx`).
+- **Site pages are dark only** (landing, `/vampire`, `/vault`, `/vault/new`, chronicles): no theme switch in the site navbar; `DARK_ONLY_PATHS` in `app/lib/theme.ts` handles first loads and `app/ui/ForceDark.tsx` in-app navigation, without touching the player's saved theme (which the dashboards use).
 - `/vampire`: the book-cover hero (`app/ui/home/Hero.tsx`). The portrait and ankh are sized from one `--cover` width so the ankh halo stays behind the portrait at every viewport; the ankh rises on scroll because the backdrop/portrait layers are sticky. Swap cover art via `COVER_ART` in `Hero.tsx`.
 - `/concept`: experimental editorial redesign, kept for reference.
 - Scroll-driven effects use CSS `animation-timeline` in `globals.css`, with a static fallback and `prefers-reduced-motion` respected.
@@ -162,7 +163,7 @@ Elysium is a cross-game vault for Vampire: The Masquerade, Werewolf: The Apocaly
 
 - **Themes = game × mode.** `app/vault/[game]/layout.tsx` sets `data-game` on a wrapper; the mode is `<html data-theme>` (toggle). `app/games.css` holds per-game tokens, fonts (Werewolf: Cinzel; Hunter: Special Elite + Courier Prime), the six `.frame` borders (gothic, neon, leaves, stone, timber, paper & tape) and ambient keyframes. Vampire uses the root tokens. Hunter's light mode ("the inn") is a true light theme and is being replaced by a city concept (roadmap); the others stay dark.
 - **Ambience:** `app/ui/game/Ambience.tsx`, one backdrop + looping element per game and mode.
-- **Navigation:** `app/ui/navbar.tsx` → `app/ui/SiteIsland.tsx` (site pages: theme panel, phone menu, section dots) and `app/ui/dashboard/sidenav.tsx` (dashboards: game switcher, nav items, Chronicles, Themes, Settings, Friends, Log out); the theme frame comes from `.frame`.
+- **Navigation:** `app/ui/navbar.tsx` → `app/ui/SiteIsland.tsx` (site pages: links on the right, phone menu, section dots; no theme switch) and `app/ui/dashboard/sidenav.tsx` (dashboards: game switcher, nav items, Chronicles, Themes, Settings, Friends, Log out); the theme frame comes from `.frame`.
 - **Game config:** `app/lib/games.ts` (names, logos, nouns, mode names). Factions: `app/lib/factions.ts`. Sheets per game: `app/ui/sheets/game-sheets.tsx` (sections in `app/ui/sheets/sections/`).
 - **Dice:** rules for all three games in `app/lib/dice/rules.ts` (tested cases in git history: Hunger, Rage/Brutal, Desperation/Overreach/Despair). `app/ui/dice/DiceRoller.tsx` takes `game`. 3D dice: `app/ui/dice3d/` (React Three Fiber + three.js): `d10.ts` builds a true pentagonal trapezohedron and per-game face textures from the official glyphs in `public/dice/glyphs/`; `DiceScene.tsx` throws them and lands each on the rolled value. The `react-hooks/immutability` lint rule is disabled in that file because R3F mutates three.js objects in the render loop.
 - Werewolf tribe/auspice glyphs: `public/werewolf/*.png` (used as CSS masks). Sample portraits: `public/portraits/`.
