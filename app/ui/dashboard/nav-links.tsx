@@ -18,7 +18,8 @@ const linksFor = (game: Game) => [
 
 const NEW = (game: Game) => ({ name: 'New', href: gamePath(game, '/new'), icon: MdAdd });
 
-// The sidebar's call to action: create a character or a loresheet.
+// Create a character or a loresheet: styled like the other nav items, with
+// an accent icon so it stands out without competing with the game switcher.
 export function NewButton({ game }: { game: Game }) {
   const pathname = usePathname();
   const href = gamePath(game, '/new');
@@ -27,9 +28,17 @@ export function NewButton({ game }: { game: Game }) {
     <Link
       href={href}
       aria-current={active ? 'page' : undefined}
-      className='group flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_1.25rem_-0.4rem_var(--accent)] transition duration-300 ease-(--ease-out-expo) hover:brightness-110 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+      className={`group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+        active ? 'bg-bone/[0.07] text-bone' : 'text-bone/80 hover:bg-bone/[0.04] hover:text-bone'
+      }`}
     >
-      <MdAdd aria-hidden className='size-5 transition-transform duration-300 group-hover:rotate-90' />
+      <span
+        aria-hidden
+        className={`absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0.75rem_var(--accent)] transition-[scale,opacity] duration-500 ease-(--ease-spring) ${
+          active ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
+        }`}
+      />
+      <MdAdd aria-hidden className='size-5 text-accent transition-transform duration-300 ease-(--ease-spring) group-hover:rotate-90' />
       New
       <span className='sr-only'>character or loresheet</span>
     </Link>

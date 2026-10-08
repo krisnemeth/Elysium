@@ -37,10 +37,10 @@ export default function SideNav({ game }: { game: Game }) {
           <Elysium1 aria-hidden className='h-auto w-32 text-bone/90 drop-shadow-[0_0_0.6rem_var(--accent)]' />
         </Link>
 
-        <div className='mt-6 mb-5 flex flex-col gap-3'>
+        <div className='mt-6 mb-3'>
           <GameSwitcher game={game} />
-          <NewButton game={game} />
         </div>
+        <NewButton game={game} />
 
         <nav aria-label='Dashboard' className='flex grow flex-col'>
           <SideNavLinks game={game} />
