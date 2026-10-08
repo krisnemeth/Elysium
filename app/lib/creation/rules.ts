@@ -122,7 +122,8 @@ export function problems(game: Game, step: StepKey, w: Wizard): string[] {
       return [!p.name?.trim() && 'Give your character a name.', !p.concept?.trim() && 'Sum them up in a few words (the concept).'].filter(Boolean) as string[];
     case 'faction':
       if (game === 'vampire') return p.clan ? [] : ['Choose a clan.'];
-      if (game === 'werewolf') return [!p.tribe && 'Choose a tribe.', !p.auspice && 'Choose an auspice.'].filter(Boolean) as string[];
+      if (game === 'werewolf')
+        return [!p.tribe && 'Choose a tribe.', !p.auspice && 'Choose an auspice.', !p.breed && 'Choose your breed: born human or born wolf.'].filter(Boolean) as string[];
       return [!p.creed && 'Choose a creed.', !p.drive && 'Choose a Drive.'].filter(Boolean) as string[];
     case 'attributes':
       return attributeSpreadLeft(s);

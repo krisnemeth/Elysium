@@ -3,15 +3,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { GiCompass, GiQuillInk } from 'react-icons/gi';
-import { createLoresheet } from '@/app/lib/actions/loresheets';
 import { GAMES, gamePath, isGame } from '@/app/lib/games';
-import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import { panel } from '@/app/ui/kit/styles';
-import { ActionButton } from '@/app/ui/social/forms';
-import { LORE_ICONS } from '@/app/ui/loresheets/icons';
 
-export const metadata: Metadata = { title: 'New' };
+export const metadata: Metadata = { title: 'New character' };
 
 const card = `group flex h-full w-full flex-col gap-3 p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-bone/30 ${panel}`;
 
@@ -32,10 +28,10 @@ export default async function NewSheet({ params }: PageProps<'/vault/[game]/new'
 
   return (
     <div className='flex flex-col gap-10'>
-      <PageHeader eyebrow={GAMES[game].name} title='What are you writing?' description='A character to play, or a loresheet about the world around them.' />
+      <PageHeader eyebrow={`New ${noun.one}`} title='How do you want to build them?' description='Step by step with the rules explained, or the whole sheet at once. You can switch to the full sheet any time.' />
 
       <section aria-labelledby='character-title' className='flex flex-col gap-4'>
-        <h2 id='character-title' className='font-display text-3xl'>A new {noun.one}</h2>
+        <h2 id='character-title' className='sr-only'>A new {noun.one}</h2>
         <ul className='grid gap-4 md:grid-cols-2'>
           <li>
             <Link href={gamePath(game, '/new/guided')} className={card}>
@@ -50,21 +46,6 @@ export default async function NewSheet({ params }: PageProps<'/vault/[game]/new'
         </ul>
       </section>
 
-      <section aria-labelledby='lore-title' className='flex flex-col gap-4'>
-        <h2 id='lore-title' className='font-display text-3xl'>A loresheet</h2>
-        <ul className='grid gap-4 md:grid-cols-3'>
-          {(Object.keys(LORE_KINDS) as LoreKind[]).map((k) => {
-            const Icon = LORE_ICONS[k];
-            return (
-            <li key={k}>
-              <ActionButton action={createLoresheet.bind(null, game, k)} className={card}>
-                <Option icon={<Icon aria-hidden />} title={LORE_KINDS[k].label} body={LORE_KINDS[k].blurb} />
-              </ActionButton>
-            </li>
-            );
-          })}
-        </ul>
-      </section>
     </div>
   );
 }

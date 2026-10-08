@@ -29,7 +29,7 @@ import { buttonGhost, buttonPrimary, fieldInput, fieldLabel, panel } from '@/app
 import { usePreferences } from '@/app/ui/PreferencesContext';
 import { SheetProvider } from '@/app/ui/sheets/SheetContext';
 import Explain from '@/app/ui/sheets/Explain';
-import { Advantages, Attributes, Convictions, Profile, Skills } from '@/app/ui/sheets/sections/common';
+import { Advantages, Attributes, Convictions, Profile, Skills, TextBlocks } from '@/app/ui/sheets/sections/common';
 import { Edges, GiftsAndRites, Renown } from '@/app/ui/sheets/sections/werewolf-hunter';
 
 // Tutorials, in our own words (Dark Pack: never copy rulebook text).
@@ -55,8 +55,8 @@ const GUIDE: Record<StepKey, (game: Game) => string> = {
     g === 'vampire'
       ? 'Your clan is your vampiric family line. It decides which Disciplines come naturally to you and the weakness you carry. Hover a name on the sheet later for a reminder.'
       : g === 'werewolf'
-        ? 'Your tribe is the werewolf nation you belong to; your auspice is the moon you were born under and the role it gives you in a pack.'
-        : 'Your creed is how you approach the hunt. Your Drive is why you can’t stop; when a roll serves your Drive, Desperation can help you.',
+        ? 'Your tribe is the werewolf nation you belong to; your auspice is the moon you were born under and the role it gives you in a pack. Your breed says whether you were born human or wolf, and your first Gift comes from it.'
+        : 'Your creed is how you approach the hunt. Your Drive is why you can’t stop; when a roll serves your Drive, Desperation can help you. A line or two on what drives you helps your Storyteller.',
   attributes: () =>
     'Attributes are what you are born with. Place one at 4 dots, three at 3, four at 2 and one at 1. The counter below tells you what’s left. Stamina sets your Health; Composure and Resolve set your Willpower.',
   skills: () =>
@@ -215,6 +215,16 @@ export default function GuidedCreation({ game }: { game: Game }) {
                 ))}
               </div>
             </fieldset>
+            <div className='grid gap-5 sm:grid-cols-[2fr_3fr]'>
+              <fieldset>
+                <legend className={fieldLabel}>Breed</legend>
+                <div className='mt-2 grid grid-cols-2 gap-2'>
+                  <Choice checked={p.breed === 'Homid'} onSelect={() => setProfile('breed', 'Homid')} title='Homid' blurb='Born human.' />
+                  <Choice checked={p.breed === 'Lupus'} onSelect={() => setProfile('breed', 'Lupus')} title='Lupus' blurb='Born a wolf.' />
+                </div>
+              </fieldset>
+              <Profile fields={[{ key: 'patron', label: 'Patron spirit' }]} />
+            </div>
           </div>
         ) : (
           <div className='flex flex-col gap-5'>
@@ -234,6 +244,7 @@ export default function GuidedCreation({ game }: { game: Game }) {
                 ))}
               </div>
             </fieldset>
+            <TextBlocks fields={[{ key: 'profile.driveNotes', label: 'What drives you (optional)' }]} rows={2} />
           </div>
         );
       break;
@@ -345,7 +356,12 @@ export default function GuidedCreation({ game }: { game: Game }) {
       break;
     }
     case 'convictions':
-      body = <Convictions />;
+      body = (
+        <div className='flex flex-col gap-6'>
+          <Convictions />
+          {game === 'hunter' && <TextBlocks fields={[{ key: 'profile.redemption', label: 'Redemption: how you could come back from Despair (optional)' }]} rows={2} />}
+        </div>
+      );
       break;
     case 'advantages': {
       const { merits, flaws } = advantageBudget(w.sheet);

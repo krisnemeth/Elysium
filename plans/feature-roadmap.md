@@ -84,8 +84,9 @@ The app was front-end only with sample data. This group makes characters persist
 - **Open scene work**: darker Hunter cabin, a city concept to replace the inn (light mode dropped), clipboard
   notepaper with aligned lines, the Werewolf cave's light source, new Vampire
   scenes. One scene at a time, checking in after each.
-- Later: loresheets shared with a chronicle; Werewolf breed and Hunter
-  specifics in guided creation; a true server-generated PDF if browser
+- ✅ Guided creation, second pass: Werewolf breed (required) and patron spirit,
+  Hunter "what drives you" and Redemption notes.
+- Later: loresheets shared with a chronicle; a true server-generated PDF if browser
   printing isn't enough.
 - Storyteller's tones will have to be different, and Players should choose a storyteller identity for the chronicle. these should be varied bots with different styles of storytelling. it helps players pick one, based on a characterized approach.
 
@@ -148,9 +149,9 @@ soft environment map so edges and faces read clearly in every theme.
   and kind, so players can give their locations, NPCs and other loresheets an
   image. Check the asset pack's terms for each image we host.
 - **Pick a character portrait from the library**, as well as uploading one.
-- **Image cropper.** Let players upload any image and choose which part to use
-  (drag and zoom inside the card's frame shape), instead of the current
-  automatic centre crop.
+- ✅ **Image cropper** (portraits): uploads open a 3:4 frame to drag and zoom
+  (wheel, pinch, slider, keyboard) before saving. Later: the card's own frame
+  shape (e.g. the arch) as the crop guide, and the same tool for loresheet images.
 - **Later:** these images could shape how a chronicle is laid out (scene
   backdrops, location cards, NPC portraits in the story engine; see
   `plans/storyteller-engine.md`).

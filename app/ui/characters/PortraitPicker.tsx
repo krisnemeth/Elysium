@@ -9,6 +9,7 @@ import type { Game } from '@/app/lib/games';
 import { removePortrait, setPortrait } from '@/app/lib/actions/characters';
 import { PORTRAIT_MAX_BYTES, PORTRAIT_SIZE, isUploadedPortrait } from '@/app/lib/portraits';
 import { buttonGhost } from '@/app/ui/kit/styles';
+import ImageCropper, { type CropRect } from './ImageCropper';
 
 // Anything bigger is almost certainly not a photo we can decode comfortably.
 const MAX_INPUT_BYTES = 30 * 1024 * 1024;
@@ -18,33 +19,18 @@ function encode(canvas: HTMLCanvasElement, type: string, quality: number) {
 }
 
 /*
-  Crops to 3:4 (keeping the upper part of tall photos, where faces usually
-  are), scales down to PORTRAIT_SIZE and re-encodes. Re-encoding also drops
-  EXIF data such as GPS location.
+  Draws the chosen part of the image, scaled down to PORTRAIT_SIZE, and
+  re-encodes it. Re-encoding also drops EXIF data such as GPS location.
 */
-async function prepare(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
-  const ratio = PORTRAIT_SIZE.width / PORTRAIT_SIZE.height;
-  let sw = bitmap.width;
-  let sh = bitmap.height;
-  let sx = 0;
-  let sy = 0;
-  if (sw / sh > ratio) {
-    sw = Math.round(sh * ratio);
-    sx = Math.round((bitmap.width - sw) / 2);
-  } else {
-    sh = Math.round(sw / ratio);
-    sy = Math.round((bitmap.height - sh) * 0.2);
-  }
-  const scale = Math.min(1, PORTRAIT_SIZE.width / sw);
+async function prepare(bitmap: ImageBitmap, rect: CropRect): Promise<Blob> {
+  const scale = Math.min(1, PORTRAIT_SIZE.width / rect.sw);
   const canvas = document.createElement('canvas');
-  canvas.width = Math.round(sw * scale);
-  canvas.height = Math.round(sh * scale);
+  canvas.width = Math.max(1, Math.round(rect.sw * scale));
+  canvas.height = Math.max(1, Math.round(rect.sh * scale));
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('no canvas');
   ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-  bitmap.close();
+  ctx.drawImage(bitmap, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, canvas.width, canvas.height);
 
   // WebP where the browser can encode it (Safari can't), JPEG otherwise.
   for (const quality of [0.86, 0.75, 0.6]) {
@@ -54,6 +40,8 @@ async function prepare(file: File): Promise<Blob> {
   }
   throw new Error('too large');
 }
+
+type Pending = { bitmap: ImageBitmap; url: string };
 
 export default function PortraitPicker({
   id,
@@ -78,19 +66,44 @@ export default function PortraitPicker({
   const [pending, startTransition] = useTransition();
   const custom = isUploadedPortrait(src);
 
-  const upload = (file: File | undefined) => {
+  const [cropping, setCropping] = useState<Pending | null>(null);
+
+  // A chosen or dropped file opens the cropper first.
+  const choose = async (file: File | undefined) => {
     if (!file) return;
     if (!file.type.startsWith('image/')) return setMessage('That file isn’t an image.');
     if (file.size > MAX_INPUT_BYTES) return setMessage('That image is too large to use (30 MB at most).');
+    try {
+      const bitmap = await createImageBitmap(file);
+      setMessage('');
+      setCropping({ bitmap, url: URL.createObjectURL(file) });
+    } catch {
+      setMessage('Couldn’t read that image. Try a JPEG or PNG.');
+    }
+  };
+
+  const closeCropper = () => {
+    if (cropping) {
+      URL.revokeObjectURL(cropping.url);
+      cropping.bitmap.close();
+    }
+    setCropping(null);
+  };
+
+  const upload = (rect: CropRect) => {
+    if (!cropping) return;
+    const { bitmap } = cropping;
     setMessage('Uploading…');
     startTransition(async () => {
       let blob: Blob;
       try {
-        blob = await prepare(file);
+        blob = await prepare(bitmap, rect);
       } catch {
-        setMessage('Couldn’t read that image. Try a JPEG or PNG.');
+        setMessage('Couldn’t prepare that image. Try another one.');
+        closeCropper();
         return;
       }
+      closeCropper();
       const form = new FormData();
       form.append('portrait', blob, 'portrait');
       const result = await setPortrait(id, game, form);
@@ -114,22 +127,27 @@ export default function PortraitPicker({
   const onDrop = (e: DragEvent) => {
     e.preventDefault();
     setDragging(false);
-    upload(e.dataTransfer.files[0]);
+    void choose(e.dataTransfer.files[0]);
   };
 
   const fileInput = (
-    <input
-      ref={input}
-      id={inputId}
-      type='file'
-      accept='image/*'
-      className='sr-only'
-      tabIndex={-1}
-      onChange={(e) => {
-        upload(e.target.files?.[0]);
-        e.target.value = '';
-      }}
-    />
+    <>
+      <input
+        ref={input}
+        id={inputId}
+        type='file'
+        accept='image/*'
+        className='sr-only'
+        tabIndex={-1}
+        onChange={(e) => {
+          void choose(e.target.files?.[0]);
+          e.target.value = '';
+        }}
+      />
+      {cropping && (
+        <ImageCropper url={cropping.url} width={cropping.bitmap.width} height={cropping.bitmap.height} onCancel={closeCropper} onConfirm={upload} />
+      )}
+    </>
   );
 
   const buttons = (
