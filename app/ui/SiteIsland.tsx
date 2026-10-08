@@ -33,7 +33,7 @@ function scrollToSection(id: string) {
   crossfades to show which section you're in.
 */
 export default function SiteIsland({
-  sections,
+  sections: allSections,
   themeLabels,
   signedIn,
 }: {
@@ -58,6 +58,10 @@ export default function SiteIsland({
     else setMenu(false);
   }, [themes]);
   useIsland({ open: expanded, onEscape, onBreakpoint: closeAll, trigger: themes ? themeTrigger : menuButton });
+
+  // Never repeat a destination the buttons already offer (the call to action, Log in).
+  const ctaHref = signedIn ? '/vault' : '/signup';
+  const sections = allSections.filter((s) => s.href !== ctaHref && s.href !== '/login');
 
   // Section dots: each in-page link's dot fades in as its section arrives.
   const hashIds = sections.filter((s) => s.href.startsWith('#')).map((s) => s.href.slice(1));
@@ -132,32 +136,33 @@ export default function SiteIsland({
             <Elysium1 aria-hidden className='mt-1 h-auto w-20 text-bone/90' />
           </Link>
 
-          <ul className='hidden items-center gap-6 text-sm text-bone/70 md:flex'>
-            {sections.map(({ href, label }) => {
-              const isHash = href.startsWith('#');
-              if (isHash) hashIndex++;
-              const i = hashIndex;
-              return (
-                <li key={href}>
-                  <a href={href} onClick={(e) => onSectionClick(e, href)} className={`relative block rounded-sm py-1 pl-3 transition-colors duration-200 hover:text-bone ${focus}`}>
-                    {isHash && (
-                      <span
-                        ref={(el) => {
-                          dots.current[i] = el;
-                        }}
-                        aria-hidden
-                        style={{ opacity: 0 }}
-                        className='absolute top-1/2 left-0 size-1.5 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0.5rem_var(--accent)]'
-                      />
-                    )}
-                    {label}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
 
+          {/* Everything sits on the right: links, theme, account, call to action. */}
           <div className='flex items-center gap-1'>
+            <ul className='mr-3 hidden items-center gap-6 text-sm text-bone/70 md:flex'>
+              {sections.map(({ href, label }) => {
+                const isHash = href.startsWith('#');
+                if (isHash) hashIndex++;
+                const i = hashIndex;
+                return (
+                  <li key={href}>
+                    <a href={href} onClick={(e) => onSectionClick(e, href)} className={`relative block rounded-sm py-1 pl-3 transition-colors duration-200 hover:text-bone ${focus}`}>
+                      {isHash && (
+                        <span
+                          ref={(el) => {
+                            dots.current[i] = el;
+                          }}
+                          aria-hidden
+                          style={{ opacity: 0 }}
+                          className='absolute top-1/2 left-0 size-1.5 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0.5rem_var(--accent)]'
+                        />
+                      )}
+                      {label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
             {themeButton('hidden md:grid')}
             <div className='hidden items-center md:flex'>
               {signedIn ? (
@@ -171,7 +176,7 @@ export default function SiteIsland({
               )}
             </div>
             <Link
-              href={signedIn ? '/vault' : '/signup'}
+              href={ctaHref}
               onClick={closeAll}
               className={`group inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_0_1.5rem_-0.5rem_var(--accent)] transition duration-300 hover:brightness-110 active:scale-[0.98] ${focus}`}
             >
