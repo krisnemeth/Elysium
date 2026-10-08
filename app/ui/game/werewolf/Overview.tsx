@@ -2,11 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import { MdAdd } from 'react-icons/md';
-import { GiD10, GiPawPrint, GiWolfHowl } from 'react-icons/gi';
+import { GiPawPrint, GiWolfHowl } from 'react-icons/gi';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
 import EmptyState from '@/app/ui/kit/EmptyState';
-import { panel, buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
+import { panel, buttonPrimary } from '@/app/ui/kit/styles';
 import type { Character } from '@/app/lib/sample-characters';
 import { AUSPICES, glyphUrl } from '@/app/lib/factions';
 import { FactionMark } from '@/app/ui/game/FactionMark';
@@ -40,10 +40,6 @@ export default function WerewolfOverview({ characters: pack }: { characters: Cha
             <Link href='/vault/werewolf/new' className={buttonPrimary}>
               <MdAdd aria-hidden className='size-4 transition-transform duration-300 group-hover:rotate-90' />
               New Garou
-            </Link>
-            <Link href='/vault/werewolf/dice' className={buttonGhost}>
-              <GiD10 aria-hidden className='size-4 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
-              Roll with Rage
             </Link>
           </>
         }

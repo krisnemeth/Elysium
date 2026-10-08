@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { MdAdd, MdArrowOutward } from 'react-icons/md';
-import { GiD10, GiScrollUnfurled } from 'react-icons/gi';
+import { GiScrollUnfurled } from 'react-icons/gi';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
 import EmptyState from '@/app/ui/kit/EmptyState';
@@ -38,10 +38,6 @@ export default function VampireOverview({
             <Link href='/vault/vampire/new' className={buttonPrimary}>
               <MdAdd aria-hidden className='size-4 transition-transform duration-300 group-hover:rotate-90' />
               New character
-            </Link>
-            <Link href='/vault/vampire/dice' className={buttonGhost}>
-              <GiD10 aria-hidden className='size-4 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
-              Roll dice
             </Link>
           </>
         }
@@ -125,7 +121,7 @@ export default function VampireOverview({
                 <p className='max-w-[32ch] text-sm leading-relaxed text-bone/55'>
                   Loresheets hold the histories, places and grudges your sheets have no room for.
                 </p>
-                <Link href='/vault/vampire/new' className={buttonGhost}>Write one</Link>
+                <Link href='/vault/vampire/loresheets' className={buttonGhost}>Write one</Link>
               </div>
             )}
           </section>

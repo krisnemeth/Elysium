@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GiCastle, GiVampireCape, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
-import { MdAdd, MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
+import { MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 
 // The characters page is named after the game's group: Coterie, Pack, Cell.
@@ -15,35 +15,6 @@ const linksFor = (game: Game) => [
   { name: 'Loresheets', href: gamePath(game, '/loresheets'), icon: GiScrollUnfurled },
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
 ];
-
-const NEW = (game: Game) => ({ name: 'New', href: gamePath(game, '/new'), icon: MdAdd });
-
-// Create a character or a loresheet: styled like the other nav items, with
-// an accent icon so it stands out without competing with the game switcher.
-export function NewButton({ game }: { game: Game }) {
-  const pathname = usePathname();
-  const href = gamePath(game, '/new');
-  const active = pathname.startsWith(href);
-  return (
-    <Link
-      href={href}
-      aria-current={active ? 'page' : undefined}
-      className={`group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-        active ? 'bg-bone/[0.07] text-bone' : 'text-bone/80 hover:bg-bone/[0.04] hover:text-bone'
-      }`}
-    >
-      <span
-        aria-hidden
-        className={`absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0.75rem_var(--accent)] transition-[scale,opacity] duration-500 ease-(--ease-spring) ${
-          active ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
-        }`}
-      />
-      <MdAdd aria-hidden className='size-5 text-accent transition-transform duration-300 ease-(--ease-spring) group-hover:rotate-90' />
-      New
-      <span className='sr-only'>character or loresheet</span>
-    </Link>
-  );
-}
 
 const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
 const accountLinks = (game: Game) => [
@@ -93,7 +64,7 @@ export function TabBarLinks({ game }: { game: Game }) {
   const pathname = usePathname();
   return (
     <ul className='grid grid-cols-5'>
-      {[linksFor(game)[0], linksFor(game)[1], NEW(game), linksFor(game)[3], CHRONICLES].map(({ name, href, icon: Icon }) => {
+      {[...linksFor(game), CHRONICLES].map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>

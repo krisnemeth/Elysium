@@ -2,19 +2,16 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { GiScrollUnfurled } from 'react-icons/gi';
-import { createLoresheet } from '@/app/lib/actions/loresheets';
 import { getLoresheets } from '@/app/lib/data/loresheets';
 import { GAMES, isGame } from '@/app/lib/games';
 import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
 import EmptyState from '@/app/ui/kit/EmptyState';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import { panel } from '@/app/ui/kit/styles';
-import { ActionButton } from '@/app/ui/social/forms';
 import { LORE_ICONS } from '@/app/ui/loresheets/icons';
+import NewLoresheet from '@/app/ui/loresheets/NewLoresheet';
 
 export const metadata: Metadata = { title: 'Loresheets' };
-
-const btn = 'rounded-full border border-bone/20 px-4 py-2 text-sm text-bone/85 transition hover:border-bone/50 hover:text-bone';
 
 export default async function Loresheets({ params }: PageProps<'/vault/[game]/loresheets'>) {
   const { game } = await params;
@@ -28,14 +25,7 @@ export default async function Loresheets({ params }: PageProps<'/vault/[game]/lo
         eyebrow={`${GAMES[game].name} · Loresheets`}
         title='The lore.'
         description='Places, histories and faces that don’t fit on a character sheet.'
-        actions={kinds.map((k) => {
-          const Icon = LORE_ICONS[k];
-          return (
-            <ActionButton key={k} action={createLoresheet.bind(null, game, k)} className={`${btn} inline-flex items-center gap-2`}>
-              <Icon aria-hidden className='size-4 text-accent' /> New {LORE_KINDS[k].noun}
-            </ActionButton>
-          );
-        })}
+        actions={<NewLoresheet game={game} />}
       />
       {list.length === 0 ? (
         <EmptyState icon={<GiScrollUnfurled aria-hidden />} title='No loresheets yet'>

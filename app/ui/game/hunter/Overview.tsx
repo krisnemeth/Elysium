@@ -1,9 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { MdAdd } from 'react-icons/md';
-import { GiD10 } from 'react-icons/gi';
 import PageHeader from '@/app/ui/kit/PageHeader';
-import { buttonPrimary, buttonGhost, panel } from '@/app/ui/kit/styles';
+import { buttonPrimary, panel } from '@/app/ui/kit/styles';
 import type { Character } from '@/app/lib/sample-characters';
 
 // Pin positions on the board (percent) and tilt, for up to six photos.
@@ -30,10 +29,6 @@ export default function HunterOverview({ characters: cell }: { characters: Chara
             <Link href='/vault/hunter/new' className={buttonPrimary}>
               <MdAdd aria-hidden className='size-4 transition-transform duration-300 group-hover:rotate-90' />
               Open a new file
-            </Link>
-            <Link href='/vault/hunter/dice' className={buttonGhost}>
-              <GiD10 aria-hidden className='size-4 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
-              Roll for the cell
             </Link>
           </>
         }

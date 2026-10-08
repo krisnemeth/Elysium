@@ -3,7 +3,7 @@ import { FaPowerOff } from 'react-icons/fa';
 import { Elysium1 } from '@/app/ui/svgs';
 import ThemePicker from '@/app/ui/dashboard/ThemePicker';
 import { signOut } from '@/app/lib/actions/auth';
-import { NewButton, SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
+import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
 import { panel } from '@/app/ui/kit/styles';
 import { GAMES, type Game } from '@/app/lib/games';
 
@@ -37,10 +37,9 @@ export default function SideNav({ game }: { game: Game }) {
           <Elysium1 aria-hidden className='h-auto w-32 text-bone/90 drop-shadow-[0_0_0.6rem_var(--accent)]' />
         </Link>
 
-        <div className='mt-6 mb-3'>
+        <div className='mt-6 mb-6'>
           <GameSwitcher game={game} />
         </div>
-        <NewButton game={game} />
 
         <nav aria-label='Dashboard' className='flex grow flex-col'>
           <SideNavLinks game={game} />
