@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { FaPowerOff } from 'react-icons/fa';
 import { Elysium1 } from '@/app/ui/svgs';
 import ThemePicker from '@/app/ui/dashboard/ThemePicker';
+import PhoneIsland from '@/app/ui/dashboard/PhoneIsland';
 import { signOut } from '@/app/lib/actions/auth';
 import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
 import { panel } from '@/app/ui/kit/styles';
@@ -28,7 +29,7 @@ export default function SideNav({ game }: { game: Game }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className={`frame fixed inset-y-4 left-4 z-40 hidden w-60 flex-col p-4 md:flex ${panel}`}>
+      <aside className={`group/side frame fixed inset-y-4 left-4 z-40 hidden w-60 flex-col overflow-y-auto p-4 md:flex ${panel}`}>
         <Link
           href='/vault'
           aria-label='Your vault'
@@ -45,8 +46,9 @@ export default function SideNav({ game }: { game: Game }) {
           <SideNavLinks game={game} />
           <div aria-hidden className='mx-4 my-2 border-t border-bone/10' />
           <SideNavLinks game={game} group='chronicles' />
-          <div className='flex grow items-center justify-center px-2'>
-            <Logo aria-label={GAMES[game].title} role='img' className='h-auto w-full max-w-40 text-bone/40' />
+          {/* The logo shrinks to fit, and steps aside while Themes is open. */}
+          <div className='flex min-h-0 grow items-center justify-center overflow-hidden px-2 group-has-[[data-themes=open]]/side:invisible'>
+            <Logo aria-label={GAMES[game].title} role='img' className='h-auto max-h-full w-full max-w-40 text-bone/40' />
           </div>
           <ThemePicker game={game} />
           <div aria-hidden className='mx-4 my-2 border-t border-bone/10' />
@@ -57,21 +59,8 @@ export default function SideNav({ game }: { game: Game }) {
         </div>
       </aside>
 
-      {/* Phone top bar */}
-      <header className='fixed inset-x-0 top-0 z-40 px-3 pt-3 md:hidden'>
-        <div className={`frame flex flex-col gap-2 px-3 py-2 ${panel}`}>
-          <div className='flex h-10 items-center justify-between'>
-            <Link href='/vault' aria-label='Your vault'>
-              <Elysium1 aria-hidden className='h-auto w-24 text-bone/90' />
-            </Link>
-            <div className='flex items-center gap-1'>
-              <ThemePicker game={game} compact />
-              <LogOut compact />
-            </div>
-          </div>
-          <GameSwitcher game={game} compact />
-        </div>
-      </header>
+      {/* Phone top bar: grows into a menu (Settings, Friends, Themes, Log out). */}
+      <PhoneIsland game={game} />
 
       {/* Phone tab bar */}
       <nav aria-label='Dashboard' className='fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden'>

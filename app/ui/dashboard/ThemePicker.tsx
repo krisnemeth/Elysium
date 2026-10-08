@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useId, useSyncExternalStore, type CSSProperties } from 'react';
-import { MdCheck, MdOutlinePalette } from 'react-icons/md';
+import { useCallback, useId, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react';
+import { MdCheck, MdExpandMore, MdOutlinePalette } from 'react-icons/md';
 import { GAMES, gamePath, type Game } from '@/app/lib/games';
-import { THEME_STORAGE_KEY, type Theme } from '@/app/lib/theme';
+import type { Theme } from '@/app/lib/theme';
+import { readTheme, serverTheme, subscribeTheme, switchTheme } from '@/app/lib/theme-switch';
+import { IslandSection, useIsland } from '@/app/ui/kit/Island';
 
 // A small picture of each scene: its colours and the shape of its frame.
 const PREVIEWS: Record<Game, Record<Theme, { mood: string; bg: string; frame: CSSProperties; accent: string }>> = {
@@ -22,87 +24,80 @@ const PREVIEWS: Record<Game, Record<Theme, { mood: string; bg: string; frame: CS
   },
 };
 
-// The theme lives on <html data-theme>; watch it from outside React.
-function subscribe(onChange: () => void) {
-  const observer = new MutationObserver(onChange);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  return () => observer.disconnect();
-}
-const currentTheme = (): Theme => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
-
-function choose(t: Theme) {
-  document.documentElement.dataset.theme = t;
-  try {
-    localStorage.setItem(THEME_STORAGE_KEY, t);
-  } catch {}
+// One tile per scene, with a mini preview; the current one is ticked.
+export function ThemeTiles({ game, onPicked, compact = false }: { game: Game; onPicked?: () => void; compact?: boolean }) {
+  const theme = useSyncExternalStore(subscribeTheme, readTheme, serverTheme);
+  return (
+    <ul className='flex flex-col gap-2'>
+      {(['dark', 'light'] as const).map((t) => {
+        const p = PREVIEWS[game][t];
+        const active = theme === t;
+        return (
+          <li key={t}>
+            <button
+              type='button'
+              aria-pressed={active}
+              onClick={() => {
+                switchTheme(t);
+                onPicked?.();
+              }}
+              className={`flex w-full items-center gap-3 rounded-xl border p-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
+                active ? 'border-accent/60 bg-accent/10' : 'border-bone/10 hover:border-bone/30'
+              }`}
+            >
+              {/* Mini scene with a mini frame. */}
+              <span aria-hidden className={`relative grid shrink-0 place-items-center overflow-hidden rounded-lg ${compact ? 'h-9 w-10' : 'h-12 w-16'}`} style={{ background: p.bg }}>
+                <span className={`rounded-[4px] bg-black/40 ${compact ? 'h-6 w-4' : 'h-8 w-5'}`} style={p.frame} />
+                <span className='absolute right-1.5 bottom-1.5 size-1.5 rounded-full' style={{ background: p.accent }} />
+              </span>
+              <span className='min-w-0 grow'>
+                <span className={`flex items-center gap-1.5 font-display leading-tight ${compact ? 'text-sm' : 'text-base'}`}>
+                  <span className='min-w-0'>{GAMES[game].modes[t]}</span>
+                  {active && <MdCheck aria-hidden className='size-4 shrink-0 text-accent' />}
+                </span>
+                {!compact && <span className='block text-xs leading-snug text-bone/55'>{p.mood}</span>}
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
 }
 
 /*
-  "Themes" opens a small drawer with the game's two scenes as preview tiles.
-  Uses the popover API: Esc or a click outside closes it.
+  Themes in the desktop sidebar: the item grows in place to show the tiles,
+  dynamic-island style, instead of opening a separate drawer.
 */
-export default function ThemePicker({ game, compact = false }: { game: Game; compact?: boolean }) {
+export default function ThemePicker({ game }: { game: Game }) {
+  const [open, setOpen] = useState(false);
   const id = useId();
-  const theme = useSyncExternalStore(subscribe, currentTheme, () => 'dark' as Theme);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const close = useCallback(() => setOpen(false), []);
+  useIsland({ open, onEscape: close, trigger, lockScroll: false });
 
   return (
-    <>
+    <div data-themes={open ? 'open' : undefined} className={`rounded-xl transition-colors duration-300 ${open ? 'bg-bone/[0.04]' : ''}`}>
       <button
+        ref={trigger}
         type='button'
-        popoverTarget={id}
-        className={`group flex items-center gap-3 rounded-xl text-sm text-bone/60 transition-colors duration-300 hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-          compact ? 'p-2' : 'w-full px-4 py-3 hover:bg-bone/[0.04]'
-        }`}
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={() => setOpen((o) => !o)}
+        className='group flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-bone/60 transition-colors duration-300 hover:bg-bone/[0.04] hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
       >
         <MdOutlinePalette aria-hidden className='size-5 transition-[scale] duration-300 ease-(--ease-spring) group-hover:scale-110' />
-        <span className={compact ? 'sr-only' : ''}>Themes</span>
+        <span className='grow text-left'>Themes</span>
+        <MdExpandMore aria-hidden className={`size-4 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
       </button>
-
-      <div
-        id={id}
-        popover='auto'
-        aria-label={`${GAMES[game].name} themes`}
-        // Popovers default to the centre of the screen; place it by the button instead.
-        className={`fixed w-72 rounded-2xl border border-bone/15 bg-ink/95 p-4 text-bone shadow-[0_1.5rem_3rem_-0.5rem_rgb(0_0_0/0.8)] backdrop-blur-xl ${
-          compact ? 'inset-x-0 top-20 bottom-auto mx-auto' : 'top-auto right-auto bottom-40 left-[16.5rem] m-0'
-        }`}
-      >
-        <p className='px-1 text-[0.65rem] tracking-[0.25em] text-bone/50 uppercase'>{GAMES[game].name} themes</p>
-        <ul className='mt-3 flex flex-col gap-2'>
-          {(['dark', 'light'] as const).map((t) => {
-            const p = PREVIEWS[game][t];
-            const active = theme === t;
-            return (
-              <li key={t}>
-                <button
-                  type='button'
-                  aria-pressed={active}
-                  onClick={() => choose(t)}
-                  className={`flex w-full items-center gap-3 rounded-xl border p-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
-                    active ? 'border-accent/60 bg-accent/10' : 'border-bone/10 hover:border-bone/30'
-                  }`}
-                >
-                  {/* Mini scene with a mini frame. */}
-                  <span aria-hidden className='relative grid h-14 w-20 shrink-0 place-items-center overflow-hidden rounded-lg' style={{ background: p.bg }}>
-                    <span className='h-9 w-6 rounded-[4px] bg-black/40' style={p.frame} />
-                    <span className='absolute right-1.5 bottom-1.5 size-1.5 rounded-full' style={{ background: p.accent }} />
-                  </span>
-                  <span className='min-w-0 grow'>
-                    <span className='flex items-center gap-1.5 font-display text-lg leading-tight'>
-                      {GAMES[game].modes[t]}
-                      {active && <MdCheck aria-hidden className='size-4 text-accent' />}
-                    </span>
-                    <span className='block text-xs leading-snug text-bone/55'>{p.mood}</span>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-        <Link href={gamePath(game, '/settings')} className='mt-3 block px-1 text-xs text-bone/50 underline-offset-2 hover:text-bone hover:underline'>
-          Prefer plain borders? Simple frames in Settings
-        </Link>
-      </div>
-    </>
+      <IslandSection open={open} id={id}>
+        <div className='flex flex-col gap-2 px-2 pt-1 pb-2'>
+          <ThemeTiles game={game} compact />
+          <Link href={gamePath(game, '/settings')} className='px-1 text-xs text-bone/50 underline-offset-2 hover:text-bone hover:underline'>
+            Simple frames in Settings
+          </Link>
+        </div>
+      </IslandSection>
+    </div>
   );
 }

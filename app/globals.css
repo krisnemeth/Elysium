@@ -348,3 +348,27 @@ body {
     animation: glow-pulse 2.4s ease-in-out infinite;
   }
 }
+
+/* Theme switches crossfade the whole page (app/lib/theme-switch.ts): the old
+   look fades and softens into the new one. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 500ms;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+::view-transition-old(root) {
+  animation-name: theme-out;
+}
+@keyframes theme-out {
+  to {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
