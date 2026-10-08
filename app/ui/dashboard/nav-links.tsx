@@ -2,14 +2,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GiCastle, GiVampireCape, GiQuillInk, GiD10, GiBatWing, GiWolfHowl, GiCrossbow } from 'react-icons/gi';
+import { GiCastle, GiVampireCape, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
+import { MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
+
+// The characters page is named after the game's group: Coterie, Pack, Cell.
+const groupName = (game: Game) => GAMES[game].noun.group[0].toUpperCase() + GAMES[game].noun.group.slice(1);
 
 const linksFor = (game: Game) => [
   { name: 'Overview', href: gamePath(game), icon: GiCastle },
-  { name: GAMES[game].noun.many === 'Hunters' ? 'Cell' : 'Characters', href: gamePath(game, '/characters'), icon: GiVampireCape },
-  { name: 'New sheet', href: gamePath(game, '/new'), icon: GiQuillInk },
+  { name: groupName(game), href: gamePath(game, '/characters'), icon: GiVampireCape },
+  { name: 'Loresheets', href: gamePath(game, '/loresheets'), icon: GiScrollUnfurled },
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
+];
+
+const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
+const accountLinks = (game: Game) => [
+  { name: 'Settings', href: gamePath(game, '/settings'), icon: MdOutlineSettings },
+  { name: 'Friends', href: gamePath(game, '/friends'), icon: MdPeopleOutline },
 ];
 
 function isActive(pathname: string, href: string, game: Game) {
@@ -17,11 +27,12 @@ function isActive(pathname: string, href: string, game: Game) {
 }
 
 // Vertical list for the desktop sidebar.
-export function SideNavLinks({ game }: { game: Game }) {
+export function SideNavLinks({ game, group = 'main' }: { game: Game; group?: 'main' | 'chronicles' | 'account' }) {
   const pathname = usePathname();
+  const links = group === 'main' ? linksFor(game) : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
   return (
     <ul className='flex flex-col gap-1'>
-      {linksFor(game).map(({ name, href, icon: Icon }) => {
+      {links.map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>
@@ -52,8 +63,8 @@ export function SideNavLinks({ game }: { game: Game }) {
 export function TabBarLinks({ game }: { game: Game }) {
   const pathname = usePathname();
   return (
-    <ul className='grid grid-cols-4'>
-      {linksFor(game).map(({ name, href, icon: Icon }) => {
+    <ul className='grid grid-cols-5'>
+      {[...linksFor(game), CHRONICLES].map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>

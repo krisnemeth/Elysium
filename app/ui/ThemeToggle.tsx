@@ -1,6 +1,7 @@
 'use client';
 
-import { THEME_STORAGE_KEY, type Theme } from '@/app/lib/theme';
+import type { Theme } from '@/app/lib/theme';
+import { switchTheme } from '@/app/lib/theme-switch';
 
 type Props = {
   labels: Record<Theme, string>;
@@ -18,14 +19,8 @@ export default function ThemeToggle({
   className = '',
   labelClassName = '',
 }: Props) {
-  const toggle = () => {
-    const root = document.documentElement;
-    const next: Theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    root.dataset.theme = next;
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, next);
-    } catch {}
-  };
+  // Crossfades via the View Transition API (app/lib/theme-switch.ts).
+  const toggle = () => switchTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
 
   return (
     <button

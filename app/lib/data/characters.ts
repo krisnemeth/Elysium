@@ -9,6 +9,7 @@ import { isUploadedPortrait } from '@/app/lib/portraits';
 
 export type CharacterRecord = {
   id: string;
+  user_id: string;
   game: Game;
   name: string;
   faction: string | null;
@@ -21,7 +22,7 @@ export type CharacterRecord = {
   updated_at: string;
 };
 
-const COLUMNS = 'id, game, name, faction, portrait, summary, status, sheet, starter_key, created_at, updated_at';
+const COLUMNS = 'id, user_id, game, name, faction, portrait, summary, status, sheet, starter_key, created_at, updated_at';
 
 // The card/list shape the dashboards use.
 export function toCharacter(row: CharacterRecord): Character {
@@ -43,10 +44,19 @@ export function toCharacter(row: CharacterRecord): Character {
   };
 }
 
-// RLS limits every query to the signed-in user's own rows.
-export const getCharacters = cache(async (game?: Game) => {
+// Your own characters. RLS also lets Storytellers read sheets brought to their
+// chronicles, so these filter by owner; chronicles use getSharedCharacter.
+const currentUser = cache(async () => {
   const supabase = await createClient();
-  let query = supabase.from('characters').select(COLUMNS).order('updated_at', { ascending: false });
+  const { data } = await supabase.auth.getClaims();
+  return (data?.claims?.sub as string | undefined) ?? null;
+});
+
+export const getCharacters = cache(async (game?: Game) => {
+  const me = await currentUser();
+  if (!me) return [];
+  const supabase = await createClient();
+  let query = supabase.from('characters').select(COLUMNS).eq('user_id', me).order('updated_at', { ascending: false });
   if (game) query = query.eq('game', game);
   const { data, error } = await query;
   if (error) throw new Error(`Could not load characters: ${error.message}`);
@@ -55,6 +65,17 @@ export const getCharacters = cache(async (game?: Game) => {
 
 export const getCharacter = cache(async (id: string) => {
   // Not a UUID: treat as not found rather than erroring.
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  const me = await currentUser();
+  if (!me) return null;
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('characters').select(COLUMNS).eq('id', id).eq('user_id', me).maybeSingle();
+  if (error) throw new Error(`Could not load character: ${error.message}`);
+  return data as CharacterRecord | null;
+});
+
+// A sheet you can read as a chronicle's Storyteller (RLS decides).
+export const getSharedCharacter = cache(async (id: string) => {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const supabase = await createClient();
   const { data, error } = await supabase.from('characters').select(COLUMNS).eq('id', id).maybeSingle();

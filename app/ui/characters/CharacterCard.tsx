@@ -60,7 +60,6 @@ export default function CharacterCard({
             Open sheet
             <MdArrowOutward aria-hidden className='transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5' />
           </Link>
-          <span className='text-[0.65rem] tracking-[0.2em] text-bone/35 uppercase'>Loresheet soon</span>
         </div>
       </div>
     </article>

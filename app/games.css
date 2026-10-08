@@ -95,8 +95,18 @@
     var(--c-br) bottom right / 34px no-repeat;
 }
 
-/* Vampire, Neon Nights: a flickering neon tube. */
+/* Vampire, Neon Nights: a neon tube around the frame. Only the tube (its own
+   layer) flickers, like a sign; the content behind it stays steady. */
 :root[data-theme='light'] [data-game='vampire'] .frame {
+  border-color: transparent;
+}
+:root[data-theme='light'] [data-game='vampire'] .frame::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
   border: 1.5px solid color-mix(in oklab, var(--accent) 85%, white);
   box-shadow:
     0 0 0.4rem var(--accent),
@@ -274,7 +284,43 @@
 
 @media (prefers-reduced-motion: reduce) {
   [data-game] .frame,
+  [data-game] .frame::after,
   .ambience * {
     animation: none !important;
   }
+}
+
+/* ------------------------------------------------------------ character cards */
+
+/* Vampire cards carry both looks; the theme picks one. */
+.vtm-neon { display: none; }
+:root[data-theme='light'] .vtm-neon { display: block; }
+:root[data-theme='light'] .vtm-masq { display: none; }
+
+/* Masquerade: a pointed (lancet) arch, stretched to the window's box. */
+.gothic-arch {
+  --arch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 100V36C0 16 26 5 50 0C74 5 100 16 100 36V100Z'/%3E%3C/svg%3E");
+  mask: var(--arch) center / 100% 100% no-repeat;
+  -webkit-mask: var(--arch) center / 100% 100% no-repeat;
+}
+
+/* Masquerade card: the card's own top follows a pointed arch. */
+.gothic-arch-outer {
+  --arch-outer: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 500' preserveAspectRatio='none'%3E%3Cpath d='M0 500V200C0 95 120 30 200 3C280 30 400 95 400 200V500Z'/%3E%3C/svg%3E");
+  mask: var(--arch-outer) center / 100% 100% no-repeat;
+  -webkit-mask: var(--arch-outer) center / 100% 100% no-repeat;
+}
+
+/* Settings → Simple frames: plain hairline borders instead of each theme's
+   ornament. The scenes behind stay. */
+[data-frames='simple'] .frame {
+  border: 1px solid color-mix(in oklab, var(--color-bone) 12%, transparent) !important;
+  border-image: none !important;
+  outline: none !important;
+  animation: none !important;
+}
+[data-frames='simple'] .frame::before,
+[data-frames='simple'] .frame::after,
+[data-frames='simple'] .frame-ornament {
+  display: none !important;
 }

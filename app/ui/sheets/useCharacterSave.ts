@@ -96,5 +96,13 @@ export function useCharacterSave(game: Game, initialId: string | null, initialSh
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
-  return { sheet, update, state, error, id, retry: save };
+  // The character's id, saving it first if it's new (e.g. before a portrait upload).
+  const ensureId = useCallback(async () => {
+    if (idRef.current) return idRef.current;
+    await save();
+    while (inFlight.current) await new Promise((r) => setTimeout(r, 100));
+    return idRef.current;
+  }, [save]);
+
+  return { sheet, update, state, error, id, retry: save, ensureId };
 }

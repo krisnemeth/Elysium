@@ -56,6 +56,9 @@ export function GiftsAndRites() {
               <div className='w-28 shrink-0'>
                 <SelectField label={`Gift ${i + 1} source`} hideLabel name={`gift-${i}-source`} value={g.source} options={['Native', 'Auspice', 'Tribe']} onChange={(v) => set(i, { source: v as Gift['source'] })} />
               </div>
+              <div className='w-28 shrink-0'>
+                <SelectField label={`Gift ${i + 1} Renown`} hideLabel name={`gift-${i}-renown`} value={g.renown} options={['Glory', 'Honor', 'Wisdom']} onChange={(v) => set(i, { renown: v })} />
+              </div>
               <button type='button' aria-label={`Remove ${g.name || 'gift'}`} className={removeButton} onClick={() => update((d) => void (d.gifts = gifts.filter((_, j) => j !== i)))}>
                 <MdClose aria-hidden />
               </button>

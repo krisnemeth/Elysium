@@ -34,7 +34,7 @@ export default function CharacterEditor({
   portrait?: string | null;
   children: ReactNode;
 }) {
-  const { sheet, update, state, error, id, retry } = useCharacterSave(game, initialId, initialSheet, (newId) =>
+  const { sheet, update, state, error, id, retry, ensureId } = useCharacterSave(game, initialId, initialSheet, (newId) =>
     // Keep editing in place; the URL now points at the saved character.
     window.history.replaceState(null, '', `/vault/${game}/characters/${newId}/edit`),
   );
@@ -72,12 +72,11 @@ export default function CharacterEditor({
           </>
         )}
       </div>
-      {id && (
-        <div className='mb-6'>
-          <PortraitPicker id={id} game={game} name={sheet.profile.name ?? ''} src={portrait ?? GAMES[game].figure.src} />
-        </div>
-      )}
       {children}
+      {/* The portrait comes last, after the rest of the sheet. */}
+      <section aria-label='Portrait' className='mt-8'>
+        <PortraitPicker id={id} ensureId={ensureId} game={game} name={sheet.profile.name ?? ''} src={portrait ?? GAMES[game].figure.src} />
+      </section>
     </SheetProvider>
   );
 }

@@ -1,22 +1,30 @@
 import Link from 'next/link';
 import { MdAdd, MdArrowOutward } from 'react-icons/md';
-import { GiD10, GiScrollUnfurled } from 'react-icons/gi';
+import { GiScrollUnfurled } from 'react-icons/gi';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
 import EmptyState from '@/app/ui/kit/EmptyState';
 import CharacterRow from '@/app/ui/dashboard/CharacterRow';
 import { panel, buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
 import type { Character } from '@/app/lib/sample-characters';
+import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
+import { LORE_ICONS } from '@/app/ui/loresheets/icons';
 
 // Vampire dashboard overview (the revamp design).
-export default function VampireOverview({ characters: mine }: { characters: Character[] }) {
+export default function VampireOverview({
+  characters: mine,
+  loresheets = [],
+}: {
+  characters: Character[];
+  loresheets?: { id: string; title: string; kind: LoreKind }[];
+}) {
   const finished = mine.filter((c) => c.status === 'finished');
   const drafts = mine.filter((c) => c.status === 'draft');
 
   const stats = [
     { label: 'Characters finished', value: finished.length },
     { label: 'Drafts in progress', value: drafts.length },
-    { label: 'Loresheets', value: 0 },
+    { label: 'Loresheets', value: loresheets.length },
   ];
 
   return (
@@ -30,10 +38,6 @@ export default function VampireOverview({ characters: mine }: { characters: Char
             <Link href='/vault/vampire/new' className={buttonPrimary}>
               <MdAdd aria-hidden className='size-4 transition-transform duration-300 group-hover:rotate-90' />
               New character
-            </Link>
-            <Link href='/vault/vampire/dice' className={buttonGhost}>
-              <GiD10 aria-hidden className='size-4 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
-              Roll dice
             </Link>
           </>
         }
@@ -89,18 +93,37 @@ export default function VampireOverview({ characters: mine }: { characters: Char
             )}
           </section>
 
-          <section
-            aria-labelledby='lore-title'
-            className={`relative flex grow flex-col items-center justify-center overflow-hidden p-8 text-center ${panel}`}
-          >
-            <GiScrollUnfurled aria-hidden className='size-10 text-accent/70' />
-            <h2 id='lore-title' className='mt-4 font-display text-2xl'>No loresheets yet</h2>
-            <p className='mt-2 max-w-[32ch] text-sm leading-relaxed text-bone/55'>
-              Loresheets will hold the histories, lovers and grudges your sheets have no room for.
-            </p>
-            <span className='mt-5 rounded-full border border-bone/15 px-3 py-1 text-[0.65rem] tracking-[0.2em] text-bone/45 uppercase'>
-              Coming soon
-            </span>
+          <section aria-labelledby='lore-title' className={`flex grow flex-col p-5 ${panel}`}>
+            <div className='flex items-baseline justify-between px-2'>
+              <h2 id='lore-title' className='font-display text-2xl'>Loresheets</h2>
+              <Link href='/vault/vampire/loresheets' className='text-xs tracking-[0.2em] text-bone/50 uppercase transition-colors hover:text-bone'>
+                All
+              </Link>
+            </div>
+            {loresheets.length ? (
+              <ul className='mt-3 flex flex-col'>
+                {loresheets.slice(0, 4).map((l) => {
+                  const Icon = LORE_ICONS[l.kind];
+                  return (
+                  <li key={l.id}>
+                    <Link href={`/vault/vampire/loresheets/${l.id}`} className='flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-bone/[0.05]'>
+                      <Icon aria-hidden className='size-5 shrink-0 text-accent/80' />
+                      <span className='grow truncate'>{l.title || `Untitled ${LORE_KINDS[l.kind].noun}`}</span>
+                      <span className='shrink-0 text-[0.65rem] tracking-[0.15em] text-bone/45 uppercase'>{LORE_KINDS[l.kind].label}</span>
+                    </Link>
+                  </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <div className='flex grow flex-col items-center justify-center gap-3 px-4 py-8 text-center'>
+                <GiScrollUnfurled aria-hidden className='size-10 text-accent/70' />
+                <p className='max-w-[32ch] text-sm leading-relaxed text-bone/55'>
+                  Loresheets hold the histories, places and grudges your sheets have no room for.
+                </p>
+                <Link href='/vault/vampire/loresheets' className={buttonGhost}>Write one</Link>
+              </div>
+            )}
           </section>
         </div>
       </div>

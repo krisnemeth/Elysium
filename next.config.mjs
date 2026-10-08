@@ -11,6 +11,9 @@ const nextConfig = {
       { source: '/dashboard/characters', destination: '/vault/vampire/characters', permanent: true },
       { source: '/dashboard/dice', destination: '/vault/vampire/dice', permanent: true },
       { source: '/dashboard/sheets/:path*', destination: '/vault/new', permanent: true },
+      // Friends and Settings live inside each game's dashboard (with the sidebar).
+      { source: '/vault/friends', destination: '/vault/vampire/friends', permanent: false },
+      { source: '/vault/settings', destination: '/vault/vampire/settings', permanent: false },
     ];
   },
   turbopack: {

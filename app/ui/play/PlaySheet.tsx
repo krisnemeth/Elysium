@@ -8,6 +8,7 @@ import { ATTRIBUTES, SKILLS, type Attribute, type Damage, type Sheet, type Skill
 import { NO_DAMAGE, takeDamage, trackState } from '@/app/lib/play/damage';
 import { fieldInput, fieldLabel, panel } from '@/app/ui/kit/styles';
 import DiceRoller from '@/app/ui/dice/DiceRoller';
+import { shareRoll } from '@/app/lib/actions/social';
 import SaveStatus from '@/app/ui/sheets/SaveStatus';
 import { useCharacterSave } from '@/app/ui/sheets/useCharacterSave';
 import { DamageTrack, HumanityTrack, PointTrack } from './tracks';
@@ -37,7 +38,23 @@ function seconds(game: Game, sheet: Sheet): { group: string; options: Second[] }
   return groups;
 }
 
-export default function PlaySheet({ game, id, name, initialSheet }: { game: Game; id: string; name: string; initialSheet: Sheet }) {
+export default function PlaySheet({
+  game,
+  id,
+  name,
+  initialSheet,
+  chronicles = [],
+  embeddedIn,
+}: {
+  game: Game;
+  id: string;
+  name: string;
+  initialSheet: Sheet;
+  // Chronicles this character is in: rolls can be shared to one of them.
+  chronicles?: { id: string; name: string }[];
+  // Shown on a chronicle's page: no header, and every roll goes to that chronicle.
+  embeddedIn?: string;
+}) {
   const { sheet, update, state, error, retry } = useCharacterSave(game, id, initialSheet);
   const t = sheet.trackers;
   const healthMax = t.health ?? 0;
@@ -81,9 +98,16 @@ export default function PlaySheet({ game, id, name, initialSheet }: { game: Game
     .join(' · ');
 
   const specialKey = game === 'vampire' ? 'hunger' : game === 'werewolf' ? 'rage' : 'desperation';
+  const shareId = useId();
+  const [chosenShare, setShareTo] = useState(chronicles[0]?.id ?? '');
+  const shareTo = embeddedIn ?? chosenShare;
+  const rollLabel = [first, second?.label].filter(Boolean).join(' + ');
 
   return (
     <div className='flex flex-col gap-8'>
+      {embeddedIn ? (
+        <SaveStatus className='self-start' state={state} error={error} onRetry={() => void retry()} />
+      ) : (
       <header className='flex flex-wrap items-center gap-3'>
         <Link href={`/vault/${game}/characters/${id}`} className='inline-flex items-center gap-1.5 text-sm text-bone/60 transition-colors hover:text-bone'>
           <MdArrowBack aria-hidden /> {name}
@@ -93,6 +117,7 @@ export default function PlaySheet({ game, id, name, initialSheet }: { game: Game
         </Link>
         <SaveStatus className='ml-auto' state={state} error={error} onRetry={() => void retry()} />
       </header>
+      )}
 
       <section aria-labelledby='condition-title' className='flex flex-col gap-4'>
         <h2 id='condition-title' className='font-display text-3xl'>Condition</h2>
@@ -197,8 +222,24 @@ export default function PlaySheet({ game, id, name, initialSheet }: { game: Game
             <span className='hidden sm:block' />
           )}
         </div>
+        {embeddedIn ? (
+          <p className='text-sm text-bone/55'>Rolls here appear in the chronicle’s dice log for everyone.</p>
+        ) : chronicles.length > 0 && (
+          <div className='flex flex-wrap items-center gap-3 text-sm text-bone/70'>
+            <label htmlFor={shareId}>Share rolls with</label>
+            <select id={shareId} value={shareTo} onChange={(e) => setShareTo(e.target.value)} className='cursor-pointer rounded-lg border border-bone/15 bg-transparent px-3 py-1.5 [&_option]:bg-ink'>
+              <option value=''>Nobody (private)</option>
+              {chronicles.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
         <DiceRoller
           game={game}
+          onResult={(r, info) => {
+            if (shareTo) void shareRoll(shareTo, game, sheet.profile.name || name, info.reroll ? `${rollLabel} (Willpower reroll)` : rollLabel, r, info.difficulty);
+          }}
           pool={pool}
           onPoolChange={(v) => setModifier(v - base)}
           poolNote={poolNote}

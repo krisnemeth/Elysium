@@ -2,13 +2,13 @@
 
 ## Project Overview
 
-**Elysium** is a web application for managing **Vampire: The Masquerade (VTM)** character sheets and loresheets. Players can create accounts, build full VTM character sheets (attributes, skills, disciplines, bio, etc.), and manage multiple characters. The name "Elysium" refers to the neutral ground in VTM lore.
+**Elysium** is a free, cross-game character vault for the World of Darkness 5th editions: **Vampire: The Masquerade**, **Werewolf: The Apocalypse** and **Hunter: The Reckoning**. Players keep character sheets and loresheets, play at the table (damage, dice, XP), and run chronicles with friends, led by a Storyteller or the Storyteller bot. Each game has its own themed dashboard with two scenes.
 
 - Developer: Krisztian Nemeth — https://krisnemeth.dev
 - Repo: `krisnemeth/elysium`
-- Dev branch: `main` (the multi-game World of Darkness vault)
+- Dev branch: `main` (the multi-game World of Darkness vault). Feature work happens on branches; the user approves merges into `main`.
 - `legacy`: a frozen backup of the original 2023/24 Vampire-only app (as of 2026-10-07, after the Next 16 / Tailwind 4 / Node 24 upgrades). Never delete, rewrite or merge into it; it's protected on GitHub against deletion and force-pushes.
-- Roadmap: `plans/feature-roadmap.md`
+- Roadmap and status: `plans/feature-roadmap.md` (also `plans/storyteller-engine.md`, `plans/dark-pack-compliance.md`).
 
 ---
 
@@ -18,92 +18,38 @@
 |---|---|
 | Framework | Next.js 16.3.8 (App Router, Turbopack) + React 19 |
 | Language | TypeScript 5.9 (strict) |
-| Styling | Tailwind CSS 4 (CSS-first config in `globals.css`, via `@tailwindcss/postcss`) |
-| Icons | react-icons 5.2.0 |
-| SVG components | @svgr/webpack 8.1.0 (via `turbopack.rules`) |
+| Styling | Tailwind CSS 4 (CSS-first config in `app/globals.css`; per-game themes in `app/games.css`) |
+| Database, auth, storage, realtime | **Supabase** (`@supabase/ssr`, migrations in `supabase/migrations/`, CLI linked to project "Elysium") |
+| 3D dice | three.js via React Three Fiber (`app/ui/dice3d/`) |
+| Icons | react-icons (game-icons `Gi*` for navigation, Material `Md*` for UI) |
+| SVG components | @svgr/webpack via `turbopack.rules` |
 | Linting | ESLint 9 flat config (`eslint.config.mjs`) |
-| Fonts | Josefin Slab & Josefin Sans (Google Fonts) |
-| Database | **Supabase** (PostgreSQL — to be integrated) |
-| Auth | **Supabase Auth** (to be integrated) |
-| Hosting | Vercel (standard Next.js deployment) |
+| Hosting | Vercel (Node 24) |
 
 ---
 
-## Directory Structure
+## Directory Structure (main parts)
 
 ```
-/
-├── app/
-│   ├── layout.tsx              # Root layout (fonts, dark theme)
-│   ├── page.tsx                # Landing/home page
-│   ├── globals.css             # Tailwind entry + @theme config + global dark-theme CSS
-│   ├── fonts.ts                # Google Fonts config
-│   ├── lib/
-│   │   └── utils.ts            # formatDate utility
-│   ├── ui/
-│   │   ├── navbar.tsx          # Fixed top nav (Log In / Sign Up)
-│   │   ├── footer.tsx          # Global footer
-│   │   ├── glowUpButtonLarge.tsx
-│   │   ├── glowUpButtonMedium.tsx
-│   │   ├── home/               # Landing page section components
-│   │   │   ├── WelcomeText.tsx
-│   │   │   ├── HomePageArt.tsx
-│   │   │   ├── Features.tsx
-│   │   │   ├── GlowUpCard.tsx
-│   │   │   ├── FeatureCard.tsx
-│   │   │   ├── LogoGrid.tsx
-│   │   │   └── Footer.tsx
-│   │   ├── dashboard/
-│   │   │   ├── sidenav.tsx     # Fixed sidebar (has commented-out signOut)
-│   │   │   ├── nav-links.tsx
-│   │   │   ├── OverviewCard.tsx
-│   │   │   ├── CardList.tsx
-│   │   │   └── CardListItem.tsx
-│   │   ├── characters/
-│   │   │   └── CharacterCard.tsx
-│   │   ├── sheets/             # Character sheet form section components
-│   │   │   ├── TextInputFields.tsx
-│   │   │   ├── Attributes.tsx
-│   │   │   ├── AttributeCheckBoxInput.tsx
-│   │   │   ├── Skills.tsx
-│   │   │   ├── SkillCheckBoxInput.tsx
-│   │   │   ├── LifeStats.tsx           # Health / Willpower / Humanity tracks
-│   │   │   ├── LifeStatsInput.tsx
-│   │   │   ├── Disciplines.tsx
-│   │   │   ├── DisciplineInput.tsx
-│   │   │   ├── ResonanceHunger.tsx
-│   │   │   ├── ResonanceHungerInput.tsx  # STUB: renders placeholder text only
-│   │   │   ├── TenetsTouchstonesBane.tsx
-│   │   │   ├── BloodPotency.tsx
-│   │   │   ├── BloodPotencyCheckbox.tsx
-│   │   │   ├── BloodPotencyTextInput.tsx
-│   │   │   ├── BioData.tsx
-│   │   │   ├── BioDataDateOf.tsx
-│   │   │   ├── BioDataAge.tsx
-│   │   │   ├── BioDataTextArea.tsx
-│   │   │   ├── MixedSection.tsx
-│   │   │   ├── MeritsFlawsInput.tsx
-│   │   │   ├── Experience.tsx
-│   │   │   ├── TextInput.tsx
-│   │   │   ├── TextInputDropdown.tsx
-│   │   │   ├── TextArea.tsx
-│   │   │   └── CategoryDividers.tsx
-│   │   └── svgs/
-│   │       ├── index.ts        # All SVG exports
-│   │       └── *.svg           # 40+ clan/faction SVGs
-│   ├── dashboard/
-│   │   ├── layout.tsx          # Sidebar + content shell
-│   │   ├── (overview)/page.tsx # Dashboard home (static data)
-│   │   ├── characters/page.tsx # Character gallery (static data)
-│   │   ├── sheets/page.tsx     # Sheet type selection
-│   │   └── sheets/create/page.tsx  # Full character sheet form
-│   └── (no api/ directory yet)
-├── public/                     # Static assets (character/clan images, art)
-├── package.json
-├── postcss.config.js           # @tailwindcss/postcss
-├── next.config.mjs             # Turbopack rule: SVGs → React components via @svgr/webpack
-├── tsconfig.json
-└── eslint.config.mjs           # ESLint flat config (core-web-vitals)
+app/
+├── page.tsx, vampire/        # Landing pages (World of Darkness, Vampire book cover)
+├── login/, signup/, auth/    # Accounts (Supabase Auth)
+├── vault/
+│   ├── page.tsx              # All characters across games
+│   ├── new/                  # Choose a game
+│   ├── [game]/               # Each game's dashboard (sidebar layout, data-game theme)
+│   │   ├── characters/       # Coterie / Pack / Cell, + [id] view, edit, play
+│   │   ├── new/              # Guided or Classic character (new/guided, new/classic)
+│   │   ├── loresheets/       # Loresheets list and editor
+│   │   ├── dice/, settings/, friends/
+│   ├── chronicles/           # Chronicles (own layout; to be reworked)
+│   └── print/[id]/           # Printable A4 sheet
+├── media/portraits/          # Serves private portrait uploads
+├── lib/                      # actions/, data/, supabase/, sheets/, creation/, xp/, play/, dice/, storyteller/, starters/
+└── ui/                       # kit/, sheets/, play/, dice/, dice3d/, game/, dashboard/, chronicles/, guided/, loresheets/, social/, characters/
+supabase/migrations/          # Schema, RLS, RPCs (pushed with `supabase db push`)
+scripts/build-starters.mts    # Validates starter characters, writes their migration
+plans/                        # Roadmap and design notes
 ```
 
 ---
@@ -112,59 +58,31 @@
 
 | Path | Purpose |
 |---|---|
-| `/` | Landing page — hero + features + footer |
-| `/concept` | Concept landing page ("Nightly Edition"): editorial V5-style alternative, own fonts in `app/concept/fonts.ts` |
-| `/dashboard` | Overview — hardcoded finished/draft character counts |
-| `/dashboard/characters` | Character gallery — 8 hardcoded characters with clan info |
-| `/dashboard/sheets` | Sheet hub — links to create Loresheets or Character Sheets |
-| `/dashboard/sheets/create` | Full VTM character sheet form (no submit action yet) |
+| `/` | World of Darkness landing (neutral `data-game='wod'` style) |
+| `/vampire` | The Vampire book-cover landing |
+| `/login`, `/signup`, `/auth/*` | Accounts |
+| `/vault` | All your characters across games |
+| `/vault/new` | Choose a game before creating a character |
+| `/vault/[game]` | Dashboard (overview) |
+| `/vault/[game]/characters` (+ `/[id]`, `/[id]/edit`, `/[id]/play`) | Coterie/Pack/Cell, sheet view, editor, play mode |
+| `/vault/[game]/new` (+ `/guided`, `/classic`) | New character |
+| `/vault/[game]/loresheets` (+ `/[id]`) | Loresheets |
+| `/vault/[game]/dice`, `/settings`, `/friends` | Dice roller, Settings, Friends (`/vault/settings` and `/vault/friends` redirect) |
+| `/vault/chronicles` (+ `/[id]`, `/[id]/characters/[characterId]`) | Chronicles, a Storyteller's read-only view of players' sheets |
+| `/vault/print/[id]` | Printable sheet |
+| `/concept`, `/concept/dashboard/*` | Editorial "case files" prototype (kept for reference) |
+| `/dashboard/*` | Redirects to `/vault/vampire/*` |
 
 ---
 
-## VTM Domain Concepts
+## Domain
 
-The app models V5 (5th Edition) mechanics:
-- **Clans:** Brujah, Ventrue, Malkavian, Tremere, Gangrel, Lasombra, Banu Haqim, Nosferatu, Toreador, Tzimisce, Ravnos, Salubri, Hecata + more
-- **Sects:** Camarilla, Anarch, Sabbat (SVGs exist for all three)
-- **Sheet sections:** Attributes, Skills, Disciplines, Blood Potency, Resonance, Hunger, Life Stats (Health/Willpower/Humanity), Tenets, Touchstones, Bane, Bio Data
-- **Loresheets:** A V5 mechanic — character history documents; planned but not yet implemented
-
----
-
-## Current State
-
-### What Works (Frontend Only)
-- **Landing page** — hero, feature highlights, logo grid, footer with sign-up form stub
-- **Dashboard layout** — responsive sidebar nav, mobile top nav
-- **Characters page** — gallery of 8 hardcoded VTM characters with images, clan symbols
-- **Sheet creator form** — complete UI for full VTM character sheet with local React state:
-  - Basic info (Name, Player, Chronicle, Concept, Ambition, Predator, Sire, Clan, Generation)
-  - 9 Attributes (Physical / Social / Mental, 5-checkbox each)
-  - 27 Skills (3 categories, 5-checkbox + optional label each)
-  - Life Stats (Health, Willpower, Humanity — 10 checkboxes each)
-  - 6 Discipline slots (dropdown + 5-level checkboxes + 5 power name fields)
-  - Resonance & Hunger (5-checkbox hunger track)
-  - Tenets, Touchstones & Bane (3 textareas)
-  - Blood Potency (10 checkboxes + 6 stat text fields)
-  - Experience (Total / Spent inputs)
-  - Biographical data (DoB, DoD, auto-calculated ages, appearance, history)
-  - Merits & Flaws (13 rows: name + 5-checkbox rating)
-
-### Known Bugs
-- None currently tracked. (Fixed: `LifeStats.tsx` willpower & humanity rows previously wrote to the health state.)
-
-### What's Missing / Incomplete
-- No Supabase integration (database, auth)
-- No API route handlers (`app/api/` doesn't exist)
-- Form has no `onSubmit` / `action` handler — data is never saved
-- No authentication — Log Out button's server action is empty, `signOut` import is commented out
-- `ResonanceHungerInput.tsx` is a placeholder stub
-- All dashboard data is hardcoded (characters, overview counts)
-- Character action buttons (View, Edit, Delete) all link to `#`
-- No PDF export
-- No form validation
-- No search / filter on characters page
-- No loresheet system (navigation item exists, no implementation)
+5th edition rules for all three games:
+- **Vampire:** clans (incl. Ministry, Salubri, Caitiff, Thin-blood), Disciplines, predator types, Hunger, Humanity and Stains, Blood Potency, Bane.
+- **Werewolf:** tribes, auspices, breed, Renown, Gifts and Rites, Rage, Harano, Hauglosk, patron spirit.
+- **Hunter:** creeds, Drives, Edges and Perks, Desperation, Danger, Despair.
+- Shared: Attributes, Skills with specialties, Health/Willpower (Superficial and Aggravated damage), advantages and flaws, convictions and touchstones, XP.
+- **Loresheets** here are the player's own write-ups of a location, a player character or an NPC (not the rulebook mechanic).
 
 ---
 
@@ -181,186 +99,12 @@ Supabase is only called on the server (Server Components, Server Actions, `proxy
 
 ## Design System
 
-- **Theme**: Dark gothic — black backgrounds, `slate-300` text, `rose-600` / `red-800` accents
-- **Gradients**: `violet-950 → red-950`
-- **Glass effects**: `backdrop-blur`, `bg-opacity`
-- **Glow buttons**: rose-600 blur shadow
-- **Checkboxes**: rotated 45° for diamond shape
-- **Borders**: dotted on text inputs
-- **Custom breakpoint**: `3xl` at 1600px, defined as `--breakpoint-3xl` in the `@theme` block of `globals.css`
-- **Fonts**: Josefin Slab (headings), Josefin Sans (body)
-
----
-
-## Refactoring & Completion Plan
-
-### Phase 0 — Bug Fixes (do first)
-
-1. ~~**Fix `LifeStats.tsx`**: Change willpower and humanity inputs to use their own state keys and handlers.~~ ✅ Done
-2. **Complete `ResonanceHungerInput.tsx`**: Implement resonance text input + 5-checkbox hunger track (same pattern as other stat inputs).
-3. **Remove dead/commented code**: Clean up commented-out blocks in `sidenav.tsx` and elsewhere.
-
----
-
-### Phase 1 — Supabase Setup
-
-#### 1.1 Install dependencies
-```bash
-npm install @supabase/supabase-js @supabase/ssr
-```
-
-#### 1.2 Supabase client helpers
-Create `app/lib/supabase/`:
-- `client.ts` — browser client (`createBrowserClient`)
-- `server.ts` — server client (`createServerClient` using Next.js cookies)
-- `proxy.ts` — session refresh helper
-
-#### 1.3 Next.js proxy (formerly middleware)
-Create `proxy.ts` at root (Next.js 16 renamed `middleware.ts` → `proxy.ts`; export a function named `proxy`) to refresh Supabase Auth sessions on every request, protecting `/dashboard/**` routes.
-
-#### 1.4 Database Schema (PostgreSQL via Supabase)
-
-```sql
--- Users are handled by Supabase Auth (auth.users)
-
--- Character sheet (one row per character)
-create table public.characters (
-  id           uuid primary key default gen_random_uuid(),
-  user_id      uuid not null references auth.users(id) on delete cascade,
-  name         text not null,
-  player       text,
-  chronicle    text,
-  concept      text,
-  ambition     text,
-  predator     text,
-  sire         text,
-  clan         text,
-  generation   text,
-  -- attributes (9 integers 0-5)
-  str int2, dex int2, sta int2,
-  cha int2, man int2, com int2,
-  int int2, wit int2, res int2,
-  -- life stats (10-bit arrays stored as integer bitmask or jsonb)
-  health       int2[],
-  willpower    int2[],
-  humanity     int2[],
-  -- disciplines (jsonb array of {name, level, powers[]})
-  disciplines  jsonb,
-  -- skills (jsonb map of skill_name -> {level, specialty})
-  skills       jsonb,
-  -- resonance & hunger
-  resonance    text,
-  hunger       int2,
-  -- blood potency
-  blood_potency         int2,
-  blood_surge           text,
-  power_bonus           text,
-  feeding_penalty       text,
-  mend_amount           text,
-  rouse_reroll          text,
-  bane_severity         text,
-  -- experience
-  exp_total    int2,
-  exp_spent    int2,
-  -- tenets / touchstones / bane
-  tenets       text,
-  touchstones  text,
-  clan_bane    text,
-  -- merits & flaws (jsonb array of {name, level})
-  merits_flaws jsonb,
-  -- bio
-  date_of_birth        date,
-  date_of_death        date,
-  appearance           text,
-  distinguishing_features text,
-  history              text,
-  notes                text,
-  -- meta
-  is_draft     boolean not null default true,
-  created_at   timestamptz not null default now(),
-  updated_at   timestamptz not null default now()
-);
-
--- Row-level security
-alter table public.characters enable row level security;
-create policy "Users own their characters"
-  on public.characters for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-```
-
----
-
-### Phase 2 — Authentication
-
-#### 2.1 Auth pages
-Create `app/(auth)/login/page.tsx` and `app/(auth)/signup/page.tsx` using Supabase Auth UI or a custom form calling `supabase.auth.signInWithPassword` / `signUp`.
-
-#### 2.2 Wire up navbar buttons
-- "Log In" → `/login`
-- "Sign Up" → `/signup`
-
-#### 2.3 Wire up Log Out
-Uncomment and implement `signOut` in `sidenav.tsx` using Supabase client.
-
-#### 2.4 Protect dashboard
-Middleware redirects unauthenticated users from `/dashboard/**` to `/login`.
-
----
-
-### Phase 3 — API / Server Actions
-
-Use **Next.js Server Actions** (already used pattern in the project with `'use server'`) rather than separate REST routes.
-
-Create `app/lib/actions/characters.ts`:
-- `createCharacter(formData)` — insert into `public.characters`
-- `updateCharacter(id, formData)` — update by id (RLS enforces ownership)
-- `deleteCharacter(id)` — delete by id
-- `getCharacters()` — fetch all characters for the current user
-- `getCharacter(id)` — fetch one character
-
-Create `app/lib/data/characters.ts`:
-- Server-side data fetching functions called from Server Components
-
----
-
-### Phase 4 — Connect the Sheet Form
-
-1. Lift all local state in sheet components into a single parent form state object in `sheets/create/page.tsx` (convert it to `'use client'`).
-2. Wire the `<form>` `action` to the `createCharacter` Server Action.
-3. Add client-side validation (required fields, numeric ranges).
-4. After save, redirect to `/dashboard/characters/[id]`.
-5. Create `sheets/[id]/edit/page.tsx` that loads existing data and calls `updateCharacter`.
-
----
-
-### Phase 5 — Dynamic Dashboard
-
-1. Replace all hardcoded character arrays in `(overview)/page.tsx` and `characters/page.tsx` with `getCharacters()` fetches.
-2. `OverviewCard` counts (finished, drafts, loresheets) become real queries.
-3. Character card "View / Edit / Delete" buttons become functional links and server actions.
-
----
-
-### Phase 6 — Character Detail Page
-
-Create `app/dashboard/characters/[id]/page.tsx`:
-- Read-only view of a saved character sheet (print-friendly layout)
-- Edit button → navigate to edit page
-
----
-
-### Phase 7 — PDF Export (Stretch)
-
-Use `@react-pdf/renderer` or `puppeteer` on a route handler to generate a print-ready VTM character sheet PDF.
-
----
-
-### Phase 8 — Loresheet System (Stretch)
-
-The sidebar already has a Loresheet link. Implement:
-- `public.loresheets` table (user_id, title, content, character_id)
-- CRUD pages under `app/dashboard/loresheets/`
+- **Themes = game × scene**: each game has two scenes (dark/light on `<html data-theme>`), chosen from the **Themes** item in the sidebar. See "Games, themes and routes".
+- **Fonts**: Cormorant (display) and Josefin Sans (body); Werewolf uses Cinzel; Hunter uses Special Elite + Courier Prime.
+- **Surfaces**: `panel` from `app/ui/kit/styles.ts` (glass panels), `.frame` for each theme's border, `bone`/`ink`/`accent` colour tokens.
+- **Ornament** lives on frames and edges only, never over reading areas or portraits; Settings → Simple frames turns it down (`data-frames='simple'`).
+- **Motion**: easing tokens in `globals.css`; theme switches crossfade (View Transitions); menus use the "island" pattern (`app/ui/kit/Island.tsx`); everything respects `prefers-reduced-motion`.
+- **Custom breakpoint**: `3xl` at 1600px (`--breakpoint-3xl` in `@theme`).
 
 ---
 
@@ -377,22 +121,29 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 
 ## Landing Pages
 
-- `/` (`app/page.tsx`): book-cover hero (`app/ui/home/Hero.tsx`). The portrait and ankh are sized from one `--cover` width so the ankh halo stays behind the portrait at every viewport; the ankh rises on scroll because the backdrop/portrait layers are sticky. Swap cover art via `COVER_ART` in `Hero.tsx`.
-- `/concept`: experimental redesign. `_lib/hunger-dice.ts` implements V5 dice rules (crits, messy crits, bestial failures) as a pure function, reusable for the dashboard dice roller.
+- `/` (`app/page.tsx`): the World of Darkness landing: three games side by side, then sections #worlds, #atmospheres and #dice (the navbar dots follow them).
+- `/vampire`: the book-cover hero (`app/ui/home/Hero.tsx`). The portrait and ankh are sized from one `--cover` width so the ankh halo stays behind the portrait at every viewport; the ankh rises on scroll because the backdrop/portrait layers are sticky. Swap cover art via `COVER_ART` in `Hero.tsx`.
+- `/concept`: experimental editorial redesign, kept for reference.
 - Scroll-driven effects use CSS `animation-timeline` in `globals.css`, with a static fallback and `prefers-reduced-motion` respected.
 
 ## App UI (dashboard)
 
-- Shell: `app/dashboard/layout.tsx` (ambient backdrop + `ui/dashboard/sidenav.tsx`: glass sidebar on desktop, top bar + bottom tab bar on phones). `app/dashboard/template.tsx` animates every page in.
-- Shared kit in `app/ui/kit/`: `styles.ts` (panel, buttons, field classes), `PageHeader`, `Stagger` (cascading entrance), `DotRating` (V5 dot/box ratings, keyboard slider). Theme toggle: `app/ui/ThemeToggle.tsx`; theme script: `app/lib/theme.ts`.
+- Shell: `app/vault/[game]/layout.tsx` (ambient backdrop + `ui/dashboard/sidenav.tsx`: glass sidebar on desktop; on phones a top bar that grows into a menu, `PhoneIsland.tsx`, plus a bottom tab bar).
+- Shared kit in `app/ui/kit/`: `styles.ts` (panel, buttons, field classes), `PageHeader`, `Stagger` (cascading entrance), `DotRating` (V5 dot/box ratings, keyboard slider). Themes: `app/ui/dashboard/ThemePicker.tsx` (sidebar, grows in place) and the site navbar's theme panel (`app/ui/SiteIsland.tsx`); every switch goes through `switchTheme` in `app/lib/theme-switch.ts` (View Transition crossfade). Theme script: `app/lib/theme.ts`. Island menus: `app/ui/kit/Island.tsx`.
 - Character sheets: one `Sheet` object (`app/lib/sheets/types.ts`) held by `app/ui/sheets/CharacterEditor.tsx`, which autosaves it (900 ms debounce) through the server actions in `app/lib/actions/characters.ts`. Sections (`app/ui/sheets/sections/`) read and write it via `useSheet()` / `useSheetFields()` from `SheetContext.tsx`; per-game section lists are in `game-sheets.tsx`. Inputs are in `fields.tsx`.
 - Characters live in Supabase (`public.characters`, RLS: owner only); reads go through `app/lib/data/characters.ts`. New accounts get copies of the 9 starters (`app/lib/starters/`, validated and turned into a migration by `node scripts/build-starters.mts <file>`).
 - Saving: `app/ui/sheets/useCharacterSave.ts` (autosave hook) and `SaveStatus.tsx`, shared by the editor and play mode.
 - Play mode: `app/vault/[game]/characters/[id]/play` → `app/ui/play/PlaySheet.tsx` (tracks in `app/ui/play/tracks.tsx`). Damage rules are pure functions in `app/lib/play/damage.ts`; play state lives on the sheet (`damage`, `stains`, `despair`). `DiceRoller` is uncontrolled on the dice page and bound to the sheet in play mode (`pool`, `special`, `danger`, `despair`, `onWillpowerReroll`).
 - XP: `sheet.xp` entries; costs and the in-clan Discipline table in `app/lib/xp/costs.ts`; UI in `app/ui/sheets/sections/experience.tsx`. Only costs we're sure of are priced; anything else takes a player-entered cost.
 - Portraits: uploads go to the private `portraits` bucket at `<user>/<character>/<uuid>.webp` (policies in the migration limit each user to their own folder) and are served by `app/media/portraits/[...path]/route.ts` with the user's session. `app/ui/characters/PortraitPicker.tsx` crops to 3:4 and resizes to 900×1200 in the browser first; `setPortrait`/`removePortrait` are in `app/lib/actions/characters.ts`. Uploaded portraits render with `unoptimized` (see `Character.image`).
+- Social (Group 3): `/vault/[game]/friends`, `/vault/chronicles`, `/vault/chronicles/[id]`. Tables `friendships`, `chronicles`, `chronicle_members`, `chronicle_rolls`, `chronicle_notes` (migration `…_friends_and_chronicles.sql`); cross-table checks go through security-definer helpers (`is_chronicle_member`, `chronicle_role`, `storyteller_can_read`, `in_same_chronicle`) and lookups of other users through RPCs (`send_friend_request`, `create_chronicle`, `invite_to_chronicle`, `chronicle_party`, `cast_vote`, `call_vote`). Data in `app/lib/data/social.ts`, actions in `app/lib/actions/social.ts`, UI in `app/ui/social/` and `app/ui/chronicles/`.
+- Characters RLS lets Storytellers read players' sheets, so `getCharacters`/`getCharacter` filter by owner; use `getSharedCharacter` only for the chronicle view.
+- Live updates: `app/lib/supabase/browser.ts` `subscribe()` loads the session and calls `realtime.setAuth` before joining (otherwise RLS sends nothing). The server passes the URL and publishable key down.
+- Storyteller bot: `app/lib/storyteller/` (content tables + seeded generator). **Dark Pack: all bot text must be original writing; no quotes or paraphrase of books, no canon named characters.** Read `plans/dark-pack-compliance.md` before adding content.
+- Group 4: `/vault/[game]/new` offers Guided (`/new/guided`) or Classic (`/new/classic`); loresheets are created from the Loresheets page (one "New loresheet" menu). Guided creation: `app/ui/guided/GuidedCreation.tsx` (client-only via `GuidedLoader`, draft in sessionStorage) on the rules in `app/lib/creation/rules.ts` (keep the numbers in step with `scripts/build-starters.mts`). Loresheets: `public.loresheets`, `app/lib/loresheets.ts` (field specs), editor `app/ui/loresheets/LoresheetEditor.tsx`. Preferences: `profiles.preferences` → `PreferencesProvider` in `app/vault/[game]/layout.tsx`; tooltips via `app/ui/sheets/Explain.tsx` + `app/lib/sheets/glossary.ts` (our own wording, Dark Pack). Printable sheet: `/vault/print/[id]`.
+- Don't run Prettier on this repo: there's no config, and its defaults rewrite the house style (single JSX quotes, long lines).
 - Sample data (landing and `/concept` only): `app/lib/sample-characters.ts`; clan → official symbol/name logo: `app/lib/clans.ts`.
-- Dice roller: `/dashboard/dice` (`app/ui/dice/DiceRoller.tsx`) on the pure rules in `app/lib/hunger-dice.ts` (also used by `/concept`). Includes rouse checks and Willpower rerolls.
+- Dice roller: `/vault/[game]/dice` (`app/ui/dice/DiceRoller.tsx`) on the rules in `app/lib/dice/rules.ts`. Includes rouse/Rage checks and Willpower rerolls.
 - Motion keyframes and easing tokens (`--ease-spring`, `--ease-out-expo`) are in `globals.css`; all motion is disabled under `prefers-reduced-motion`.
 
 ## Games, themes and routes
@@ -405,14 +156,14 @@ Elysium is a cross-game vault for Vampire: The Masquerade, Werewolf: The Apocaly
 | `/vampire` | The Vampire book-cover landing (the earlier revamp) |
 | `/vault` | All characters across games |
 | `/vault/new` | Choose a game before creating a character |
-| `/vault/[game]` (+ `/characters`, `/new`, `/dice`) | Each game's dashboard, sheet and dice |
+| `/vault/[game]` (+ `/characters`, `/new`, `/loresheets`, `/dice`, `/settings`, `/friends`) | Each game's dashboard and pages |
 | `/concept`, `/concept/dashboard/*` | Editorial "case files" prototype (kept for reference) |
 | `/dashboard/*` | Redirects to `/vault/vampire/*` (next.config.mjs) |
 
-- **Themes = game × mode.** `app/vault/[game]/layout.tsx` sets `data-game` on a wrapper; the mode is `<html data-theme>` (toggle). `app/games.css` holds per-game tokens, fonts (Werewolf: Cinzel; Hunter: Special Elite + Courier Prime), the six `.frame` borders (gothic, neon, leaves, stone, timber, paper & tape) and ambient keyframes. Vampire uses the root tokens. Hunter's light mode ("the inn") is a true light theme; the others stay dark.
+- **Themes = game × mode.** `app/vault/[game]/layout.tsx` sets `data-game` on a wrapper; the mode is `<html data-theme>` (toggle). `app/games.css` holds per-game tokens, fonts (Werewolf: Cinzel; Hunter: Special Elite + Courier Prime), the six `.frame` borders (gothic, neon, leaves, stone, timber, paper & tape) and ambient keyframes. Vampire uses the root tokens. Hunter's light mode ("the inn") is a true light theme and is being replaced by a city concept (roadmap); the others stay dark.
 - **Ambience:** `app/ui/game/Ambience.tsx`, one backdrop + looping element per game and mode.
-- **Same navigation everywhere:** `app/ui/navbar.tsx` (site) and `app/ui/dashboard/sidenav.tsx` (dashboards, with the game switcher); the theme frame comes from `.frame`.
-- **Game config:** `app/lib/games.ts` (names, logos, nouns, mode names). Factions: `app/lib/factions.ts`. Sheets per game: `app/ui/sheets/game-sheets.tsx` (Werewolf/Hunter built from `generic.tsx`).
+- **Navigation:** `app/ui/navbar.tsx` → `app/ui/SiteIsland.tsx` (site pages: theme panel, phone menu, section dots) and `app/ui/dashboard/sidenav.tsx` (dashboards: game switcher, nav items, Chronicles, Themes, Settings, Friends, Log out); the theme frame comes from `.frame`.
+- **Game config:** `app/lib/games.ts` (names, logos, nouns, mode names). Factions: `app/lib/factions.ts`. Sheets per game: `app/ui/sheets/game-sheets.tsx` (sections in `app/ui/sheets/sections/`).
 - **Dice:** rules for all three games in `app/lib/dice/rules.ts` (tested cases in git history: Hunger, Rage/Brutal, Desperation/Overreach/Despair). `app/ui/dice/DiceRoller.tsx` takes `game`. 3D dice: `app/ui/dice3d/` (React Three Fiber + three.js): `d10.ts` builds a true pentagonal trapezohedron and per-game face textures from the official glyphs in `public/dice/glyphs/`; `DiceScene.tsx` throws them and lands each on the rolled value. The `react-hooks/immutability` lint rule is disabled in that file because R3F mutates three.js objects in the render loop.
 - Werewolf tribe/auspice glyphs: `public/werewolf/*.png` (used as CSS masks). Sample portraits: `public/portraits/`.
 
@@ -461,10 +212,12 @@ npm run lint     # ESLint check
 - All new code should be TypeScript with strict types.
 - Prefer **Server Components** by default; only add `'use client'` when interactivity is needed.
 - Prefer **Server Actions** over API routes for mutations.
-- Never expose `SUPABASE_SERVICE_ROLE_KEY` to the client bundle.
-- Follow the existing Tailwind dark-theme design: `bg-black`, `text-slate-300`, `border-slate-300/50`, hover `bg-rose-600`.
-- The VTM character sheet UI is intentionally faithful to the official sheet — don't simplify the field structure.
-- `clsx` is already installed; use it for conditional class names.
+- Never expose a Supabase secret/service-role key to the client; the app only uses the publishable key, server-side.
+- Use the theme tokens (`bg-ink`, `text-bone`, `accent`, `panel`, `.frame`) rather than fixed colours, so every game and scene works.
+- The character sheets stay faithful to the official sheets' structure — don't simplify the fields.
+- `clsx` is installed; use it for conditional class names.
+- Game text and generated content must follow `plans/dark-pack-compliance.md` (original wording, no quoted book text).
+- Don't run Prettier (see above). Check work with `npx tsc --noEmit`, `npm run lint` and `npm run build`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

@@ -1,5 +1,6 @@
 import { LogoAnkh } from '@/app/ui/svgs/official';
 import Glyph from '@/app/ui/dice/Glyph';
+import Explain from './Explain';
 
 // The game's mark, chosen by the surrounding [data-game] (ankh by default).
 function Mark({ flip }: { flip?: boolean }) {
@@ -20,7 +21,7 @@ export default function CategoryDividers({ title, id }: { title: string; id?: st
       <span className='h-px grow bg-linear-to-r from-transparent to-bone/20' />
       <Mark />
       <h2 id={id} className='text-center font-display text-3xl'>
-        {title}
+        <Explain label={title} />
       </h2>
       <Mark flip />
       <span className='h-px grow bg-linear-to-l from-transparent to-bone/20' />

@@ -34,7 +34,7 @@ const VAMPIRE: SheetSection[] = [
     label: 'Merits & notes',
     body: (
       <div className='grid gap-8 lg:grid-cols-2'>
-        <Advantages />
+        <Advantages game='vampire' />
         <TextBlocks fields={[{ key: 'notes', label: 'Notes' }]} rows={14} />
       </div>
     ),
@@ -99,7 +99,7 @@ const WEREWOLF: SheetSection[] = [
     label: 'Advantages',
     body: (
       <div className='grid gap-8 lg:grid-cols-2'>
-        <Advantages />
+        <Advantages game='werewolf' />
         <TextBlocks fields={[{ key: 'notes', label: 'Notes' }]} rows={12} />
       </div>
     ),
@@ -122,7 +122,7 @@ const HUNTER: SheetSection[] = [
           { key: 'chronicle', label: 'Chronicle' },
           { key: 'ambition', label: 'Ambition' },
           { key: 'creed', label: 'Creed', options: CREEDS },
-          { key: 'drive', label: 'Drive', options: DRIVES },
+          { key: 'drive', label: 'Drive', term: 'Hunter’s Drive', options: DRIVES },
           { key: 'desire', label: 'Desire' },
         ]}
       />
@@ -160,7 +160,7 @@ const HUNTER: SheetSection[] = [
     label: 'Advantages',
     body: (
       <div className='grid gap-8 lg:grid-cols-2'>
-        <Advantages />
+        <Advantages game='hunter' />
         <TextBlocks fields={[{ key: 'notes', label: 'Case notes' }]} rows={12} />
       </div>
     ),
