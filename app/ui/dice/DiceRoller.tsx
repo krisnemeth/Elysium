@@ -1,11 +1,12 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { GiD10 } from 'react-icons/gi';
 import { MdAdd, MdRemove, MdRefresh } from 'react-icons/md';
 import {
   canReroll,
+  DICE_SET,
   rerollDice,
   rollPool,
   SPECIAL_DIE_NAME,
@@ -16,6 +17,7 @@ import {
 } from '@/app/lib/dice/rules';
 import { buttonGhost, buttonPrimary, panel } from '@/app/ui/kit/styles';
 import Glyph from './Glyph';
+import { settleMs } from '@/app/ui/dice3d/timing';
 import Paper from '@/app/ui/game/Paper';
 
 // The 3D tray only runs in the browser.
@@ -196,7 +198,10 @@ export default function DiceRoller({
   const [choiceMade, setChoiceMade] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
-  const usableSpecial = game === 'hunter' && despair ? 0 : special;
+  // Pools built from a sheet can exceed the dice set; roll what the set holds.
+  const set = DICE_SET[game];
+  const usablePool = Math.min(pool, set.pool);
+  const usableSpecial = Math.min(game === 'hunter' && despair ? 0 : special, set.special);
 
   const log = (entry: Omit<HistoryEntry, 'id'>) =>
     setHistory((h) => [{ ...entry, id: (h[0]?.id ?? 0) + 1 }, ...h].slice(0, 8));
@@ -207,7 +212,7 @@ export default function DiceRoller({
     setRollKey((k) => k + 1);
     setSettled(false);
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setTimeout(() => setSettled(true), reduced ? 0 : 1400 + indexes.length * 70);
+    setTimeout(() => setSettled(true), reduced ? 0 : settleMs(indexes.length));
   };
 
   const finish = (r: RollResult, label?: string) => {
@@ -223,7 +228,7 @@ export default function DiceRoller({
   };
 
   const roll = () => {
-    const r = rollPool(game, pool, usableSpecial, difficulty);
+    const r = rollPool(game, usablePool, usableSpecial, difficulty);
     setSelected([]);
     setRerolled(false);
     setChoiceMade(false);
@@ -255,7 +260,7 @@ export default function DiceRoller({
     log({ label: choice === 'overreach' ? 'Overreach: Danger +1' : 'Chose Despair', detail: '', grim: true });
   };
 
-  const dice: Die[] = result ? result.dice : idleDice(game, pool, usableSpecial);
+  const dice: Die[] = result ? result.dice : idleDice(game, usablePool, usableSpecial);
   const canRerollNow = !!result && settled && !rerolled;
   const sceneDice = dice.map((d, i) => ({
     ...d,
@@ -281,10 +286,10 @@ export default function DiceRoller({
       <div className={`flex h-full flex-col gap-6 p-6 md:p-8 ${torn} ${panel}`}>
         <div className='flex flex-wrap items-end justify-center gap-x-10 gap-y-6 md:justify-between'>
           <div className='flex flex-col items-center gap-1'>
-            <Stepper label='Dice pool' value={pool} min={1} max={20} onChange={(v) => { setPool(v); resetRoll(); }} />
+            <Stepper label='Dice pool' value={usablePool} min={1} max={set.pool} onChange={(v) => { setPool(v); resetRoll(); }} />
             {poolNote && <span className='max-w-48 text-center text-xs text-bone/45'>{poolNote}</span>}
           </div>
-          <Stepper label={specialName} value={special} min={0} max={5} onChange={(v) => { setSpecial(v); resetRoll(); }} />
+          <Stepper label={specialName} value={special} min={0} max={set.special} onChange={(v) => { setSpecial(v); resetRoll(); }} />
           <Stepper label='Difficulty' value={difficulty} min={1} max={10} onChange={setDifficulty} />
         </div>
 
@@ -331,7 +336,7 @@ export default function DiceRoller({
         <div className='flex flex-wrap items-center justify-center gap-3'>
           <button type='button' onClick={roll} disabled={!settled} className={`${buttonPrimary} px-8 py-3 text-base`}>
             <GiD10 aria-hidden className='size-5 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
-            Roll {pool + (game === 'hunter' ? usableSpecial : 0)} dice
+            Roll {usablePool + (game === 'hunter' ? usableSpecial : 0)} dice
           </button>
           {canRerollNow && (
             <button type='button' onClick={reroll} disabled={!selected.length} className={buttonGhost}>

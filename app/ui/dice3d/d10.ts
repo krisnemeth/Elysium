@@ -120,10 +120,11 @@ export function faceTowards(value: number, toCamera: THREE.Vector3, screenUp: TH
 
 type Style = { face: string; glyph: string };
 
-// Colours sampled from the front faces of the official dice art.
+// Colours sampled from the front faces of the official dice art; the black
+// dice are a shade deeper, so they read black rather than grey on screen.
 export const DICE_STYLES: Record<Game, Record<DieKind, Style>> = {
   vampire: {
-    regular: { face: '#373737', glyph: '#e4e4e4' },
+    regular: { face: '#1c1c1d', glyph: '#e8e8e8' },
     special: { face: '#ff0021', glyph: '#151515' },
   },
   werewolf: {
@@ -132,7 +133,7 @@ export const DICE_STYLES: Record<Game, Record<DieKind, Style>> = {
   },
   hunter: {
     regular: { face: '#ff7800', glyph: '#060600' },
-    special: { face: '#202020', glyph: '#f5821f' },
+    special: { face: '#141414', glyph: '#f5821f' },
   },
 };
 

@@ -9,6 +9,8 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { Die, Game } from '@/app/lib/dice/rules';
 import { d10, diceAtlas, faceTowards } from './d10';
+import { planThrow, sample, type DiePath } from './throw';
+import Tray, { FLOOR_Y, WALL_HEIGHT, WALL_THICKNESS } from './Tray';
 
 export type SceneDie = Die & { dimmed?: boolean; selected?: boolean; selectable?: boolean };
 
@@ -24,7 +26,6 @@ type Props = {
 const SPACING = 2.4;
 const TO_CAMERA = new THREE.Vector3(0, 1.25, 1).normalize();
 const SCREEN_UP = new THREE.Vector3(0, 1, 0).sub(TO_CAMERA.clone().multiplyScalar(TO_CAMERA.y)).normalize();
-const THROW_SECONDS = 1.1;
 // Self-lit share of each face's colour; the key light adds the rest, so a
 // face turned to the camera shows its official colour and the sides fall
 // into shade like the printed dice.
@@ -33,7 +34,6 @@ const ENV_INTENSITY = 0.2;
 const KEY_LIGHT = 1.5;
 const GLOW_SELECTED = 0.5;
 
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 const smoothstep = (a: number, b: number, t: number) => {
   const x = Math.min(1, Math.max(0, (t - a) / (b - a)));
   return x * x * (3 - 2 * x);
@@ -60,9 +60,27 @@ function useAtlas(game: Game, kind: Die['kind']) {
   return texture;
 }
 
+// Inner half-sizes of the tray: room for the dice, at least five across and
+// two deep, plus space to bounce.
+function traySize(cols: number, rows: number) {
+  return {
+    halfWidth: (Math.max(cols, 5) * SPACING) / 2 + 0.9,
+    halfDepth: (Math.max(rows, 2) * SPACING * 1.15) / 2 + 0.9,
+  };
+}
+
+// Rows of dice, as many across as makes them largest on screen: the tray's
+// footprint (seen at the camera's angle, depth looks ~0.8 as long) is
+// compared with the canvas shape.
 function layout(count: number, aspect: number) {
-  const maxCols = Math.max(3, Math.min(8, Math.floor(aspect * 3.2)));
-  const cols = Math.min(count, maxCols);
+  let cols = 1;
+  let best = Infinity;
+  for (let c = 1; c <= Math.min(count, 8); c++) {
+    const { halfWidth, halfDepth } = traySize(c, Math.ceil(count / c));
+    const extent = Math.max(halfWidth / aspect, halfDepth * 0.8);
+    // On a tie (small pools in the smallest tray), prefer one long row.
+    if (extent <= best + 1e-6) [best, cols] = [extent, c];
+  }
   const rows = Math.ceil(count / cols);
   const slots = Array.from({ length: count }, (_, i) => {
     const row = Math.floor(i / cols);
@@ -73,20 +91,33 @@ function layout(count: number, aspect: number) {
   return { cols, rows, slots };
 }
 
-function CameraRig({ cols, rows }: { cols: number; rows: number }) {
+// Frames the whole tray, walls included: the camera backs off along its
+// viewing direction until every corner sits inside the view, with a margin.
+function CameraRig({ halfWidth, halfDepth }: { halfWidth: number; halfDepth: number }) {
   const { camera, size } = useThree();
   useEffect(() => {
     const cam = camera as THREE.PerspectiveCamera;
-    const vfov = (cam.fov * Math.PI) / 180;
-    const aspect = size.width / size.height;
-    const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect);
-    const w = cols * SPACING + 0.6;
-    const h = rows * SPACING * 1.15 + 1.4;
-    const dist = Math.max(w / 2 / Math.tan(hfov / 2), h / 2 / Math.tan(vfov / 2)) + 1.5;
-    cam.position.copy(TO_CAMERA.clone().multiplyScalar(dist));
-    cam.lookAt(0, 0, 0);
-    cam.updateProjectionMatrix();
-  }, [camera, size, cols, rows]);
+    const w = halfWidth + WALL_THICKNESS;
+    const d = halfDepth + WALL_THICKNESS;
+    const corners = [FLOOR_Y, FLOOR_Y + WALL_HEIGHT].flatMap((y) => [-w, w].flatMap((x) => [-d, d].map((z) => new THREE.Vector3(x, y, z))));
+    const fits = (dist: number) => {
+      cam.position.copy(TO_CAMERA).multiplyScalar(dist);
+      cam.lookAt(0, FLOOR_Y / 2, 0);
+      cam.updateMatrixWorld();
+      cam.updateProjectionMatrix();
+      return corners.every((c) => {
+        const ndc = c.clone().project(cam);
+        return Math.abs(ndc.x) < 0.97 && Math.abs(ndc.y) < 0.95;
+      });
+    };
+    let [lo, hi] = [2, 200];
+    for (let i = 0; i < 30; i++) {
+      const mid = (lo + hi) / 2;
+      if (fits(mid)) hi = mid;
+      else lo = mid;
+    }
+    fits(hi);
+  }, [camera, size, halfWidth, halfDepth]);
   return null;
 }
 
@@ -97,11 +128,14 @@ function D10Mesh({
   index,
   throwId,
   thrown,
+  planFor,
   onSelect,
 }: {
   game: Game;
   die: SceneDie;
   slot: THREE.Vector3;
+  // The shared simulation for a throw (all dice together, so they collide).
+  planFor: (throwId: number) => Map<number, DiePath>;
   index: number;
   throwId: number;
   thrown: boolean;
@@ -136,38 +170,36 @@ function D10Mesh({
     invalidate();
   }, [material, texture, invalidate]);
 
-  // Each throw gets a random start, spin and timing, and a target
-  // orientation that shows the rolled value with a little natural twist.
+  // The path comes from the shared simulation; the spin is this die's own,
+  // ending on the face that shows the rolled value, with a little twist.
   const flight = useRef({
     start: 0,
-    duration: 0,
-    from: new THREE.Vector3(),
+    animate: false,
     startQ: new THREE.Quaternion(),
     axis: new THREE.Vector3(0, 1, 0),
     spin: 0,
     target: new THREE.Quaternion(),
   });
   useLayoutEffect(() => {
-    const animate = thrown && !prefersReducedMotion();
     flight.current = {
-      start: performance.now() + (animate ? index * 70 : 0),
-      duration: animate ? THROW_SECONDS + Math.random() * 0.35 : 0,
-      from: slot.clone().add(new THREE.Vector3((Math.random() - 0.5) * 7, 4 + Math.random() * 3, -3 - Math.random() * 3)),
+      start: performance.now(),
+      animate: thrown && !prefersReducedMotion(),
       startQ: new THREE.Quaternion().random(),
       axis: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
-      spin: (3 + Math.random() * 3) * Math.PI * 2,
+      spin: (4 + Math.random() * 3) * Math.PI * 2,
       target: faceTowards(die.value, TO_CAMERA, SCREEN_UP, (Math.random() - 0.5) * 0.3),
     };
     invalidate();
-    // A new throw only when this die is (re)rolled or its slot moves.
+    // A new throw only when this die is (re)rolled.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [throwId, die.value, slot.x, slot.z]);
+  }, [throwId, die.value]);
 
   useFrame(() => {
     const m = mesh.current;
     if (!m) return;
     const { target, ...f } = flight.current;
-    const t = f.duration ? (performance.now() - f.start) / (f.duration * 1000) : 1;
+    const path = f.animate ? planFor(throwId).get(index) : undefined;
+    const t = path ? ((performance.now() - f.start) / 1000 - path.delay) / path.duration : 1;
     const lift = die.selected ? 0.45 : hovered && die.selectable ? 0.18 : 0;
 
     if (t < 0) {
@@ -176,13 +208,10 @@ function D10Mesh({
       return;
     }
     m.visible = true;
-    if (t < 1) {
-      const p = easeOut(t);
-      m.position.lerpVectors(f.from, slot, p);
-      // Bounces that die away as it lands.
-      m.position.y = slot.y + Math.abs(Math.sin(t * Math.PI * 2.6)) * Math.pow(1 - t, 2) * 2.2 + (1 - p) * 0.5;
+    if (t < 1 && path) {
+      const p = sample(path, t, m.position);
       const spinning = f.startQ.clone().multiply(new THREE.Quaternion().setFromAxisAngle(f.axis, f.spin * p));
-      m.quaternion.slerpQuaternions(spinning, target, smoothstep(0.55, 1, t));
+      m.quaternion.slerpQuaternions(spinning, target, smoothstep(0.6, 1, t));
       invalidate();
     } else {
       m.quaternion.copy(target);
@@ -228,6 +257,24 @@ function D10Mesh({
 export default function DiceScene({ game, dice, rollKey, rolled, onSelect }: Props) {
   const [aspect, setAspect] = useState(2);
   const { cols, rows, slots } = layout(Math.max(1, dice.length), aspect);
+  const tray = traySize(cols, rows);
+
+  // One simulation per throw, made when the first die asks for it, from the
+  // layout at that moment.
+  const latest = useRef({ slots, rolled, tray });
+  useLayoutEffect(() => {
+    latest.current = { slots, rolled, tray };
+  });
+  const planFor = useMemo(() => {
+    let cached: { key: number; plan: Map<number, DiePath> } | null = null;
+    return (key: number) => {
+      if (cached?.key !== key) {
+        const { slots, rolled, tray } = latest.current;
+        cached = { key, plan: planThrow(slots, rolled, tray) };
+      }
+      return cached.plan;
+    };
+  }, []);
 
   return (
     <Canvas
@@ -245,22 +292,19 @@ export default function DiceScene({ game, dice, rollKey, rolled, onSelect }: Pro
       resize={{ debounce: 50 }}
     >
       <AspectWatcher onChange={setAspect} />
-      <CameraRig cols={cols} rows={rows} />
+      <CameraRig halfWidth={tray.halfWidth} halfDepth={tray.halfDepth} />
       <StudioEnvironment />
       <directionalLight
         position={[-5, 10, 4]}
         intensity={KEY_LIGHT}
         castShadow
         shadow-mapSize={[1024, 1024]}
-        shadow-camera-left={-12}
-        shadow-camera-right={12}
-        shadow-camera-top={12}
-        shadow-camera-bottom={-12}
+        shadow-camera-left={-14}
+        shadow-camera-right={14}
+        shadow-camera-top={14}
+        shadow-camera-bottom={-14}
       />
-      <mesh rotation-x={-Math.PI / 2} position-y={-1.05} receiveShadow>
-        <planeGeometry args={[60, 60]} />
-        <shadowMaterial opacity={0.35} />
-      </mesh>
+      <Tray game={game} halfWidth={tray.halfWidth} halfDepth={tray.halfDepth} />
       {dice.map((die, i) => (
           <D10Mesh
             key={i}
@@ -270,6 +314,7 @@ export default function DiceScene({ game, dice, rollKey, rolled, onSelect }: Pro
             index={i}
             throwId={rolled.includes(i) ? rollKey : -1}
             thrown={rolled.includes(i)}
+            planFor={planFor}
             onSelect={onSelect}
           />
       ))}
