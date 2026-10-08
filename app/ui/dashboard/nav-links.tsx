@@ -2,17 +2,39 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GiCastle, GiVampireCape, GiQuillInk, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
-import { MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
+import { GiCastle, GiVampireCape, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
+import { MdAdd, MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
+
+// The characters page is named after the game's group: Coterie, Pack, Cell.
+const groupName = (game: Game) => GAMES[game].noun.group[0].toUpperCase() + GAMES[game].noun.group.slice(1);
 
 const linksFor = (game: Game) => [
   { name: 'Overview', href: gamePath(game), icon: GiCastle },
-  { name: GAMES[game].noun.many === 'Hunters' ? 'Cell' : 'Characters', href: gamePath(game, '/characters'), icon: GiVampireCape },
-  { name: 'New sheet', href: gamePath(game, '/new'), icon: GiQuillInk },
+  { name: groupName(game), href: gamePath(game, '/characters'), icon: GiVampireCape },
   { name: 'Loresheets', href: gamePath(game, '/loresheets'), icon: GiScrollUnfurled },
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
 ];
+
+const NEW = (game: Game) => ({ name: 'New', href: gamePath(game, '/new'), icon: MdAdd });
+
+// The sidebar's call to action: create a character or a loresheet.
+export function NewButton({ game }: { game: Game }) {
+  const pathname = usePathname();
+  const href = gamePath(game, '/new');
+  const active = pathname.startsWith(href);
+  return (
+    <Link
+      href={href}
+      aria-current={active ? 'page' : undefined}
+      className='group flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_1.25rem_-0.4rem_var(--accent)] transition duration-300 ease-(--ease-out-expo) hover:brightness-110 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+    >
+      <MdAdd aria-hidden className='size-5 transition-transform duration-300 group-hover:rotate-90' />
+      New
+      <span className='sr-only'>character or loresheet</span>
+    </Link>
+  );
+}
 
 const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
 const accountLinks = (game: Game) => [
@@ -62,7 +84,7 @@ export function TabBarLinks({ game }: { game: Game }) {
   const pathname = usePathname();
   return (
     <ul className='grid grid-cols-5'>
-      {[...linksFor(game).filter((l) => !l.href.endsWith('/loresheets')), CHRONICLES].map(({ name, href, icon: Icon }) => {
+      {[linksFor(game)[0], linksFor(game)[1], NEW(game), linksFor(game)[3], CHRONICLES].map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>

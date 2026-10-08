@@ -8,6 +8,7 @@ import CharacterRow from '@/app/ui/dashboard/CharacterRow';
 import { panel, buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
 import type { Character } from '@/app/lib/sample-characters';
 import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
+import { LORE_ICONS } from '@/app/ui/loresheets/icons';
 
 // Vampire dashboard overview (the revamp design).
 export default function VampireOverview({
@@ -105,14 +106,18 @@ export default function VampireOverview({
             </div>
             {loresheets.length ? (
               <ul className='mt-3 flex flex-col'>
-                {loresheets.slice(0, 4).map((l) => (
+                {loresheets.slice(0, 4).map((l) => {
+                  const Icon = LORE_ICONS[l.kind];
+                  return (
                   <li key={l.id}>
-                    <Link href={`/vault/vampire/loresheets/${l.id}`} className='flex items-baseline justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-bone/[0.05]'>
-                      <span className='truncate'>{l.title || `Untitled ${LORE_KINDS[l.kind].noun}`}</span>
+                    <Link href={`/vault/vampire/loresheets/${l.id}`} className='flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-bone/[0.05]'>
+                      <Icon aria-hidden className='size-5 shrink-0 text-accent/80' />
+                      <span className='grow truncate'>{l.title || `Untitled ${LORE_KINDS[l.kind].noun}`}</span>
                       <span className='shrink-0 text-[0.65rem] tracking-[0.15em] text-bone/45 uppercase'>{LORE_KINDS[l.kind].label}</span>
                     </Link>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             ) : (
               <div className='flex grow flex-col items-center justify-center gap-3 px-4 py-8 text-center'>

@@ -10,6 +10,7 @@ import EmptyState from '@/app/ui/kit/EmptyState';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import { panel } from '@/app/ui/kit/styles';
 import { ActionButton } from '@/app/ui/social/forms';
+import { LORE_ICONS } from '@/app/ui/loresheets/icons';
 
 export const metadata: Metadata = { title: 'Loresheets' };
 
@@ -27,11 +28,14 @@ export default async function Loresheets({ params }: PageProps<'/vault/[game]/lo
         eyebrow={`${GAMES[game].name} · Loresheets`}
         title='The lore.'
         description='Places, histories and faces that don’t fit on a character sheet.'
-        actions={kinds.map((k) => (
-          <ActionButton key={k} action={createLoresheet.bind(null, game, k)} className={btn}>
-            New {LORE_KINDS[k].noun}
-          </ActionButton>
-        ))}
+        actions={kinds.map((k) => {
+          const Icon = LORE_ICONS[k];
+          return (
+            <ActionButton key={k} action={createLoresheet.bind(null, game, k)} className={`${btn} inline-flex items-center gap-2`}>
+              <Icon aria-hidden className='size-4 text-accent' /> New {LORE_KINDS[k].noun}
+            </ActionButton>
+          );
+        })}
       />
       {list.length === 0 ? (
         <EmptyState icon={<GiScrollUnfurled aria-hidden />} title='No loresheets yet'>
@@ -42,7 +46,13 @@ export default async function Loresheets({ params }: PageProps<'/vault/[game]/lo
           .filter((k) => list.some((l) => l.kind === k))
           .map((k) => (
             <section key={k} aria-label={LORE_KINDS[k].label}>
-              <h2 className='font-display text-3xl'>{LORE_KINDS[k].label}s</h2>
+              <h2 className='flex items-center gap-3 font-display text-3xl'>
+                {(() => {
+                  const Icon = LORE_ICONS[k];
+                  return <Icon aria-hidden className='size-7 text-accent' />;
+                })()}
+                {LORE_KINDS[k].label}s
+              </h2>
               <ul className='mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
                 {list
                   .filter((l) => l.kind === k)

@@ -2,15 +2,16 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { GiCompass, GiQuillInk, GiScrollUnfurled } from 'react-icons/gi';
+import { GiCompass, GiQuillInk } from 'react-icons/gi';
 import { createLoresheet } from '@/app/lib/actions/loresheets';
 import { GAMES, gamePath, isGame } from '@/app/lib/games';
 import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import { panel } from '@/app/ui/kit/styles';
 import { ActionButton } from '@/app/ui/social/forms';
+import { LORE_ICONS } from '@/app/ui/loresheets/icons';
 
-export const metadata: Metadata = { title: 'New sheet' };
+export const metadata: Metadata = { title: 'New' };
 
 const card = `group flex h-full w-full flex-col gap-3 p-6 text-left transition duration-300 hover:-translate-y-1 hover:border-bone/30 ${panel}`;
 
@@ -52,13 +53,16 @@ export default async function NewSheet({ params }: PageProps<'/vault/[game]/new'
       <section aria-labelledby='lore-title' className='flex flex-col gap-4'>
         <h2 id='lore-title' className='font-display text-3xl'>A loresheet</h2>
         <ul className='grid gap-4 md:grid-cols-3'>
-          {(Object.keys(LORE_KINDS) as LoreKind[]).map((k) => (
+          {(Object.keys(LORE_KINDS) as LoreKind[]).map((k) => {
+            const Icon = LORE_ICONS[k];
+            return (
             <li key={k}>
               <ActionButton action={createLoresheet.bind(null, game, k)} className={card}>
-                <Option icon={<GiScrollUnfurled aria-hidden />} title={LORE_KINDS[k].label} body={LORE_KINDS[k].blurb} />
+                <Option icon={<Icon aria-hidden />} title={LORE_KINDS[k].label} body={LORE_KINDS[k].blurb} />
               </ActionButton>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </section>
     </div>

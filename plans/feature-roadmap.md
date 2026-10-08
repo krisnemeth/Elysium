@@ -139,3 +139,18 @@ physically based materials with some roughness and clearcoat; subtle surface
 texture (resin swirl, stone grain, worn bone) via normal/roughness maps;
 engraved, slightly recessed glyphs that catch the light; better lighting and a
 soft environment map so edges and faces read clearly in every theme.
+
+## Images (notes, 2026-10-08)
+
+- **A large housed image library.** Many pictures hosted on the site, largely
+  drawn from the official Dark Pack asset pack (`brand-assets/`, ~300
+  illustrations: characters, antagonists, locations, scenes), tagged by game
+  and kind, so players can give their locations, NPCs and other loresheets an
+  image. Check the asset pack's terms for each image we host.
+- **Pick a character portrait from the library**, as well as uploading one.
+- **Image cropper.** Let players upload any image and choose which part to use
+  (drag and zoom inside the card's frame shape), instead of the current
+  automatic centre crop.
+- **Later:** these images could shape how a chronicle is laid out (scene
+  backdrops, location cards, NPC portraits in the story engine; see
+  `plans/storyteller-engine.md`).
