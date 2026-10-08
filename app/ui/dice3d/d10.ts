@@ -98,7 +98,10 @@ function buildGeometry() {
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   geometry.computeVertexNormals();
-  return { geometry, faces, kite2d };
+  // Distance from the centre to every face (they're all alike): how high
+  // the die's centre sits when it lies flat on a face.
+  const inradius = faces[0].normal.dot(kites[0][0]);
+  return { geometry, faces, kite2d, inradius };
 }
 
 let built: ReturnType<typeof buildGeometry> | null = null;

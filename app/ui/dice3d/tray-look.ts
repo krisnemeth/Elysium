@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type { Game } from '@/app/lib/dice/rules';
 
 /*
-  Dice trays, one per game: a walnut tray lined with card-table baize
+  Dice trays, one per game: a walnut tray with a lighter wooden floor
   (Vampire), a carved stone trough on slate (Werewolf) and an olive-drab
   ammo crate lined with canvas (Hunter). Every surface is painted on a
   canvas from tileable noise, so nothing is downloaded and textures repeat
@@ -87,14 +87,16 @@ function paint(shade: (u: number, v: number) => RGB, after?: (ctx: CanvasRenderi
   return texture;
 }
 
-// Long grain with growth rings, running along u.
-function wood(dark: string, light: string, seed: number) {
+// Long grain with growth rings, running along u. `rings` sets how many
+// rings cross the tile, `warp` how much they wander, `contrast` how strongly
+// they show.
+function wood(dark: string, light: string, seed: number, { rings = 18, warp = 7, contrast = 0.75 } = {}) {
   const grain = fbm(seed, 2, 5, 12);
   const fine = fbm(seed + 1, 32, 3, 16);
   const [d, l] = [hex(dark), hex(light)];
   return paint((u, v) => {
-    const rings = 0.5 + 0.5 * Math.sin((v * 18 + grain(u, v) * 7) * Math.PI * 2);
-    const c = mix(d, l, Math.pow(rings, 2.2) * 0.75 + fine(u, v) * 0.25);
+    const ring = 0.5 + 0.5 * Math.sin((v * rings + grain(u, v) * warp) * Math.PI * 2);
+    const c = mix(d, l, Math.pow(ring, 2.2) * contrast + fine(u, v) * (1 - contrast) + (1 - contrast) * 0.3 * grain(u * 2, v));
     return c.map((x) => x * (0.88 + grain(u * 3, v) * 0.24)) as RGB;
   });
 }
@@ -176,13 +178,14 @@ export function trayLook(game: Game): TrayLook {
   let look: TrayLook;
   switch (game) {
     case 'vampire': {
+      // Dark walnut walls around a lighter, warmer floor, so black dice stand out.
       const walnut = wood('#24120b', '#6b3c22', 11);
-      const baize = cloth('#2f5a43', 12);
+      const boards = wood('#4a2816', '#9a6238', 13, { rings: 6, warp: 14, contrast: 0.35 });
       look = {
         wall: new THREE.MeshStandardMaterial({ map: walnut, roughness: 0.45, bumpMap: walnut, bumpScale: 0.6 }),
-        floor: new THREE.MeshStandardMaterial({ map: baize, roughness: 1, bumpMap: baize, bumpScale: 0.8 }),
+        floor: new THREE.MeshStandardMaterial({ map: boards, roughness: 0.55, bumpMap: boards, bumpScale: 0.5 }),
         wallTile: 6,
-        floorTile: 5,
+        floorTile: 7,
       };
       break;
     }
