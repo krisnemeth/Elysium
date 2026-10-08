@@ -60,13 +60,13 @@ const GAMES: Record<
     },
   },
   werewolf: {
-    success: 'wta-claw.png',
-    critical: 'wta-claw-crit.png',
+    success: 'wta-claw.svg',
+    critical: 'wta-claw-crit.svg',
     outcomes: {
       brutal: {
         title: 'Brutal outcome',
         note: 'Two or more Rage dice show 1 or 2. The test fails, unless the goal was to cause harm.',
-        glyph: 'wta-fangs.png',
+        glyph: 'wta-fangs.svg',
         grim: true,
       },
     },
@@ -79,19 +79,19 @@ const GAMES: Record<
     },
   },
   hunter: {
-    success: 'htr-flame.png',
-    critical: 'htr-flame-crit.png',
+    success: 'htr-flame.svg',
+    critical: 'htr-flame-crit.svg',
     outcomes: {
       overreach: {
         title: 'Overreach or Despair',
         note: 'You succeed, but a Desperation die shows a 1. Choose your price.',
-        glyph: 'htr-overreach.png',
+        glyph: 'htr-overreach.svg',
         grim: true,
       },
       despair: {
         title: 'Despair',
         note: 'You fail with a Desperation 1. Your Drive is lost until the cell fulfils it.',
-        glyph: 'htr-overreach.png',
+        glyph: 'htr-overreach.svg',
         grim: true,
       },
     },
@@ -106,19 +106,6 @@ function outcomeText(game: Game, outcome: Outcome): OutcomeText {
       glyph: outcome === 'critical' ? g.critical : outcome === 'win' ? g.success : undefined,
     }
   );
-}
-
-function useCssVar(name: string, fallback: string) {
-  const [value, setValue] = useState(fallback);
-  useEffect(() => {
-    const read = () =>
-      setValue(getComputedStyle(document.querySelector('[data-game]') ?? document.documentElement).getPropertyValue(name).trim() || fallback);
-    read();
-    const observer = new MutationObserver(read);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    return () => observer.disconnect();
-  }, [name, fallback]);
-  return value;
 }
 
 function Stepper({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
@@ -208,7 +195,6 @@ export default function DiceRoller({
   const [rerolled, setRerolled] = useState(false);
   const [choiceMade, setChoiceMade] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const accent = useCssVar('--accent', '#c81e2b');
 
   const usableSpecial = game === 'hunter' && despair ? 0 : special;
 
@@ -303,7 +289,7 @@ export default function DiceRoller({
         </div>
 
         <div className='relative -mx-2 h-72 md:h-96'>
-          <DiceScene game={game} dice={sceneDice} rollKey={rollKey} rolled={rolled} accent={accent} onSelect={toggle} />
+          <DiceScene game={game} dice={sceneDice} rollKey={rollKey} rolled={rolled} onSelect={toggle} />
         </div>
 
         {/* Screen reader and keyboard access to the dice */}

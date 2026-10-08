@@ -34,7 +34,7 @@ The app was front-end only with sample data. This group makes characters persist
   Desperation and Willpower mid-session.
 - **Dice from the sheet**: pick e.g. Strength + Brawl to build the pool; the
   game's special dice come from the current tracker value.
-- **Dice graphics improvements**: perfect the dice graphics to match the real dice as close as possible. Explore the idea of dice tray backgrounds in 3D. 
+- ✅ **Dice graphics improvements** (2026-10-08): the 3D dice now match the official dice art: vector symbols (Werewolf/Hunter traced from the asset pack), placed where the printed faces have them, sharp 768px faces, true colours. Still open: dice tray backgrounds in 3D, surface texture.
 - **XP log**: record spends, with costs worked out from the rules.
 
 ## Group 3 — Friends, groups and Storytellers

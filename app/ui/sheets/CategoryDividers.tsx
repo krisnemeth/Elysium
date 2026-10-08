@@ -8,8 +8,8 @@ function Mark({ flip }: { flip?: boolean }) {
   return (
     <>
       <LogoAnkh aria-hidden className={`h-4 w-auto ${rot} text-accent in-data-[game=hunter]:hidden in-data-[game=werewolf]:hidden`} />
-      <Glyph name='wta-claw.png' className={`hidden size-5 text-accent in-data-[game=werewolf]:inline-block ${flip ? '-scale-x-100' : ''}`} />
-      <Glyph name='htr-flame.png' className='hidden size-5 text-accent in-data-[game=hunter]:inline-block' />
+      <Glyph name='wta-claw.svg' className={`hidden size-5 text-accent in-data-[game=werewolf]:inline-block ${flip ? '-scale-x-100' : ''}`} />
+      <Glyph name='htr-flame.svg' className='hidden size-5 text-accent in-data-[game=hunter]:inline-block' />
     </>
   );
 }

@@ -18,7 +18,6 @@ type Props = {
   // Changes on every roll; dice whose index is in `rolled` are thrown again.
   rollKey: number;
   rolled: number[];
-  accent: string;
   onSelect?: (index: number) => void;
 };
 
@@ -26,6 +25,13 @@ const SPACING = 2.4;
 const TO_CAMERA = new THREE.Vector3(0, 1.25, 1).normalize();
 const SCREEN_UP = new THREE.Vector3(0, 1, 0).sub(TO_CAMERA.clone().multiplyScalar(TO_CAMERA.y)).normalize();
 const THROW_SECONDS = 1.1;
+// Self-lit share of each face's colour; the key light adds the rest, so a
+// face turned to the camera shows its official colour and the sides fall
+// into shade like the printed dice.
+const GLOW = 0.35;
+const ENV_INTENSITY = 0.2;
+const KEY_LIGHT = 1.5;
+const GLOW_SELECTED = 0.5;
 
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 const smoothstep = (a: number, b: number, t: number) => {
@@ -39,13 +45,18 @@ function prefersReducedMotion() {
 
 function useAtlas(game: Game, kind: Die['kind']) {
   const [texture, setTexture] = useState<THREE.CanvasTexture | null>(null);
+  const gl = useThree((s) => s.gl);
   useEffect(() => {
     let live = true;
-    diceAtlas(game, kind).then((t) => live && setTexture(t));
+    diceAtlas(game, kind).then((t) => {
+      // Sharpest filtering the GPU offers, so symbols stay crisp on tilted faces.
+      t.anisotropy = gl.capabilities.getMaxAnisotropy();
+      if (live) setTexture(t);
+    });
     return () => {
       live = false;
     };
-  }, [game, kind]);
+  }, [game, kind, gl]);
   return texture;
 }
 
@@ -102,21 +113,25 @@ function D10Mesh({
   const invalidate = useThree((s) => s.invalidate);
   const [hovered, setHovered] = useState(false);
 
-  // Resin dice: a smooth base under a glossy clear coat.
+  // Resin dice: the face texture also glows a little (emissive), so the
+  // official colours read true whatever the light; a thin clear coat adds
+  // highlights without washing them out.
   const material = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        roughness: 0.4,
+        roughness: 0.6,
         metalness: 0,
-        clearcoat: 0.75,
-        clearcoatRoughness: 0.1,
-        envMapIntensity: 0.3,
+        specularIntensity: 0.25,
+        clearcoat: 0.15,
+        clearcoatRoughness: 0.2,
+        emissive: new THREE.Color('#ffffff'),
         flatShading: true,
       }),
     [],
   );
   useEffect(() => {
     material.map = texture;
+    material.emissiveMap = texture;
     material.needsUpdate = true;
     invalidate();
   }, [material, texture, invalidate]);
@@ -178,8 +193,7 @@ function D10Mesh({
 
     const dim = die.dimmed && t >= 1 ? 0.6 : 1;
     material.color.setScalar(dim);
-    material.emissive.set(die.selected ? '#ffffff' : '#000000');
-    material.emissiveIntensity = die.selected ? 0.08 : 0;
+    material.emissiveIntensity = (die.selected ? GLOW_SELECTED : GLOW) * dim;
   });
 
   return (
@@ -211,13 +225,14 @@ function D10Mesh({
   3D dice tray: real d10s thrown onto a table, each landing on the value the
   rules engine rolled. Rendering is on demand, so it idles at zero cost.
 */
-export default function DiceScene({ game, dice, rollKey, rolled, accent, onSelect }: Props) {
+export default function DiceScene({ game, dice, rollKey, rolled, onSelect }: Props) {
   const [aspect, setAspect] = useState(2);
   const { cols, rows, slots } = layout(Math.max(1, dice.length), aspect);
 
   return (
     <Canvas
-      shadows
+      // PCF: three.js has dropped the soft variant R3F asks for by default.
+      shadows='percentage'
       // No tone mapping: keep the official dice colours true.
       flat
       frameloop='demand'
@@ -232,10 +247,9 @@ export default function DiceScene({ game, dice, rollKey, rolled, accent, onSelec
       <AspectWatcher onChange={setAspect} />
       <CameraRig cols={cols} rows={rows} />
       <StudioEnvironment />
-      <ambientLight intensity={0.15} />
       <directionalLight
         position={[-5, 10, 4]}
-        intensity={1.3}
+        intensity={KEY_LIGHT}
         castShadow
         shadow-mapSize={[1024, 1024]}
         shadow-camera-left={-12}
@@ -243,7 +257,6 @@ export default function DiceScene({ game, dice, rollKey, rolled, accent, onSelec
         shadow-camera-top={12}
         shadow-camera-bottom={-12}
       />
-      <pointLight position={[7, 2.5, 4]} intensity={45} color={accent} />
       <mesh rotation-x={-Math.PI / 2} position-y={-1.05} receiveShadow>
         <planeGeometry args={[60, 60]} />
         <shadowMaterial opacity={0.35} />
@@ -271,6 +284,8 @@ function StudioEnvironment() {
     const pmrem = new THREE.PMREMGenerator(gl);
     const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     scene.environment = env;
+    // Materials lit by scene.environment take this, not their own envMapIntensity.
+    scene.environmentIntensity = ENV_INTENSITY;
     invalidate();
     return () => {
       scene.environment = null;
