@@ -105,12 +105,13 @@ export type StepKey =
   | 'specialties'
   | 'convictions'
   | 'advantages'
-  | 'review';
+  | 'review'
+  | 'portrait';
 
 export const STEPS: Record<Game, StepKey[]> = {
-  vampire: ['concept', 'faction', 'attributes', 'skills', 'disciplines', 'predator', 'specialties', 'convictions', 'advantages', 'review'],
-  werewolf: ['concept', 'faction', 'attributes', 'skills', 'renown', 'specialties', 'convictions', 'advantages', 'review'],
-  hunter: ['concept', 'faction', 'attributes', 'skills', 'edges', 'specialties', 'convictions', 'advantages', 'review'],
+  vampire: ['concept', 'faction', 'attributes', 'skills', 'disciplines', 'predator', 'specialties', 'convictions', 'advantages', 'review', 'portrait'],
+  werewolf: ['concept', 'faction', 'attributes', 'skills', 'renown', 'specialties', 'convictions', 'advantages', 'review', 'portrait'],
+  hunter: ['concept', 'faction', 'attributes', 'skills', 'edges', 'specialties', 'convictions', 'advantages', 'review', 'portrait'],
 };
 
 // What still needs doing on a step, in friendly words. Empty means done.
@@ -183,6 +184,7 @@ export function problems(game: Game, step: StepKey, w: Wizard): string[] {
       return out;
     }
     case 'review':
+    case 'portrait':
       return [];
   }
 }

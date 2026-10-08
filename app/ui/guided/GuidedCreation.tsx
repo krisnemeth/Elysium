@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useId, useState, useTransition, type ReactNode } from 'react';
 import clsx from 'clsx';
-import { MdArrowBack, MdArrowForward, MdCheck, MdInfoOutline } from 'react-icons/md';
+import { MdAddPhotoAlternate, MdArrowBack, MdArrowForward, MdCheck, MdInfoOutline, MdPhotoLibrary } from 'react-icons/md';
 import { GAMES, type Game } from '@/app/lib/games';
 import { AUSPICES, CREEDS, DRIVES, TRIBES } from '@/app/lib/factions';
 import { CLANS } from '@/app/lib/clans';
@@ -24,7 +24,8 @@ import {
   type StepKey,
   type Wizard,
 } from '@/app/lib/creation/rules';
-import { createCharacter } from '@/app/lib/actions/characters';
+import { createCharacter, setPortrait } from '@/app/lib/actions/characters';
+import { usePortraitSource } from '@/app/ui/characters/portrait-source';
 import { buttonGhost, buttonPrimary, fieldInput, fieldLabel, panel } from '@/app/ui/kit/styles';
 import { usePreferences } from '@/app/ui/PreferencesContext';
 import { SheetProvider } from '@/app/ui/sheets/SheetContext';
@@ -46,6 +47,7 @@ const TITLES: Record<StepKey, string> = {
   convictions: 'Convictions and touchstones',
   advantages: 'Advantages and flaws',
   review: 'Ready?',
+  portrait: 'A face for them',
 };
 
 const GUIDE: Record<StepKey, (game: Game) => string> = {
@@ -77,7 +79,8 @@ const GUIDE: Record<StepKey, (game: Game) => string> = {
     'A conviction is a line your character won’t cross lightly; a touchstone is a living person who keeps them true to it. Write at least one pair. They keep your character human when things get dark.',
   advantages: () =>
     'Spend seven dots on merits (useful traits) and backgrounds (contacts, money, a safe place), and take two dots of flaws. Ask your Storyteller if you’re unsure what fits the chronicle.',
-  review: () => 'Check the summary. When you create the character you’ll land on the full sheet, already filled in. You can change anything there.',
+  review: () => 'Check the summary. Next, give them a face; then you’ll land on the full sheet, already filled in.',
+  portrait: () => 'Upload an image or choose one from the library, then frame it. This is optional: you can add or change it any time on the sheet.',
 };
 
 const STORAGE = (game: Game) => `elysium:guided:${game}`;
@@ -139,6 +142,18 @@ export default function GuidedCreation({ game }: { game: Game }) {
   const steps = STEPS[game];
   const key = steps[step];
   const ids = { spec: useId() };
+  // The chosen portrait waits here until the character is created.
+  const [portrait, setPortraitBlob] = useState<{ blob: Blob; url: string } | null>(null);
+  const [portraitError, setPortraitError] = useState('');
+  const source = usePortraitSource({
+    game,
+    onReady: (blob) => {
+      if (portrait) URL.revokeObjectURL(portrait.url);
+      setPortraitError('');
+      setPortraitBlob({ blob, url: URL.createObjectURL(blob) });
+    },
+    onError: setPortraitError,
+  });
 
   const save = (next: { w: Wizard; step: number }) => {
     setState(next);
@@ -164,6 +179,13 @@ export default function GuidedCreation({ game }: { game: Game }) {
       setError('');
       const result = await createCharacter(game, finalSheet(game, w));
       if (!result.ok) return setError(result.error);
+      if (portrait) {
+        const form = new FormData();
+        form.append('portrait', portrait.blob, 'portrait');
+        const uploaded = await setPortrait(result.id, game, form);
+        // The character exists either way; a failed upload can be retried on the sheet.
+        if (!uploaded.ok) setError(`Created, but the portrait didn’t upload: ${uploaded.error}`);
+      }
       persist(game, null);
       router.push(`/vault/${game}/characters/${result.id}/edit?guided=1`);
     });
@@ -376,6 +398,42 @@ export default function GuidedCreation({ game }: { game: Game }) {
       );
       break;
     }
+    case 'portrait':
+      body = (
+        <div className='flex flex-col items-center gap-5 sm:flex-row sm:items-start'>
+          <div className='relative aspect-[3/4] w-48 shrink-0 overflow-hidden rounded-2xl bg-bone/5 ring-1 ring-bone/15'>
+            {/* eslint-disable-next-line @next/next/no-img-element -- a local preview of the cropped image */}
+            <img src={portrait?.url ?? GAMES[game].figure.src} alt={portrait ? 'Your chosen portrait.' : ''} className={`size-full object-cover object-top ${portrait ? '' : 'opacity-40 grayscale'}`} />
+            {!portrait && <span className='absolute inset-x-0 bottom-3 text-center text-xs text-bone/70'>No portrait yet</span>}
+          </div>
+          <div className='flex flex-col gap-3'>
+            <div className='flex flex-wrap gap-2'>
+              <button type='button' onClick={source.openFile} className={buttonGhost}>
+                <MdAddPhotoAlternate aria-hidden /> Upload
+              </button>
+              <button type='button' onClick={source.openLibrary} className={buttonGhost}>
+                <MdPhotoLibrary aria-hidden /> Choose from library
+              </button>
+              {portrait && (
+                <button
+                  type='button'
+                  onClick={() => {
+                    URL.revokeObjectURL(portrait.url);
+                    setPortraitBlob(null);
+                  }}
+                  className='text-sm text-bone/55 underline-offset-2 hover:text-bone hover:underline'
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+            <p className='max-w-sm text-sm text-bone/55'>It’s saved with the character when you press Create. Skip it if you like.</p>
+            {portraitError && <p role='alert' className='text-sm text-accent'>{portraitError}</p>}
+            {source.elements}
+          </div>
+        </div>
+      );
+      break;
     case 'review': {
       const f = finalSheet(game, w);
       const rows: [string, string][] = [

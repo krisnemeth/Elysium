@@ -2,55 +2,26 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useId, useRef, useState, useTransition, type DragEvent } from 'react';
-import { MdAddPhotoAlternate, MdDeleteOutline } from 'react-icons/md';
+import { useState, useTransition, type DragEvent } from 'react';
+import { MdAddPhotoAlternate, MdDeleteOutline, MdPhotoLibrary } from 'react-icons/md';
 import clsx from 'clsx';
 import type { Game } from '@/app/lib/games';
 import { removePortrait, setPortrait } from '@/app/lib/actions/characters';
-import { PORTRAIT_MAX_BYTES, PORTRAIT_SIZE, isUploadedPortrait } from '@/app/lib/portraits';
+import { isUploadedPortrait } from '@/app/lib/portraits';
 import { buttonGhost } from '@/app/ui/kit/styles';
-import ImageCropper, { type CropRect } from './ImageCropper';
-
-// Anything bigger is almost certainly not a photo we can decode comfortably.
-const MAX_INPUT_BYTES = 30 * 1024 * 1024;
-
-function encode(canvas: HTMLCanvasElement, type: string, quality: number) {
-  return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, quality));
-}
-
-/*
-  Draws the chosen part of the image, scaled down to PORTRAIT_SIZE, and
-  re-encodes it. Re-encoding also drops EXIF data such as GPS location.
-*/
-async function prepare(bitmap: ImageBitmap, rect: CropRect): Promise<Blob> {
-  const scale = Math.min(1, PORTRAIT_SIZE.width / rect.sw);
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.max(1, Math.round(rect.sw * scale));
-  canvas.height = Math.max(1, Math.round(rect.sh * scale));
-  const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('no canvas');
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(bitmap, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, canvas.width, canvas.height);
-
-  // WebP where the browser can encode it (Safari can't), JPEG otherwise.
-  for (const quality of [0.86, 0.75, 0.6]) {
-    let blob = await encode(canvas, 'image/webp', quality);
-    if (blob?.type !== 'image/webp') blob = await encode(canvas, 'image/jpeg', quality);
-    if (blob && blob.size <= PORTRAIT_MAX_BYTES) return blob;
-  }
-  throw new Error('too large');
-}
-
-type Pending = { bitmap: ImageBitmap; url: string };
+import { usePortraitSource } from './portrait-source';
 
 export default function PortraitPicker({
   id,
+  ensureId,
   game,
   name,
   src: initialSrc,
   variant = 'panel',
 }: {
-  id: string;
+  // Null for a character that hasn't been saved yet: `ensureId` saves it first.
+  id: string | null;
+  ensureId?: () => Promise<string | null>;
   game: Game;
   name: string;
   src: string;
@@ -58,65 +29,32 @@ export default function PortraitPicker({
   variant?: 'panel' | 'overlay';
 }) {
   const router = useRouter();
-  const inputId = useId();
-  const input = useRef<HTMLInputElement>(null);
   const [src, setSrc] = useState(initialSrc);
   const [message, setMessage] = useState('');
   const [dragging, setDragging] = useState(false);
   const [pending, startTransition] = useTransition();
   const custom = isUploadedPortrait(src);
 
-  const [cropping, setCropping] = useState<Pending | null>(null);
-
-  // A chosen or dropped file opens the cropper first.
-  const choose = async (file: File | undefined) => {
-    if (!file) return;
-    if (!file.type.startsWith('image/')) return setMessage('That file isn’t an image.');
-    if (file.size > MAX_INPUT_BYTES) return setMessage('That image is too large to use (30 MB at most).');
-    try {
-      const bitmap = await createImageBitmap(file);
-      setMessage('');
-      setCropping({ bitmap, url: URL.createObjectURL(file) });
-    } catch {
-      setMessage('Couldn’t read that image. Try a JPEG or PNG.');
-    }
-  };
-
-  const closeCropper = () => {
-    if (cropping) {
-      URL.revokeObjectURL(cropping.url);
-      cropping.bitmap.close();
-    }
-    setCropping(null);
-  };
-
-  const upload = (rect: CropRect) => {
-    if (!cropping) return;
-    const { bitmap } = cropping;
+  const save = (blob: Blob) => {
     setMessage('Uploading…');
     startTransition(async () => {
-      let blob: Blob;
-      try {
-        blob = await prepare(bitmap, rect);
-      } catch {
-        setMessage('Couldn’t prepare that image. Try another one.');
-        closeCropper();
-        return;
-      }
-      closeCropper();
+      const target = id ?? (await ensureId?.()) ?? null;
+      if (!target) return setMessage('Couldn’t save the character yet. Try again in a moment.');
       const form = new FormData();
       form.append('portrait', blob, 'portrait');
-      const result = await setPortrait(id, game, form);
+      const result = await setPortrait(target, game, form);
       if (!result.ok) return setMessage(result.error);
       setSrc(result.src);
       setMessage('Portrait updated.');
       router.refresh();
     });
   };
+  const source = usePortraitSource({ game, onReady: save, onError: setMessage });
 
   const remove = () =>
     startTransition(async () => {
       setMessage('Removing…');
+      if (!id) return;
       const result = await removePortrait(id, game);
       if (!result.ok) return setMessage(result.error);
       setSrc(result.src);
@@ -127,34 +65,19 @@ export default function PortraitPicker({
   const onDrop = (e: DragEvent) => {
     e.preventDefault();
     setDragging(false);
-    void choose(e.dataTransfer.files[0]);
+    void source.chooseFile(e.dataTransfer.files[0]);
   };
 
-  const fileInput = (
-    <>
-      <input
-        ref={input}
-        id={inputId}
-        type='file'
-        accept='image/*'
-        className='sr-only'
-        tabIndex={-1}
-        onChange={(e) => {
-          void choose(e.target.files?.[0]);
-          e.target.value = '';
-        }}
-      />
-      {cropping && (
-        <ImageCropper url={cropping.url} width={cropping.bitmap.width} height={cropping.bitmap.height} onCancel={closeCropper} onConfirm={upload} />
-      )}
-    </>
-  );
+  const fileInput = source.elements;
 
   const buttons = (
     <div className='flex flex-wrap items-center gap-2'>
-      <button type='button' onClick={() => input.current?.click()} disabled={pending} className={`${buttonGhost} bg-ink/70 px-4 py-1.5 text-xs backdrop-blur-md`}>
+      <button type='button' onClick={source.openFile} disabled={pending} className={`${buttonGhost} bg-ink/70 px-4 py-1.5 text-xs backdrop-blur-md`}>
         <MdAddPhotoAlternate aria-hidden className='size-4' />
-        {custom ? 'Change portrait' : 'Upload portrait'}
+        {custom ? 'Upload another' : 'Upload'}
+      </button>
+      <button type='button' onClick={source.openLibrary} disabled={pending} className={`${buttonGhost} bg-ink/70 px-4 py-1.5 text-xs backdrop-blur-md`}>
+        <MdPhotoLibrary aria-hidden className='size-4' /> Choose from library
       </button>
       {custom && (
         <button type='button' onClick={remove} disabled={pending} className={`${buttonGhost} bg-ink/70 px-4 py-1.5 text-xs backdrop-blur-md`}>
@@ -208,10 +131,8 @@ export default function PortraitPicker({
         <Image src={src} alt={`Portrait of ${name || 'this character'}.`} fill sizes='5rem' unoptimized={isUploadedPortrait(src)} className='object-cover' />
       </div>
       <div className='flex min-w-0 flex-col gap-2'>
-        <label htmlFor={inputId} className='font-display text-lg leading-tight'>
-          Portrait
-        </label>
-        <p className='text-xs leading-relaxed text-bone/50'>JPEG, PNG or WebP. Drop an image here or upload one; it’s cropped to 3:4.</p>
+        <h3 className='font-display text-lg leading-tight'>Portrait</h3>
+        <p className='text-xs leading-relaxed text-bone/50'>Upload an image (or drop one here) or choose one from the library, then frame it.</p>
         {fileInput}
         {buttons}
         {status}

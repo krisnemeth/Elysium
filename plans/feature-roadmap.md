@@ -148,7 +148,7 @@ soft environment map so edges and faces read clearly in every theme.
   illustrations: characters, antagonists, locations, scenes), tagged by game
   and kind, so players can give their locations, NPCs and other loresheets an
   image. Check the asset pack's terms for each image we host.
-- **Pick a character portrait from the library**, as well as uploading one.
+- ✅ **Pick a character portrait from the library** (`app/lib/portrait-library.ts`, the site's own hosted portraits for now), as well as uploading one; both go through the cropper. On the classic sheet the portrait sits at the very end; guided creation ends with a Portrait step. Grow the library from the asset pack next.
 - ✅ **Image cropper** (portraits): uploads open a 3:4 frame to drag and zoom
   (wheel, pinch, slider, keyboard) before saving. Later: the card's own frame
   shape (e.g. the arch) as the crop guide, and the same tool for loresheet images.
