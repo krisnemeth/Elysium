@@ -143,8 +143,12 @@ export async function respondToInvite(chronicleId: string, accept: boolean) {
   if (accept) redirect(chroniclePath(chronicleId));
 }
 
-export async function leaveChronicle(chronicleId: string) {
-  await respondToInvite(chronicleId, false);
+// Leaves the table, keeping the character on file for a re-invite.
+export async function leaveChronicle(chronicleId: string): Promise<ActionState> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('leave_chronicle', { cid: chronicleId });
+  if (error || !data) return { error: 'Couldn’t leave the game. Try again.' };
+  revalidatePath('/vault/chronicles');
   redirect('/vault/chronicles');
 }
 

@@ -79,7 +79,8 @@ export function TurnProvider({
   );
 
   const holder = seats.find((s) => s.userId === turn?.user_id) ?? null;
-  const deadline = bot && turn && holder ? Date.parse(turn.started_at) + turn.seconds * 1000 : null;
+  // Playing alone, turns don't time out: the game waits for you.
+  const deadline = bot && turn && holder && seats.length > 1 ? Date.parse(turn.started_at) + turn.seconds * 1000 : null;
   const left = deadline === null ? null : Math.max(0, Math.ceil((deadline - now) / 1000));
 
   // The clock, for the fuse (bot chronicles only).
@@ -151,6 +152,7 @@ export function TurnTracker() {
   const t = useTurn();
   if (!t) return null;
   const { seats, holder, myTurn, bot, isStoryteller, left, turn, pending } = t;
+  const solo = seats.length === 1 && !isStoryteller;
   const burning = left !== null && left <= FUSE;
 
   if (!seats.length)
@@ -159,7 +161,12 @@ export function TurnTracker() {
   const controls = (
     <div className='flex min-w-0 flex-col gap-2'>
       <p role='status' className='text-sm text-bone/70'>
-        {holder ? (
+        {solo && myTurn ? (
+          <>
+            <span className='block font-display text-xl leading-tight text-accent'>Playing alone</span>
+            <span className='text-bone/45'>No turns to wait for. The game pauses when you leave.</span>
+          </>
+        ) : holder ? (
           <>
             <span className={clsx('block font-display text-xl leading-tight', myTurn ? 'text-accent' : 'text-bone')}>
               {myTurn ? 'Your turn' : `${holder.character}’s turn`}
@@ -178,7 +185,7 @@ export function TurnTracker() {
         )}
       </p>
       <span className='flex flex-wrap gap-2'>
-        {(myTurn || (isStoryteller && holder)) && (
+        {((myTurn && !solo) || (isStoryteller && holder)) && (
           <button type='button' disabled={pending} onClick={t.pass} className='rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:brightness-110 disabled:opacity-60'>
             {myTurn ? 'End your turn' : 'Next player'}
           </button>

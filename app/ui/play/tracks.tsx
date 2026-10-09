@@ -211,7 +211,7 @@ const slash = (aggravated: boolean) => (
   </svg>
 );
 
-// Health or Willpower in two lines: the boxes, then Superficial and Aggravated steppers.
+// Health or Willpower: the boxes, then Superficial and Aggravated steppers.
 export function MiniDamageTrack({ label, max, damage = NO_DAMAGE, onChange, downLabel }: { label: string; max: number; damage?: Damage; onChange: (d: Damage) => void; downLabel: string }) {
   const state = trackState(damage, max);
   const marks = boxes(damage, max);
@@ -234,12 +234,12 @@ export function MiniDamageTrack({ label, max, damage = NO_DAMAGE, onChange, down
         ))}
       </ol>
       <div className='flex items-center justify-between gap-2 text-xs text-bone/55'>
-        <span className='flex items-center gap-1.5'>
-          Superficial
+        <span className='flex items-center gap-1' title='Superficial damage'>
+          Sup.
           <MiniStep label={`${label} superficial damage`} onDown={() => change('superficial', -1)} onUp={() => change('superficial', 1)} downDisabled={sup === 0} upDisabled={max === 0 || agg >= max} />
         </span>
-        <span className='flex items-center gap-1.5'>
-          Aggravated
+        <span className='flex items-center gap-1' title='Aggravated damage'>
+          Agg.
           <MiniStep label={`${label} aggravated damage`} onDown={() => change('aggravated', -1)} onUp={() => change('aggravated', 1)} downDisabled={agg === 0} upDisabled={max === 0 || agg >= max} />
         </span>
       </div>
@@ -247,55 +247,51 @@ export function MiniDamageTrack({ label, max, damage = NO_DAMAGE, onChange, down
   );
 }
 
-// Hunger, Rage, Desperation… on one line.
+// Hunger, Rage, Desperation…: the name and steppers, the marks underneath.
 export function MiniPointTrack({ label, value, max = 5, onChange, shape = 'dot' }: { label: string; value: number; max?: number; onChange: (v: number) => void; shape?: 'dot' | 'box' }) {
   return (
-    <section aria-label={label} className='flex items-center justify-between gap-2'>
-      <h3 className='text-sm'>{label}</h3>
-      <span className='flex items-center gap-2'>
-        <ol className='flex gap-1.5' role='img' aria-label={`${label} ${value} of ${max}`}>
-          {Array.from({ length: max }, (_, i) => (
-            <li key={i} className={clsx('size-3 border', shape === 'dot' ? 'rounded-full' : 'rotate-45 rounded-[2px]', i < value ? 'border-accent bg-accent' : 'border-bone/30')} />
-          ))}
-        </ol>
+    <section aria-label={label} className='flex flex-col gap-1.5'>
+      <div className='flex items-center justify-between gap-2'>
+        <h3 className='text-sm'>{label}</h3>
         <MiniStep label={label} onDown={() => onChange(Math.max(0, value - 1))} onUp={() => onChange(Math.min(max, value + 1))} downDisabled={value <= 0} upDisabled={value >= max} />
-      </span>
+      </div>
+      <ol className='flex gap-2 pl-0.5' role='img' aria-label={`${label} ${value} of ${max}`}>
+        {Array.from({ length: max }, (_, i) => (
+          <li key={i} className={clsx('size-3 border', shape === 'dot' ? 'rounded-full' : 'rotate-45 rounded-[2px]', i < value ? 'border-accent bg-accent' : 'border-bone/30')} />
+        ))}
+      </ol>
     </section>
   );
 }
 
-// Humanity and Stains in two lines.
+// Humanity (steppers by the name) and Stains (steppers underneath).
 export function MiniHumanityTrack({ humanity, stains, onHumanity, onStains }: { humanity: number; stains: number; onHumanity: (v: number) => void; onStains: (v: number) => void }) {
   const empty = 10 - humanity;
   const overflow = stains > empty;
   return (
     <section aria-label='Humanity' className='flex flex-col gap-1.5'>
-      <div className='flex items-baseline justify-between gap-2'>
-        <h3 className='text-sm'>Humanity</h3>
-        <p role='status' className={clsx('text-[0.6rem] tracking-[0.15em] uppercase', overflow ? 'text-accent' : 'text-bone/45')}>
-          {overflow ? 'Degeneration' : `${humanity} · ${stains} ${stains === 1 ? 'stain' : 'stains'}`}
-        </p>
+      <div className='flex items-center justify-between gap-2'>
+        <h3 className='text-sm'>
+          Humanity <span className={clsx('text-xs', overflow ? 'text-accent' : 'text-bone/45')}>{overflow ? 'Degeneration' : humanity}</span>
+        </h3>
+        <MiniStep label='Humanity' onDown={() => onHumanity(Math.max(0, humanity - 1))} onUp={() => onHumanity(Math.min(10, humanity + 1))} downDisabled={humanity === 0} upDisabled={humanity === 10} />
       </div>
-      <ol className='flex gap-1' aria-hidden>
+      <ol className='flex gap-[3px]' aria-hidden>
         {Array.from({ length: 10 }, (_, i) => {
           const filled = i < humanity;
           const stained = !filled && i >= 10 - Math.min(stains, empty);
           return (
-            <li key={i} className={clsx('grid size-4.5 place-items-center rounded-full border', filled ? 'border-accent bg-accent' : 'border-bone/25')}>
+            <li key={i} className={clsx('grid size-4 place-items-center rounded-full border', filled ? 'border-accent bg-accent' : 'border-bone/25')}>
               {stained && slash(false)}
             </li>
           );
         })}
       </ol>
       <div className='flex items-center justify-between gap-2 text-xs text-bone/55'>
-        <span className='flex items-center gap-1.5'>
-          Humanity
-          <MiniStep label='Humanity' onDown={() => onHumanity(Math.max(0, humanity - 1))} onUp={() => onHumanity(Math.min(10, humanity + 1))} downDisabled={humanity === 0} upDisabled={humanity === 10} />
+        <span>
+          {stains} {stains === 1 ? 'Stain' : 'Stains'}
         </span>
-        <span className='flex items-center gap-1.5'>
-          Stains
-          <MiniStep label='Stains' onDown={() => onStains(Math.max(0, stains - 1))} onUp={() => onStains(Math.min(10, stains + 1))} downDisabled={stains === 0} />
-        </span>
+        <MiniStep label='Stains' onDown={() => onStains(Math.max(0, stains - 1))} onUp={() => onStains(Math.min(10, stains + 1))} downDisabled={stains === 0} />
       </div>
     </section>
   );

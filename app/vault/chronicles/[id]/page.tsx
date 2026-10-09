@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
-import { deleteChronicle, deleteNote, leaveChronicle, removeMember, respondToInvite } from '@/app/lib/actions/social';
+import { deleteChronicle, deleteNote, removeMember, respondToInvite } from '@/app/lib/actions/social';
 import { getCharacter, getCharacters, toCharacter } from '@/app/lib/data/characters';
 import { getChronicle, getFriends, getNotes, getRolls, getTurn, getVotes } from '@/app/lib/data/social';
 import { GAMES } from '@/app/lib/games';
@@ -19,6 +19,7 @@ import CharacterSheetView from '@/app/ui/characters/CharacterSheetView';
 import { factionName } from '@/app/ui/game/FactionMark';
 import SheetModal from '@/app/ui/chronicles/SheetModal';
 import StorytellerDice from '@/app/ui/chronicles/StorytellerDice';
+import GameBar from '@/app/ui/chronicles/GameBar';
 import TableShell from '@/app/ui/chronicles/TableShell';
 import { ColumnTabs, PlayTable, TableColumns } from '@/app/ui/chronicles/table';
 import { TurnProvider, TurnTracker, type Seat } from '@/app/ui/chronicles/turns';
@@ -212,6 +213,11 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         <CharacterPicker chronicleId={c.id} current={membership.character_id} characters={myCharacters.map((ch) => ({ id: ch.id, name: ch.name, game: ch.game }))} />
       )}
       <InviteFriends chronicleId={c.id} friends={invitable} />
+      {isOwner && (
+        <ActionButton action={deleteChronicle.bind(null, c.id)} className={`${small} self-start`} confirm='Delete this chronicle for everyone?'>
+          Delete the chronicle
+        </ActionButton>
+      )}
     </div>
   );
 
@@ -238,6 +244,17 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
     </>
   );
 
+  const bar = (
+    <GameBar
+      chronicleId={c.id}
+      eyebrow={`${GAMES[c.game].name} chronicle · ${bot ? 'Storyteller bot' : isStoryteller ? 'You’re the Storyteller' : 'Player'}`}
+      title={c.name}
+      act={scene?.act}
+      acts={bot ? ACT_COUNT : undefined}
+      solo={joined.length === 1}
+    />
+  );
+
   let table: ReactNode;
   if (myCharacter) {
     const ch = toCharacter(myCharacter);
@@ -258,6 +275,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
           </SheetModal>
         }
         log={log}
+        bar={bar}
       >
         {middle}
       </PlayTable>
@@ -267,6 +285,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
     const dice = isStoryteller ? (
       <ColumnTabs
         label='Dice'
+        tight
         tabs={[
           { id: 'roll', label: 'Roll', content: <StorytellerDice chronicleId={c.id} game={c.game} /> },
           { id: 'log', label: 'Dice log', content: log },
@@ -275,6 +294,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
     ) : (
       <ColumnTabs
         label='Dice'
+        tight
         tabs={[
           {
             id: 'log',
@@ -290,29 +310,14 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
       />
     );
     table = (
-      <TableColumns leftLabel='Party' left={<ColumnTabs label='The party' tabs={[{ id: 'party', label: 'The party', content: partyList }]} />} right={dice}>
+      <TableColumns bar={bar} leftLabel='Party' left={<ColumnTabs label='The party' tight tabs={[{ id: 'party', label: 'The party', content: partyList }]} />} right={dice}>
         {middle}
       </TableColumns>
     );
   }
 
   return (
-    <TableShell
-      game={c.game}
-      eyebrow={`${GAMES[c.game].name} chronicle · ${bot ? 'Storyteller bot' : isStoryteller ? 'You’re the Storyteller' : 'Player'}`}
-      title={c.name}
-      actions={
-        isOwner ? (
-          <ActionButton action={deleteChronicle.bind(null, c.id)} className={small} confirm='Delete this chronicle for everyone?'>
-            Delete chronicle
-          </ActionButton>
-        ) : (
-          <ActionButton action={leaveChronicle.bind(null, c.id)} className={small} confirm='Leave this chronicle?'>
-            Leave
-          </ActionButton>
-        )
-      }
-    >
+    <TableShell game={c.game} act={scene?.act ?? 0}>
       <LiveRefresh chronicleId={c.id} live={live} />
       {/* The page is rendered per request, so its clock is the server's. */}
       {/* eslint-disable-next-line react-hooks/purity */}

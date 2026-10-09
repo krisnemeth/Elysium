@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import clsx from 'clsx';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { GAMES, type Game } from '@/app/lib/games';
 import { ATTRIBUTES, SKILLS, type Damage, type Sheet } from '@/app/lib/sheets/types';
 import { NO_DAMAGE } from '@/app/lib/play/damage';
@@ -11,6 +11,7 @@ import PoolRoller from '@/app/ui/play/PoolRoller';
 import { MiniDamageTrack, MiniHumanityTrack, MiniPointTrack } from '@/app/ui/play/tracks';
 import SaveStatus from '@/app/ui/sheets/SaveStatus';
 import { useCharacterSave } from '@/app/ui/sheets/useCharacterSave';
+import { registerFlush } from './GameBar';
 import { useRollLock } from './turns';
 
 /*
@@ -27,12 +28,18 @@ const COLUMNS = [
 ] as const;
 type Column = (typeof COLUMNS)[number]['id'];
 
-const column = 'min-h-0 flex-col gap-4 lg:flex';
+const column = 'min-h-0 flex-col gap-2 lg:flex';
 
-export function TableColumns({ left, right, children, leftLabel = 'Character' }: { left: ReactNode; right: ReactNode; children: ReactNode; leftLabel?: string }) {
+/*
+  `bar` is the game's own bar: over the middle column from lg up (the
+  sidebars run the full height either side of it), above the tabs below lg.
+  The sidebars match the dashboard sidebar's width (w-60).
+*/
+export function TableColumns({ bar, left, right, children, leftLabel = 'Character' }: { bar: ReactNode; left: ReactNode; right: ReactNode; children: ReactNode; leftLabel?: string }) {
   const [shown, setShown] = useState<Column>('middle');
   return (
-    <div className='flex min-h-0 grow flex-col gap-4'>
+    <div className='flex min-h-0 grow flex-col gap-2'>
+      <div className='lg:hidden'>{bar}</div>
       <div role='tablist' aria-label='Table' className='flex gap-1 self-center rounded-full border border-bone/10 bg-ink/50 p-1 lg:hidden'>
         {COLUMNS.map((c) => (
           <button
@@ -47,9 +54,12 @@ export function TableColumns({ left, right, children, leftLabel = 'Character' }:
           </button>
         ))}
       </div>
-      <div className='grid min-h-0 grow gap-4 lg:grid-cols-[17rem_minmax(0,1fr)_20rem] xl:grid-cols-[19rem_minmax(0,1fr)_22rem]'>
+      <div className='grid min-h-0 grow gap-2 lg:grid-cols-[15rem_minmax(0,1fr)_15rem]'>
         <aside aria-label={leftLabel} className={clsx(column, shown === 'left' ? 'flex' : 'hidden')}>{left}</aside>
-        <div className={clsx(column, shown === 'middle' ? 'flex' : 'hidden')}>{children}</div>
+        <div className={clsx(column, shown === 'middle' ? 'flex' : 'hidden')}>
+          <div className='hidden lg:block'>{bar}</div>
+          {children}
+        </div>
         <aside aria-label='Dice' className={clsx(column, shown === 'right' ? 'flex' : 'hidden')}>{right}</aside>
       </div>
     </div>
@@ -58,12 +68,13 @@ export function TableColumns({ left, right, children, leftLabel = 'Character' }:
 
 // Tabs inside a column. Every tab stays mounted (the dice keep their state).
 // `footer` stays in view under every tab (e.g. the group's vote).
-export function ColumnTabs({ label, tabs, footer, className = '' }: { label: string; tabs: { id: string; label: string; content: ReactNode }[]; footer?: ReactNode; className?: string }) {
+// `tight` is for the narrow sidebars.
+export function ColumnTabs({ label, tabs, footer, tight = false, className = '' }: { label: string; tabs: { id: string; label: string; content: ReactNode }[]; footer?: ReactNode; tight?: boolean; className?: string }) {
   const [shown, setShown] = useState(tabs[0]?.id);
   return (
     <section aria-label={label} className={`flex min-h-0 grow flex-col ${panel} ${className}`}>
       {tabs.length > 1 ? (
-        <div role='tablist' aria-label={label} className='flex shrink-0 gap-5 border-b border-bone/10 px-5'>
+        <div role='tablist' aria-label={label} className='flex shrink-0 gap-4 border-b border-bone/10 px-4'>
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -81,14 +92,14 @@ export function ColumnTabs({ label, tabs, footer, className = '' }: { label: str
           ))}
         </div>
       ) : (
-        <h2 className='shrink-0 border-b border-bone/10 px-5 py-3 font-display text-lg'>{tabs[0]?.label}</h2>
+        <h2 className='shrink-0 border-b border-bone/10 px-4 py-3 font-display text-lg'>{tabs[0]?.label}</h2>
       )}
       {tabs.map((t) => (
-        <div key={t.id} role={tabs.length > 1 ? 'tabpanel' : undefined} hidden={shown !== t.id} className='min-h-0 grow overflow-y-auto p-5 [&:not([hidden])]:flex [&:not([hidden])]:flex-col'>
+        <div key={t.id} role={tabs.length > 1 ? 'tabpanel' : undefined} hidden={shown !== t.id} className={clsx('min-h-0 grow overflow-y-auto p-4 [&:not([hidden])]:flex [&:not([hidden])]:flex-col', !tight && 'lg:p-5')}>
           {t.content}
         </div>
       ))}
-      {footer && <div className='shrink-0 border-t border-bone/10 px-5 pt-4 pb-5'>{footer}</div>}
+      {footer && <div className='shrink-0 border-t border-bone/10 px-5 pt-3 pb-4'>{footer}</div>}
     </section>
   );
 }
@@ -106,6 +117,7 @@ export function PlayTable({
   faction,
   sheetDialog,
   log,
+  bar,
   children,
 }: {
   chronicleId: string;
@@ -119,9 +131,11 @@ export function PlayTable({
   sheetDialog: ReactNode;
   // The chronicle's shared dice log.
   log: ReactNode;
+  bar: ReactNode;
   children: ReactNode;
 }) {
-  const { sheet, update, state, error, retry } = useCharacterSave(game, id, initialSheet);
+  const { sheet, update, state, error, retry, flush } = useCharacterSave(game, id, initialSheet);
+  useEffect(() => registerFlush(flush), [flush]);
   const locked = useRollLock();
   const t = sheet.trackers;
   const setDamage = (track: 'health' | 'willpower') => (d: Damage) =>
@@ -146,14 +160,14 @@ export function PlayTable({
         : (sheet.edges ?? []).filter((e) => e.name).map((e) => e.name);
 
   const character = (
-    <section aria-label='Your character' className={`flex min-h-0 grow flex-col gap-4 overflow-y-auto p-5 ${panel}`}>
+    <section aria-label='Your character' className={`flex min-h-0 grow flex-col gap-4 overflow-y-auto p-4 ${panel}`}>
       <div className='flex items-center gap-3'>
-        <span className='relative h-20 w-15 shrink-0 overflow-hidden rounded-lg'>
+        <span className='relative h-18 w-14 shrink-0 overflow-hidden rounded-lg'>
           <Image src={portrait.src} unoptimized={portrait.unoptimized} alt='' fill sizes='4rem' className='object-cover object-top' />
         </span>
         <div className='min-w-0 grow'>
           <p className={label}>{faction || GAMES[game].noun.one}</p>
-          <h2 className='truncate font-display text-2xl leading-tight'>{sheet.profile.name || name}</h2>
+          <h2 className='line-clamp-2 font-display text-xl leading-tight'>{sheet.profile.name || name}</h2>
           <SaveStatus className='mt-1' state={state} error={error} onRetry={() => void retry()} />
         </div>
       </div>
@@ -237,10 +251,12 @@ export function PlayTable({
 
   return (
     <TableColumns
+      bar={bar}
       left={character}
       right={
         <ColumnTabs
           label='Dice'
+          tight
           tabs={[
             { id: 'roll', label: 'Roll', content: <PoolRoller game={game} name={name} sheet={sheet} update={update} shareTo={chronicleId} compact locked={locked} /> },
             { id: 'log', label: 'Dice log', content: log },

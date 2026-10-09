@@ -212,6 +212,16 @@
   border-color: rgb(110 75 44 / 0.18);
 }
 
+/* The chronicle table (app/ui/chronicles/TableShell.tsx): lighter glass for
+   every game, so the act's location shows through behind the panels. */
+.chronicle-table .panel {
+  background-color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+  backdrop-filter: blur(16px);
+}
+:root[data-theme='dark'] [data-game='hunter'] .chronicle-table .panel:not(.frame) {
+  background-color: rgb(24 17 11 / 0.6);
+}
+
 /* -------------------------------------------------------------- ambience */
 
 @keyframes neon-flicker {

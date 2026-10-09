@@ -25,7 +25,7 @@ export type Chronicle = {
   updated_at: string;
 };
 
-export type Membership = { role: 'storyteller' | 'player'; status: 'invited' | 'joined'; character_id: string | null };
+export type Membership = { role: 'storyteller' | 'player'; status: 'invited' | 'joined' | 'left'; character_id: string | null };
 
 export type PartyMember = {
   user_id: string;

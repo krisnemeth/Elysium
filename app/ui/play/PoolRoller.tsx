@@ -97,7 +97,7 @@ export default function PoolRoller({
 
   return (
     <div className={clsx('flex flex-col', compact ? 'h-full min-h-0 gap-3' : 'gap-4')}>
-      <div className={clsx('grid', compact ? 'grid-cols-2 gap-3' : `gap-4 p-5 sm:grid-cols-[1fr_1fr_auto] sm:items-end ${panel}`)}>
+      <div className={clsx('grid', compact ? 'gap-2' : `gap-4 p-5 sm:grid-cols-[1fr_1fr_auto] sm:items-end ${panel}`)}>
         <div className='flex min-w-0 flex-col gap-1'>
           <label htmlFor={firstId} className={fieldLabel}>Attribute</label>
           <select id={firstId} value={first} onChange={(e) => { setFirst(e.target.value as Attribute); setModifier(0); }} className={select}>
@@ -124,7 +124,7 @@ export default function PoolRoller({
           </select>
         </div>
         {second?.specialty ? (
-          <label className={clsx('flex cursor-pointer items-center gap-2 text-sm text-bone/75', compact ? 'col-span-2' : 'min-h-11')}>
+          <label className={clsx('flex cursor-pointer items-center gap-2 text-sm text-bone/75', compact ? '' : 'min-h-11')}>
             <input type='checkbox' checked={useSpecialty} onChange={(e) => setUseSpecialty(e.target.checked)} className='size-5 accent-[var(--accent)]' />
             {second.specialty} (+1)
           </label>
