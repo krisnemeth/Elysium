@@ -4,7 +4,7 @@ import { shareRoll } from '@/app/lib/actions/social';
 import type { Game } from '@/app/lib/games';
 import DiceRoller from '@/app/ui/dice/DiceRoller';
 
-// A Storyteller's roller: every roll is shared to the chronicle's dice log.
+// A Storyteller's roller: every roll is shared to the chronicle's roll log.
 export default function StorytellerDice({ chronicleId, game }: { chronicleId: string; game: Game }) {
   return (
     <DiceRoller

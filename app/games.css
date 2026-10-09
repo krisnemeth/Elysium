@@ -282,6 +282,10 @@
 .chronicle-table .skin-frame {
   background-color: color-mix(in srgb, var(--ink) 72%, transparent);
 }
+/* The story itself sits on darker glass, for reading. */
+.chronicle-table .story-panel {
+  background-color: color-mix(in srgb, var(--ink) 86%, transparent);
+}
 .chronicle-table[data-skin='hunter-light'] .panel {
   background-color: color-mix(in srgb, var(--ink) 90%, transparent);
 }

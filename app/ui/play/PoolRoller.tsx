@@ -5,6 +5,7 @@ import { useId, useState } from 'react';
 import type { Game } from '@/app/lib/games';
 import { ATTRIBUTES, SKILLS, type Attribute, type Sheet, type Skill } from '@/app/lib/sheets/types';
 import { NO_DAMAGE, takeDamage, trackState } from '@/app/lib/play/damage';
+import { healthMax, willpowerMax } from '@/app/lib/sheets/derived';
 import { shareRoll } from '@/app/lib/actions/social';
 import { fieldInput, fieldLabel, panel } from '@/app/ui/kit/styles';
 import DiceRoller from '@/app/ui/dice/DiceRoller';
@@ -78,7 +79,7 @@ export default function PoolRoller({
   const specialty = useSpecialty && second?.specialty ? 1 : 0;
   const physical = PHYSICAL.includes(first);
   const penalty =
-    (physical && trackState(health, t.health ?? 0) !== 'fine') || (!physical && trackState(willpower, t.willpower ?? 0) !== 'fine') ? IMPAIRED_PENALTY : 0;
+    (physical && trackState(health, healthMax(sheet)) !== 'fine') || (!physical && trackState(willpower, willpowerMax(sheet)) !== 'fine') ? IMPAIRED_PENALTY : 0;
   const base = Math.max(1, firstDots + (second?.dots ?? 0) + specialty - penalty);
   const pool = Math.max(1, base + modifier);
   const poolNote = [
@@ -136,6 +137,10 @@ export default function PoolRoller({
         game={game}
         compact={compact}
         locked={locked}
+        onReset={() => {
+          setModifier(0);
+          setUseSpecialty(false);
+        }}
         onResult={(r, info) => {
           if (shareTo) void shareRoll(shareTo, game, sheet.profile.name || name, info.reroll ? `${rollLabel} (Willpower reroll)` : rollLabel, r, info.difficulty);
         }}
@@ -154,7 +159,7 @@ export default function PoolRoller({
         }
         onWillpowerReroll={() =>
           update((s) => {
-            s.damage = { ...s.damage, willpower: takeDamage(willpower, t.willpower ?? 0, 'superficial') };
+            s.damage = { ...s.damage, willpower: takeDamage(willpower, willpowerMax(sheet), 'superficial') };
           })
         }
       />

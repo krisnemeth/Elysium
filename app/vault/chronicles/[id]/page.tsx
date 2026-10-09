@@ -17,9 +17,8 @@ import { panel } from '@/app/ui/kit/styles';
 import SocialShell from '@/app/ui/social/SocialShell';
 import { ActionButton } from '@/app/ui/social/forms';
 import { BotVote, CharacterPicker, InviteFriends, LiveRefresh, LiveRolls, NoteComposer } from '@/app/ui/chronicles/parts';
-import CharacterSheetView from '@/app/ui/characters/CharacterSheetView';
-import { factionName } from '@/app/ui/game/FactionMark';
-import SheetModal from '@/app/ui/chronicles/SheetModal';
+import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
+import { CLANS } from '@/app/lib/clans';
 import StorytellerDice from '@/app/ui/chronicles/StorytellerDice';
 import GameBar from '@/app/ui/chronicles/GameBar';
 import TableShell from '@/app/ui/chronicles/TableShell';
@@ -239,20 +238,22 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
   );
   const middle = (
     <>
-      <ColumnTabs label='The story' tabs={middleTabs} footer={vote} />
+      <ColumnTabs label='The story' tabs={middleTabs} footer={vote} className='story-panel' />
       <div className={`shrink-0 px-5 py-3 ${panel}`}>
         <TurnTracker />
       </div>
     </>
   );
 
+  // Who tells the story: the bot, or the Storyteller's name.
+  const st = party.find((p) => p.role === 'storyteller' && p.status === 'joined');
+  const storyteller = bot ? 'Bot' : st ? (st.user_id === me ? 'You' : st.display_name) : 'Nobody yet';
   const bar = (
     <GameBar
       chronicleId={c.id}
-      eyebrow={`${GAMES[c.game].name} chronicle · ${bot ? 'Storyteller bot' : isStoryteller ? 'You’re the Storyteller' : 'Player'}`}
+      kind={GAMES[c.game].name}
+      storyteller={storyteller}
       title={c.name}
-      act={scene?.act}
-      acts={bot ? ACT_COUNT : undefined}
       solo={joined.length === 1}
     />
   );
@@ -260,6 +261,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
   let table: ReactNode;
   if (myCharacter) {
     const ch = toCharacter(myCharacter);
+    const clan = ch.clan ? CLANS[ch.clan] : null;
     table = (
       <PlayTable
         chronicleId={c.id}
@@ -267,14 +269,13 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         id={myCharacter.id}
         name={myCharacter.name || 'Unnamed'}
         initialSheet={myCharacter.sheet}
-        portrait={{ src: ch.image.src, unoptimized: !!ch.image.unoptimized }}
-        faction={`${GAMES[myCharacter.game].name} · ${factionName(ch) || GAMES[myCharacter.game].noun.one}`}
-        sheetDialog={
-          <SheetModal label={`${ch.name}’s sheet`}>
-            <div data-game={myCharacter.game}>
-              <CharacterSheetView record={myCharacter} back={{ href: `/vault/${myCharacter.game}/characters/${myCharacter.id}`, label: 'Open on its own page' }} />
-            </div>
-          </SheetModal>
+        emblem={<FactionMark character={ch} className='h-14' />}
+        wordmark={
+          clan?.Wordmark ? (
+            <clan.Wordmark role='img' aria-label={clan.name} className='h-6 w-auto' />
+          ) : (
+            <span className='text-xs tracking-[0.25em] uppercase'>{factionName(ch) || GAMES[myCharacter.game].noun.one}</span>
+          )
         }
         log={log}
         bar={bar}
@@ -291,7 +292,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         className='skin-frame'
         tabs={[
           { id: 'roll', label: 'Roll', content: <StorytellerDice chronicleId={c.id} game={c.game} /> },
-          { id: 'log', label: 'Dice log', content: log },
+          { id: 'log', label: 'Roll log', content: log },
         ]}
       />
     ) : (
@@ -302,7 +303,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         tabs={[
           {
             id: 'log',
-            label: 'Dice log',
+            label: 'Roll log',
             content: (
               <>
                 <p className='mb-4 text-sm text-bone/60'>Bring a character (under The party) to get your sheet and dice here.</p>

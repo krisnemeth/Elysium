@@ -8,6 +8,7 @@ import type { Choice } from '@/app/lib/storyteller/generate';
 import type { PartyMember, Roll } from '@/app/lib/data/social';
 import { GAMES, type Game } from '@/app/lib/games';
 import { SPECIAL_DIE_NAME } from '@/app/lib/dice/rules';
+import { dieImage } from '@/app/lib/dice/faces';
 import { subscribe } from '@/app/lib/supabase/browser';
 import { buttonGhost, buttonPrimary, fieldInput, fieldLabel } from '@/app/ui/kit/styles';
 
@@ -228,6 +229,20 @@ export function LiveRefresh({ chronicleId, live }: { chronicleId: string; live: 
   return null;
 }
 
+/*
+  One die as the official dice art shows it (failure, success, critical, or
+  the special die's grim face). Faces that score nothing are dimmed, unless
+  they carry a grim result.
+*/
+function DieFace({ game, kind, value }: { game: Game; kind: 'regular' | 'special'; value: number }) {
+  const name = `${kind === 'special' ? `${SPECIAL_DIE_NAME[game]} die` : 'Die'}: ${value}`;
+  const grim = kind === 'special' && (value === 1 || (game === 'werewolf' && value === 2));
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- tiny static art, already sized
+    <img src={dieImage(game, kind, value)} alt={name} title={name} width={32} height={35} className={clsx('h-[35px] w-8', value < 6 && !grim && 'opacity-45')} />
+  );
+}
+
 const OUTCOMES: Record<string, string> = {
   critical: 'Critical win',
   win: 'Win',
@@ -283,17 +298,7 @@ export function LiveRolls({ chronicleId, initial, party, live }: { chronicleId: 
               </div>
               <div className='flex flex-wrap items-center gap-1.5'>
                 {r.dice.map((d, i) => (
-                  <span
-                    key={i}
-                    title={d.kind === 'special' ? `${SPECIAL_DIE_NAME[r.game]} die` : 'Die'}
-                    className={clsx(
-                      'grid size-6 place-items-center rounded-md text-[0.7rem] tabular-nums',
-                      d.kind === 'special' ? 'bg-accent/80 text-white' : 'bg-bone/10',
-                      d.value < 6 && 'opacity-50',
-                    )}
-                  >
-                    {d.value}
-                  </span>
+                  <DieFace key={i} game={r.game} kind={d.kind} value={d.value} />
                 ))}
                 <span className='ml-2 text-xs text-bone/50 tabular-nums'>
                   {r.successes} vs {r.difficulty} ·{' '}
