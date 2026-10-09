@@ -122,9 +122,9 @@ export function BotVote({
     });
 
   return (
-    <div className='flex flex-col gap-3'>
+    <div className='flex flex-col gap-2.5'>
       <p className={fieldLabel}>What does the group do? Everyone votes.</p>
-      <ul className='grid gap-2 sm:grid-cols-2'>
+      <ul className='grid gap-2 sm:grid-cols-2 2xl:grid-cols-4'>
         {choices.map((c) => {
           const voters = votes.filter((v) => v.choice === c.id);
           const chosen = mine === c.id;
@@ -136,33 +136,33 @@ export function BotVote({
                 aria-pressed={chosen}
                 onClick={() => run(() => voteBotChoice(chronicleId, step, c.id))}
                 className={clsx(
-                  'flex h-full w-full flex-col items-start gap-1 rounded-xl border p-3 text-left transition-colors focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60',
+                  'flex h-full w-full flex-col items-start gap-0.5 rounded-xl border px-3 py-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60',
                   chosen ? 'border-accent bg-accent/15' : 'border-bone/15 hover:border-bone/40',
                 )}
               >
                 <span className='flex w-full items-baseline justify-between gap-2'>
-                  <span className='font-display text-lg'>{c.label}</span>
+                  <span className='font-display text-lg leading-tight'>{c.label}</span>
                   {voters.length > 0 && <span className='text-xs text-accent tabular-nums'>{voters.length}</span>}
                 </span>
-                {c.test && <span className='text-xs text-bone/55'>Roll: {c.test}</span>}
+                {c.test && <span className='text-xs text-bone/55 short:line-clamp-1' title={`Roll: ${c.test}`}>Roll: {c.test}</span>}
                 {voters.length > 0 && <span className='text-xs text-bone/70'>{voters.map((v) => names.get(v.user_id) ?? 'Someone').join(', ')}</span>}
               </button>
             </li>
           );
         })}
       </ul>
-      <div className='flex flex-wrap items-center gap-3 text-xs text-bone/55'>
+      <div className='flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-bone/55'>
         <span role='status'>
           {votes.length} of {members.length} voted
           {waiting.length > 0 && ` · waiting for ${waiting.map((m) => names.get(m.id)).join(', ')}`}
         </span>
+        <span className='short:hidden'>You can change your vote until everyone has voted; ties go to the creator.</span>
         {isOwner && votes.length > 0 && waiting.length > 0 && (
           <button type='button' disabled={pending} onClick={() => run(() => callBotVote(chronicleId, step))} className='rounded-full border border-bone/20 px-3 py-1 text-bone/80 hover:border-bone/50 hover:text-bone'>
             End the vote now
           </button>
         )}
       </div>
-      <p className='text-xs text-bone/40'>You can change your vote until everyone has voted. Ties go to the chronicle’s creator.</p>
       {error && <p role='status' className='text-sm text-accent'>{error}</p>}
     </div>
   );

@@ -114,17 +114,17 @@ function outcomeText(game: Game, outcome: Outcome): OutcomeText {
   );
 }
 
-function Stepper({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
+function Stepper({ label, value, min, max, onChange, small = false }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void; small?: boolean }) {
   const btn =
-    'grid size-9 place-items-center rounded-full border border-bone/15 text-bone/80 transition duration-300 ease-(--ease-spring) hover:scale-110 hover:border-bone/40 hover:text-bone active:scale-95 focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-30';
+    `grid ${small ? 'size-7' : 'size-9'} place-items-center rounded-full border border-bone/15 text-bone/80 transition duration-300 ease-(--ease-spring) hover:scale-110 hover:border-bone/40 hover:text-bone active:scale-95 focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-30`;
   return (
-    <div className='flex flex-col items-center gap-2'>
-      <span className='text-[0.7rem] tracking-[0.2em] text-bone/55 uppercase'>{label}</span>
-      <div className='flex items-center gap-2'>
+    <div className={`flex flex-col items-center ${small ? 'gap-1' : 'gap-2'}`}>
+      <span className={`${small ? 'text-[0.6rem] tracking-[0.15em]' : 'text-[0.7rem] tracking-[0.2em]'} text-bone/55 uppercase`}>{label}</span>
+      <div className={`flex items-center ${small ? 'gap-1' : 'gap-2'}`}>
         <button type='button' aria-label={`Decrease ${label}`} className={btn} disabled={value <= min} onClick={() => onChange(value - 1)}>
           <MdRemove aria-hidden />
         </button>
-        <output aria-label={label} key={value} className='result-in w-10 text-center font-display text-4xl tabular-nums'>
+        <output aria-label={label} key={value} className={`result-in text-center font-display tabular-nums ${small ? 'w-8 text-3xl' : 'w-10 text-4xl'}`}>
           {value}
         </output>
         <button type='button' aria-label={`Increase ${label}`} className={btn} disabled={value >= max} onClick={() => onChange(value + 1)}>
@@ -170,6 +170,7 @@ export default function DiceRoller({
   poolNote,
   onResult,
   compact = false,
+  locked,
 }: {
   game?: Game;
   pool?: number;
@@ -189,6 +190,8 @@ export default function DiceRoller({
   // A smaller roller for the chronicle page: one column, a portrait tray, no
   // history (the chronicle keeps its own dice log).
   compact?: boolean;
+  // Why rolling isn't possible right now (e.g. it's someone else's turn).
+  locked?: string;
 }) {
   const config = GAMES[game];
   const specialName = SPECIAL_DIE_NAME[game];
@@ -243,7 +246,7 @@ export default function DiceRoller({
   };
 
   const roll = () => {
-    if (needsCheck) return;
+    if (needsCheck || locked) return;
     setChecked(false);
     const r = rollPool(game, usablePool, usableSpecial, difficulty);
     setSelected([]);
@@ -298,20 +301,22 @@ export default function DiceRoller({
   const text = result ? outcomeText(game, result.outcome) : null;
 
   return (
-    <div className={compact ? 'grid gap-5' : 'grid gap-5 xl:grid-cols-3'}>
-      <Paper index={1} className={compact ? undefined : 'xl:col-span-2'}>
+    <div className={compact ? 'flex h-full min-h-0 flex-col gap-5' : 'grid gap-5 xl:grid-cols-3'}>
+      <Paper index={1} className={compact ? 'min-h-0 grow' : 'xl:col-span-2'}>
+        {/* Compact rollers sit inside the table's own panel. */}
         {(torn) => (
-      <div className={`flex h-full flex-col ${compact ? 'gap-5 p-5' : 'gap-6 p-6 md:p-8'} ${torn} ${panel}`}>
-        <div className='flex flex-wrap items-end justify-center gap-x-10 gap-y-6 md:justify-between'>
+      <div className={`flex h-full flex-col ${compact ? 'gap-3' : `gap-6 p-6 md:p-8 ${torn} ${panel}`}`}>
+        <div className={compact ? 'flex items-start justify-around gap-1' : 'flex flex-wrap items-end justify-center gap-x-10 gap-y-6 md:justify-between'}>
           <div className='flex flex-col items-center gap-1'>
-            <Stepper label='Dice pool' value={usablePool} min={1} max={set.pool} onChange={(v) => { setPool(v); resetRoll(); }} />
-            {poolNote && <span className='max-w-48 text-center text-xs text-bone/45'>{poolNote}</span>}
+            <Stepper small={compact} label={compact ? 'Pool' : 'Dice pool'} value={usablePool} min={1} max={set.pool} onChange={(v) => { setPool(v); resetRoll(); }} />
+            {poolNote && !compact && <span className='max-w-48 text-center text-xs text-bone/45'>{poolNote}</span>}
           </div>
-          <Stepper label={specialName} value={special} min={0} max={set.special} onChange={(v) => { setSpecial(v); resetRoll(); }} />
-          <Stepper label='Difficulty' value={difficulty} min={1} max={10} onChange={setDifficulty} />
+          <Stepper small={compact} label={specialName} value={special} min={0} max={set.special} onChange={(v) => { setSpecial(v); resetRoll(); }} />
+          <Stepper small={compact} label={compact ? 'Diff.' : 'Difficulty'} value={difficulty} min={1} max={10} onChange={setDifficulty} />
         </div>
+        {poolNote && compact && <p className='-mt-1 text-center text-xs text-bone/45'>{poolNote}</p>}
 
-        <div className={compact ? 'relative mx-auto h-96 w-full max-w-sm' : 'relative -mx-2 h-108 md:h-144'}>
+        <div className={compact ? 'relative min-h-72 w-full grow lg:min-h-40' : 'relative -mx-2 h-108 md:h-144'}>
           <DiceScene
             game={game}
             portrait={compact}
@@ -338,14 +343,14 @@ export default function DiceRoller({
           ))}
         </ul>
 
-        <div aria-live='polite' className='min-h-24 border-t border-bone/10 pt-6 text-center'>
+        <div aria-live='polite' className={compact ? 'border-t border-bone/10 pt-3 text-center empty:border-0 empty:pt-0' : 'min-h-24 border-t border-bone/10 pt-6 text-center'}>
           {text && result && settled ? (
-            <div key={rollKey} className='result-in flex flex-col items-center gap-2'>
+            <div key={rollKey} className={`result-in flex flex-col items-center ${compact ? 'gap-1' : 'gap-2'}`}>
               <div className='flex items-center gap-3'>
-                {text.glyph && <Glyph name={text.glyph} className={`inline-block size-12 ${text.grim ? 'text-accent' : 'text-bone'}`} />}
-                <p className={`font-display ${compact ? 'text-4xl' : 'text-5xl'} italic ${text.grim ? 'text-accent' : ''}`}>{text.title}</p>
+                {text.glyph && <Glyph name={text.glyph} className={`inline-block ${compact ? 'size-8' : 'size-12'} ${text.grim ? 'text-accent' : 'text-bone'}`} />}
+                <p className={`font-display ${compact ? 'text-3xl' : 'text-5xl'} italic ${text.grim ? 'text-accent' : ''}`}>{text.title}</p>
               </div>
-              <p className='max-w-md text-bone/60'>{text.note}</p>
+              <p className={`max-w-md text-bone/60 ${compact ? 'text-xs' : ''}`}>{text.note}</p>
               <p className='text-xs tracking-[0.2em] text-bone/45 uppercase'>
                 {result.successes} {result.successes === 1 ? 'success' : 'successes'} vs difficulty {difficulty}
               </p>
@@ -356,40 +361,48 @@ export default function DiceRoller({
                 </div>
               )}
             </div>
-          ) : (
-            <p className='text-sm text-bone/45'>
+          ) : compact && !result ? null : (
+            <p className={`${compact ? 'text-xs' : 'text-sm'} text-bone/45`}>
               {result ? 'Rolling…' : `Set your pool and roll. ${specialName} dice are the coloured ones.`}
             </p>
           )}
         </div>
 
         {config.check && (
-          <div className='flex flex-col items-center gap-3'>
-            <label className='flex cursor-pointer items-center gap-3 text-sm text-bone/75'>
-              <input type='checkbox' checked={usesPower} onChange={(e) => setUsesPower(e.target.checked)} className='size-4 accent-[var(--accent)]' />
+          <div className={`flex flex-col items-center ${compact ? 'gap-2' : 'gap-3'}`}>
+            <label className={`flex cursor-pointer items-center gap-3 ${compact ? 'text-xs' : 'text-sm'} text-bone/75`}>
+              <input type='checkbox' checked={usesPower} onChange={(e) => setUsesPower(e.target.checked)} className='size-4 shrink-0 accent-[var(--accent)]' />
               {config.check.uses}
             </label>
-            {(needsCheck || compact) && (
-              <div id='check-first' role='status' className='flex flex-wrap items-center justify-center gap-3 text-sm text-accent'>
-                {needsCheck && config.check.first}
-                <button type='button' onClick={check} className={buttonGhost}>{config.check.button}</button>
-              </div>
+            {needsCheck && !locked && (
+              <p id='check-first' role='status' className={`text-center ${compact ? 'text-xs' : 'text-sm'} text-accent`}>
+                {config.check.first}
+              </p>
             )}
           </div>
         )}
+        {locked && (
+          <p id='roll-locked' role='status' className={`text-center ${compact ? 'text-xs' : 'text-sm'} text-bone/60`}>
+            {locked}
+          </p>
+        )}
 
         <div className='flex flex-wrap items-center justify-center gap-3'>
+          {/* The check sits next to Roll when it's needed (or always, when compact). */}
+          {config.check && (compact || needsCheck) && !locked && (
+            <button type='button' onClick={check} className={buttonGhost}>{config.check.button}</button>
+          )}
           <button
             type='button'
             onClick={roll}
-            disabled={!settled || needsCheck}
-            aria-describedby={needsCheck ? 'check-first' : undefined}
-            className={`${buttonPrimary} px-8 py-3 text-base`}
+            disabled={!settled || needsCheck || !!locked}
+            aria-describedby={locked ? 'roll-locked' : needsCheck ? 'check-first' : undefined}
+            className={`${buttonPrimary} ${compact ? 'px-6 py-2.5' : 'px-8 py-3'} text-base`}
           >
             <GiD10 aria-hidden className='size-5 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
             Roll {usablePool + (game === 'hunter' ? usableSpecial : 0)} dice
           </button>
-          {canRerollNow && (
+          {canRerollNow && !locked && (
             <button type='button' onClick={reroll} disabled={!selected.length} className={buttonGhost}>
               <MdRefresh aria-hidden className='size-4 transition-transform duration-500 group-hover:-rotate-180' />
               {selected.length ? `Reroll ${selected.length} with Willpower` : `Tap up to ${MAX_REROLL} dice to reroll`}
@@ -400,7 +413,7 @@ export default function DiceRoller({
         )}
       </Paper>
 
-      <div className={compact ? 'grid gap-5 sm:grid-cols-2 empty:hidden' : 'flex flex-col gap-5'}>
+      <div className={compact ? 'grid gap-5 empty:hidden' : 'flex flex-col gap-5'}>
         {/* Compact rollers keep the check button next to Roll instead. */}
         {config.check && !compact && (
           <section aria-labelledby='check-title' className={`p-6 ${panel}`}>

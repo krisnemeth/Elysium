@@ -170,3 +170,12 @@ export async function getVotes(chronicleId: string, step: number) {
   const { data } = await supabase.from('chronicle_votes').select('user_id, choice, created_at').eq('chronicle_id', chronicleId).eq('step', step);
   return (data ?? []) as Vote[];
 }
+
+// Whose turn it is at the table (no row until the first turn starts).
+export type Turn = { user_id: string | null; round: number; seconds: number; started_at: string };
+
+export async function getTurn(chronicleId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase.from('chronicle_turns').select('user_id, round, seconds, started_at').eq('chronicle_id', chronicleId).maybeSingle();
+  return (data ?? null) as Turn | null;
+}
