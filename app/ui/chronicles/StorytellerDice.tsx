@@ -9,6 +9,7 @@ export default function StorytellerDice({ chronicleId, game }: { chronicleId: st
   return (
     <DiceRoller
       game={game}
+      compact
       onResult={(r, info) => void shareRoll(chronicleId, game, 'Storyteller', info.reroll ? 'Willpower reroll' : 'Storyteller roll', r, info.difficulty)}
     />
   );

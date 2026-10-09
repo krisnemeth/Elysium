@@ -43,7 +43,7 @@ const GAMES: Record<
     success: string;
     critical: string;
     outcomes: Partial<Record<Outcome, OutcomeText>>;
-    check?: { title: string; body: string; button: string; calm: string; bad: string };
+    check?: { title: string; body: string; button: string; calm: string; bad: string; uses: string; first: string };
   }
 > = {
   vampire: {
@@ -59,6 +59,8 @@ const GAMES: Record<
       button: 'Rouse the blood',
       calm: 'Rouse check: calm',
       bad: 'Rouse check: Hunger rises',
+      uses: 'This roll uses the blood (a Discipline or Blood Surge)',
+      first: 'Rouse the blood first: this roll draws on it.',
     },
   },
   werewolf: {
@@ -78,6 +80,8 @@ const GAMES: Record<
       button: 'Make a Rage check',
       calm: 'Rage check: Rage holds',
       bad: 'Rage check: Rage spent',
+      uses: 'This roll calls on a Gift or a change of form',
+      first: 'Make a Rage check first: this roll calls on your Rage.',
     },
   },
   hunter: {
@@ -165,6 +169,7 @@ export default function DiceRoller({
   onWillpowerReroll,
   poolNote,
   onResult,
+  compact = false,
 }: {
   game?: Game;
   pool?: number;
@@ -181,6 +186,9 @@ export default function DiceRoller({
   poolNote?: string;
   // Every roll and reroll, e.g. to share it with a chronicle.
   onResult?: (result: RollResult, info: { reroll: boolean; difficulty: number }) => void;
+  // A smaller roller for the chronicle page: one column, a portrait tray, no
+  // history (the chronicle keeps its own dice log).
+  compact?: boolean;
 }) {
   const config = GAMES[game];
   const specialName = SPECIAL_DIE_NAME[game];
@@ -198,6 +206,10 @@ export default function DiceRoller({
   const [rerolled, setRerolled] = useState(false);
   const [choiceMade, setChoiceMade] = useState(false);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  // A roll that uses the blood or a Gift needs its rouse/Rage check first.
+  const [usesPower, setUsesPower] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const needsCheck = !!config.check && usesPower && !checked;
 
   // Pools built from a sheet can exceed the dice set; roll what the set holds.
   const set = DICE_SET[game];
@@ -231,6 +243,8 @@ export default function DiceRoller({
   };
 
   const roll = () => {
+    if (needsCheck) return;
+    setChecked(false);
     const r = rollPool(game, usablePool, usableSpecial, difficulty);
     setSelected([]);
     setRerolled(false);
@@ -253,6 +267,7 @@ export default function DiceRoller({
     const value = Math.floor(Math.random() * 10) + 1;
     const ok = value >= 6;
     if (!ok) setSpecial(game === 'vampire' ? Math.min(5, special + 1) : Math.max(0, special - 1));
+    setChecked(true);
     log({ label: ok ? config.check!.calm : config.check!.bad, detail: `Rolled ${value}`, grim: !ok });
   };
 
@@ -283,10 +298,10 @@ export default function DiceRoller({
   const text = result ? outcomeText(game, result.outcome) : null;
 
   return (
-    <div className='grid gap-5 xl:grid-cols-3'>
-      <Paper index={1} className='xl:col-span-2'>
+    <div className={compact ? 'grid gap-5' : 'grid gap-5 xl:grid-cols-3'}>
+      <Paper index={1} className={compact ? undefined : 'xl:col-span-2'}>
         {(torn) => (
-      <div className={`flex h-full flex-col gap-6 p-6 md:p-8 ${torn} ${panel}`}>
+      <div className={`flex h-full flex-col ${compact ? 'gap-5 p-5' : 'gap-6 p-6 md:p-8'} ${torn} ${panel}`}>
         <div className='flex flex-wrap items-end justify-center gap-x-10 gap-y-6 md:justify-between'>
           <div className='flex flex-col items-center gap-1'>
             <Stepper label='Dice pool' value={usablePool} min={1} max={set.pool} onChange={(v) => { setPool(v); resetRoll(); }} />
@@ -296,9 +311,10 @@ export default function DiceRoller({
           <Stepper label='Difficulty' value={difficulty} min={1} max={10} onChange={setDifficulty} />
         </div>
 
-        <div className='relative -mx-2 h-72 md:h-96'>
+        <div className={compact ? 'relative mx-auto h-96 w-full max-w-sm' : 'relative -mx-2 h-108 md:h-144'}>
           <DiceScene
             game={game}
+            portrait={compact}
             dice={sceneDice}
             rollKey={rollKey}
             rolled={rolled}
@@ -327,7 +343,7 @@ export default function DiceRoller({
             <div key={rollKey} className='result-in flex flex-col items-center gap-2'>
               <div className='flex items-center gap-3'>
                 {text.glyph && <Glyph name={text.glyph} className={`inline-block size-12 ${text.grim ? 'text-accent' : 'text-bone'}`} />}
-                <p className={`font-display text-5xl italic ${text.grim ? 'text-accent' : ''}`}>{text.title}</p>
+                <p className={`font-display ${compact ? 'text-4xl' : 'text-5xl'} italic ${text.grim ? 'text-accent' : ''}`}>{text.title}</p>
               </div>
               <p className='max-w-md text-bone/60'>{text.note}</p>
               <p className='text-xs tracking-[0.2em] text-bone/45 uppercase'>
@@ -347,8 +363,29 @@ export default function DiceRoller({
           )}
         </div>
 
+        {config.check && (
+          <div className='flex flex-col items-center gap-3'>
+            <label className='flex cursor-pointer items-center gap-3 text-sm text-bone/75'>
+              <input type='checkbox' checked={usesPower} onChange={(e) => setUsesPower(e.target.checked)} className='size-4 accent-[var(--accent)]' />
+              {config.check.uses}
+            </label>
+            {(needsCheck || compact) && (
+              <div id='check-first' role='status' className='flex flex-wrap items-center justify-center gap-3 text-sm text-accent'>
+                {needsCheck && config.check.first}
+                <button type='button' onClick={check} className={buttonGhost}>{config.check.button}</button>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className='flex flex-wrap items-center justify-center gap-3'>
-          <button type='button' onClick={roll} disabled={!settled} className={`${buttonPrimary} px-8 py-3 text-base`}>
+          <button
+            type='button'
+            onClick={roll}
+            disabled={!settled || needsCheck}
+            aria-describedby={needsCheck ? 'check-first' : undefined}
+            className={`${buttonPrimary} px-8 py-3 text-base`}
+          >
             <GiD10 aria-hidden className='size-5 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
             Roll {usablePool + (game === 'hunter' ? usableSpecial : 0)} dice
           </button>
@@ -363,8 +400,9 @@ export default function DiceRoller({
         )}
       </Paper>
 
-      <div className='flex flex-col gap-5'>
-        {config.check && (
+      <div className={compact ? 'grid gap-5 sm:grid-cols-2 empty:hidden' : 'flex flex-col gap-5'}>
+        {/* Compact rollers keep the check button next to Roll instead. */}
+        {config.check && !compact && (
           <section aria-labelledby='check-title' className={`p-6 ${panel}`}>
             <h2 id='check-title' className='font-display text-2xl'>{config.check.title}</h2>
             <p className='mt-2 text-sm leading-relaxed text-bone/60'>{config.check.body}</p>
@@ -391,6 +429,7 @@ export default function DiceRoller({
           </section>
         )}
 
+        {!compact && (
         <section aria-labelledby='history-title' className={`grow p-6 ${panel}`}>
           <h2 id='history-title' className='font-display text-2xl'>Recent rolls</h2>
           {history.length ? (
@@ -406,6 +445,7 @@ export default function DiceRoller({
             <p className='mt-3 text-sm text-bone/45'>Nothing rolled yet tonight.</p>
           )}
         </section>
+        )}
       </div>
     </div>
   );
