@@ -122,7 +122,7 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ 
 ## Landing Pages
 
 - `/` (`app/page.tsx`): the World of Darkness landing: three games side by side, then sections #worlds, #atmospheres and #dice (the navbar dots follow them), each over a location illustration from the asset pack (`public/locations/`, `app/ui/home/SectionBackdrop.tsx`).
-- **Site pages are dark only** (landing, `/vampire`, `/vault`, `/vault/new`, chronicles): no theme switch in the site navbar; `DARK_ONLY_PATHS` in `app/lib/theme.ts` handles first loads and `app/ui/ForceDark.tsx` in-app navigation, without touching the player's saved theme (which the dashboards use).
+- **Site pages are dark only** (landing, `/vampire`, `/vault`, `/vault/new`, chronicles, login/signup/auth, 404): no theme switch in the site navbar; `DARK_ONLY_PATHS` in `app/lib/theme.ts` handles first loads and `app/ui/ForceDark.tsx` in-app navigation, without touching the player's saved theme (which the dashboards use).
 - `/vampire`: the book-cover hero (`app/ui/home/Hero.tsx`). The portrait and ankh are sized from one `--cover` width so the ankh halo stays behind the portrait at every viewport; the ankh rises on scroll because the backdrop/portrait layers are sticky. Swap cover art via `COVER_ART` in `Hero.tsx`.
 - `/concept`: experimental editorial redesign, kept for reference.
 - Scroll-driven effects use CSS `animation-timeline` in `globals.css`, with a static fallback and `prefers-reduced-motion` respected.

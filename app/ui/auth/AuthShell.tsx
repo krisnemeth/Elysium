@@ -2,10 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Elysium1 } from '@/app/ui/svgs';
-import ThemeToggle from '@/app/ui/ThemeToggle';
+import ForceDark from '@/app/ui/ForceDark';
 import { GAMES, GAMES_ORDER } from '@/app/lib/games';
 
-// Shared frame for login, sign-up and the other auth screens.
+// Shared frame for login, sign-up and the other auth screens. Dark only, like
+// the rest of the site pages (the saved theme is for the game dashboards).
 export default function AuthShell({ title, lead, children }: { title: string; lead?: ReactNode; children: ReactNode }) {
   return (
     <div data-game='wod' className='relative isolate grid min-h-svh bg-ink text-bone transition-colors duration-500 lg:grid-cols-[1fr_minmax(26rem,32rem)]'>
@@ -20,11 +21,11 @@ export default function AuthShell({ title, lead, children }: { title: string; le
       </div>
 
       <main id='main' className='page-in relative flex flex-col px-6 py-8 md:px-12'>
-        <div className='flex items-center justify-between'>
+        <ForceDark />
+        <div className='flex items-center'>
           <Link href='/' aria-label='Elysium home' className='rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone'>
             <Elysium1 aria-hidden className='h-auto w-24 text-bone' />
           </Link>
-          <ThemeToggle labels={{ light: 'Light', dark: 'Dark' }} labelClassName='sr-only' className='rounded-xl p-2 text-bone/70' />
         </div>
         <div className='my-auto w-full max-w-sm self-center py-12'>
           <h1 className='font-display text-5xl leading-tight tracking-tight'>{title}</h1>

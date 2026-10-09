@@ -1,16 +1,13 @@
 import Link from 'next/link';
 import { LogoAnkh } from '@/app/ui/svgs/official';
-import ThemeToggle from '@/app/ui/ThemeToggle';
+import ForceDark from '@/app/ui/ForceDark';
 import { buttonPrimary, buttonGhost } from '@/app/ui/kit/styles';
 
 export default function NotFound() {
   return (
     <main className='grain relative isolate grid min-h-svh place-items-center overflow-hidden bg-ink px-6 text-bone'>
       <div className='pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_40%,var(--accent-deep),transparent_65%)] opacity-70' />
-      <ThemeToggle
-        labels={{ light: 'Neon Nights', dark: 'Masquerade' }}
-        className='absolute top-5 right-5 rounded-xl px-3 py-2 text-xs text-bone/70 transition-colors hover:text-bone'
-      />
+      <ForceDark />
       <div className='page-in flex max-w-md flex-col items-center text-center'>
         <LogoAnkh aria-hidden className='glow-pulse h-28 w-auto text-accent drop-shadow-[0_0_2rem_var(--accent)]' />
         <p className='mt-8 text-xs tracking-[0.3em] text-accent uppercase'>404</p>
