@@ -44,3 +44,26 @@ export function glyphFor(game: Game, kind: DieKind, value: number): string | nul
   }
 }
 
+
+/*
+  The official dice art for one rolled die (public/dice/faces/, exported from
+  the Dark Pack asset pack): the regular or special die showing a failure, a
+  success, a critical, or the special die's grim face.
+*/
+const SPECIAL: Record<Game, string> = { vampire: 'hunger', werewolf: 'rage', hunter: 'desperation' };
+const GRIM: Record<Game, string> = { vampire: 'bestialfailure', werewolf: 'brutal', hunter: 'overreachordespair' };
+
+export function dieImage(game: Game, kind: DieKind, value: number): string {
+  const special = kind === 'special';
+  const face =
+    value === 10
+      ? special && game === 'vampire'
+        ? 'messycritical'
+        : 'critical'
+      : value >= 6
+        ? 'success'
+        : special && (value === 1 || (game === 'werewolf' && value === 2))
+          ? GRIM[game]
+          : 'failure';
+  return `/dice/faces/${game}-${special ? SPECIAL[game] : 'regular'}-${face}.webp`;
+}

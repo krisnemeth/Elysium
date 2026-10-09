@@ -8,8 +8,7 @@ import type { Choice } from '@/app/lib/storyteller/generate';
 import type { PartyMember, Roll } from '@/app/lib/data/social';
 import { GAMES, type Game } from '@/app/lib/games';
 import { SPECIAL_DIE_NAME } from '@/app/lib/dice/rules';
-import { DICE_STYLES, glyphFor } from '@/app/lib/dice/faces';
-import Glyph from '@/app/ui/dice/Glyph';
+import { dieImage } from '@/app/lib/dice/faces';
 import { subscribe } from '@/app/lib/supabase/browser';
 import { buttonGhost, buttonPrimary, fieldInput, fieldLabel } from '@/app/ui/kit/styles';
 
@@ -231,25 +230,16 @@ export function LiveRefresh({ chronicleId, live }: { chronicleId: string; live: 
 }
 
 /*
-  One die as the official dice show it: a d10's kite-shaped face in the
-  game's colours, with the symbol that value shows (none on a blank face).
-  Faces that score nothing are dimmed, unless they carry a grim symbol.
+  One die as the official dice art shows it (failure, success, critical, or
+  the special die's grim face). Faces that score nothing are dimmed, unless
+  they carry a grim result.
 */
 function DieFace({ game, kind, value }: { game: Game; kind: 'regular' | 'special'; value: number }) {
-  const style = DICE_STYLES[game][kind];
-  const glyph = glyphFor(game, kind, value);
   const name = `${kind === 'special' ? `${SPECIAL_DIE_NAME[game]} die` : 'Die'}: ${value}`;
+  const grim = kind === 'special' && (value === 1 || (game === 'werewolf' && value === 2));
   return (
-    <span
-      role='img'
-      aria-label={name}
-      title={name}
-      className={clsx('relative grid h-8 w-7 place-items-center pt-1', value < 6 && !glyph && 'opacity-45')}
-      // The symbol is drawn in currentColor: the die's own ink.
-      style={{ backgroundColor: style.face, color: style.glyph, clipPath: 'polygon(50% 0, 100% 70%, 50% 100%, 0 70%)' }}
-    >
-      {glyph && <Glyph name={glyph} className='inline-block size-4.5' />}
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element -- tiny static art, already sized
+    <img src={dieImage(game, kind, value)} alt={name} title={name} width={32} height={35} className={clsx('h-[35px] w-8', value < 6 && !grim && 'opacity-45')} />
   );
 }
 
