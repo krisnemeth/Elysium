@@ -200,7 +200,7 @@ export default function Home() {
           <SectionBackdrop src='/locations/location-30.webp' />
           <div className='mx-auto max-w-6xl'>
             <h2 id='atmo-title' className='reveal max-w-3xl font-display text-5xl leading-[0.95] tracking-tight text-balance md:text-6xl'>
-              Every game has its own room, by night and by day.
+              Every game has two rooms of its own.
             </h2>
             <p className='reveal mt-5 max-w-[56ch] leading-relaxed text-bone/65'>
               Six themes, each with its own frame, light and a little something that never stops moving.
