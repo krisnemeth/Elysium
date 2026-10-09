@@ -104,5 +104,11 @@ export function useCharacterSave(game: Game, initialId: string | null, initialSh
     return idRef.current;
   }, [save]);
 
-  return { sheet, update, state, error, id, retry: save, ensureId };
+  // Saves anything still waiting on the autosave, e.g. before leaving the page.
+  const flush = useCallback(async () => {
+    if (timer.current) await save();
+    while (inFlight.current) await new Promise((r) => setTimeout(r, 100));
+  }, [save]);
+
+  return { sheet, update, state, error, id, retry: save, ensureId, flush };
 }

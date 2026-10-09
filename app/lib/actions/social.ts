@@ -7,6 +7,7 @@ import { isGame, type Game } from '@/app/lib/games';
 import { TONES, SETTINGS, type SettingKind, type Tone } from '@/app/lib/storyteller/content';
 import { logEntry, newBotState, sceneFor, type BotState, type Choice } from '@/app/lib/storyteller/generate';
 import type { RollResult } from '@/app/lib/dice/rules';
+import { getTurn, type Turn } from '@/app/lib/data/social';
 
 export type ActionState = { ok?: boolean; error?: string; message?: string };
 
@@ -142,8 +143,12 @@ export async function respondToInvite(chronicleId: string, accept: boolean) {
   if (accept) redirect(chroniclePath(chronicleId));
 }
 
-export async function leaveChronicle(chronicleId: string) {
-  await respondToInvite(chronicleId, false);
+// Leaves the table, keeping the character on file for a re-invite.
+export async function leaveChronicle(chronicleId: string): Promise<ActionState> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('leave_chronicle', { cid: chronicleId });
+  if (error || !data) return { error: 'Couldn’t leave the game. Try again.' };
+  revalidatePath('/vault/chronicles');
   redirect('/vault/chronicles');
 }
 
@@ -244,4 +249,23 @@ export async function callBotVote(chronicleId: string, step: number): Promise<Ac
   await afterDecision(supabase, chronicleId, winner as string);
   revalidatePath(chroniclePath(chronicleId));
   return { ok: true };
+}
+
+// ------------------------------------------------------------------ turns
+
+// Passes the turn on. `expected` is whose turn the caller saw (null to start).
+// Returns the turn as it stands afterwards, in case live updates are slow.
+export async function passTurn(chronicleId: string, expected: string | null): Promise<ActionState & { turn?: Turn | null }> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc('pass_turn', { cid: chronicleId, expected });
+  if (error) return { error: 'Couldn’t pass the turn. Try again.' };
+  return { ok: true, turn: await getTurn(chronicleId) };
+}
+
+// A Storyteller (person) gives the turn to a player, or to nobody.
+export async function giveTurn(chronicleId: string, to: string | null): Promise<ActionState & { turn?: Turn | null }> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('give_turn', { cid: chronicleId, to_user: to });
+  if (error || !data) return { error: 'Only the Storyteller can hand out turns.' };
+  return { ok: true, turn: await getTurn(chronicleId) };
 }

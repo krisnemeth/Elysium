@@ -62,6 +62,7 @@ The app was front-end only with sample data. This group makes characters persist
 - ✅ **At the table**: your character's card (key roll values, full sheet in a
   dialog), condition tracking and dice on the chronicle page; a dice roller for
   the Storyteller.
+- ✅ **The chronicle table** (#41): a self-contained game mode that fits the screen (full-height character and dice sidebars, the game's own bar, story and turns in the middle; tabs on phones), over a location backdrop per act. Turn based: the current player's card rises; a Storyteller hands out turns, the bot enforces them with a 2-minute fuse. Leaving asks first and keeps your character for a re-invite; playing alone just pauses.
 - Next: the story engine proposal in `plans/storyteller-engine.md`.
 
 ## Group 4 — Story and polish

@@ -25,7 +25,7 @@ export type Chronicle = {
   updated_at: string;
 };
 
-export type Membership = { role: 'storyteller' | 'player'; status: 'invited' | 'joined'; character_id: string | null };
+export type Membership = { role: 'storyteller' | 'player'; status: 'invited' | 'joined' | 'left'; character_id: string | null };
 
 export type PartyMember = {
   user_id: string;
@@ -169,4 +169,13 @@ export async function getVotes(chronicleId: string, step: number) {
   const supabase = await createClient();
   const { data } = await supabase.from('chronicle_votes').select('user_id, choice, created_at').eq('chronicle_id', chronicleId).eq('step', step);
   return (data ?? []) as Vote[];
+}
+
+// Whose turn it is at the table (no row until the first turn starts).
+export type Turn = { user_id: string | null; round: number; seconds: number; started_at: string };
+
+export async function getTurn(chronicleId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase.from('chronicle_turns').select('user_id, round, seconds, started_at').eq('chronicle_id', chronicleId).maybeSingle();
+  return (data ?? null) as Turn | null;
 }
