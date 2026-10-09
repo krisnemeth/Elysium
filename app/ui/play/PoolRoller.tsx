@@ -137,6 +137,10 @@ export default function PoolRoller({
         game={game}
         compact={compact}
         locked={locked}
+        onReset={() => {
+          setModifier(0);
+          setUseSpecialty(false);
+        }}
         onResult={(r, info) => {
           if (shareTo) void shareRoll(shareTo, game, sheet.profile.name || name, info.reroll ? `${rollLabel} (Willpower reroll)` : rollLabel, r, info.difficulty);
         }}
