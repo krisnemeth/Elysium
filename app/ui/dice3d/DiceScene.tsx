@@ -20,6 +20,8 @@ type Props = {
   // Changes on every roll; dice whose index is in `rolled` are thrown again.
   rollKey: number;
   rolled: number[];
+  // Turn the tray so its short side faces the player (for narrow spaces).
+  portrait?: boolean;
   onSelect?: (index: number) => void;
   // Called with the rollKey once every thrown die has stopped.
   onSettled?: (rollKey: number) => void;
@@ -67,21 +69,32 @@ function useAtlas(game: Game, kind: Die['kind']) {
 
 // Inner half-sizes of the tray: room for the dice, at least five across and
 // two deep, plus space to bounce.
-function traySize(cols: number, rows: number) {
+function traySize(cols: number, rows: number, portrait = false) {
   return {
-    halfWidth: (Math.max(cols, 5) * SPACING) / 2 + 0.9,
-    halfDepth: (Math.max(rows, 2) * SPACING * 1.15) / 2 + 0.9,
+    halfWidth: (Math.max(cols, portrait ? 3 : 5) * SPACING) / 2 + 0.9,
+    halfDepth: (Math.max(rows, portrait ? 4 : 2) * SPACING * 1.15) / 2 + 0.9,
   };
+}
+
+// Grow the tray to fill the canvas, so a tall canvas gets a deep tray (more
+// room to roll) rather than empty space. Seen at the camera's angle, depth
+// looks about 0.8 as long. A portrait tray never grows wider than it is deep.
+function fillCanvas({ halfWidth, halfDepth }: { halfWidth: number; halfDepth: number }, aspect: number, portrait: boolean) {
+  const depth = Math.max(halfDepth, (halfWidth / aspect / 0.8) * 0.95);
+  const width = Math.max(halfWidth, Math.min(depth * 0.8 * aspect * 0.95, portrait ? depth : Infinity));
+  return { halfWidth: width, halfDepth: depth };
 }
 
 // Rows of dice, as many across as makes them largest on screen: the tray's
 // footprint (seen at the camera's angle, depth looks ~0.8 as long) is
 // compared with the canvas shape.
-function layout(count: number, aspect: number) {
+function layout(count: number, aspect: number, portrait = false) {
   let cols = 1;
   let best = Infinity;
   for (let c = 1; c <= Math.min(count, 8); c++) {
-    const { halfWidth, halfDepth } = traySize(c, Math.ceil(count / c));
+    const { halfWidth, halfDepth } = traySize(c, Math.ceil(count / c), portrait);
+    // A portrait tray stays deeper than it is wide.
+    if (portrait && halfDepth < halfWidth) continue;
     const extent = Math.max(halfWidth / aspect, halfDepth * 0.8);
     // On a tie (small pools in the smallest tray), prefer one long row.
     if (extent <= best + 1e-6) [best, cols] = [extent, c];
@@ -293,10 +306,10 @@ function D10Mesh({
   3D dice tray: real d10s thrown onto a table, each landing on the value the
   rules engine rolled. Rendering is on demand, so it idles at zero cost.
 */
-export default function DiceScene({ game, dice, rollKey, rolled, onSelect, onSettled }: Props) {
+export default function DiceScene({ game, dice, rollKey, rolled, portrait = false, onSelect, onSettled }: Props) {
   const [aspect, setAspect] = useState(2);
-  const { cols, rows, slots } = layout(Math.max(1, dice.length), aspect);
-  const tray = traySize(cols, rows);
+  const { cols, rows, slots } = layout(Math.max(1, dice.length), aspect, portrait);
+  const tray = fillCanvas(traySize(cols, rows, portrait), aspect, portrait);
 
   // One simulation per throw, made when the first die asks for it. Dice
   // stay where they fell until the pool changes; before any roll they wait
