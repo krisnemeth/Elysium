@@ -160,7 +160,9 @@ export function PlayTable({
         : (sheet.edges ?? []).filter((e) => e.name).map((e) => e.name);
 
   const character = (
-    <section aria-label='Your character' className={`skin-frame flex min-h-0 grow flex-col gap-4 overflow-y-auto p-4 ${panel}`}>
+    // The frame draws just outside the panel, so the scrolling happens inside it.
+    <section aria-label='Your character' className={`skin-frame flex min-h-0 grow flex-col ${panel}`}>
+      <div className='flex min-h-0 grow flex-col gap-4 overflow-y-auto p-4'>
       <div className='flex items-center gap-3'>
         <span className='relative h-18 w-14 shrink-0 overflow-hidden rounded-lg'>
           <Image src={portrait.src} unoptimized={portrait.unoptimized} alt='' fill sizes='4rem' className='object-cover object-top' />
@@ -246,6 +248,7 @@ export function PlayTable({
         </div>
       )}
       <div className='mt-auto'>{sheetDialog}</div>
+      </div>
     </section>
   );
 
