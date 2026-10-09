@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -11,6 +12,7 @@ import { GAMES } from '@/app/lib/games';
 import { isUploadedPortrait } from '@/app/lib/portraits';
 import { ACT_COUNT, buildArc, knownNpcs, sceneFor, storySoFar } from '@/app/lib/storyteller/generate';
 import { SUPABASE_KEY, SUPABASE_URL } from '@/app/lib/supabase/env';
+import { readSkin, SKIN_COOKIE } from '@/app/lib/table-skin';
 import { panel } from '@/app/ui/kit/styles';
 import SocialShell from '@/app/ui/social/SocialShell';
 import { ActionButton } from '@/app/ui/social/forms';
@@ -286,6 +288,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
       <ColumnTabs
         label='Dice'
         tight
+        className='skin-frame'
         tabs={[
           { id: 'roll', label: 'Roll', content: <StorytellerDice chronicleId={c.id} game={c.game} /> },
           { id: 'log', label: 'Dice log', content: log },
@@ -295,6 +298,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
       <ColumnTabs
         label='Dice'
         tight
+        className='skin-frame'
         tabs={[
           {
             id: 'log',
@@ -310,14 +314,16 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
       />
     );
     table = (
-      <TableColumns bar={bar} leftLabel='Party' left={<ColumnTabs label='The party' tight tabs={[{ id: 'party', label: 'The party', content: partyList }]} />} right={dice}>
+      <TableColumns bar={bar} leftLabel='Party' left={<ColumnTabs label='The party' tight className='skin-frame' tabs={[{ id: 'party', label: 'The party', content: partyList }]} />} right={dice}>
         {middle}
       </TableColumns>
     );
   }
 
+  const skin = readSkin((await cookies()).get(SKIN_COOKIE)?.value, `${c.game}-dark`);
+
   return (
-    <TableShell game={c.game} act={scene?.act ?? 0}>
+    <TableShell game={c.game} act={scene?.act ?? 0} skin={skin}>
       <LiveRefresh chronicleId={c.id} live={live} />
       {/* The page is rendered per request, so its clock is the server's. */}
       {/* eslint-disable-next-line react-hooks/purity */}

@@ -160,7 +160,7 @@ export function PlayTable({
         : (sheet.edges ?? []).filter((e) => e.name).map((e) => e.name);
 
   const character = (
-    <section aria-label='Your character' className={`flex min-h-0 grow flex-col gap-4 overflow-y-auto p-4 ${panel}`}>
+    <section aria-label='Your character' className={`skin-frame flex min-h-0 grow flex-col gap-4 overflow-y-auto p-4 ${panel}`}>
       <div className='flex items-center gap-3'>
         <span className='relative h-18 w-14 shrink-0 overflow-hidden rounded-lg'>
           <Image src={portrait.src} unoptimized={portrait.unoptimized} alt='' fill sizes='4rem' className='object-cover object-top' />
@@ -257,6 +257,7 @@ export function PlayTable({
         <ColumnTabs
           label='Dice'
           tight
+          className='skin-frame'
           tabs={[
             { id: 'roll', label: 'Roll', content: <PoolRoller game={game} name={name} sheet={sheet} update={update} shareTo={chronicleId} compact locked={locked} /> },
             { id: 'log', label: 'Dice log', content: log },

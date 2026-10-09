@@ -9,7 +9,7 @@ import { readTheme, serverTheme, subscribeTheme, switchTheme } from '@/app/lib/t
 import { IslandSection, useIsland } from '@/app/ui/kit/Island';
 
 // A small picture of each scene: its colours and the shape of its frame.
-const PREVIEWS: Record<Game, Record<Theme, { mood: string; bg: string; frame: CSSProperties; accent: string }>> = {
+export const PREVIEWS: Record<Game, Record<Theme, { mood: string; bg: string; frame: CSSProperties; accent: string }>> = {
   vampire: {
     dark: { mood: 'Gothic velvet and candle-red.', bg: 'linear-gradient(160deg,#450a0a,#0d0a0b 70%)', frame: { border: '1px solid #c81e2b88', outline: '1px solid #ffffff1a', outlineOffset: 2 }, accent: '#c81e2b' },
     light: { mood: 'Clubs, rain and neon.', bg: 'linear-gradient(160deg,#2e1065,#0d0717 70%)', frame: { border: '1.5px solid #fda4c4', boxShadow: '0 0 6px #e11d48, 0 0 14px #e11d4888' }, accent: '#e11d48' },
