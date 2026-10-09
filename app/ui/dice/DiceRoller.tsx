@@ -432,18 +432,18 @@ export default function DiceRoller({
               </span>
             </button>
           </div>
-          <div className='grid grid-cols-[auto_1fr] gap-2'>
-            <button type='button' onClick={resetAll} aria-label='Reset the roll' title='Reset: clear the roll and set up the dice again' className={`${buttonGhost} aspect-square px-0`}>
-              <MdRestartAlt aria-hidden className='size-5' />
+          <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
+            <button type='button' onClick={resetAll} aria-label='Reset the roll' title='Reset: clear the roll and set up the dice again' className={`${buttonGhost} size-10 px-0 py-0`}>
+              <MdRestartAlt aria-hidden className='size-4 shrink-0' />
             </button>
             <button
               type='button'
               onClick={roll}
               disabled={!settled || needsCheck || !!locked}
               aria-describedby={locked ? 'roll-locked' : needsCheck ? 'check-first' : undefined}
-              className={`${buttonPrimary} ${compact ? 'py-2.5' : 'py-3'} text-base`}
+              className={buttonPrimary}
             >
-              <GiD10 aria-hidden className='size-5 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
+              <GiD10 aria-hidden className='size-4 transition-transform duration-500 ease-(--ease-spring) group-hover:rotate-180' />
               Roll {usablePool + (game === 'hunter' ? usableSpecial : 0)} dice
             </button>
           </div>
