@@ -5,16 +5,26 @@ import { MdClose, MdOpenInFull } from 'react-icons/md';
 
 // The full sheet in a dialog over a blurred page. Esc, the close button or a
 // click outside closes it.
-export default function SheetModal({ label, children }: { label: string; children: ReactNode }) {
+export default function SheetModal({
+  label,
+  trigger = 'Full sheet',
+  triggerClassName = 'inline-flex items-center gap-1.5 rounded-full border border-bone/20 px-4 py-1.5 text-xs text-bone/85 transition hover:border-bone/50 hover:text-bone',
+  children,
+}: {
+  label: string;
+  trigger?: string;
+  triggerClassName?: string;
+  children: ReactNode;
+}) {
   const dialog = useRef<HTMLDialogElement>(null);
   return (
     <>
       <button
         type='button'
         onClick={() => dialog.current?.showModal()}
-        className='inline-flex items-center gap-1.5 rounded-full border border-bone/20 px-4 py-1.5 text-xs text-bone/85 transition hover:border-bone/50 hover:text-bone'
+        className={triggerClassName}
       >
-        <MdOpenInFull aria-hidden /> Full sheet
+        <MdOpenInFull aria-hidden /> {trigger}
       </button>
       <dialog
         ref={dialog}

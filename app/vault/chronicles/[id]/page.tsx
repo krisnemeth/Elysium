@@ -17,9 +17,7 @@ import { panel } from '@/app/ui/kit/styles';
 import SocialShell from '@/app/ui/social/SocialShell';
 import { ActionButton } from '@/app/ui/social/forms';
 import { BotVote, CharacterPicker, InviteFriends, LiveRefresh, LiveRolls, NoteComposer } from '@/app/ui/chronicles/parts';
-import CharacterSheetView from '@/app/ui/characters/CharacterSheetView';
 import { factionName } from '@/app/ui/game/FactionMark';
-import SheetModal from '@/app/ui/chronicles/SheetModal';
 import StorytellerDice from '@/app/ui/chronicles/StorytellerDice';
 import GameBar from '@/app/ui/chronicles/GameBar';
 import TableShell from '@/app/ui/chronicles/TableShell';
@@ -239,20 +237,22 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
   );
   const middle = (
     <>
-      <ColumnTabs label='The story' tabs={middleTabs} footer={vote} />
+      <ColumnTabs label='The story' tabs={middleTabs} footer={vote} className='story-panel' />
       <div className={`shrink-0 px-5 py-3 ${panel}`}>
         <TurnTracker />
       </div>
     </>
   );
 
+  // Who tells the story: the bot, or the Storyteller's name.
+  const st = party.find((p) => p.role === 'storyteller' && p.status === 'joined');
+  const storyteller = bot ? 'Bot' : st ? (st.user_id === me ? 'You' : st.display_name) : 'Nobody yet';
   const bar = (
     <GameBar
       chronicleId={c.id}
-      eyebrow={`${GAMES[c.game].name} chronicle · ${bot ? 'Storyteller bot' : isStoryteller ? 'You’re the Storyteller' : 'Player'}`}
+      kind={GAMES[c.game].name}
+      storyteller={storyteller}
       title={c.name}
-      act={scene?.act}
-      acts={bot ? ACT_COUNT : undefined}
       solo={joined.length === 1}
     />
   );
@@ -269,13 +269,6 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         initialSheet={myCharacter.sheet}
         portrait={{ src: ch.image.src, unoptimized: !!ch.image.unoptimized }}
         faction={`${GAMES[myCharacter.game].name} · ${factionName(ch) || GAMES[myCharacter.game].noun.one}`}
-        sheetDialog={
-          <SheetModal label={`${ch.name}’s sheet`}>
-            <div data-game={myCharacter.game}>
-              <CharacterSheetView record={myCharacter} back={{ href: `/vault/${myCharacter.game}/characters/${myCharacter.id}`, label: 'Open on its own page' }} />
-            </div>
-          </SheetModal>
-        }
         log={log}
         bar={bar}
       >
