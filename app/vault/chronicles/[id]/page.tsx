@@ -17,7 +17,8 @@ import { panel } from '@/app/ui/kit/styles';
 import SocialShell from '@/app/ui/social/SocialShell';
 import { ActionButton } from '@/app/ui/social/forms';
 import { BotVote, CharacterPicker, InviteFriends, LiveRefresh, LiveRolls, NoteComposer } from '@/app/ui/chronicles/parts';
-import { factionName } from '@/app/ui/game/FactionMark';
+import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
+import { CLANS } from '@/app/lib/clans';
 import StorytellerDice from '@/app/ui/chronicles/StorytellerDice';
 import GameBar from '@/app/ui/chronicles/GameBar';
 import TableShell from '@/app/ui/chronicles/TableShell';
@@ -260,6 +261,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
   let table: ReactNode;
   if (myCharacter) {
     const ch = toCharacter(myCharacter);
+    const clan = ch.clan ? CLANS[ch.clan] : null;
     table = (
       <PlayTable
         chronicleId={c.id}
@@ -267,8 +269,14 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         id={myCharacter.id}
         name={myCharacter.name || 'Unnamed'}
         initialSheet={myCharacter.sheet}
-        portrait={{ src: ch.image.src, unoptimized: !!ch.image.unoptimized }}
-        faction={`${GAMES[myCharacter.game].name} · ${factionName(ch) || GAMES[myCharacter.game].noun.one}`}
+        emblem={<FactionMark character={ch} className='h-14' />}
+        wordmark={
+          clan?.Wordmark ? (
+            <clan.Wordmark role='img' aria-label={clan.name} className='h-6 w-auto' />
+          ) : (
+            <span className='text-xs tracking-[0.25em] uppercase'>{factionName(ch) || GAMES[myCharacter.game].noun.one}</span>
+          )
+        }
         log={log}
         bar={bar}
       >
@@ -284,7 +292,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         className='skin-frame'
         tabs={[
           { id: 'roll', label: 'Roll', content: <StorytellerDice chronicleId={c.id} game={c.game} /> },
-          { id: 'log', label: 'Dice log', content: log },
+          { id: 'log', label: 'Roll log', content: log },
         ]}
       />
     ) : (
@@ -295,7 +303,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
         tabs={[
           {
             id: 'log',
-            label: 'Dice log',
+            label: 'Roll log',
             content: (
               <>
                 <p className='mb-4 text-sm text-bone/60'>Bring a character (under The party) to get your sheet and dice here.</p>

@@ -25,7 +25,7 @@ export default async function Chronicles() {
       title='Your tables.'
       description={
         <>
-          A chronicle is a group playing together: a Storyteller (or the Storyteller bot), players and their characters, a shared dice log and
+          A chronicle is a group playing together: a Storyteller (or the Storyteller bot), players and their characters, a shared roll log and
           session notes. Invite people from your <TextLink href='/vault/friends'>friends</TextLink>.
         </>
       }

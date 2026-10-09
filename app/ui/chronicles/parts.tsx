@@ -8,6 +8,8 @@ import type { Choice } from '@/app/lib/storyteller/generate';
 import type { PartyMember, Roll } from '@/app/lib/data/social';
 import { GAMES, type Game } from '@/app/lib/games';
 import { SPECIAL_DIE_NAME } from '@/app/lib/dice/rules';
+import { DICE_STYLES, glyphFor } from '@/app/lib/dice/faces';
+import Glyph from '@/app/ui/dice/Glyph';
 import { subscribe } from '@/app/lib/supabase/browser';
 import { buttonGhost, buttonPrimary, fieldInput, fieldLabel } from '@/app/ui/kit/styles';
 
@@ -228,6 +230,29 @@ export function LiveRefresh({ chronicleId, live }: { chronicleId: string; live: 
   return null;
 }
 
+/*
+  One die as the official dice show it: a d10's kite-shaped face in the
+  game's colours, with the symbol that value shows (none on a blank face).
+  Faces that score nothing are dimmed, unless they carry a grim symbol.
+*/
+function DieFace({ game, kind, value }: { game: Game; kind: 'regular' | 'special'; value: number }) {
+  const style = DICE_STYLES[game][kind];
+  const glyph = glyphFor(game, kind, value);
+  const name = `${kind === 'special' ? `${SPECIAL_DIE_NAME[game]} die` : 'Die'}: ${value}`;
+  return (
+    <span
+      role='img'
+      aria-label={name}
+      title={name}
+      className={clsx('relative grid h-8 w-7 place-items-center pt-1', value < 6 && !glyph && 'opacity-45')}
+      // The symbol is drawn in currentColor: the die's own ink.
+      style={{ backgroundColor: style.face, color: style.glyph, clipPath: 'polygon(50% 0, 100% 70%, 50% 100%, 0 70%)' }}
+    >
+      {glyph && <Glyph name={glyph} className='inline-block size-4.5' />}
+    </span>
+  );
+}
+
 const OUTCOMES: Record<string, string> = {
   critical: 'Critical win',
   win: 'Win',
@@ -283,17 +308,7 @@ export function LiveRolls({ chronicleId, initial, party, live }: { chronicleId: 
               </div>
               <div className='flex flex-wrap items-center gap-1.5'>
                 {r.dice.map((d, i) => (
-                  <span
-                    key={i}
-                    title={d.kind === 'special' ? `${SPECIAL_DIE_NAME[r.game]} die` : 'Die'}
-                    className={clsx(
-                      'grid size-6 place-items-center rounded-md text-[0.7rem] tabular-nums',
-                      d.kind === 'special' ? 'bg-accent/80 text-white' : 'bg-bone/10',
-                      d.value < 6 && 'opacity-50',
-                    )}
-                  >
-                    {d.value}
-                  </span>
+                  <DieFace key={i} game={r.game} kind={d.kind} value={d.value} />
                 ))}
                 <span className='ml-2 text-xs text-bone/50 tabular-nums'>
                   {r.successes} vs {r.difficulty} ·{' '}

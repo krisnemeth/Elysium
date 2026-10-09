@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import clsx from 'clsx';
 import { useEffect, useState, type ReactNode } from 'react';
 import { GAMES, type Game } from '@/app/lib/games';
 import type { Damage, Sheet } from '@/app/lib/sheets/types';
+import { healthMax, healthRule, willpowerMax, willpowerRule } from '@/app/lib/sheets/derived';
 import { NO_DAMAGE } from '@/app/lib/play/damage';
 import { panel } from '@/app/ui/kit/styles';
 import PoolRoller from '@/app/ui/play/PoolRoller';
@@ -114,8 +114,8 @@ export function PlayTable({
   id,
   name,
   initialSheet,
-  portrait,
-  faction,
+  emblem,
+  wordmark,
   log,
   bar,
   children,
@@ -125,9 +125,10 @@ export function PlayTable({
   id: string;
   name: string;
   initialSheet: Sheet;
-  portrait: { src: string; unoptimized: boolean };
-  faction: string;
-  // The chronicle's shared dice log.
+  // The faction's official symbol and the clan's name logo (or the faction's name).
+  emblem: ReactNode;
+  wordmark: ReactNode;
+  // The chronicle's shared roll log.
   log: ReactNode;
   bar: ReactNode;
   children: ReactNode;
@@ -157,19 +158,17 @@ export function PlayTable({
     // The frame draws just outside the panel, so the scrolling happens inside it.
     <section aria-label='Your character' className={`skin-frame flex min-h-0 grow flex-col ${panel}`}>
       <div className='flex min-h-0 grow flex-col gap-5 overflow-y-auto p-4'>
-        {/* The character card. */}
-        <div className='relative aspect-[4/3] shrink-0 overflow-hidden rounded-xl short:aspect-[16/9]'>
-          <Image src={portrait.src} unoptimized={portrait.unoptimized} alt='' fill sizes='22rem' className='object-cover object-top' />
-          <div className='absolute inset-0 bg-linear-to-t from-ink via-ink/30 to-transparent' />
-          <div className='absolute inset-x-0 bottom-0 p-3'>
-            <p className={label}>{faction || GAMES[game].noun.one}</p>
-            <h2 className='line-clamp-2 font-display text-2xl leading-tight'>{sheet.profile.name || name}</h2>
-          </div>
+        {/* Who they are: the faction's official mark, the name, the clan's wordmark.
+            (Their portrait is on their card in the turn tracker.) */}
+        <div className='flex shrink-0 flex-col items-center gap-2 border-b border-bone/10 pt-2 pb-5 text-center'>
+          <span className='text-accent'>{emblem}</span>
+          <h2 className='line-clamp-2 font-display text-3xl leading-tight'>{sheet.profile.name || name}</h2>
+          <span className='flex items-center text-bone/70'>{wordmark}</span>
         </div>
 
         <div className='flex flex-col gap-4'>
-          <MiniDamageTrack label='Health' max={t.health ?? 0} damage={sheet.damage?.health ?? NO_DAMAGE} onChange={setDamage('health')} downLabel={game === 'vampire' ? 'Torpor' : 'Down'} />
-          <MiniDamageTrack label='Willpower' max={t.willpower ?? 0} damage={sheet.damage?.willpower ?? NO_DAMAGE} onChange={setDamage('willpower')} downLabel='Impaired' />
+          <MiniDamageTrack label='Health' rule={healthRule(sheet)} max={healthMax(sheet)} damage={sheet.damage?.health ?? NO_DAMAGE} onChange={setDamage('health')} downLabel={game === 'vampire' ? 'Torpor' : 'Down'} />
+          <MiniDamageTrack label='Willpower' rule={willpowerRule(sheet)} max={willpowerMax(sheet)} damage={sheet.damage?.willpower ?? NO_DAMAGE} onChange={setDamage('willpower')} downLabel='Impaired' />
           <MiniPointTrack label={special.label} value={t[special.key] ?? 0} onChange={setTracker(special.key)} shape={special.shape} />
         </div>
 
@@ -192,7 +191,7 @@ export function PlayTable({
           className='skin-frame'
           tabs={[
             { id: 'roll', label: 'Roll', content: <PoolRoller game={game} name={name} sheet={sheet} update={update} shareTo={chronicleId} compact locked={locked} /> },
-            { id: 'log', label: 'Dice log', content: log },
+            { id: 'log', label: 'Roll log', content: log },
           ]}
         />
       }

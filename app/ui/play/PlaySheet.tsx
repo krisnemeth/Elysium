@@ -6,6 +6,7 @@ import { MdArrowBack, MdEdit } from 'react-icons/md';
 import type { Game } from '@/app/lib/games';
 import type { Damage, Sheet } from '@/app/lib/sheets/types';
 import { NO_DAMAGE } from '@/app/lib/play/damage';
+import { healthMax as healthOf, willpowerMax as willpowerOf } from '@/app/lib/sheets/derived';
 import { panel } from '@/app/ui/kit/styles';
 import SaveStatus from '@/app/ui/sheets/SaveStatus';
 import { useCharacterSave } from '@/app/ui/sheets/useCharacterSave';
@@ -28,8 +29,9 @@ export default function PlaySheet({
 }) {
   const { sheet, update, state, error, retry } = useCharacterSave(game, id, initialSheet);
   const t = sheet.trackers;
-  const healthMax = t.health ?? 0;
-  const willpowerMax = t.willpower ?? 0;
+  // From the rules: Stamina + 3, and Composure + Resolve.
+  const healthMax = healthOf(sheet);
+  const willpowerMax = willpowerOf(sheet);
   const health = sheet.damage?.health ?? NO_DAMAGE;
   const willpower = sheet.damage?.willpower ?? NO_DAMAGE;
 

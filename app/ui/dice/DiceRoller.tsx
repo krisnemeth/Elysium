@@ -189,7 +189,7 @@ export default function DiceRoller({
   // Every roll and reroll, e.g. to share it with a chronicle.
   onResult?: (result: RollResult, info: { reroll: boolean; difficulty: number }) => void;
   // A smaller roller for the chronicle page: one column, a portrait tray, no
-  // history (the chronicle keeps its own dice log).
+  // history (the chronicle keeps its own roll log).
   compact?: boolean;
   // Why rolling isn't possible right now (e.g. it's someone else's turn).
   locked?: string;

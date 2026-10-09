@@ -212,7 +212,8 @@ const slash = (aggravated: boolean) => (
 );
 
 // Health or Willpower: the boxes, then Superficial and Aggravated steppers.
-export function MiniDamageTrack({ label, max, damage = NO_DAMAGE, onChange, downLabel }: { label: string; max: number; damage?: Damage; onChange: (d: Damage) => void; downLabel: string }) {
+// `rule` says where the number of boxes comes from, e.g. "Stamina 3 + 3".
+export function MiniDamageTrack({ label, rule, max, damage = NO_DAMAGE, onChange, downLabel }: { label: string; rule?: string; max: number; damage?: Damage; onChange: (d: Damage) => void; downLabel: string }) {
   const state = trackState(damage, max);
   const marks = boxes(damage, max);
   const sup = Math.min(damage.superficial, max);
@@ -221,7 +222,10 @@ export function MiniDamageTrack({ label, max, damage = NO_DAMAGE, onChange, down
   return (
     <section aria-label={label} className='flex flex-col gap-1.5'>
       <div className='flex items-baseline justify-between gap-2'>
-        <h3 className='text-sm'>{label}</h3>
+        <h3 className='text-sm'>
+          {label}
+          {rule && <span className='ml-1.5 text-[0.65rem] text-bone/40'>{rule}</span>}
+        </h3>
         <p role='status' className={clsx('text-[0.6rem] tracking-[0.15em] uppercase', state === 'fine' ? 'text-bone/45' : 'text-accent')}>
           {state === 'down' ? downLabel : state === 'impaired' ? 'Impaired' : `${max - sup - agg} of ${max}`}
         </p>
