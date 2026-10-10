@@ -132,13 +132,38 @@
   border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%234f7a4c' stroke-width='2'%3E%3Cpath d='M7 7C30 3 40 11 60 7s30-4 53 0M7 113c23 4 33-4 53 0s30 4 53 0M7 7c-4 23 4 33 0 53s-4 30 0 53M113 7c4 23-4 33 0 53s4 30 0 53'/%3E%3C/g%3E%3Cg fill='%2338603a'%3E%3Cellipse cx='22' cy='7' rx='6' ry='2.5' transform='rotate(-30 22 7)'/%3E%3Cellipse cx='48' cy='9' rx='6' ry='2.5' transform='rotate(25 48 9)'/%3E%3Cellipse cx='75' cy='5' rx='6' ry='2.5' transform='rotate(-25 75 5)'/%3E%3Cellipse cx='100' cy='9' rx='6' ry='2.5' transform='rotate(30 100 9)'/%3E%3Cellipse cx='22' cy='113' rx='6' ry='2.5' transform='rotate(30 22 113)'/%3E%3Cellipse cx='48' cy='111' rx='6' ry='2.5' transform='rotate(-25 48 111)'/%3E%3Cellipse cx='75' cy='115' rx='6' ry='2.5' transform='rotate(25 75 115)'/%3E%3Cellipse cx='100' cy='111' rx='6' ry='2.5' transform='rotate(-30 100 111)'/%3E%3Cellipse cx='7' cy='22' rx='2.5' ry='6' transform='rotate(30 7 22)'/%3E%3Cellipse cx='9' cy='48' rx='2.5' ry='6' transform='rotate(-25 9 48)'/%3E%3Cellipse cx='5' cy='75' rx='2.5' ry='6' transform='rotate(25 5 75)'/%3E%3Cellipse cx='9' cy='100' rx='2.5' ry='6' transform='rotate(-30 9 100)'/%3E%3Cellipse cx='113' cy='22' rx='2.5' ry='6' transform='rotate(-30 113 22)'/%3E%3Cellipse cx='111' cy='48' rx='2.5' ry='6' transform='rotate(25 111 48)'/%3E%3Cellipse cx='115' cy='75' rx='2.5' ry='6' transform='rotate(-25 115 75)'/%3E%3Cellipse cx='111' cy='100' rx='2.5' ry='6' transform='rotate(30 111 100)'/%3E%3Ccircle cx='7' cy='7' r='4'/%3E%3Ccircle cx='113' cy='7' r='4'/%3E%3Ccircle cx='7' cy='113' r='4'/%3E%3Ccircle cx='113' cy='113' r='4'/%3E%3C/g%3E%3C/svg%3E") 30 round;
 }
 
-/* Werewolf, The cave: rough-hewn stone. */
+/*
+  Rendered frames (scripts/edge-studio): one way of drawing for every theme
+  that has one, so they feel like one family. The rim is a 9-slice image used
+  as the border; tall frames (the sidebars) also get ornament strips along
+  their top and bottom edges, behind the content. A theme joins by adding its
+  selectors to these rules and setting its images (--frame-rim, --frame-top,
+  --frame-bottom) below.
+*/
+:root[data-theme='light'] [data-game='werewolf'],
+[data-skin='werewolf-light'] {
+  /* Werewolf, The cave: wet rock, stalactites and stalagmites, firelight. */
+  --frame-rim: url('/frames/werewolf-light/rim.webp');
+  --frame-top: url('/frames/werewolf-light/top.webp');
+  --frame-bottom: url('/frames/werewolf-light/bottom.webp');
+}
 :root[data-theme='light'] [data-game='werewolf'] .frame,
 [data-skin='werewolf-light'] .skin-frame {
-  border: 12px solid transparent;
+  border: 16px solid transparent;
   border-radius: 0;
-  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.08' numOctaves='4' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .38 0 0 0 0 .33 0 0 0 1.6 -.4'/%3E%3C/filter%3E%3Crect width='90' height='90' fill='%23443b31'/%3E%3Crect width='90' height='90' filter='url(%23s)'/%3E%3Cpath d='M0 30h90M0 60h90M30 0v30M60 30v30M30 60v30' stroke='%23211b15' stroke-width='2'/%3E%3C/svg%3E") 30 round;
+  border-image: var(--frame-rim) 32 / 16px round;
   box-shadow: inset 0 0 1.5rem rgb(0 0 0 / 0.6);
+}
+:root[data-theme='light'] [data-game='werewolf'] .frame-tall::before,
+[data-skin='werewolf-light'] .skin-frame::before {
+  content: '';
+  position: absolute;
+  inset: -16px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    var(--frame-top) top center / 100% auto no-repeat,
+    var(--frame-bottom) bottom center / 100% auto no-repeat;
 }
 
 /* Hunter, The cabin: weathered timber with nail heads. */

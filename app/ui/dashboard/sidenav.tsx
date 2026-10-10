@@ -29,7 +29,7 @@ export default function SideNav({ game }: { game: Game }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className={`group/side frame fixed inset-y-4 left-4 z-40 hidden w-60 flex-col p-4 md:flex ${panel}`}>
+      <aside className={`group/side frame frame-tall fixed inset-y-4 left-4 z-40 hidden w-60 flex-col p-4 md:flex ${panel}`}>
         <Link
           href='/vault'
           aria-label='Your vault'
