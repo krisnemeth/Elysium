@@ -57,7 +57,7 @@ const GAMES: Record<
     check: {
       title: 'Rouse check',
       body: 'Wake the blood for a discipline or Blood Surge. On a 1–5, your Hunger rises.',
-      button: 'Rouse the blood',
+      button: 'Rouse check',
       calm: 'Rouse check: calm',
       bad: 'Rouse check: Hunger rises',
       uses: 'This roll uses the blood (a Discipline or Blood Surge)',
@@ -78,7 +78,7 @@ const GAMES: Record<
     check: {
       title: 'Rage check',
       body: 'Call on a Gift or shift your form. On a 1–5, you lose a point of Rage.',
-      button: 'Make a Rage check',
+      button: 'Rage check',
       calm: 'Rage check: Rage holds',
       bad: 'Rage check: Rage spent',
       uses: 'This roll calls on a Gift or a change of form',
