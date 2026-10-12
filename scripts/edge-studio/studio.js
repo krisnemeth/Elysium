@@ -273,3 +273,56 @@ export async function atlasLeaves(id, rects, { size = 1024, tint = '#ffffff', ro
     return new THREE.Mesh(geometry, material);
   };
 }
+
+// Colours by distance (0-1) through a list of stops, for banded or shaded parts.
+function shade(geometry, stops, at) {
+  const pos = geometry.attributes.position;
+  const colours = [];
+  const c = new THREE.Color(), a = new THREE.Color(), b = new THREE.Color();
+  for (let k = 0; k < pos.count; k++) {
+    const t = Math.min(0.999, Math.max(0, at(pos.getX(k), pos.getY(k), pos.getZ(k)))) * (stops.length - 1);
+    const i = Math.floor(t);
+    c.copy(a.set(stops[i])).lerp(b.set(stops[i + 1]), t - i);
+    colours.push(c.r, c.g, c.b);
+  }
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colours, 3));
+}
+
+/*
+  A bracket fungus: a banded half-shelf growing out of a trunk towards the
+  viewer, tilted up so its top shows. Its attachment is at the origin.
+*/
+export function bracket({ radius, seed, bands = ['#2a2019', '#4c3f31', '#665a48', '#857a66'], tilt = -0.95 }) {
+  const n = noise3(seed);
+  const geometry = new THREE.SphereGeometry(radius, 28, 8, 0, Math.PI, 0, Math.PI);
+  const pos = geometry.attributes.position;
+  for (let k = 0; k < pos.count; k++) {
+    const x = pos.getX(k), y = pos.getY(k), z = pos.getZ(k);
+    const f = 1 + 0.12 * n(x * 0.5, 0, z * 0.5);
+    pos.setXYZ(k, x * f, y * 0.26 + 0.04 * (x * x + z * z) / radius, z * f);
+  }
+  geometry.computeVertexNormals();
+  // Bands from the attachment out to a pale rim.
+  shade(geometry, bands.concat(bands.slice(1)), (x, y, z) => Math.hypot(x, z) / radius);
+  const mesh = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75 }));
+  mesh.rotation.x = tilt;
+  return mesh;
+}
+
+// A small capped mushroom (a bonnet, an inkcap…), its base at the origin, growing up +y.
+export function mushroom({ height, cap, seed, colour = '#6e5a44', stem = '#6c6456', lean = 0 }) {
+  const rnd = random(seed);
+  const group = new THREE.Group();
+  const s = new THREE.Mesh(new THREE.CylinderGeometry(cap * 0.16, cap * 0.24, height, 10, 4), new THREE.MeshStandardMaterial({ color: stem, roughness: 0.7 }));
+  s.position.y = height / 2;
+  const capGeometry = new THREE.SphereGeometry(cap, 24, 10, 0, Math.PI * 2, 0, Math.PI * (0.38 + rnd() * 0.12));
+  capGeometry.scale(1, 0.75 + rnd() * 0.5, 1);
+  // Darker at the crown, pale at the edge.
+  shade(capGeometry, [new THREE.Color(colour).multiplyScalar(0.62).getStyle(), colour, '#8d7f69'], (x, y, z) => Math.hypot(x, z) / cap);
+  const c = new THREE.Mesh(capGeometry, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, side: THREE.DoubleSide }));
+  const top = capGeometry.boundingBox ?? (capGeometry.computeBoundingBox(), capGeometry.boundingBox);
+  c.position.y = height - top.min.y * 0.6;
+  group.add(s, c);
+  group.rotation.z = lean;
+  return group;
+}
