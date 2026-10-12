@@ -74,10 +74,12 @@ async function texture(id, kind, srgb) {
   `size` CSS px, starting at `origin`.
 */
 export async function pbr(id, { tile = 192, origin = [0, 0], stretch = [1, 1], tint = '#ffffff', roughness = 1, normalScale = 1.4, ...rest } = {}) {
-  const maps = await Promise.all([texture(id, 'Color', true), texture(id, 'NormalGL'), texture(id, 'Roughness'), texture(id, 'AmbientOcclusion')]);
+  // Not every material has an ambient occlusion map (metals usually don't).
+  const maps = await Promise.all([texture(id, 'Color', true), texture(id, 'NormalGL'), texture(id, 'Roughness'), texture(id, 'AmbientOcclusion').catch(() => null)]);
   return (size) => {
     const repeat = [size[0] / tile / stretch[0], size[1] / tile / stretch[1]];
     const ms = maps.map((m) => {
+      if (!m) return null;
       const t = m.clone();
       t.repeat.set(...repeat);
       t.offset.set((-origin[0] / size[0]) * repeat[0], (-origin[1] / size[1]) * repeat[1]);
@@ -124,8 +126,12 @@ export function lights(scene, { centre, colour, intensity, fill = ['#29323d', '#
   `band` draws only the rim's inner part instead (e.g. a line of moss on the
   bark): from `from` (0-1 across the rim, wobbling by `wobble`) to the inner
   edge, raised by `lift`. Same seed, same rim shape. Lights come with `lit`.
+  `grain` (px per texture tile) lays the material along each side, mitred at
+  the corners, as for timber; otherwise it lies flat across the whole image.
+  `rough` scales how ragged the edges are (0: straight); `beam` gives a flat
+  face with chamfered edges instead of a rounded one.
 */
-export async function rim(scene, { material, seed = 1, height = 3, lit, band }) {
+export async function rim(scene, { material, seed = 1, height = 3, lit, band, grain, rough = 1, beam = false }) {
   const S = RIM_SIZE, B = RIM_WIDTH, L = S - 2 * B;
   const inner = periodicNoise(seed, L, 12);
   const outer = periodicNoise(seed + 1, L, 12);
@@ -134,8 +140,8 @@ export async function rim(scene, { material, seed = 1, height = 3, lit, band }) 
   const across = (x, y) => {
     const d = Math.min(x, y, S - x, S - y);
     const t = d === x || d === S - x ? y - B : x - B;
-    const o = 0.6 + 0.6 * outer(t);
-    const i = B * (0.74 + 0.2 * inner(t));
+    const o = 0.6 + 0.6 * outer(t) * rough;
+    const i = B * (0.74 + 0.2 * inner(t) * rough);
     const u = (d - o) / (i - o);
     if (!band) return { u, t, w: i - o };
     const f = band.from + band.wobble * bandEdge(t);
@@ -149,7 +155,8 @@ export async function rim(scene, { material, seed = 1, height = 3, lit, band }) 
     const x = pos.getX(k) + S / 2, y = pos.getY(k) + S / 2;
     const { u, t } = across(x, y);
     const c = Math.min(1, Math.max(0, u));
-    pos.setZ(k, (band?.lift ?? 0) + height * Math.sin(Math.PI * c) ** 0.9 * (0.8 + 0.35 * swell(t)));
+    const profile = beam ? Math.min(1, c / 0.18, (1 - c) / 0.18) : Math.sin(Math.PI * c) ** 0.9;
+    pos.setZ(k, (band?.lift ?? 0) + height * profile * (1 + (0.35 * swell(t) - 0.2) * rough));
   }
   geometry.computeVertexNormals();
 
@@ -171,7 +178,21 @@ export async function rim(scene, { material, seed = 1, height = 3, lit, band }) 
   ctx.putImageData(img, 0, 0);
   const alpha = new THREE.CanvasTexture(canvas);
 
-  const mesh = new THREE.Mesh(geometry, material([S, S]));
+  if (grain) {
+    // The shape keeps the plane's own UVs (channel 1); the material runs along each side.
+    geometry.setAttribute('uv1', geometry.attributes.uv.clone());
+    alpha.channel = 1;
+    const uv = geometry.attributes.uv;
+    for (let k = 0; k < pos.count; k++) {
+      const x = pos.getX(k) + S / 2, y = pos.getY(k) + S / 2;
+      const d = Math.min(x, y, S - x, S - y);
+      const along = d === x || d === S - x ? y - B : x - B;
+      // Each side gets its own stretch of the texture, so the corners read as mitres.
+      const side = d === x ? 0 : d === S - x ? 0.5 : d === y ? 0.25 : 0.75;
+      uv.setXY(k, along / grain, d / grain + side);
+    }
+  }
+  const mesh = new THREE.Mesh(geometry, material(grain ? [grain, grain] : [S, S]));
   mesh.material.alphaMap = alpha;
   mesh.position.set(S / 2, S / 2, 0);
   scene.add(mesh);

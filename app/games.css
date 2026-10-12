@@ -148,6 +148,22 @@
   --frame-top-tile: 192px 40px;
   --frame-bottom-tile: 192px 36px;
 }
+:root[data-theme='dark'] [data-game='hunter'],
+:root:not([data-theme]) [data-game='hunter'],
+[data-skin='hunter-dark'] {
+  /* Hunter, The cabin: weathered timber, rope, iron straps, rusting nails, spent shells, the bulb overhead. */
+  --frame-rim: url('/frames/hunter-dark/rim.webp');
+  --frame-top: url('/frames/hunter-dark/top.webp');
+  --frame-top-left: url('/frames/hunter-dark/top-left.webp');
+  --frame-top-right: url('/frames/hunter-dark/top-right.webp');
+  --frame-bottom: url('/frames/hunter-dark/bottom.webp');
+  --frame-bottom-left: url('/frames/hunter-dark/bottom-left.webp');
+  --frame-bottom-right: url('/frames/hunter-dark/bottom-right.webp');
+  --frame-top-corner: 72px 176px;
+  --frame-bottom-corner: 72px 128px;
+  --frame-top-tile: 192px 40px;
+  --frame-bottom-tile: 192px 36px;
+}
 :root[data-theme='light'] [data-game='werewolf'],
 [data-skin='werewolf-light'] {
   /* Werewolf, The cave: wet rock, stalactites and stalagmites, firelight. */
@@ -168,7 +184,10 @@
 :root:not([data-theme]) [data-game='werewolf'] .frame,
 [data-skin='werewolf-dark'] .skin-frame,
 :root[data-theme='light'] [data-game='werewolf'] .frame,
-[data-skin='werewolf-light'] .skin-frame {
+[data-skin='werewolf-light'] .skin-frame,
+:root[data-theme='dark'] [data-game='hunter'] .frame,
+:root:not([data-theme]) [data-game='hunter'] .frame,
+[data-skin='hunter-dark'] .skin-frame {
   border: 16px solid transparent;
   border-radius: 0;
   border-image: var(--frame-rim) 32 / 16px round;
@@ -178,7 +197,10 @@
 :root:not([data-theme]) [data-game='werewolf'] .frame-tall::before,
 [data-skin='werewolf-dark'] .skin-frame::before,
 :root[data-theme='light'] [data-game='werewolf'] .frame-tall::before,
-[data-skin='werewolf-light'] .skin-frame::before {
+[data-skin='werewolf-light'] .skin-frame::before,
+:root[data-theme='dark'] [data-game='hunter'] .frame-tall::before,
+:root:not([data-theme]) [data-game='hunter'] .frame-tall::before,
+[data-skin='hunter-dark'] .skin-frame::before {
   content: '';
   position: absolute;
   inset: -16px;
@@ -191,28 +213,6 @@
     var(--frame-bottom-right) bottom right / var(--frame-bottom-corner) no-repeat,
     var(--frame-top) top left / var(--frame-top-tile) repeat-x,
     var(--frame-bottom) bottom left / var(--frame-bottom-tile) repeat-x;
-}
-
-/* Hunter, The cabin: weathered timber with nail heads. */
-:root[data-theme='dark'] [data-game='hunter'] .frame,
-:root:not([data-theme]) [data-game='hunter'] .frame,
-[data-skin='hunter-dark'] .skin-frame {
-  border: 12px solid transparent;
-  border-radius: 0;
-  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='3' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .22 0 0 0 0 .12 0 0 0 1.4 -.25'/%3E%3C/filter%3E%3Crect width='90' height='90' fill='%233a2414'/%3E%3Crect width='90' height='90' filter='url(%23w)'/%3E%3C/svg%3E") 30 stretch;
-}
-:root[data-theme='dark'] [data-game='hunter'] .frame::after,
-:root:not([data-theme]) [data-game='hunter'] .frame::after,
-[data-skin='hunter-dark'] .skin-frame::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  pointer-events: none;
-  background:
-    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) top left / 12px 12px no-repeat,
-    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) top right / 12px 12px no-repeat,
-    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) bottom left / 12px 12px no-repeat,
-    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) bottom right / 12px 12px no-repeat;
 }
 
 /* Hunter, The inn: a clipboard. Hardboard back, steel clip, ruled notepaper. */
