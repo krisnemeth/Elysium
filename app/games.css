@@ -135,17 +135,27 @@
 /*
   Rendered frames (scripts/edge-studio): one way of drawing for every theme
   that has one, so they feel like one family. The rim is a 9-slice image used
-  as the border; tall frames (the sidebars) also get ornament strips along
-  their top and bottom edges, behind the content. A theme joins by adding its
-  selectors to these rules and setting its images (--frame-rim, --frame-top,
-  --frame-bottom) below.
+  as the border; tall frames (the sidebars) also get ornaments along their
+  top and bottom edges, behind the content: a piece for each corner (the
+  heavy ones, kept to the side gutters) and a short fringe tiled between,
+  which ends before the content starts. A theme joins by adding its
+  selectors to these rules and setting its images and sizes (--frame-*).
 */
 :root[data-theme='light'] [data-game='werewolf'],
 [data-skin='werewolf-light'] {
   /* Werewolf, The cave: wet rock, stalactites and stalagmites, firelight. */
   --frame-rim: url('/frames/werewolf-light/rim.webp');
   --frame-top: url('/frames/werewolf-light/top.webp');
+  --frame-top-left: url('/frames/werewolf-light/top-left.webp');
+  --frame-top-right: url('/frames/werewolf-light/top-right.webp');
   --frame-bottom: url('/frames/werewolf-light/bottom.webp');
+  --frame-bottom-left: url('/frames/werewolf-light/bottom-left.webp');
+  --frame-bottom-right: url('/frames/werewolf-light/bottom-right.webp');
+  /* Piece sizes (CSS px): the corners, then the fringe's tile. */
+  --frame-top-corner: 72px 176px;
+  --frame-bottom-corner: 72px 128px;
+  --frame-top-tile: 192px 40px;
+  --frame-bottom-tile: 192px 36px;
 }
 :root[data-theme='light'] [data-game='werewolf'] .frame,
 [data-skin='werewolf-light'] .skin-frame {
@@ -162,8 +172,12 @@
   z-index: -1;
   pointer-events: none;
   background:
-    var(--frame-top) top center / 100% auto no-repeat,
-    var(--frame-bottom) bottom center / 100% auto no-repeat;
+    var(--frame-top-left) top left / var(--frame-top-corner) no-repeat,
+    var(--frame-top-right) top right / var(--frame-top-corner) no-repeat,
+    var(--frame-bottom-left) bottom left / var(--frame-bottom-corner) no-repeat,
+    var(--frame-bottom-right) bottom right / var(--frame-bottom-corner) no-repeat,
+    var(--frame-top) top left / var(--frame-top-tile) repeat-x,
+    var(--frame-bottom) bottom left / var(--frame-bottom-tile) repeat-x;
 }
 
 /* Hunter, The cabin: weathered timber with nail heads. */

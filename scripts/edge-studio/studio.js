@@ -100,15 +100,21 @@ export async function pbr(id, { tile = 192, origin = [0, 0], stretch = [1, 1], t
 
 /*
   The light rig, the same for every theme: the source sits at `centre` (the
-  panel's middle, in front of it) in the theme's colour, plus a dim fill.
+  panel's middle, in front of it) in the theme's colour, plus a dim fill and,
+  optionally, a light from above (`top`, e.g. daylight or a waterfall's glow).
 */
-export function lights(scene, { centre, colour, intensity, fill = ['#29323d', '#140c06'], fillIntensity = 0.5, front = 0.35 }) {
+export function lights(scene, { centre, colour, intensity, fill = ['#29323d', '#140c06'], fillIntensity = 0.5, front = 0.35, top }) {
   const key = new THREE.PointLight(colour, intensity, 0, 1);
   key.position.set(...centre);
   // A soft light from the viewer's side, so slopes facing away aren't black.
   const soft = new THREE.DirectionalLight(colour, front);
   soft.position.set(0, 0, 1);
   scene.add(key, soft, new THREE.HemisphereLight(fill[0], fill[1], fillIntensity));
+  if (top) {
+    const above = new THREE.DirectionalLight(top.colour, top.intensity);
+    above.position.set(0.2, 1, 0.7);
+    scene.add(above);
+  }
 }
 
 /*
