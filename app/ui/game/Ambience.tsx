@@ -94,20 +94,21 @@ const WALLPAPER = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
 function Hunter() {
   return (
     <div className={`${fixed} ambience overflow-hidden`}>
-      {/* The cabin: a hunter's den under its one lamp, a cigarette left burning in the ashtray, the storm on the skylight */}
+      {/* The hideout: the cell's basement den under its one lamp, a cigarette left burning on the desk */}
       <div className='absolute inset-0 hidden dark:block'>
-        {/* The art keeps its proportions and covers the screen, raised so the lamp hangs above the pages' panels */}
-        <div className='absolute top-0 left-1/2 aspect-[1000/603] w-[max(100vw,205vh)] -translate-x-1/2 -translate-y-[18%]'>
-          <Image src='/art/htr-den.webp' alt='' fill sizes='205vh' className='opacity-55 brightness-90 sepia-[.45] saturate-[.85]' />
-          {/* The storm through the skylight */}
-          <div className='absolute top-0 right-0 h-[18%] w-1/2 bg-[#dfeaff] mix-blend-screen blur-2xl' style={{ animation: 'lightning 9s linear infinite' }} />
+        {/*
+          The art (mirrored) keeps its proportions and covers the screen, placed so its lamp
+          hangs at the top right, over the pages' actions rather than behind their headings.
+        */}
+        <div className='absolute top-0 aspect-[1000/603] w-[max(140vw,215vh)] -translate-y-[22%]' style={{ left: 'calc(85vw - 0.606 * max(140vw, 215vh))' }}>
+          <Image src='/art/htr-den.webp' alt='' fill sizes='215vh' className='-scale-x-100 opacity-55 brightness-90 sepia-[.45] saturate-[.85]' />
 
           {/* The lamp: the shade lit warm, a cone of light down onto the desk, dust and old smoke hanging in it */}
-          <div className='absolute top-[30.5%] left-[39.4%] -translate-1/2' style={{ animation: 'bulb-buzz 11s linear infinite' }}>
+          <div className='absolute top-[30.5%] left-[60.6%] -translate-1/2' style={{ animation: 'bulb-buzz 11s linear infinite' }}>
             <div className='size-[14vh] rounded-full bg-[radial-gradient(circle,rgb(255_226_170/0.85),rgb(255_180_90/0.35)_35%,transparent_70%)] mix-blend-screen' />
             <div className='absolute top-1/2 left-1/2 size-[70vh] -translate-1/2 rounded-full bg-[radial-gradient(circle,rgb(255_190_110/0.22),transparent_60%)]' />
           </div>
-          <div className='absolute top-[31%] left-[39.4%] h-[52%] w-[46%] -translate-x-1/2 mix-blend-screen' style={{ animation: 'bulb-buzz 11s linear infinite' }}>
+          <div className='absolute top-[31%] left-[60.6%] h-[52%] w-[46%] -translate-x-1/2 mix-blend-screen' style={{ animation: 'bulb-buzz 11s linear infinite' }}>
             {/* Clipped to a cone, then blurred, so its edges are soft */}
             <div className='absolute inset-0 blur-xl'>
               <div className='size-full bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgb(255_200_130/0.24),transparent_85%)] [clip-path:polygon(41%_0,59%_0,100%_100%,0_100%)]' />
@@ -117,7 +118,7 @@ function Hunter() {
           </div>
 
           {/* A cigarette left on the desk under the lamp: its ember, and the smoke curling up into the light */}
-          <div className='absolute top-[60%] left-[43%]'>
+          <div className='absolute top-[60%] left-[57%]'>
             <span className='absolute -top-0.5 -left-0.5 size-1 rounded-full bg-[#ff8a3a] shadow-[0_0_0.5rem_0.2rem_rgb(255_120_40/0.6)]' style={{ animation: 'firelight 2.4s ease-in-out infinite' }} />
             <div className='absolute bottom-0 left-1/2 h-[26rem] w-48 -translate-x-1/2 [filter:url(#smoke-curl)_blur(1.5px)]'>
               {Array.from({ length: 10 }, (_, i) => (
@@ -143,9 +144,7 @@ function Hunter() {
           </filter>
         </svg>
 
-        {/* The lightning washes faintly over the room too */}
-        <div className='absolute inset-0 bg-[#cfe0ff] mix-blend-overlay' style={{ animation: 'lightning-room 9s linear infinite' }} />
-        <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_40%_30%,transparent_20%,rgb(10_7_4/0.8)_80%)]' />
+        <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,transparent_20%,rgb(10_7_4/0.8)_80%)]' />
       </div>
 
       {/* The inn: wallpaper and wainscot, a sunlit window onto the city, curtains, a fire */}
