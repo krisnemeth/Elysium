@@ -97,12 +97,20 @@ function Hunter() {
       {/* The hideout: the cell's basement den under its one lamp, a cigarette left burning on the desk */}
       <div className='absolute inset-0 hidden dark:block'>
         {/*
-          The art (mirrored) keeps its proportions and covers the screen, placed so its lamp
-          hangs at the top right, over the pages' actions rather than behind their headings.
+          The art (mirrored) keeps its proportions, placed so its lamp hangs at the top right,
+          over the pages' actions rather than behind their headings. Only a little larger than
+          the screen, as the painting is small: its left and bottom edges fade into the dark
+          (the sidebar and the panels cover them anyway).
         */}
-        <div className='absolute top-0 aspect-[1000/603] w-[max(140vw,215vh)] -translate-y-[22%]' style={{ left: 'calc(85vw - 0.606 * max(140vw, 215vh))' }}>
-          <Image src='/art/htr-den.webp' alt='' fill sizes='215vh' className='-scale-x-100 opacity-55 brightness-90 sepia-[.45] saturate-[.85]' />
-
+        <div
+          className='absolute top-0 aspect-[1000/603] w-[max(105vw,170vh)] -translate-y-[18.6%]'
+          style={{
+            left: 'calc(85vw - 0.606 * max(105vw, 170vh))',
+            maskImage: 'linear-gradient(to right, transparent, #000 12%), linear-gradient(to top, transparent, #000 22%)',
+            maskComposite: 'intersect',
+          }}
+        >
+          <Image src='/art/htr-den.webp' alt='' fill unoptimized className='-scale-x-100 opacity-55 brightness-90 sepia-[.45] saturate-[.85]' />
           {/* The lamp: the shade lit warm, a cone of light down onto the desk, dust and old smoke hanging in it */}
           <div className='absolute top-[30.5%] left-[60.6%] -translate-1/2' style={{ animation: 'bulb-buzz 11s linear infinite' }}>
             <div className='size-[14vh] rounded-full bg-[radial-gradient(circle,rgb(255_226_170/0.85),rgb(255_180_90/0.35)_35%,transparent_70%)] mix-blend-screen' />

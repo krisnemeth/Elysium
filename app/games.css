@@ -26,7 +26,7 @@
 }
 
 [data-game='hunter'] {
-  /* The cabin */
+  /* The hideout */
   --ink: #120d09;
   --color-bone: #f1e6d2;
   --accent: #f08a24;
@@ -151,7 +151,7 @@
 :root[data-theme='dark'] [data-game='hunter'],
 :root:not([data-theme]) [data-game='hunter'],
 [data-skin='hunter-dark'] {
-  /* Hunter, The cabin: weathered timber, rope, iron straps, rusting nails, spent shells, the bulb overhead. */
+  /* Hunter, The hideout: a steel pipe, a valve, a gun cage's mesh, an ammo can, spent shells, the bulb overhead. */
   --frame-rim: url('/frames/hunter-dark/rim.webp');
   --frame-top: url('/frames/hunter-dark/top.webp');
   --frame-top-left: url('/frames/hunter-dark/top-left.webp');
