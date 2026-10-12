@@ -7,15 +7,32 @@
   piece takes its light from the same side. Like the others, the long pieces
   keep to the side gutters; along the edges only clamps, which end before
   the content starts.
-  Materials (ambientCG, CC0): Metal022 (rusted steel: the pipe and its
-  fittings), Metal021 (the ammo can's worn paint).
+  Materials (ambientCG, CC0): Metal021 (the pipe, its fittings and the ammo
+  can), Metal022 (the rust patches).
 */
 import * as THREE from 'three';
 import { pbr, random, RIM_SIZE, RIM_WIDTH } from '../studio.js';
 
-const steel = () => pbr('Metal022', { tint: '#9a8d82', roughness: 0.95, metalness: 0.1, normalScale: 1.4, tile: 96 });
+/*
+  The pipe: worn grey steel, rusted only here and there. A thin clear coat
+  (old oil and grime) gives it a soft sheen where the lamp catches it.
+*/
+const sheen = (make) => async () => {
+  const base = await make();
+  return (size) => {
+    const s = base(size);
+    return new THREE.MeshPhysicalMaterial({
+      map: s.map, normalMap: s.normalMap, normalScale: s.normalScale, roughnessMap: s.roughnessMap,
+      roughness: s.roughness, metalness: s.metalness, color: s.color, transparent: true,
+      clearcoat: 0.3, clearcoatRoughness: 0.35,
+    });
+  };
+};
+const steel = sheen(() => pbr('Metal021', { tint: '#e4dcd2', roughness: 0.45, metalness: 0.5, normalScale: 1.2, tile: 96 }));
 // Fittings: the same steel, a little darker and finer.
-const iron = () => pbr('Metal022', { tint: '#8a7d72', roughness: 0.95, metalness: 0.1, normalScale: 1.2, tile: 40 });
+const iron = sheen(() => pbr('Metal021', { tint: '#d0c8be', roughness: 0.5, metalness: 0.5, normalScale: 1.1, tile: 40 }));
+// Rust, laid over the steel in patches (see `rust`).
+const rusted = () => pbr('Metal022', { tint: '#9a8d82', roughness: 0.95, metalness: 0.1, normalScale: 1.4, tile: 48 });
 // The ammo can: plain olive paint, worn by the steel's roughness.
 const olive = () => pbr('Metal021', { color: '#3c4228', map: null, roughness: 0.85, metalness: 0.15, normalScale: 0.8, tile: 60 });
 
@@ -26,14 +43,82 @@ const olive = () => pbr('Metal021', { color: '#3c4228', map: null, roughness: 0.
   cold spill from the room behind.
 */
 function lamp(scene) {
-  const bulb = new THREE.DirectionalLight('#ffc98c', 3.6);
+  const bulb = new THREE.DirectionalLight('#ffc98c', 4.4);
   bulb.position.set(0.62, 0.55, 0.56);
   scene.add(bulb, new THREE.HemisphereLight('#2a3440', '#120d09', 1));
+  scene.environment = room();
+  scene.environmentIntensity = 1.4;
+}
+
+/*
+  What the steel reflects: a dark room with the lamp's bright spot in the
+  same direction as the light, so the sheen sits where the light falls.
+*/
+let roomMap;
+function room() {
+  if (roomMap) return roomMap;
+  const W = 512, H = 256;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, '#6a5440');
+  sky.addColorStop(0.45, '#3a2e24');
+  sky.addColorStop(0.6, '#15110d');
+  sky.addColorStop(1, '#080706');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H);
+  // three.js's equirectangular layout: u from atan2(z, x), v from asin(y).
+  const d = new THREE.Vector3(0.62, 0.55, 0.56).normalize();
+  const u = (Math.atan2(d.z, d.x) / (2 * Math.PI) + 0.5) * W;
+  const v = (1 - (Math.asin(d.y) / Math.PI + 0.5)) * H;
+  // The lamp itself, and the wash it throws on the ceiling around it.
+  const glow = ctx.createRadialGradient(u, v, 0, u, v, 200);
+  glow.addColorStop(0, '#fff4dc');
+  glow.addColorStop(0.08, '#ffd29a');
+  glow.addColorStop(0.4, 'rgba(200,140,80,0.5)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+  roomMap = new THREE.CanvasTexture(canvas);
+  roomMap.mapping = THREE.EquirectangularReflectionMapping;
+  roomMap.colorSpace = THREE.SRGBColorSpace;
+  return roomMap;
 }
 
 // The pipe's centre line, from the outer edge, and its radius.
 const EDGE = RIM_WIDTH * 0.5;
 const PIPE = 6;
+
+/*
+  A patch of rust on the pipe: a sleeve a hair wider than the pipe, its edges
+  eaten away (a noisy alpha), where water sits: round joints and clamps.
+*/
+function rust(scene, material, rnd, x, y, length, vertical) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(64, 64);
+  for (let j = 0; j < 64; j++)
+    for (let i = 0; i < 64; i++) {
+      // Densest in the middle of the length, fading ragged towards both ends.
+      const along = 1 - Math.abs(j / 63 - 0.5) * 2;
+      const v = Math.min(1, Math.max(0, along * 1.6 - 0.35 + (rnd() - 0.5) * 0.7));
+      const k = (j * 64 + i) * 4;
+      img.data[k] = img.data[k + 1] = img.data[k + 2] = v * 255;
+      img.data[k + 3] = 255;
+    }
+  ctx.putImageData(img, 0, 0);
+  const alpha = new THREE.CanvasTexture(canvas);
+  const mat = material([2 * Math.PI * PIPE, length]);
+  mat.alphaMap = alpha;
+  mat.depthWrite = false;
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(PIPE + 0.08, PIPE + 0.08, length, 32, 1, true), mat);
+  m.position.set(x, y, 0);
+  if (!vertical) m.rotation.z = Math.PI / 2;
+  scene.add(m);
+}
 
 /*
   The rim: a pipe round the panel. Straight lengths between the corners (their
@@ -42,7 +127,7 @@ const PIPE = 6;
 */
 async function pipeRim(scene) {
   const S = RIM_SIZE, B = RIM_WIDTH, L = S - 2 * B;
-  const metal = await steel();
+  const [metal, red] = await Promise.all([steel(), rusted()]);
   const round = 2 * Math.PI * PIPE;
   for (const [x, y, rz] of [[S / 2, EDGE, Math.PI / 2], [S / 2, S - EDGE, Math.PI / 2], [EDGE, S / 2, 0], [S - EDGE, S / 2, 0]]) {
     const m = new THREE.Mesh(new THREE.CylinderGeometry(PIPE, PIPE, L, 32, 1, true), metal([round, L]));
@@ -57,7 +142,32 @@ async function pipeRim(scene) {
     m.rotation.z = a;
     scene.add(m);
   }
+  // Rust where the lower bends hold water.
+  const rnd = random(71);
+  for (const [x, y, a] of [[B, B, Math.PI], [S - B, B, -Math.PI / 2]]) {
+    const m = new THREE.Mesh(new THREE.TorusGeometry(B - EDGE + 0.08, PIPE + 0.08, 24, 12, Math.PI / 2), red([round, ((B - EDGE) * Math.PI) / 2]));
+    m.material.alphaMap = blotch(rnd);
+    m.material.depthWrite = false;
+    m.position.set(x, y, 0);
+    m.rotation.z = a;
+    scene.add(m);
+  }
   lamp(scene);
+}
+
+// A ragged blotch, for rust on a bend.
+function blotch(rnd) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 32;
+  const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(32, 32);
+  for (let k = 0; k < 32 * 32; k++) {
+    const v = rnd() < 0.55 ? 200 + rnd() * 55 : rnd() * 60;
+    img.data[k * 4] = img.data[k * 4 + 1] = img.data[k * 4 + 2] = v;
+    img.data[k * 4 + 3] = 255;
+  }
+  ctx.putImageData(img, 0, 0);
+  return new THREE.CanvasTexture(canvas);
 }
 
 // A hex bolt head, facing the viewer.
@@ -178,18 +288,25 @@ function shell(scene, { x, y, angle, rnd }) {
 
 function corner({ down, right, width, height, seed, kind }) {
   return async (scene) => {
-    const [metal, paint] = await Promise.all([iron(), olive()]);
+    const [metal, paint, red] = await Promise.all([iron(), olive(), rusted()]);
     const rnd = random(seed);
     const at = (x) => (right ? width - x : x);
     // Distance from the outer edge (top or bottom) to the piece's y.
     const y = (d) => (down ? height - d : d);
+    // Rust round the joints and clamps, the rest of the pipe left clean.
     if (kind === 'valve') {
+      rust(scene, red, rnd, at(44), y(EDGE), 22, false);
+      rust(scene, red, rnd, at(EDGE), y(78), 30, true);
+      rust(scene, red, rnd, at(EDGE), y(136), 18, true);
       flange(scene, metal, at(44), y(EDGE), false);
       valve(scene, metal, at(EDGE + 1), y(78));
       clamp(scene, metal, at(EDGE), y(136), true);
     } else if (kind === 'clamps') {
+      rust(scene, red, rnd, at(EDGE), y(down ? 92 : 70), 22, true);
+      rust(scene, red, rnd, at(58), y(EDGE), 18, false);
       clamp(scene, metal, at(EDGE), y(down ? 92 : 70), true);
     } else {
+      rust(scene, red, rnd, at(30), y(EDGE), 34, false);
       ammoCan(scene, paint, metal, at(30), y(EDGE + 3));
       clamp(scene, metal, at(EDGE), y(96), true);
     }
@@ -210,11 +327,12 @@ function corner({ down, right, width, height, seed, kind }) {
 // Along the edges: a clamp now and then, bleeding rust down the wall.
 function fringe({ down, width, height, seed }) {
   return async (scene) => {
-    const metal = await iron();
+    const [metal, red] = await Promise.all([iron(), rusted()]);
     const rnd = random(seed);
     const edge = down ? height - EDGE : EDGE;
     const x = width * 0.3 + rnd() * 20;
     for (const at of [x - width, x, x + width]) {
+      rust(scene, red, random(seed * 3), at, edge, 20, false);
       clamp(scene, metal, at, edge);
       // Rust runs down the wall, so only from the top pipe.
       if (down) scene.add(streak(at, edge - PIPE, 12, random(seed * 7)));
