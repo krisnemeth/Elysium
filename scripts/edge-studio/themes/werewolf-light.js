@@ -9,7 +9,7 @@
   Material: ambientCG Rock020 (CC0); its vertical streaks read as flowstone.
 */
 import * as THREE from 'three';
-import { pbr, random, rim, lights, spike, noise3, RIM_WIDTH } from '../studio.js';
+import { pbr, random, rim, lights, spike, mound, RIM_WIDTH } from '../studio.js';
 
 const ROCK = 'Rock020';
 const rock = () => pbr(ROCK, { tint: '#b0a698', roughness: 0.42, normalScale: 1.6 });
@@ -26,22 +26,6 @@ const LIT = {
 const GUTTER = 32;
 // The middle fringe hangs from the rim's middle and ends just short of the content.
 const FRINGE = GUTTER - RIM_WIDTH * 0.5 - 3;
-
-// A lumpy mound of rock, so formations grow out of the rim.
-function mound(material, x, y, w, h, seed, down) {
-  const n = noise3(seed);
-  const g = new THREE.SphereGeometry(1, 32, 16);
-  const pos = g.attributes.position;
-  for (let k = 0; k < pos.count; k++) {
-    const f = 1 + 0.25 * n(pos.getX(k) * 2, pos.getY(k) * 2, pos.getZ(k) * 2);
-    pos.setXYZ(k, pos.getX(k) * w * f, pos.getY(k) * h * f, pos.getZ(k) * h * 1.2 * f);
-  }
-  g.computeVertexNormals();
-  const m = new THREE.Mesh(g, material([w * 4, h * 4]));
-  m.position.set(x, y, 0);
-  if (down) m.rotation.z = Math.PI;
-  return m;
-}
 
 function formation(material, { x, edge, length, radius, seed, down, rnd }) {
   const geometry = spike({ length, radius, seed, power: down ? 1.3 : 0.9, bend: (rnd() - 0.5) * 0.35, lump: 0.2 });

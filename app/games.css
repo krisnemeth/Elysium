@@ -123,15 +123,6 @@
   animation: neon-flicker 7s steps(1, end) infinite;
 }
 
-/* Werewolf, Moonlit forest: a border of leaves and vines. */
-:root[data-theme='dark'] [data-game='werewolf'] .frame,
-:root:not([data-theme]) [data-game='werewolf'] .frame,
-[data-skin='werewolf-dark'] .skin-frame {
-  border: 14px solid transparent;
-  border-radius: 0;
-  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%234f7a4c' stroke-width='2'%3E%3Cpath d='M7 7C30 3 40 11 60 7s30-4 53 0M7 113c23 4 33-4 53 0s30 4 53 0M7 7c-4 23 4 33 0 53s-4 30 0 53M113 7c4 23-4 33 0 53s4 30 0 53'/%3E%3C/g%3E%3Cg fill='%2338603a'%3E%3Cellipse cx='22' cy='7' rx='6' ry='2.5' transform='rotate(-30 22 7)'/%3E%3Cellipse cx='48' cy='9' rx='6' ry='2.5' transform='rotate(25 48 9)'/%3E%3Cellipse cx='75' cy='5' rx='6' ry='2.5' transform='rotate(-25 75 5)'/%3E%3Cellipse cx='100' cy='9' rx='6' ry='2.5' transform='rotate(30 100 9)'/%3E%3Cellipse cx='22' cy='113' rx='6' ry='2.5' transform='rotate(30 22 113)'/%3E%3Cellipse cx='48' cy='111' rx='6' ry='2.5' transform='rotate(-25 48 111)'/%3E%3Cellipse cx='75' cy='115' rx='6' ry='2.5' transform='rotate(25 75 115)'/%3E%3Cellipse cx='100' cy='111' rx='6' ry='2.5' transform='rotate(-30 100 111)'/%3E%3Cellipse cx='7' cy='22' rx='2.5' ry='6' transform='rotate(30 7 22)'/%3E%3Cellipse cx='9' cy='48' rx='2.5' ry='6' transform='rotate(-25 9 48)'/%3E%3Cellipse cx='5' cy='75' rx='2.5' ry='6' transform='rotate(25 5 75)'/%3E%3Cellipse cx='9' cy='100' rx='2.5' ry='6' transform='rotate(-30 9 100)'/%3E%3Cellipse cx='113' cy='22' rx='2.5' ry='6' transform='rotate(-30 113 22)'/%3E%3Cellipse cx='111' cy='48' rx='2.5' ry='6' transform='rotate(25 111 48)'/%3E%3Cellipse cx='115' cy='75' rx='2.5' ry='6' transform='rotate(-25 115 75)'/%3E%3Cellipse cx='111' cy='100' rx='2.5' ry='6' transform='rotate(30 111 100)'/%3E%3Ccircle cx='7' cy='7' r='4'/%3E%3Ccircle cx='113' cy='7' r='4'/%3E%3Ccircle cx='7' cy='113' r='4'/%3E%3Ccircle cx='113' cy='113' r='4'/%3E%3C/g%3E%3C/svg%3E") 30 round;
-}
-
 /*
   Rendered frames (scripts/edge-studio): one way of drawing for every theme
   that has one, so they feel like one family. The rim is a 9-slice image used
@@ -141,6 +132,22 @@
   which ends before the content starts. A theme joins by adding its
   selectors to these rules and setting its images and sizes (--frame-*).
 */
+:root[data-theme='dark'] [data-game='werewolf'],
+:root:not([data-theme]) [data-game='werewolf'],
+[data-skin='werewolf-dark'] {
+  /* Werewolf, Moonlit forest: oak bark with a line of moss, ivy-wound branches and roots, moonlight. */
+  --frame-rim: url('/frames/werewolf-dark/rim.webp');
+  --frame-top: url('/frames/werewolf-dark/top.webp');
+  --frame-top-left: url('/frames/werewolf-dark/top-left.webp');
+  --frame-top-right: url('/frames/werewolf-dark/top-right.webp');
+  --frame-bottom: url('/frames/werewolf-dark/bottom.webp');
+  --frame-bottom-left: url('/frames/werewolf-dark/bottom-left.webp');
+  --frame-bottom-right: url('/frames/werewolf-dark/bottom-right.webp');
+  --frame-top-corner: 72px 176px;
+  --frame-bottom-corner: 72px 128px;
+  --frame-top-tile: 192px 40px;
+  --frame-bottom-tile: 192px 36px;
+}
 :root[data-theme='light'] [data-game='werewolf'],
 [data-skin='werewolf-light'] {
   /* Werewolf, The cave: wet rock, stalactites and stalagmites, firelight. */
@@ -157,6 +164,9 @@
   --frame-top-tile: 192px 40px;
   --frame-bottom-tile: 192px 36px;
 }
+:root[data-theme='dark'] [data-game='werewolf'] .frame,
+:root:not([data-theme]) [data-game='werewolf'] .frame,
+[data-skin='werewolf-dark'] .skin-frame,
 :root[data-theme='light'] [data-game='werewolf'] .frame,
 [data-skin='werewolf-light'] .skin-frame {
   border: 16px solid transparent;
@@ -164,6 +174,9 @@
   border-image: var(--frame-rim) 32 / 16px round;
   box-shadow: inset 0 0 1.5rem rgb(0 0 0 / 0.6);
 }
+:root[data-theme='dark'] [data-game='werewolf'] .frame-tall::before,
+:root:not([data-theme]) [data-game='werewolf'] .frame-tall::before,
+[data-skin='werewolf-dark'] .skin-frame::before,
 :root[data-theme='light'] [data-game='werewolf'] .frame-tall::before,
 [data-skin='werewolf-light'] .skin-frame::before {
   content: '';
