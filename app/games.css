@@ -378,19 +378,10 @@
   100% { translate: 0 60vh; opacity: 0.8; scale: 0.8 1.4; }
 }
 
-@keyframes lamp-swing {
-  0%, 100% { rotate: -6deg; }
-  50% { rotate: 6deg; }
-}
-
 @keyframes motes {
   0% { translate: 0 0; opacity: 0; }
   25%, 75% { opacity: 0.8; }
   100% { translate: var(--dx, 2rem) var(--dy, -3rem); opacity: 0; }
-}
-
-@keyframes rain {
-  to { background-position: -12px 140px; }
 }
 
 /* A double flash every few seconds. */
@@ -403,6 +394,32 @@
   0%, 88%, 91%, 93%, 100% { opacity: 0; }
   89% { opacity: 0.12; }
   92% { opacity: 0.07; }
+}
+
+/* The den's lamp: a steady, warm hum with now and then a stutter in the wiring. */
+@keyframes bulb-buzz {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 1; }
+  42% { opacity: 0.55; }
+  43% { opacity: 0.95; }
+  44% { opacity: 0.6; }
+  46% { opacity: 1; }
+  78% { opacity: 0.92; }
+  80% { opacity: 1; }
+}
+
+/* A wisp of cigarette smoke: rises, spreads and thins out, swaying as it goes. */
+@keyframes smoke-rise {
+  0% { translate: 0 0; scale: 0.5 0.6; opacity: 0; rotate: 0deg; }
+  25% { opacity: var(--o, 0.4); }
+  45% { translate: var(--sway, 1.5rem) -11rem; rotate: 8deg; }
+  100% { translate: calc(var(--sway, 1.5rem) * -0.6) -24rem; scale: 4 2.4; opacity: 0; rotate: -14deg; }
+}
+
+/* Old smoke hanging in the lamp light, drifting. */
+@keyframes haze-drift {
+  0%, 100% { translate: -4% 0; opacity: 0.55; }
+  50% { translate: 4% -3%; opacity: 0.9; }
 }
 
 @keyframes curtain {

@@ -62,7 +62,7 @@ function streak(x, y, length, rnd, down = true) {
 }
 
 // A forged iron strap with rounded ends, from (x, y) along `angle`, nailed every so often.
-function strap(scene, metal, { x, y, length, angle, width = 7.5, rnd }) {
+function strap(scene, metal, { x, y, length, angle, width = 6.5, rnd }) {
   const shape = new THREE.Shape();
   const r = width / 2;
   shape.moveTo(0, -r);
@@ -76,7 +76,8 @@ function strap(scene, metal, { x, y, length, angle, width = 7.5, rnd }) {
   for (let k = 0; k < pos.count; k++) pos.setZ(k, pos.getZ(k) + 0.35 * Math.sin(pos.getX(k) * 0.21 + angle) + 0.2 * Math.sin(pos.getX(k) * 0.9));
   g.computeVertexNormals();
   const m = new THREE.Mesh(g, metal([1, 1]));
-  m.position.set(x, y, 2);
+  // Lying on the beam's flat face (the rim is 2.6 high).
+  m.position.set(x, y, 2.5);
   m.rotation.z = angle;
   scene.add(m);
   const dir = new THREE.Vector2(Math.cos(angle), Math.sin(angle));
@@ -131,6 +132,29 @@ function lashing(scene, material, { at, y, rnd, hang }) {
   cord(scene, material, pts, { radius: 2, knot: true, rnd });
 }
 
+/*
+  Rope lashed across a corner in an X: one bundle of turns across the mitre,
+  a second over it along the mitre, each wrapping round the timber's edges
+  (dipping out of sight at both ends). Ends tucked away, nothing hanging.
+*/
+function crossLashing(scene, material, { at, y }) {
+  const c = [EDGE, EDGE], L = 13.5;
+  const a = [Math.SQRT1_2, -Math.SQRT1_2], b = [Math.SQRT1_2, Math.SQRT1_2];
+  const bundle = (along, across, peak) => {
+    for (const off of [-3.5, 0, 3.5]) {
+      const pts = [];
+      for (let i = 0; i <= 6; i++) {
+        const s = -L + (i / 6) * 2 * L, f = 1 - (s / L) ** 2;
+        const u = c[0] + across[0] * off + along[0] * s, v = c[1] + across[1] * off + along[1] * s;
+        pts.push([at(u), y(v), -1.5 + (peak + 1.5) * Math.sqrt(Math.max(0, f))]);
+      }
+      cord(scene, material, pts, { radius: 1.75 });
+    }
+  };
+  bundle(a, b, 4);
+  bundle(b, a, 6);
+}
+
 function corner({ down, right, width, height, seed, kind }) {
   return async (scene) => {
     const [metal, line] = await Promise.all([iron(), rope()]);
@@ -138,17 +162,18 @@ function corner({ down, right, width, height, seed, kind }) {
     const at = (x) => (right ? width - x : x);
     // Distance from the outer edge (top or bottom) to the piece's y.
     const y = (d) => (down ? height - d : d);
-    if (kind === 'rope') lashing(scene, line, { at, y, rnd, hang: down ? 96 : 62 });
+    if (kind === 'rope') lashing(scene, line, { at, y, rnd, hang: 96 });
+    else if (kind === 'cross') crossLashing(scene, line, { at, y });
     else {
-      // An L of iron: along the edge, then down (or up) the side.
+      // An L of iron down the middle of the beam: along the edge, then down (or up) the side.
       const v = down ? -1 : 1;
-      strap(scene, metal, { x: at(EDGE + 6), y: y(EDGE + 1), length: 40, angle: right ? Math.PI : 0, rnd });
-      strap(scene, metal, { x: at(EDGE + 7), y: y(EDGE + 1), length: down ? 118 : 84, angle: (v * Math.PI) / 2, rnd });
+      strap(scene, metal, { x: at(EDGE), y: y(EDGE), length: 40, angle: right ? Math.PI : 0, rnd });
+      strap(scene, metal, { x: at(EDGE), y: y(EDGE), length: down ? 118 : 84, angle: (v * Math.PI) / 2, rnd });
     }
     // Shells in the bottom corners.
     if (!down) {
-      shell(scene, { x: at(kind === 'rope' ? 36 : 44), y: y(EDGE + 4.5), angle: (right ? -1 : 1) * (Math.PI / 2 + 0.25), rnd });
-      if (kind !== 'rope') shell(scene, { x: at(58), y: y(EDGE + 3.5), angle: (right ? 1 : -1) * (Math.PI / 2 - 0.15), rnd });
+      shell(scene, { x: at(kind === 'cross' ? 38 : 44), y: y(EDGE + 4.5), angle: (right ? -1 : 1) * (Math.PI / 2 + 0.25), rnd });
+      if (kind === 'iron') shell(scene, { x: at(58), y: y(EDGE + 3.5), angle: (right ? 1 : -1) * (Math.PI / 2 - 0.15), rnd });
     }
     // Nails with their rust along the edge, past the corner.
     for (let x = GUTTER + 12 + rnd() * 8; x < width - 4; x += 22 + rnd() * 14) {
@@ -190,7 +215,7 @@ const cabin = {
     'top-right': { ...TOP, build: corner({ down: true, right: true, ...TOP, seed: 52, kind: 'iron' }) },
     top: { width: 192, height: 40, build: fringe({ down: true, width: 192, height: 40, seed: 53 }) },
     'bottom-left': { ...BOTTOM, build: corner({ down: false, right: false, ...BOTTOM, seed: 61, kind: 'iron' }) },
-    'bottom-right': { ...BOTTOM, build: corner({ down: false, right: true, ...BOTTOM, seed: 62, kind: 'rope' }) },
+    'bottom-right': { ...BOTTOM, build: corner({ down: false, right: true, ...BOTTOM, seed: 62, kind: 'cross' }) },
     bottom: { width: 192, height: 36, build: fringe({ down: false, width: 192, height: 36, seed: 63 }) },
   },
 };
