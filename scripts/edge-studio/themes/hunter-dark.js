@@ -1,33 +1,36 @@
 /*
   Hunter, the hideout: the cell's ops base in a basement. The frame is a run
   of old steel pipe, bending round each corner, held to the wall by clamps
-  that bleed rust. On the left a valve with its handwheel; down the right the
-  welded mesh of a gun cage, padlocked at the foot; an ammo can and spent
-  shotgun shells in the bottom left. Lit by the bare bulb overhead. Like the
-  others, the long pieces keep to the side gutters; along the edges only
-  clamps, which end before the content starts.
-  Material (ambientCG, CC0): Metal021, for the pipe, its fittings and the
-  ammo can's worn paint.
+  that bleed rust. On the left a valve with its handwheel; an ammo can and
+  spent shotgun shells along the bottom. Matte and rusted through, lit only
+  by the den's lamp, which hangs to the upper right of the page, so every
+  piece takes its light from the same side. Like the others, the long pieces
+  keep to the side gutters; along the edges only clamps, which end before
+  the content starts.
+  Materials (ambientCG, CC0): Metal022 (rusted steel: the pipe and its
+  fittings), Metal021 (the ammo can's worn paint).
 */
 import * as THREE from 'three';
-import { lights, pbr, random, RIM_SIZE, RIM_WIDTH } from '../studio.js';
+import { pbr, random, RIM_SIZE, RIM_WIDTH } from '../studio.js';
 
-const steel = () => pbr('Metal021', { tint: '#8d847a', roughness: 0.75, metalness: 0.55, normalScale: 1.2, tile: 96 });
+const steel = () => pbr('Metal022', { tint: '#9a8d82', roughness: 0.95, metalness: 0.1, normalScale: 1.4, tile: 96 });
 // Fittings: the same steel, a little darker and finer.
-const iron = () => pbr('Metal021', { tint: '#a39a90', roughness: 0.65, metalness: 0.5, normalScale: 1, tile: 40 });
+const iron = () => pbr('Metal022', { tint: '#8a7d72', roughness: 0.95, metalness: 0.1, normalScale: 1.2, tile: 40 });
 // The ammo can: plain olive paint, worn by the steel's roughness.
 const olive = () => pbr('Metal021', { color: '#3c4228', map: null, roughness: 0.85, metalness: 0.15, normalScale: 0.8, tile: 60 });
 
-const LIT = {
-  colour: '#ffd09a',
-  intensity: 600,
-  fill: ['#2a3c52', '#120d09'],
-  fillIntensity: 1.5,
-  front: 1.2,
-  top: { colour: '#ffd8a8', intensity: 1.1 },
-};
+/*
+  The den's lamp hangs to the upper right of the page, well away from any
+  frame, so its light arrives as one warm direction for every piece (a
+  directional light, so the rim and the corners agree), with only a little
+  cold spill from the room behind.
+*/
+function lamp(scene) {
+  const bulb = new THREE.DirectionalLight('#ffc98c', 3.6);
+  bulb.position.set(0.62, 0.55, 0.56);
+  scene.add(bulb, new THREE.HemisphereLight('#2a3440', '#120d09', 1));
+}
 
-const GUTTER = 32;
 // The pipe's centre line, from the outer edge, and its radius.
 const EDGE = RIM_WIDTH * 0.5;
 const PIPE = 6;
@@ -54,7 +57,7 @@ async function pipeRim(scene) {
     m.rotation.z = a;
     scene.add(m);
   }
-  lights(scene, { centre: [S / 2, S / 2, 70], ...LIT });
+  lamp(scene);
 }
 
 // A hex bolt head, facing the viewer.
@@ -122,7 +125,7 @@ function valve(scene, metal, x, y) {
   stem.rotation.x = Math.PI / 2;
   stem.position.set(x, y, PIPE + 4);
   scene.add(stem);
-  const paint = new THREE.MeshStandardMaterial({ color: '#6e1f17', roughness: 0.6, metalness: 0.3 });
+  const paint = new THREE.MeshStandardMaterial({ color: '#5e2117', roughness: 0.9, metalness: 0.05 });
   const wheel = new THREE.Mesh(new THREE.TorusGeometry(7, 1.2, 12, 40), paint);
   wheel.position.set(x, y, PIPE + 7);
   scene.add(wheel);
@@ -136,48 +139,6 @@ function valve(scene, metal, x, y) {
   hub.rotation.x = Math.PI / 2;
   hub.position.set(x, y, PIPE + 7.4);
   scene.add(hub);
-}
-
-/*
-  Welded wire mesh, as on a gun cage: a grid of wires in a flat-bar frame,
-  from (x0, y0) to (x1, y1). It sits in front of the pipe, which shows through.
-*/
-function mesh(scene, metal, { x0, y0, x1, y1, pitch = 5.5 }) {
-  const wire = new THREE.MeshStandardMaterial({ color: '#5d5853', metalness: 0.7, roughness: 0.55 });
-  const w = Math.abs(x1 - x0), h = Math.abs(y1 - y0), xm = (x0 + x1) / 2, ym = (y0 + y1) / 2;
-  for (let x = Math.min(x0, x1) + pitch / 2; x < Math.max(x0, x1); x += pitch) {
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, h, 6), wire);
-    m.position.set(x, ym, PIPE + 2.6);
-    scene.add(m);
-  }
-  for (let y = Math.min(y0, y1) + pitch / 2; y < Math.max(y0, y1); y += pitch) {
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, w, 6), wire);
-    m.rotation.z = Math.PI / 2;
-    m.position.set(xm, y, PIPE + 2);
-    scene.add(m);
-  }
-  // The frame: flat bar round the edge.
-  for (const [cx, cy, bw, bh] of [[xm, y0, w + 2.4, 2.4], [xm, y1, w + 2.4, 2.4], [x0, ym, 2.4, h + 2.4], [x1, ym, 2.4, h + 2.4]]) {
-    const b = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, 1.4), metal([bw, bh]));
-    b.position.set(cx, cy, PIPE + 3.4);
-    scene.add(b);
-  }
-}
-
-// A padlock hanging from the cage at (x, y): steel shackle, brass body.
-function padlock(scene, x, y) {
-  const steelMat = new THREE.MeshStandardMaterial({ color: '#b9b4ab', metalness: 1, roughness: 0.35 });
-  const brass = new THREE.MeshStandardMaterial({ color: '#a8823f', metalness: 1, roughness: 0.4 });
-  const shackle = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.6, 10, 24, Math.PI), steelMat);
-  shackle.position.set(x, y - 2, PIPE + 5);
-  scene.add(shackle);
-  const body = new THREE.Mesh(new THREE.BoxGeometry(7, 6.5, 2.6), brass);
-  body.position.set(x, y - 5.2, PIPE + 5);
-  body.rotation.z = 0.08;
-  scene.add(body);
-  const hole = new THREE.Mesh(new THREE.CircleGeometry(0.7, 12), new THREE.MeshBasicMaterial({ color: '#1a120a' }));
-  hole.position.set(x + 0.1, y - 6, PIPE + 6.35);
-  scene.add(hole);
 }
 
 // An ammo can standing on the bottom pipe: olive steel, its lid and latch.
@@ -226,10 +187,8 @@ function corner({ down, right, width, height, seed, kind }) {
       flange(scene, metal, at(44), y(EDGE), false);
       valve(scene, metal, at(EDGE + 1), y(78));
       clamp(scene, metal, at(EDGE), y(136), true);
-    } else if (kind === 'cage') {
-      // The cage's mesh down the side, over the pipe and the padding, clear of the content.
-      mesh(scene, metal, { x0: at(1.5), y0: y(EDGE + 10), x1: at(GUTTER - 2), y1: y(down ? 150 : 104) });
-      if (!down) padlock(scene, at(GUTTER - 2), y(64));
+    } else if (kind === 'clamps') {
+      clamp(scene, metal, at(EDGE), y(down ? 92 : 70), true);
     } else {
       ammoCan(scene, paint, metal, at(30), y(EDGE + 3));
       clamp(scene, metal, at(EDGE), y(96), true);
@@ -240,12 +199,11 @@ function corner({ down, right, width, height, seed, kind }) {
       if (kind === 'can') shell(scene, { x: at(64), y: y(EDGE + 3.5), angle: (right ? 1 : -1) * (Math.PI / 2 - 0.15), rnd });
     }
     // A clamp along the edge past the corner, with its rust.
-    if (kind === 'cage') {
+    if (kind === 'clamps') {
       clamp(scene, metal, at(58), y(EDGE));
       if (down) scene.add(streak(at(58), y(EDGE + PIPE), 10 + rnd() * 5, rnd));
     }
-    const inwards = right ? -150 : width + 150;
-    lights(scene, { ...LIT, centre: [inwards, down ? height - 420 : 420, 160], intensity: LIT.intensity * 5 });
+    lamp(scene);
   };
 }
 
@@ -261,7 +219,7 @@ function fringe({ down, width, height, seed }) {
       // Rust runs down the wall, so only from the top pipe.
       if (down) scene.add(streak(at, edge - PIPE, 12, random(seed * 7)));
     }
-    lights(scene, { ...LIT, centre: [width / 2, down ? height - 420 : 420, 160], intensity: LIT.intensity * 5 });
+    lamp(scene);
   };
 }
 
@@ -272,10 +230,10 @@ const hideout = {
   pieces: {
     rim: { width: 224, height: 224, build: pipeRim },
     'top-left': { ...TOP, build: corner({ down: true, right: false, ...TOP, seed: 51, kind: 'valve' }) },
-    'top-right': { ...TOP, build: corner({ down: true, right: true, ...TOP, seed: 52, kind: 'cage' }) },
+    'top-right': { ...TOP, build: corner({ down: true, right: true, ...TOP, seed: 52, kind: 'clamps' }) },
     top: { width: 192, height: 40, build: fringe({ down: true, width: 192, height: 40, seed: 53 }) },
     'bottom-left': { ...BOTTOM, build: corner({ down: false, right: false, ...BOTTOM, seed: 61, kind: 'can' }) },
-    'bottom-right': { ...BOTTOM, build: corner({ down: false, right: true, ...BOTTOM, seed: 62, kind: 'cage' }) },
+    'bottom-right': { ...BOTTOM, build: corner({ down: false, right: true, ...BOTTOM, seed: 62, kind: 'clamps' }) },
     bottom: { width: 192, height: 36, build: fringe({ down: false, width: 192, height: 36, seed: 63 }) },
   },
 };
