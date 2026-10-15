@@ -5,7 +5,7 @@ const CHAPTERS = [
     numeral: 'I',
     eyebrow: 'Character creation',
     title: 'Build a vampire in minutes',
-    body: 'Choose a clan, spread your attribute and skill dots, pick disciplines and write the history only your Storyteller gets to read. Elysium follows the V5 sheet section by section, so nothing gets skipped.',
+    body: 'Choose a clan, spread your attribute and skill dots, pick Disciplines and write the history only your Storyteller gets to read. Elysium follows the V5 sheet section by section, so nothing gets skipped.',
     image: {
       src: '/iPadCharShotsDark.png',
       width: 1920,
@@ -17,7 +17,7 @@ const CHAPTERS = [
     numeral: 'II',
     eyebrow: 'Character sheets',
     title: 'The whole sheet, laid out like the book',
-    body: 'Attributes, skills, disciplines, Health, Willpower, Humanity, Hunger and Blood Potency sit exactly where you expect them. Mark a track with a tap instead of hunting for an eraser.',
+    body: 'Attributes, skills, Disciplines, Health, Willpower, Humanity, Hunger and Blood Potency sit exactly where you expect them. Mark a track with a tap instead of hunting for an eraser.',
     image: {
       src: '/SheetShot.png',
       width: 960,
@@ -27,14 +27,14 @@ const CHAPTERS = [
   },
   {
     numeral: 'III',
-    eyebrow: 'Phone & tablet',
+    eyebrow: 'Phones and tablets',
     title: 'At the table, or on the night bus home',
-    body: 'Elysium works on phones and tablets as well as it does on a laptop. It follows your system theme: Classic Masquerade in dark mode, Neon Nights in light.',
+    body: 'Elysium works on phones and tablets as well as it does on a laptop. It follows your system theme: Masquerade in dark mode, Neon Nights in light.',
     image: {
       src: '/MobileShots.png',
       width: 960,
       height: 720,
-      alt: 'Two phones showing Elysium in the Classic Masquerade and Neon Nights themes.',
+      alt: 'Two phones showing Elysium in the Masquerade and Neon Nights themes.',
     },
   },
   {

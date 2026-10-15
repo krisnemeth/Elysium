@@ -18,7 +18,7 @@ import vampireDark from '@/public/art/city-night.webp';
 import vampireLight from '@/public/art/lore-dark.webp';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Elysium — a character vault for the World of Darkness' },
+  title: { absolute: 'Elysium: a character vault for the World of Darkness' },
   description:
     'Build and keep characters for Vampire: The Masquerade, Werewolf: The Apocalypse and Hunter: The Reckoning, each with its own sheet, dice and atmosphere.',
 };
@@ -234,7 +234,7 @@ export default function Home() {
               The real dice, rolled in 3D.
             </h2>
             <p className='reveal mt-5 max-w-[56ch] leading-relaxed text-bone/65'>
-              Every game rolls its own d10s with its own rules: Hunger, Rage and Desperation, criticals, messy criticals, Brutal outcomes and Overreach.
+              Every game rolls its own d10s with its own rules: Hunger, Rage and Desperation, criticals, messy criticals, brutal outcomes and Overreach.
             </p>
             <Stagger className='mt-14 grid gap-5 md:grid-cols-3'>
               {DICE.map((d) => (

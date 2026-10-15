@@ -167,7 +167,7 @@ export default function Hero() {
               href='#features'
               className='inline-flex items-center gap-1 rounded-full border border-bone/30 bg-ink/40 px-5 py-3 text-sm text-bone backdrop-blur-md transition duration-300 hover:border-bone/70 hover:bg-ink/60 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone active:scale-[0.98]'
             >
-              See what&apos;s inside
+              See what’s inside
               <MdKeyboardArrowDown className='text-lg' />
             </a>
           </div>

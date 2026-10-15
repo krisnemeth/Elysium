@@ -13,7 +13,7 @@ export default function NotFound() {
         <p className='mt-8 text-xs tracking-[0.3em] text-accent uppercase'>404</p>
         <h1 className='mt-3 font-display text-5xl leading-tight'>Lost in the night.</h1>
         <p className='mt-4 leading-relaxed text-bone/65'>
-          This page doesn&apos;t exist, or it has slipped beneath the Masquerade.
+          This page doesn’t exist, or it has slipped beneath the Masquerade.
         </p>
         <div className='mt-8 flex flex-wrap justify-center gap-3'>
           <Link href='/dashboard' className={buttonPrimary}>

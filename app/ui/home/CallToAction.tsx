@@ -22,7 +22,7 @@ export default function CallToAction() {
             Your chronicle deserves better than a crumpled sheet.
           </h2>
           <p className='mt-6 max-w-[48ch] leading-relaxed text-pretty text-bone/70'>
-            Whether you&apos;ve played since the nineties or you&apos;re
+            Whether you’ve played since the nineties or you’re
             building your first neonate, Elysium keeps every character, sheet
             and backstory in one place, ready for the next session.
           </p>
@@ -40,7 +40,7 @@ export default function CallToAction() {
             src='/iPadDark.png'
             width={1920}
             height={1080}
-            alt='Elysium running on an iPad in the Classic Masquerade theme.'
+            alt='Elysium running on an iPad in the Masquerade theme.'
             sizes='(max-width: 768px) 100vw, 36rem'
             className='w-full rounded-2xl shadow-[0_3rem_6rem_-2rem_var(--accent)] ring-1 ring-bone/10 md:rotate-2'
           />

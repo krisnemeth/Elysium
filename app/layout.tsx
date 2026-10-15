@@ -14,11 +14,11 @@ export const metadata: Metadata = {
     default: 'Elysium',
   },
   description:
-    'A place to store your characters, and character sheets for the World of Darkness. Developed by Krisztian Nemeth web developer.',
+    'A free character vault for the World of Darkness: sheets, dice and chronicles for Vampire, Werewolf and Hunter. Built by Krisztian Nemeth.',
   openGraph: {
     title: 'Elysium',
     description:
-      'Build, store and play your Vampire: The Masquerade characters from any device.',
+      'Build, keep and play your Vampire, Werewolf and Hunter characters from any device.',
     images: ['/iPadDark.png'],
     type: 'website',
   },

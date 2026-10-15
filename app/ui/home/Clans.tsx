@@ -55,7 +55,7 @@ export default function Clans() {
             Elysium is neutral ground, and so is the vault. Bring your
             Camarilla elders, Anarch rebels and the clans the Ivory Tower would
             rather forget, down to the clanless Caitiff and the thin-blooded.
-            Each sheet carries its clan&apos;s symbol and bane.
+            Each sheet carries its clan’s symbol and bane.
           </p>
         </div>
 
