@@ -3,7 +3,7 @@ import AuthShell from '@/app/ui/auth/AuthShell';
 import ProviderButtons from '@/app/ui/auth/ProviderButtons';
 import EmailForm from '@/app/ui/auth/EmailForm';
 
-export const metadata: Metadata = { title: 'Create an account' };
+export const metadata: Metadata = { title: 'Sign up' };
 
 export default async function SignUp({ searchParams }: PageProps<'/signup'>) {
   const { next } = await searchParams;

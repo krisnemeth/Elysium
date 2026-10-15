@@ -8,7 +8,7 @@ export default async function CheckEmail({ searchParams }: PageProps<'/auth/chec
   const { email } = await searchParams;
   return (
     <AuthShell
-      title='Check your inbox.'
+      title='Check your email.'
       lead={
         <>
           We sent a confirmation link to {typeof email === 'string' ? <strong className='text-bone'>{email}</strong> : 'your email'}. Open it on this device to enter your vault.

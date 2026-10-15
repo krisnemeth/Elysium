@@ -56,7 +56,7 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
   });
   if (error) {
     return {
-      error: error.code === 'user_already_exists' ? 'There’s already an account with that email. Log in instead.' : error.message,
+      error: error.code === 'user_already_exists' ? 'There’s already an account with that email. Log in instead.' : 'We couldn’t create your account. Try again in a moment.',
       email,
     };
   }
@@ -71,7 +71,7 @@ export async function signInWithProvider(provider: 'google' | 'discord', next: s
     provider,
     options: { redirectTo: `${await origin()}/auth/callback?next=${encodeURIComponent(safeNext(next))}` },
   });
-  if (error || !data.url) redirect(`/auth/error?error=${encodeURIComponent(error?.message ?? 'Sign-in failed')}`);
+  if (error || !data.url) redirect(`/auth/error?error=${encodeURIComponent('We couldn’t log you in. Try again.')}`);
   redirect(data.url);
 }
 

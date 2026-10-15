@@ -13,9 +13,9 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(`${origin}${next}`);
-    return NextResponse.redirect(`${origin}/auth/error?error=${encodeURIComponent(error.message)}`);
+    return NextResponse.redirect(`${origin}/auth/error?error=${encodeURIComponent('That link didn’t work. It may have expired. Log in or sign up again.')}`);
   }
 
-  const description = searchParams.get('error_description') ?? 'The sign-in link is missing or has expired.';
+  const description = 'That link is missing or has expired. Log in or sign up again.';
   return NextResponse.redirect(`${origin}/auth/error?error=${encodeURIComponent(description)}`);
 }

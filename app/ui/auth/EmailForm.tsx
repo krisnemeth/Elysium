@@ -58,12 +58,12 @@ export default function EmailForm({ mode, next }: { mode: 'login' | 'signup'; ne
         disabled={pending}
         className='rounded-full bg-bone px-6 py-3.5 text-sm font-semibold text-ink transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_2rem_-0.5rem_var(--accent)] active:translate-y-0 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone'
       >
-        {pending ? 'One moment…' : mode === 'login' ? 'Log in' : 'Create account'}
+        {pending ? 'One moment…' : mode === 'login' ? 'Log in' : 'Sign up'}
       </button>
 
       <p className='text-center text-sm text-bone/60'>
         {mode === 'login' ? (
-          <>New here? <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : '/signup'} className='text-bone underline underline-offset-4 hover:text-accent'>Create an account</Link></>
+          <>New here? <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : '/signup'} className='text-bone underline underline-offset-4 hover:text-accent'>Sign up</Link></>
         ) : (
           <>Already have one? <Link href='/login' className='text-bone underline underline-offset-4 hover:text-accent'>Log in</Link></>
         )}
