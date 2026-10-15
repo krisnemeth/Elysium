@@ -82,7 +82,7 @@ function LibraryDialog({ game, target, onPick, onClose }: { game: Game; target: 
     >
       <div className='flex items-baseline justify-between gap-3'>
         <h2 className='font-display text-2xl'>Choose a {target.noun}</h2>
-        <button type='button' aria-label='Close' onClick={onClose} className='grid size-9 place-items-center rounded-full text-bone/70 hover:bg-bone/[0.06] hover:text-bone'>
+        <button type='button' aria-label='Close the library' onClick={onClose} className='grid size-9 place-items-center rounded-full text-bone/70 hover:bg-bone/[0.06] hover:text-bone'>
           <MdClose aria-hidden className='size-5' />
         </button>
       </div>
