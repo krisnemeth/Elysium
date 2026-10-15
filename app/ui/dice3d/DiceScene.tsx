@@ -8,7 +8,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { Die, Game } from '@/app/lib/dice/rules';
-import { d10, diceAtlas, faceTowards } from './d10';
+import { d10, diceAtlas, diceSurface, faceTowards } from './d10';
+import { SURFACE_MATERIAL, type DiceSurface } from './dice-surface';
 import { landing, planThrow, sample, type DiePath } from './throw';
 import Tray, { FLOOR_Y, WALL_HEIGHT, WALL_THICKNESS } from './Tray';
 
@@ -51,20 +52,27 @@ function prefersReducedMotion() {
 }
 
 function useAtlas(game: Game, kind: Die['kind']) {
-  const [texture, setTexture] = useState<THREE.CanvasTexture | null>(null);
+  const [textures, setTextures] = useState<{ map: THREE.CanvasTexture; surface: DiceSurface | null } | null>(null);
   const gl = useThree((s) => s.gl);
   useEffect(() => {
     let live = true;
-    diceAtlas(game, kind).then((t) => {
+    const aniso = gl.capabilities.getMaxAnisotropy();
+    // Colours and symbols first, so the die shows at once; its surface
+    // relief (normal and roughness maps) follows a moment later.
+    diceAtlas(game, kind).then((map) => {
       // Sharpest filtering the GPU offers, so symbols stay crisp on tilted faces.
-      t.anisotropy = gl.capabilities.getMaxAnisotropy();
-      if (live) setTexture(t);
+      map.anisotropy = aniso;
+      if (live) setTextures({ map, surface: null });
+      return diceSurface(game, kind).then((surface) => {
+        surface.normalMap.anisotropy = surface.roughnessMap.anisotropy = aniso;
+        if (live) setTextures({ map, surface });
+      });
     });
     return () => {
       live = false;
     };
   }, [game, kind, gl]);
-  return texture;
+  return textures;
 }
 
 // Inner half-sizes of the tray: room for the dice, at least five across and
@@ -182,33 +190,38 @@ function D10Mesh({
   const mesh = useRef<THREE.Mesh>(null);
   const blob = useRef<THREE.Mesh>(null);
   const blobMaterial = useMemo(() => new THREE.MeshBasicMaterial({ map: contactBlob(), transparent: true, depthWrite: false }), []);
-  const texture = useAtlas(game, die.kind);
+  const textures = useAtlas(game, die.kind);
   const { geometry } = d10();
   const invalidate = useThree((s) => s.invalidate);
   const [hovered, setHovered] = useState(false);
 
-  // Resin dice: the face texture also glows a little (emissive), so the
-  // official colours read true whatever the light; a thin clear coat adds
-  // highlights without washing them out.
-  const material = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        roughness: 0.6,
-        metalness: 0,
-        specularIntensity: 0.25,
-        clearcoat: 0.15,
-        clearcoatRoughness: 0.2,
-        emissive: new THREE.Color('#ffffff'),
-        flatShading: true,
-      }),
-    [],
-  );
+  // The face texture also glows a little (emissive), so the official colours
+  // read true whatever the light. Relief comes from the surface maps (normal
+  // and roughness: resin swirl, stone grain, worn paint, engraved symbols);
+  // a thin clear coat adds highlights without washing the colours out.
+  const material = useMemo(() => {
+    const look = SURFACE_MATERIAL[game];
+    return new THREE.MeshPhysicalMaterial({
+      roughness: 0.6,
+      metalness: 0,
+      specularIntensity: look.specularIntensity,
+      clearcoat: look.clearcoat,
+      clearcoatRoughness: look.clearcoatRoughness,
+      normalScale: new THREE.Vector2(look.normalScale, look.normalScale),
+      emissive: new THREE.Color('#ffffff'),
+      flatShading: true,
+    });
+  }, [game]);
   useEffect(() => {
-    material.map = texture;
-    material.emissiveMap = texture;
+    material.map = textures?.map ?? null;
+    material.emissiveMap = textures?.map ?? null;
+    material.normalMap = textures?.surface?.normalMap ?? null;
+    // The roughness map holds absolute values, so it is the whole factor.
+    material.roughnessMap = textures?.surface?.roughnessMap ?? null;
+    material.roughness = textures?.surface ? 1 : 0.6;
     material.needsUpdate = true;
     invalidate();
-  }, [material, texture, invalidate]);
+  }, [material, textures, invalidate]);
 
   // Path and tumble come from the shared simulation. The die finishes flat
   // on the face showing its value, symbol upright for the viewer, give or
