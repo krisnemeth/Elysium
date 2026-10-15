@@ -243,7 +243,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
     {
       id: 'lore',
       label: 'Lore',
-      content: <SharedLore items={sharedLore.map((l) => ({ id: l.id, kind: l.kind, title: l.title, content: l.content, by: names.get(l.shared_by) ?? 'Someone' }))} />,
+      content: <SharedLore items={sharedLore.map((l) => ({ id: l.id, kind: l.kind, title: l.title, content: l.content, image: l.image, by: names.get(l.shared_by) ?? 'Someone' }))} />,
     },
     myCharacter && { id: 'party', label: 'Party', content: partyList },
   ] as (Tab | null | false | undefined)[]).filter((t): t is Tab => !!t);

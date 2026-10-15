@@ -1,15 +1,18 @@
 'use client';
 
+import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
 import { LORE_ICONS } from '@/app/ui/loresheets/icons';
+import { LoreImage } from '@/app/ui/loresheets/LoreImagePicker';
 
 export type LoreItem = {
   id: string;
   kind: LoreKind;
   title: string;
   content: Record<string, string>;
+  image: string | null;
   by: string;
 };
 
@@ -39,7 +42,11 @@ export default function SharedLore({ items }: { items: LoreItem[] }) {
                 }}
                 className='flex w-full items-center gap-3 py-3 text-left transition-colors hover:text-accent'
               >
-                <Icon aria-hidden className='size-6 shrink-0 text-accent' />
+                {l.image ? (
+                  <LoreImage src={l.image} kind={l.kind} alt='' sizes='6rem' className={clsx('shrink-0 rounded-md', l.kind === 'location' ? 'w-20' : 'w-12')} />
+                ) : (
+                  <Icon aria-hidden className='size-6 shrink-0 text-accent' />
+                )}
                 <span className='min-w-0 grow'>
                   <span className='block truncate font-display text-lg leading-tight'>{l.title || `Untitled ${LORE_KINDS[l.kind].noun}`}</span>
                   <span className='block truncate text-xs text-bone/50'>
@@ -72,6 +79,15 @@ export default function SharedLore({ items }: { items: LoreItem[] }) {
         </div>
         {open && spec && (
           <article className='flex flex-col gap-5 px-5 pb-8 md:px-8'>
+            {open.image && (
+              <LoreImage
+                src={open.image}
+                kind={open.kind}
+                alt={open.title || `Untitled ${spec.noun}`}
+                sizes={open.kind === 'location' ? '44rem' : '12rem'}
+                className={clsx('rounded-xl', open.kind === 'location' ? 'w-full' : 'w-40 self-center sm:self-start')}
+              />
+            )}
             <header>
               <p className='text-[0.65rem] tracking-[0.2em] text-accent uppercase'>
                 Loresheet · {spec.label} · shared by {open.by} · read-only
