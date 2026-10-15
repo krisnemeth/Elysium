@@ -190,6 +190,8 @@ function D10Mesh({
   const mesh = useRef<THREE.Mesh>(null);
   const blob = useRef<THREE.Mesh>(null);
   const blobMaterial = useMemo(() => new THREE.MeshBasicMaterial({ map: contactBlob(), transparent: true, depthWrite: false }), []);
+  // Materials are per die; the textures they point at are module-cached and shared, so only the materials go.
+  useEffect(() => () => blobMaterial.dispose(), [blobMaterial]);
   const textures = useAtlas(game, die.kind);
   const { geometry } = d10();
   const invalidate = useThree((s) => s.invalidate);
@@ -212,6 +214,7 @@ function D10Mesh({
       flatShading: true,
     });
   }, [game]);
+  useEffect(() => () => material.dispose(), [material]);
   useEffect(() => {
     material.map = textures?.map ?? null;
     material.emissiveMap = textures?.map ?? null;
