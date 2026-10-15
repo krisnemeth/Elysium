@@ -40,7 +40,7 @@ export default function GameBar({
   solo,
 }: {
   chronicleId: string;
-  // The chronicle’s game (e.g. "Vampire") and who tells the story ("Bot" or a name).
+  // The chronicle’s game (e.g. "Vampire") and who tells the story (a bot persona such as "The Archivist", or a name).
   kind: string;
   storyteller: string;
   title: string;

@@ -11,6 +11,7 @@ import { getChronicle, getFriends, getNotes, getRolls, getTurn, getVotes } from 
 import { GAMES } from '@/app/lib/games';
 import { isUploadedPortrait } from '@/app/lib/portraits';
 import { ACT_COUNT, buildArc, knownNpcs, sceneFor, storySoFar } from '@/app/lib/storyteller/generate';
+import { personaFor } from '@/app/lib/storyteller/personas';
 import { SUPABASE_KEY, SUPABASE_URL } from '@/app/lib/supabase/env';
 import { readSkin, SKIN_COOKIE } from '@/app/lib/table-skin';
 import { panel } from '@/app/ui/kit/styles';
@@ -247,7 +248,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
 
   // Who tells the story: the bot, or the Storyteller's name.
   const st = party.find((p) => p.role === 'storyteller' && p.status === 'joined');
-  const storyteller = bot ? 'Bot' : st ? (st.user_id === me ? 'You' : st.display_name) : 'Nobody yet';
+  const storyteller = bot ? personaFor(bot).name : st ? (st.user_id === me ? 'You' : st.display_name) : 'Nobody yet';
   const bar = (
     <GameBar
       chronicleId={c.id}
