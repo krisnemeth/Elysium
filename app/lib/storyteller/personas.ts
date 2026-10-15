@@ -299,7 +299,7 @@ export const PERSONAS: Record<PersonaId, Persona> = {
 export const PERSONA_ORDER: PersonaId[] = ['archivist', 'nightwatch', 'wire', 'hearthkeeper', 'breaker'];
 
 export function isPersonaId(value: unknown): value is PersonaId {
-  return typeof value === 'string' && value in PERSONAS;
+  return typeof value === 'string' && Object.hasOwn(PERSONAS, value);
 }
 
 // Chronicles made before personas stored only a tone; map it to the nearest one.
