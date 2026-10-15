@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import type { DieKind, Game } from '@/app/lib/dice/rules';
 import { DICE_STYLES, glyphFor } from '@/app/lib/dice/faces';
+import { buildSurface, type DiceSurface } from './dice-surface';
 
 /*
   A real d10: a pentagonal trapezohedron with ten kite-shaped faces.
@@ -159,6 +160,36 @@ function loadImage(name: string) {
   return imageCache.get(name)!;
 }
 
+
+// Draws a game's face symbols into a canvas laid out as the atlas (cells of
+// `cell` px), tinted `color`. The official art units become canvas pixels.
+async function drawGlyphs(ctx: CanvasRenderingContext2D, game: Game, kind: DieKind, cell: number, color: string) {
+  const { kite2d } = d10();
+  const k = cell / CELL;
+  const unit = ((kite2d.far[1] - kite2d.apex[1]) * k) / ART_LENGTH;
+  const tint = document.createElement('canvas');
+  const tctx = tint.getContext('2d')!;
+  for (let value = 1; value <= 10; value++) {
+    const name = glyphFor(game, kind, value);
+    if (!name) continue;
+    const img = await loadImage(name);
+    const [bx, by, bw, bh] = GLYPH_BOX[name];
+    const w = Math.max(1, Math.round(bw * unit));
+    const h = Math.max(1, Math.round(bh * unit));
+    // Vector symbols, rasterised at full face resolution, then tinted.
+    tint.width = w;
+    tint.height = h;
+    tctx.globalCompositeOperation = 'source-over';
+    tctx.drawImage(img, 0, 0, w, h);
+    tctx.globalCompositeOperation = 'source-in';
+    tctx.fillStyle = color;
+    tctx.fillRect(0, 0, w, h);
+    const ox = ((value - 1) % ATLAS_COLS) * cell;
+    const oy = Math.floor((value - 1) / ATLAS_COLS) * cell;
+    ctx.drawImage(tint, ox + kite2d.apex[0] * k + (bx - ART_APEX[0]) * unit, oy + kite2d.apex[1] * k + (by - ART_APEX[1]) * unit);
+  }
+}
+
 const atlasCache = new Map<string, Promise<THREE.CanvasTexture>>();
 
 export function diceAtlas(game: Game, kind: DieKind) {
@@ -167,7 +198,6 @@ export function diceAtlas(game: Game, kind: DieKind) {
     atlasCache.set(
       key,
       (async () => {
-        const { kite2d } = d10();
         const style = DICE_STYLES[game][kind];
         const canvas = document.createElement('canvas');
         canvas.width = CELL * ATLAS_COLS;
@@ -175,30 +205,8 @@ export function diceAtlas(game: Game, kind: DieKind) {
         const ctx = canvas.getContext('2d')!;
         ctx.fillStyle = style.face;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Official art units → atlas pixels. The printed dice carry no numbers.
-        const unit = (kite2d.far[1] - kite2d.apex[1]) / ART_LENGTH;
-        const tint = document.createElement('canvas');
-        const tctx = tint.getContext('2d')!;
-        for (let value = 1; value <= 10; value++) {
-          const name = glyphFor(game, kind, value);
-          if (!name) continue;
-          const img = await loadImage(name);
-          const [bx, by, bw, bh] = GLYPH_BOX[name];
-          const w = Math.round(bw * unit);
-          const h = Math.round(bh * unit);
-          // Vector symbols, rasterised at full face resolution, then tinted.
-          tint.width = w;
-          tint.height = h;
-          tctx.globalCompositeOperation = 'source-over';
-          tctx.drawImage(img, 0, 0, w, h);
-          tctx.globalCompositeOperation = 'source-in';
-          tctx.fillStyle = style.glyph;
-          tctx.fillRect(0, 0, w, h);
-          const ox = ((value - 1) % ATLAS_COLS) * CELL;
-          const oy = Math.floor((value - 1) / ATLAS_COLS) * CELL;
-          ctx.drawImage(tint, ox + kite2d.apex[0] + (bx - ART_APEX[0]) * unit, oy + kite2d.apex[1] + (by - ART_APEX[1]) * unit);
-        }
+        // The printed dice carry no numbers.
+        await drawGlyphs(ctx, game, kind, CELL, style.glyph);
         const texture = new THREE.CanvasTexture(canvas);
         texture.colorSpace = THREE.SRGBColorSpace;
         return texture;
@@ -206,4 +214,35 @@ export function diceAtlas(game: Game, kind: DieKind) {
     );
   }
   return atlasCache.get(key)!;
+}
+
+// Surface relief for a die: a normal map and a roughness map on the atlas
+// layout (half its resolution), with the symbols engraved. Made once per
+// game and kind.
+const SURFACE_CELL = CELL / 2;
+const surfaceCache = new Map<string, Promise<DiceSurface>>();
+
+export function diceSurface(game: Game, kind: DieKind) {
+  const key = `${game}-${kind}`;
+  if (!surfaceCache.has(key)) {
+    surfaceCache.set(
+      key,
+      (async () => {
+        const width = SURFACE_CELL * ATLAS_COLS;
+        const height = SURFACE_CELL * ATLAS_ROWS;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+        await drawGlyphs(ctx, game, kind, SURFACE_CELL, '#fff');
+        const alpha = ctx.getImageData(0, 0, width, height).data;
+        const mask = new Float32Array(width * height);
+        for (let i = 0; i < mask.length; i++) mask[i] = alpha[i * 4 + 3] / 255;
+        // Let the page breathe between the heavy steps.
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        return buildSurface(game, kind, mask, width, height);
+      })(),
+    );
+  }
+  return surfaceCache.get(key)!;
 }

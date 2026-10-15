@@ -12,7 +12,7 @@ import type { Game } from '@/app/lib/dice/rules';
 const SIZE = 512;
 
 // Small seeded generator, so each tray looks the same on every visit.
-function rng(seed: number) {
+export function rng(seed: number) {
   return () => {
     seed = (seed + 0x6d2b79f5) | 0;
     let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
@@ -41,7 +41,7 @@ function lattice(gx: number, gy: number, random: () => number) {
 }
 
 // Fractal noise in 0..1; `stretch` makes the grain longer along u.
-function fbm(seed: number, base: number, octaves: number, stretch = 1) {
+export function fbm(seed: number, base: number, octaves: number, stretch = 1) {
   const random = rng(seed);
   const layers = Array.from({ length: octaves }, (_, o) => {
     const g = base * 2 ** o;
