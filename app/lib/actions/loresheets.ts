@@ -47,8 +47,9 @@ export async function saveLoresheet(
 
 export async function deleteLoresheet(id: string, game: Game) {
   const supabase = await createClient();
-  await removeLoresheetImages(id);
-  await supabase.from('loresheets').delete().eq('id', id);
+  // Only clear the pictures once the row is really gone (RLS: owner only).
+  const { error } = await supabase.from('loresheets').delete().eq('id', id);
+  if (!error) await removeLoresheetImages(id);
   revalidatePath(path(game));
   redirect(path(game));
 }
