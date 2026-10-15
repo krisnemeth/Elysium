@@ -241,7 +241,11 @@ export function diceSurface(game: Game, kind: DieKind) {
         // Let the page breathe between the heavy steps.
         await new Promise((resolve) => setTimeout(resolve, 0));
         return buildSurface(game, kind, mask, width, height);
-      })(),
+      })().catch((error) => {
+        // Don't keep a failure cached: a later mount can try again.
+        surfaceCache.delete(key);
+        throw error;
+      }),
     );
   }
   return surfaceCache.get(key)!;

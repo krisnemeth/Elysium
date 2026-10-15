@@ -67,6 +67,8 @@ function useAtlas(game: Game, kind: Die['kind']) {
         surface.normalMap.anisotropy = surface.roughnessMap.anisotropy = aniso;
         if (live) setTextures({ map, surface });
       });
+    }).catch(() => {
+      // The die keeps its plain look (colours and symbols, no relief).
     });
     return () => {
       live = false;
