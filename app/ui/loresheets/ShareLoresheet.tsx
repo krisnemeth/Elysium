@@ -45,11 +45,11 @@ export default function ShareLoresheet({
       {chronicles.length === 0 ? (
         <p className='text-sm text-bone/50'>You haven’t joined a chronicle of this game yet.</p>
       ) : (
-        <fieldset disabled={pending} className='flex flex-col gap-2'>
+        <fieldset className='flex flex-col gap-2'>
           <legend className={`${fieldLabel} mb-1`}>Your chronicles</legend>
           {chronicles.map((c) => (
             <label key={c.id} className='flex cursor-pointer items-center gap-3 text-bone/85'>
-              <input type='checkbox' checked={shared.has(c.id)} onChange={(e) => toggle(c.id, e.target.checked)} className='size-4 accent-accent' />
+              <input type='checkbox' checked={shared.has(c.id)} aria-disabled={pending} onChange={(e) => !pending && toggle(c.id, e.target.checked)} className='size-4 accent-accent' />
               {c.name}
             </label>
           ))}
