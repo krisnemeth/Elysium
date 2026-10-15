@@ -88,7 +88,7 @@ export async function createChronicle(_: ActionState, form: FormData): Promise<A
   if (ledBy === 'bot') {
     const persona = form.get('persona');
     const setting = String(form.get('setting'));
-    if (!isPersonaId(persona) || !(setting in SETTINGS)) return { error: 'Choose a Storyteller and a setting for the bot.' };
+    if (!isPersonaId(persona) || !Object.hasOwn(SETTINGS, setting)) return { error: 'Choose a Storyteller and a setting for the bot.' };
     bot = newBotState({ persona, setting: setting as SettingKind, focus: game });
   }
 
