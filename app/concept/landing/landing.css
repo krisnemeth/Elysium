@@ -1,0 +1,641 @@
+/*
+  Landing concept (/concept/landing, /concept/landing/b).
+  Self-contained: fixed colours (these pages are dark only), its own fonts
+  (--lc-display, --lc-sans from layout.tsx) and scroll choreography written
+  with CSS scroll-driven animations. Everything that moves sits inside
+  `prefers-reduced-motion: no-preference` and `@supports (animation-timeline)`;
+  without them the page is its static end state.
+*/
+
+.lc {
+  --lc-ink: #0a0809;
+  --lc-bone: #ece8e1;
+  --lc-bone-2: rgb(236 232 225 / 0.72);
+  --lc-bone-3: rgb(236 232 225 / 0.5);
+  --lc-line: rgb(236 232 225 / 0.14);
+  --lc-vampire: #d3203a;
+  --lc-werewolf: #8fb06a;
+  --lc-hunter: #f08a2a;
+  --lc-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  min-height: 100svh;
+  background: var(--lc-ink);
+  color: var(--lc-bone);
+  font-family: var(--lc-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  --bone: var(--lc-bone);
+  --ink: var(--lc-ink);
+  --accent: var(--lc-vampire);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+}
+.lc ::selection {
+  background: var(--lc-vampire);
+  color: #fff;
+}
+.lc-display {
+  font-family: var(--lc-display), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.lc-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--lc-bone-3);
+}
+.lc-glow-v { --glow: var(--lc-vampire); }
+.lc-glow-w { --glow: var(--lc-werewolf); }
+.lc-glow-h { --glow: var(--lc-hunter); }
+
+/* Buttons */
+.lc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0 1.6rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: transform 0.4s var(--lc-ease), background-color 0.3s, border-color 0.3s, box-shadow 0.4s;
+}
+.lc-btn:focus-visible {
+  outline: 2px solid var(--lc-bone);
+  outline-offset: 4px;
+}
+.lc-btn:active { transform: scale(0.98); }
+.lc-btn-solid {
+  background: var(--lc-bone);
+  color: var(--lc-ink);
+}
+.lc-btn-ghost {
+  border: 1px solid rgb(236 232 225 / 0.34);
+  color: var(--lc-bone);
+  background: rgb(10 8 9 / 0.35);
+  backdrop-filter: blur(10px);
+}
+@media (hover: hover) {
+  .lc-btn-solid:hover { transform: translateY(-2px); box-shadow: 0 0 2.5rem -0.5rem var(--lc-vampire); }
+  .lc-btn-ghost:hover { border-color: rgb(236 232 225 / 0.75); background: rgb(236 232 225 / 0.07); }
+}
+
+/* Film grain over the whole stage, cheap: one tiled SVG noise. */
+.lc-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* The pinned stage: 200svh tall, its sticky child holds the first screen. */
+.lc-stage { position: relative; height: 200svh; }
+.lc-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lc-stage { height: auto; }
+  .lc-sticky { position: relative; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Direction A: Three doors                                            */
+/* ------------------------------------------------------------------ */
+
+.lc-a-bg { position: absolute; inset: 0; z-index: -3; transform-origin: 50% 70%; }
+.lc-a-bg img { object-fit: cover; object-position: 50% 55%; opacity: 0.85; }
+.lc-a-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 55%, rgb(10 8 9 / 0) 0%, rgb(10 8 9 / 0.4) 65%, var(--lc-ink) 100%),
+    linear-gradient(to bottom, rgb(10 8 9 / 0.7), rgb(10 8 9 / 0.1) 40%, rgb(10 8 9 / 0.35));
+}
+.lc-a-moon {
+  position: absolute;
+  z-index: -2;
+  left: 50%;
+  top: 18%;
+  width: min(90vw, 70rem);
+  aspect-ratio: 2 / 1;
+  translate: -50% -30%;
+  background: radial-gradient(ellipse at center, rgb(236 232 225 / 0.1), transparent 62%);
+  pointer-events: none;
+}
+.lc-a-layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5.5rem 1rem 0;
+}
+.lc-a-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: none;
+}
+.lc-a-h1 {
+  margin-top: 1rem;
+  max-width: 17ch;
+  font-size: clamp(2.3rem, 5.4vw + 0.4rem, 5.4rem);
+  line-height: 0.95;
+  text-wrap: balance;
+  text-shadow: 0 0.25rem 2rem rgb(0 0 0 / 0.8);
+}
+.lc-a-h1 em { font-style: italic; color: var(--lc-bone-2); }
+.lc-a-actions { margin-top: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+.lc-a-doors {
+  flex: 1;
+  min-height: 0;
+  width: min(100%, 1120px);
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: clamp(0.4rem, 1.6vw, 1.5rem);
+  align-items: end;
+}
+.lc-door {
+  --glow: var(--lc-bone);
+  position: relative;
+  display: block;
+  height: 100%;
+  max-height: 44rem;
+  isolation: isolate;
+  border-radius: 999px 999px 0 0;
+  overflow: hidden;
+  outline-offset: 4px;
+}
+.lc-door:focus-visible { outline: 2px solid var(--lc-bone); }
+.lc-door img {
+  object-fit: cover;
+  object-position: 50% 18%;
+  filter: grayscale(0.75) contrast(1.05) brightness(0.8);
+  transition: filter 1.1s var(--lc-ease), scale 1.6s var(--lc-ease);
+}
+.lc-door .lc-door-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, color-mix(in oklab, var(--glow) 55%, transparent), transparent 55%);
+  mix-blend-mode: color;
+  opacity: 0.8;
+  transition: opacity 0.9s var(--lc-ease);
+}
+.lc-door .lc-door-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(to top, rgb(10 8 9 / 0.92) 0%, rgb(10 8 9 / 0.45) 30%, transparent 60%);
+}
+.lc-door .lc-door-ring {
+  position: absolute;
+  inset: 0.5rem 0.5rem 0;
+  z-index: 3;
+  border: 1px solid rgb(236 232 225 / 0.28);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  pointer-events: none;
+  transition: border-color 0.7s, inset 0.9s var(--lc-ease);
+}
+.lc-door-label {
+  position: absolute;
+  inset: auto 0 clamp(1rem, 3vh, 2rem);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.5rem;
+  text-align: center;
+}
+.lc-door-label svg { width: min(78%, 11rem); height: auto; }
+.lc-door-label small {
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--lc-bone-2);
+}
+@media (max-width: 40rem) {
+  .lc-door-label small { display: none; }
+  .lc-door-label svg { width: 84%; }
+}
+@media (hover: hover) {
+  .lc-door:hover img { filter: grayscale(0) contrast(1.05) brightness(0.95); scale: 1.04; }
+  .lc-door:hover .lc-door-tint { opacity: 0.35; }
+  .lc-door:hover .lc-door-ring { border-color: var(--glow); inset: 0.35rem 0.35rem 0; }
+}
+
+/* Short laptops: tighten the head so the doors keep their height. */
+@media (max-height: 800px) and (min-width: 48rem) {
+  .lc-a-layout { padding-top: 4.75rem; }
+  .lc-a-h1 { font-size: clamp(2.3rem, 4.4vw, 4.2rem); margin-top: 0.5rem; }
+  .lc-a-actions { margin-top: 1rem; }
+  .lc-a-doors { margin-top: 1.25rem; }
+}
+
+/* Section 1 of A: rises over the pinned hero. */
+.lc-a-next {
+  position: relative;
+  z-index: 2;
+  margin-top: -52svh;
+  background: var(--lc-ink);
+  border-radius: 50% 50% 0 0 / 5rem 5rem 0 0;
+  box-shadow: 0 -2.5rem 6rem rgb(0 0 0 / 0.7), 0 -1px 0 rgb(236 232 225 / 0.18);
+  padding: clamp(5rem, 11vw, 9rem) 1.25rem clamp(5rem, 9vw, 8rem);
+}
+.lc-a-next::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgb(200 16 46 / 0.12), transparent 70%);
+  pointer-events: none;
+}
+.lc-a-inner { position: relative; max-width: 72rem; margin: 0 auto; }
+.lc-a-h2 {
+  margin-top: 1.25rem;
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  line-height: 0.98;
+  text-wrap: balance;
+  max-width: 16ch;
+}
+.lc-a-lede { margin-top: 1.25rem; max-width: 52ch; color: var(--lc-bone-2); line-height: 1.7; text-wrap: pretty; }
+.lc-a-cols {
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 48rem) {
+  .lc-a-cols { grid-template-columns: repeat(3, 1fr); }
+}
+.lc-a-col {
+  --glow: var(--lc-bone);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 0 2.25rem;
+  border-top: 1px solid var(--lc-line);
+  isolation: isolate;
+}
+@media (min-width: 48rem) {
+  .lc-a-col { padding: 2.25rem 2rem 2.5rem; border-left: 1px solid var(--lc-line); }
+  .lc-a-col:first-child { padding-left: 0; border-left: 0; }
+}
+.lc-a-col::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -1px;
+  height: 2px;
+  width: 3.5rem;
+  background: var(--glow);
+  transition: width 0.9s var(--lc-ease);
+}
+@media (min-width: 48rem) {
+  .lc-a-col:not(:first-child)::before { left: 2rem; }
+}
+.lc-a-col .lc-num { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--lc-bone-3); }
+.lc-a-col h3 { margin-top: 1.25rem; font-size: clamp(1.8rem, 2.3vw, 2.2rem); line-height: 1.02; text-wrap: balance; }
+.lc-a-col p { margin-top: 0.9rem; color: var(--lc-bone-2); line-height: 1.65; max-width: 30ch; }
+.lc-a-col .lc-modes { margin-top: 1.25rem; font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--lc-bone-3); }
+.lc-a-col .lc-enter {
+  margin-top: auto;
+  padding-top: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  color: var(--lc-bone);
+}
+.lc-a-col .lc-enter span { transition: translate 0.5s var(--lc-ease), color 0.3s; }
+.lc-a-col:focus-visible { outline: 2px solid var(--lc-bone); outline-offset: 4px; }
+@media (hover: hover) {
+  .lc-a-col:hover::before { width: 8rem; }
+  .lc-a-col:hover .lc-enter span { translate: 0.25rem -0.25rem; color: var(--glow); }
+}
+
+/* ------------------------------------------------------------------ */
+/* Direction B: The vigil                                              */
+/* ------------------------------------------------------------------ */
+
+.lc-b-bg { position: absolute; inset: 0; z-index: -4; transform-origin: 62% 62%; }
+.lc-b-bg img { object-fit: cover; object-position: 60% 60%; }
+.lc-b-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background:
+    linear-gradient(to top, var(--lc-ink) 0%, rgb(10 8 9 / 0.85) 22%, rgb(10 8 9 / 0) 58%),
+    linear-gradient(to right, rgb(10 8 9 / 0.78), rgb(10 8 9 / 0) 62%),
+    radial-gradient(ellipse 90% 80% at 60% 50%, transparent 40%, rgb(10 8 9 / 0.6) 100%);
+}
+.lc-b-fog {
+  position: absolute;
+  z-index: -2;
+  left: -20%;
+  bottom: 12%;
+  width: 140%;
+  height: 40%;
+  background: radial-gradient(ellipse at center, rgb(236 232 225 / 0.1), transparent 65%);
+  filter: blur(30px);
+  pointer-events: none;
+}
+.lc-b-layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 5.5rem clamp(1.25rem, 5vw, 4.5rem) 0;
+}
+.lc-b-title {
+  margin-top: auto;
+  padding-bottom: clamp(1.5rem, 4vh, 3rem);
+}
+.lc-b-mark { width: clamp(9rem, 16vw, 13rem); height: auto; color: var(--lc-bone); opacity: 0.9; }
+.lc-b-h1 {
+  margin-top: 1.25rem;
+  font-size: clamp(3.4rem, 11vw, 10.5rem);
+  line-height: 0.82;
+  letter-spacing: -0.03em;
+  text-shadow: 0 0.5rem 3rem rgb(0 0 0 / 0.7);
+}
+.lc-b-h1 span { display: block; font-style: italic; font-size: 0.34em; line-height: 1.2; margin-top: 0.7em; letter-spacing: 0; color: var(--lc-bone-2); font-weight: 400; }
+.lc-b-actions { margin-top: 1.75rem; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.lc-b-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--lc-line);
+  margin: 0 calc(clamp(1.25rem, 5vw, 4.5rem) * -1);
+  background: linear-gradient(to top, rgb(10 8 9 / 0.9), rgb(10 8 9 / 0.35));
+  backdrop-filter: blur(14px);
+}
+.lc-b-game {
+  --glow: var(--lc-bone);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.1rem clamp(0.6rem, 2vw, 2rem) 1.75rem;
+  border-left: 1px solid var(--lc-line);
+  isolation: isolate;
+}
+.lc-b-game:first-child { border-left: 0; }
+.lc-b-game svg { width: min(100%, 11rem); height: auto; color: var(--lc-bone); }
+.lc-b-game p { font-size: 0.82rem; line-height: 1.5; color: var(--lc-bone-2); display: none; max-width: 28ch; }
+.lc-b-game .lc-num { font-size: 0.66rem; letter-spacing: 0.3em; color: var(--lc-bone-3); }
+.lc-b-game::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0.14);
+  transform-origin: left;
+  background: var(--glow);
+  transition: transform 0.9s var(--lc-ease);
+}
+.lc-b-game:focus-visible { outline: 2px solid var(--lc-bone); outline-offset: -4px; }
+@media (min-width: 48rem) {
+  .lc-b-game p { display: block; }
+  .lc-b-game { padding-top: 1.35rem; padding-bottom: 2.1rem; }
+}
+@media (hover: hover) {
+  .lc-b-game:hover::before { transform: scaleX(1); }
+}
+@media (max-height: 760px) and (min-width: 48rem) {
+  .lc-b-h1 { font-size: clamp(3rem, 9vw, 7.5rem); }
+  .lc-b-game p { display: none; }
+}
+
+/* Section 1 of B: a second scene wipes up over the first. */
+.lc-b-next {
+  position: relative;
+  z-index: 2;
+  margin-top: -100svh;
+  min-height: 150svh;
+  clip-path: inset(100% 0 0 0);
+}
+.lc-b-next-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; }
+.lc-b-next-bg { position: absolute; inset: -6% 0; z-index: -3; }
+.lc-b-next-bg img { object-fit: cover; object-position: 50% 40%; opacity: 0.8; }
+.lc-b-next-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(to bottom, rgb(10 8 9 / 0.88), rgb(10 8 9 / 0.35) 40%, rgb(10 8 9 / 0.75)),
+    radial-gradient(ellipse at center, transparent 40%, rgb(10 8 9 / 0.6));
+}
+.lc-b-next-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5rem clamp(1.25rem, 5vw, 4.5rem) 3rem;
+  max-width: 78rem;
+  margin: 0 auto;
+}
+.lc-b-h2 {
+  margin-top: 1.25rem;
+  font-size: clamp(2.5rem, 6vw, 5.6rem);
+  line-height: 0.96;
+  max-width: 14ch;
+  text-wrap: balance;
+  text-shadow: 0 0.25rem 2rem rgb(0 0 0 / 0.8);
+}
+.lc-b-lede { margin-top: 1.25rem; max-width: 50ch; line-height: 1.7; color: var(--lc-bone-2); text-wrap: pretty; text-shadow: 0 0.15rem 1rem rgb(0 0 0 / 0.9); }
+.lc-b-cards {
+  margin-top: clamp(1.75rem, 5vh, 3.5rem);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.5rem, 1.6vw, 1.25rem);
+}
+.lc-b-card {
+  --glow: var(--lc-bone);
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4.2;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  isolation: isolate;
+  border: 1px solid rgb(236 232 225 / 0.16);
+}
+.lc-b-card img { object-fit: cover; object-position: 50% 22%; filter: grayscale(0.6) brightness(0.8); transition: filter 1s var(--lc-ease), scale 1.6s var(--lc-ease); }
+.lc-b-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgb(10 8 9 / 0.95), rgb(10 8 9 / 0.2) 55%, transparent);
+}
+.lc-b-card .lc-b-cap {
+  position: absolute;
+  z-index: 2;
+  inset: auto 0 0;
+  padding: clamp(0.6rem, 1.8vw, 1.25rem);
+}
+.lc-b-card .lc-b-cap svg { width: min(88%, 9rem); height: auto; }
+.lc-b-card .lc-b-cap small { display: block; margin-top: 0.6rem; font-size: 0.64rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--glow); }
+.lc-b-card:focus-visible { outline: 2px solid var(--lc-bone); outline-offset: 3px; }
+@media (hover: hover) {
+  .lc-b-card:hover img { filter: grayscale(0) brightness(0.95); scale: 1.05; }
+  .lc-b-card:hover { border-color: var(--glow); }
+}
+@media (max-width: 40rem) {
+  .lc-b-card { aspect-ratio: 3 / 5; }
+  .lc-b-card .lc-b-cap small { display: none; }
+}
+@media (max-height: 780px) and (min-width: 48rem) {
+  .lc-b-card { aspect-ratio: 3 / 2.9; }
+  .lc-b-card img { object-position: 50% 12%; }
+  .lc-b-lede { display: none; }
+}
+.lc-b-after { position: relative; z-index: 3; background: var(--lc-ink); }
+
+/* ------------------------------------------------------------------ */
+/* Footer (Dark Pack notices, verbatim from app/lib/dark-pack.ts)       */
+/* ------------------------------------------------------------------ */
+.lc-footer { position: relative; z-index: 3; background: var(--lc-ink); border-top: 1px solid var(--lc-line); padding: 3rem 1.25rem; color: var(--lc-bone-3); font-size: 0.78rem; line-height: 1.7; }
+.lc-footer-in { max-width: 72rem; margin: 0 auto; display: flex; gap: 1.25rem; align-items: flex-start; }
+.lc-footer a { text-decoration: underline; text-underline-offset: 3px; }
+.lc-footer a:hover { color: var(--lc-bone); }
+
+/* Direction switcher (concept review only) */
+.lc-switch {
+  position: fixed;
+  z-index: 70;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgb(10 8 9 / 0.8);
+  border: 1px solid var(--lc-line);
+  backdrop-filter: blur(10px);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+.lc-switch a { padding: 0.35rem 0.8rem; border-radius: 999px; color: var(--lc-bone-2); }
+.lc-switch a[aria-current='page'] { background: var(--lc-bone); color: var(--lc-ink); }
+
+/* ------------------------------------------------------------------ */
+/* Motion                                                              */
+/* ------------------------------------------------------------------ */
+
+@keyframes lc-rise {
+  from { opacity: 0; translate: 0 1.5rem; }
+}
+@keyframes lc-fade {
+  from { opacity: 0; }
+}
+@keyframes lc-door-in {
+  from { opacity: 0; translate: 0 4rem; }
+}
+@keyframes lc-settle {
+  from { scale: 1.12; opacity: 0; }
+}
+@keyframes lc-reveal-up {
+  from { opacity: 0; translate: 0 2rem; }
+}
+
+/* Scroll keyframes (hero stage: scroll 0 to 100svh) */
+@keyframes lc-a-bg {
+  to { scale: 1.22; filter: brightness(0.55); }
+}
+@keyframes lc-a-head {
+  to { opacity: 0; translate: 0 -7svh; filter: blur(6px); }
+}
+@keyframes lc-a-door-1 { to { translate: 0 -9svh; } }
+@keyframes lc-a-door-2 { to { translate: 0 -15svh; } }
+@keyframes lc-a-door-3 { to { translate: 0 -6svh; } }
+@keyframes lc-b-bg {
+  to { scale: 1.4; filter: brightness(0.45) blur(2px); }
+}
+@keyframes lc-b-title {
+  to { opacity: 0; translate: 0 -10svh; }
+}
+@keyframes lc-b-strip {
+  to { opacity: 0; translate: 0 6svh; }
+}
+@keyframes lc-b-wipe {
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes lc-b-next-bg {
+  from { translate: 0 6%; scale: 1.15; }
+  to { translate: 0 -4%; scale: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Opening sequence: the scene settles, the head rises, the doors follow. */
+  .lc-a-bg, .lc-b-bg { animation: lc-settle 2.4s var(--lc-ease) both; }
+  .lc-in-1 { animation: lc-rise 1.4s var(--lc-ease) 0.25s both; }
+  .lc-in-2 { animation: lc-rise 1.4s var(--lc-ease) 0.4s both; }
+  .lc-in-3 { animation: lc-rise 1.4s var(--lc-ease) 0.55s both; }
+  .lc-in-4 { animation: lc-rise 1.4s var(--lc-ease) 0.7s both; }
+  .lc-door-wrap:nth-child(1) { animation: lc-door-in 1.8s var(--lc-ease) 0.5s both; }
+  .lc-door-wrap:nth-child(2) { animation: lc-door-in 1.8s var(--lc-ease) 0.65s both; }
+  .lc-door-wrap:nth-child(3) { animation: lc-door-in 1.8s var(--lc-ease) 0.8s both; }
+  .lc-b-game { animation: lc-fade 1.4s ease 1s both; }
+
+  @supports (animation-timeline: scroll()) {
+    .lc-a-bg-s { animation: lc-a-bg linear both; animation-timeline: scroll(root); animation-range: 0 110svh; }
+    .lc-a-head { animation: lc-a-head linear both; animation-timeline: scroll(root); animation-range: 0 55svh; }
+    .lc-door-wrap:nth-child(1) .lc-door { animation: lc-a-door-1 linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-door-wrap:nth-child(2) .lc-door { animation: lc-a-door-2 linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-door-wrap:nth-child(3) .lc-door { animation: lc-a-door-3 linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+
+    .lc-b-bg-s { animation: lc-b-bg linear both; animation-timeline: scroll(root); animation-range: 0 110svh; }
+    .lc-b-title-s { animation: lc-b-title linear both; animation-timeline: scroll(root); animation-range: 0 50svh; }
+    .lc-b-strip-s { animation: lc-b-strip linear both; animation-timeline: scroll(root); animation-range: 30svh 90svh; }
+    .lc-b-next { animation: lc-b-wipe linear both; animation-timeline: scroll(root); animation-range: 12svh 100svh; }
+    .lc-b-next-bg { animation: lc-b-next-bg linear both; animation-timeline: scroll(root); animation-range: 40svh 200svh; }
+
+    .lc-reveal { animation: lc-reveal-up linear both; animation-timeline: view(); animation-range: entry 5% entry 65%; }
+  }
+}
+
+/* No scroll-driven support: show the wipe section plainly. */
+@supports not (animation-timeline: scroll()) {
+  .lc-b-next { clip-path: none; margin-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lc-b-next { clip-path: none; margin-top: 0; min-height: 0; }
+  .lc-b-next-pin { position: relative; height: auto; min-height: 100svh; }
+  .lc-a-next { margin-top: 0; }
+}
+
+.lc-door-wrap { height: 100%; max-height: 44rem; min-height: 0; align-self: end; }
+.lc-door-wrap .lc-door { max-height: none; }
+
+@media (max-width: 40rem) {
+  .lc-btn { min-height: 2.9rem; padding: 0 1.15rem; font-size: 0.82rem; }
+  .lc-a-actions { flex-wrap: nowrap; }
+  .lc-a-layout { padding-top: 5rem; }
+  .lc-a-doors { margin-top: 1.5rem; }
+  .lc-b-actions { flex-wrap: nowrap; }
+  .lc-switch { bottom: auto; top: 5.25rem; right: 1rem; opacity: 0.9; }
+}
+@media (max-height: 960px) and (min-width: 48rem) {
+  .lc-b-next-body { padding-top: 6rem; padding-bottom: 2.5rem; }
+  .lc-b-h2 { font-size: clamp(2.5rem, 5vw, 4.6rem); }
+  .lc-b-card { aspect-ratio: 3 / 3.3; }
+}
