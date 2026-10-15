@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import type { Game } from '@/app/lib/games';
+import VampireAmbience from './vampire/Scenes';
 
 /*
   Backdrop art plus one looping animated element per game and mode.
@@ -38,19 +39,6 @@ function Particles({ count, className, anim, spread = 100 }: { count: number; cl
         );
       })}
     </>
-  );
-}
-
-function Vampire() {
-  return (
-    <div className={`${fixed} ambience overflow-hidden`}>
-      <div className='grain absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_60%_-10%,var(--accent-deep),transparent_70%),radial-gradient(ellipse_50%_40%_at_0%_100%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent_70%)] opacity-70' />
-      {/* Crimson mist drifting slowly across */}
-      <div
-        className='absolute -bottom-1/4 left-0 h-2/3 w-[140%] rounded-[50%] bg-accent/10 blur-3xl'
-        style={{ animation: 'drift-x 38s ease-in-out infinite alternate' }}
-      />
-    </div>
   );
 }
 
@@ -167,5 +155,5 @@ function Hunter() {
 export default function Ambience({ game }: { game: Game }) {
   if (game === 'werewolf') return <Werewolf />;
   if (game === 'hunter') return <Hunter />;
-  return <Vampire />;
+  return <VampireAmbience />;
 }

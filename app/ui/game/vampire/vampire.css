@@ -1,0 +1,128 @@
+/*
+  Vampire details that sit on top of the root tokens. Everything here is scoped
+  to [data-game='vampire'] (or a Vampire-only class) so the other games and the
+  shared defaults are untouched. The neon sidebar (.frame) is NOT restyled here.
+
+  Neon Nights card details are pure CSS "cut corner" work in the spirit of
+  augmented-ui: two clipped corners with a neon edge drawn on the diagonal, two
+  corner brackets and a short tube along the foot. Ornament stays on the edge,
+  never over a portrait's face or the reading area; Settings -> Simple frames
+  (data-frames='simple') turns all of it off.
+*/
+
+/* --------------------------------------------------- Neon Nights: cards */
+
+:root[data-theme='light'] .vtm-neon {
+  filter: drop-shadow(0 0 0.5rem color-mix(in oklab, var(--accent) 28%, transparent));
+  transition: filter 0.5s var(--ease-out-expo);
+}
+:root[data-theme='light'] .group:hover > .vtm-neon,
+:root[data-theme='light'] .group:focus-within > .vtm-neon {
+  filter: drop-shadow(0 0 0.9rem color-mix(in oklab, var(--accent) 55%, transparent));
+}
+
+:root[data-theme='light'] .vtm-neon > .panel {
+  --cut: 20px;
+  --tube: color-mix(in oklab, var(--accent) 88%, white);
+  border-radius: 0.375rem;
+  border-color: color-mix(in oklab, var(--accent) 38%, transparent);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+/* Corners: the diagonals of the two clipped corners, and a bracket on each of
+   the other two. */
+:root[data-theme='light'] .vtm-neon > .panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--tube) calc(50% - 0.5px) calc(50% + 1.5px), transparent calc(50% + 1.5px)) top left / var(--cut) var(--cut) no-repeat,
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--tube) calc(50% - 0.5px) calc(50% + 1.5px), transparent calc(50% + 1.5px)) bottom right / var(--cut) var(--cut) no-repeat,
+    linear-gradient(var(--tube), var(--tube)) top 5px right 5px / 11px 1.5px no-repeat,
+    linear-gradient(var(--tube), var(--tube)) top 5px right 5px / 1.5px 11px no-repeat,
+    linear-gradient(var(--tube), var(--tube)) bottom 5px left 5px / 11px 1.5px no-repeat,
+    linear-gradient(var(--tube), var(--tube)) bottom 5px left 5px / 1.5px 11px no-repeat;
+}
+
+/* A short neon tube along the foot, which stretches on hover. */
+:root[data-theme='light'] .vtm-neon > .panel::after {
+  content: '';
+  position: absolute;
+  z-index: 10;
+  left: var(--cut);
+  bottom: 0;
+  width: 26%;
+  height: 2px;
+  pointer-events: none;
+  background: var(--tube);
+  box-shadow:
+    0 0 0.35rem var(--accent),
+    0 0 0.9rem color-mix(in oklab, var(--accent) 60%, transparent);
+  transition: width 0.6s var(--ease-out-expo);
+}
+:root[data-theme='light'] .group:hover > .vtm-neon > .panel::after,
+:root[data-theme='light'] .group:focus-within > .vtm-neon > .panel::after {
+  width: calc(100% - var(--cut) * 2);
+}
+
+/* --------------------------------------- Neon Nights: panels (the sheet) */
+
+/* Two fine corner ticks on each panel (drawn as background layers, so nothing
+   is positioned or clipped and content is never covered). */
+:root[data-theme='light'] [data-game='vampire'] .panel:not(.frame, .vtm-neon > .panel) {
+  --tick: color-mix(in oklab, var(--accent) 70%, transparent);
+  background-image:
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick)),
+    linear-gradient(var(--tick), var(--tick));
+  background-position: top 9px left 9px, top 9px left 9px, bottom 9px right 9px, bottom 9px right 9px;
+  background-size: 14px 1px, 1px 14px, 14px 1px, 1px 14px;
+  background-repeat: no-repeat;
+}
+
+/* ------------------------------------------------------- Simple frames */
+
+[data-frames='simple'] .vtm-neon > .panel {
+  clip-path: none;
+  border-radius: var(--radius-2xl);
+}
+[data-frames='simple'] .vtm-neon > .panel::before,
+[data-frames='simple'] .vtm-neon > .panel::after {
+  display: none;
+}
+[data-frames='simple'] .vtm-neon {
+  filter: none;
+}
+[data-frames='simple'] [data-game='vampire'] .panel {
+  background-image: none !important;
+}
+
+/* ------------------------------------------------------------- scenes */
+
+@keyframes beam-sway {
+  from { rotate: -2deg; opacity: 0.8; }
+  to { rotate: 2.5deg; opacity: 1; }
+}
+
+@keyframes heartbeat {
+  0%, 100% { opacity: 0.7; }
+  8% { opacity: 1; }
+  16% { opacity: 0.75; }
+  24% { opacity: 0.95; }
+  40% { opacity: 0.7; }
+}
+
+@keyframes grid-run {
+  from { background-position: 0 0; }
+  to { background-position: 0 4.5rem; }
+}
