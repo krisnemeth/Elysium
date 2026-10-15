@@ -31,7 +31,7 @@ const VAMPIRE: SheetSection[] = [
   },
   {
     id: 'merits',
-    label: 'Merits & notes',
+    label: 'Advantages & notes',
     body: (
       <div className='grid gap-8 lg:grid-cols-2'>
         <Advantages game='vampire' />
@@ -40,7 +40,7 @@ const VAMPIRE: SheetSection[] = [
     ),
   },
   { id: 'experience', label: 'Experience', body: <Experience game='vampire' /> },
-  { id: 'biography', label: 'Biography', body: <Biography milestone='Embrace' apparent='Apparent age' /> },
+  { id: 'biography', label: 'Biography', body: <Biography milestone='the Embrace' apparent='Apparent age' /> },
 ];
 
 const WEREWOLF: SheetSection[] = [
@@ -83,7 +83,7 @@ const WEREWOLF: SheetSection[] = [
     ),
   },
   { id: 'renown', label: 'Renown', body: <Renown /> },
-  { id: 'gifts', label: 'Gifts & rites', body: <GiftsAndRites /> },
+  { id: 'gifts', label: 'Gifts & Rites', body: <GiftsAndRites /> },
   {
     id: 'spirit',
     label: 'Spirit',
@@ -105,7 +105,7 @@ const WEREWOLF: SheetSection[] = [
     ),
   },
   { id: 'experience', label: 'Experience', body: <Experience game='werewolf' /> },
-  { id: 'biography', label: 'Biography', body: <Biography milestone='First Change' /> },
+  { id: 'biography', label: 'Biography', body: <Biography milestone='the First Change' /> },
 ];
 
 const HUNTER: SheetSection[] = [
@@ -138,13 +138,13 @@ const HUNTER: SheetSection[] = [
         tracks={[
           { key: 'health', label: 'Health', max: 10, shape: 'box' },
           { key: 'willpower', label: 'Willpower', max: 10, shape: 'box' },
-          { key: 'desperation', label: 'Desperation', max: 5, note: "The cell's, shared" },
+          { key: 'desperation', label: 'Desperation', max: 5, note: 'Shared by the cell' },
           { key: 'danger', label: 'Danger', max: 5, note: 'How close the quarry is' },
         ]}
       />
     ),
   },
-  { id: 'edges', label: 'Edges & perks', body: <Edges /> },
+  { id: 'edges', label: 'Edges & Perks', body: <Edges /> },
   {
     id: 'convictions',
     label: 'Convictions',

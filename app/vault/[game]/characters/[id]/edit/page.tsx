@@ -28,7 +28,7 @@ export default async function EditCharacter({ params, searchParams }: PageProps<
           <p className='max-w-[70ch] text-sm leading-relaxed text-bone/70'>
             This is the full sheet, filled in from your answers. Hover any trait’s name for a reminder of what it means (you can turn that off in
             Settings). {game === 'vampire' && 'Name the powers for each Discipline dot, then '}
-            {game === 'werewolf' && 'Add any rites you know, then '}
+            {game === 'werewolf' && 'Add any Rites you know, then '}
             {game === 'hunter' && 'Add your notes and Redemption, then '}
             write their history in Biography when you’re ready.
           </p>

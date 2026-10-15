@@ -144,7 +144,7 @@ const BLOOD_STATS = [
   ['bloodSurge', 'Blood Surge'],
   ['mendAmount', 'Mend amount'],
   ['powerBonus', 'Power bonus'],
-  ['rouseReroll', 'Rouse re-roll'],
+  ['rouseReroll', 'Rouse reroll'],
   ['baneSeverity', 'Bane severity'],
   ['feedingPenalty', 'Feeding penalty'],
 ] as const;

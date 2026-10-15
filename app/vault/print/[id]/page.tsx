@@ -36,7 +36,7 @@ function Box({ title, children, className = '' }: { title: string; children: Rea
 }
 
 const PROFILE: Record<string, [string, string][]> = {
-  vampire: [['name', 'Name'], ['concept', 'Concept'], ['predator', 'Predator'], ['player', 'Player'], ['ambition', 'Ambition'], ['clan', 'Clan'], ['chronicle', 'Chronicle'], ['desire', 'Desire'], ['generation', 'Generation'], ['sire', 'Sire'], ['sect', 'Sect']],
+  vampire: [['name', 'Name'], ['concept', 'Concept'], ['predator', 'Predator type'], ['player', 'Player'], ['ambition', 'Ambition'], ['clan', 'Clan'], ['chronicle', 'Chronicle'], ['desire', 'Desire'], ['generation', 'Generation'], ['sire', 'Sire'], ['sect', 'Sect']],
   werewolf: [['name', 'Name'], ['concept', 'Concept'], ['tribe', 'Tribe'], ['player', 'Player'], ['ambition', 'Ambition'], ['auspice', 'Auspice'], ['chronicle', 'Chronicle'], ['desire', 'Desire'], ['patron', 'Patron spirit'], ['pack', 'Pack'], ['breed', 'Breed']],
   hunter: [['name', 'Name'], ['concept', 'Concept'], ['creed', 'Creed'], ['player', 'Player'], ['ambition', 'Ambition'], ['drive', 'Drive'], ['chronicle', 'Chronicle'], ['desire', 'Desire'], ['cell', 'Cell']],
 };
@@ -163,20 +163,20 @@ export default async function PrintSheet({ params }: PageProps<'/vault/print/[id
               ))}
             </Box>
           )}
-          <Box title='Advantages & Flaws'>
+          <Box title='Advantages & flaws'>
             {s.advantages.map((a, i) => (
               <div key={i} className='flex justify-between border-b border-neutral-200'>
                 <span>{a.name}{a.kind === 'flaw' && ' (flaw)'}</span> <Dots value={a.dots} />
               </div>
             ))}
           </Box>
-          <Box title='Convictions & Touchstones'>
+          <Box title='Convictions & touchstones'>
             {s.convictions.map((c, i) => (
-              <p key={i} className='mb-1'><span className='font-bold'>{c.conviction}</span> — {c.touchstone}</p>
+              <p key={i} className='mb-1'><span className='font-bold'>{c.conviction}</span>: {c.touchstone}</p>
             ))}
           </Box>
           {(s.bane || s.tenets || s.favor || s.ban) && (
-            <Box title={s.bane ? 'Bane & Tenets' : 'Favor & Ban'}>
+            <Box title={s.bane ? 'Bane & tenets' : 'Favor & Ban'}>
               {s.bane && <p className='mb-1'><span className='font-bold'>Bane: </span>{s.bane}</p>}
               {s.tenets && <p className='mb-1 whitespace-pre-line'><span className='font-bold'>Tenets: </span>{s.tenets}</p>}
               {s.favor && <p className='mb-1'><span className='font-bold'>Favor: </span>{s.favor}</p>}
@@ -184,7 +184,7 @@ export default async function PrintSheet({ params }: PageProps<'/vault/print/[id
             </Box>
           )}
           <Box title='Experience'>
-            <p>Total {xp.earned} · Spent {xp.spent} · Available {xp.available}</p>
+            <p>Earned {xp.earned} · Spent {xp.spent} · Available {xp.available}</p>
           </Box>
         </div>
 

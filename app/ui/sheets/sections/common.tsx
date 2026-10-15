@@ -257,7 +257,7 @@ function yearsBetween(from?: string, to?: Date) {
   return years;
 }
 
-// `milestone`: the Embrace, the First Change or the Reckoning.
+// `milestone`: the Embrace, the First Change or the Reckoning (with its "the").
 export function Biography({ milestone, apparent }: { milestone: string; apparent?: string }) {
   const { sheet, update } = useSheet();
   const b = sheet.biography;
@@ -322,7 +322,7 @@ export function NameList({
         ))}
       </ul>
       <button type='button' className={addButton} onClick={() => onChange([...items, ''])}>
-        <MdAdd aria-hidden /> Add {placeholder.toLowerCase()}
+        <MdAdd aria-hidden /> Add {placeholder}
       </button>
     </div>
   );

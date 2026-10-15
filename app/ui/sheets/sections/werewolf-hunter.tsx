@@ -66,7 +66,7 @@ export function GiftsAndRites() {
           ))}
         </ul>
         <button type='button' className={addButton} onClick={() => update((d) => void (d.gifts = [...gifts, { name: '', source: 'Native', renown: '' }]))}>
-          <MdAdd aria-hidden /> Add gift
+          <MdAdd aria-hidden /> Add Gift
         </button>
       </div>
       <NameList title='Rites' placeholder='Rite' items={sheet.rites ?? []} onChange={(rites) => update((d) => void (d.rites = rites))} />
@@ -105,7 +105,7 @@ export function Edges() {
         ))}
       </ul>
       <button type='button' className={addButton} onClick={() => setEdges([...edges, { name: '', perks: [] }])}>
-        <MdAdd aria-hidden /> Add edge
+        <MdAdd aria-hidden /> Add Edge
       </button>
     </div>
   );

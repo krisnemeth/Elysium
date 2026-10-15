@@ -145,7 +145,7 @@ export function HumanityTrack({
       <div className='flex items-baseline justify-between gap-3'>
         <h2 className='font-display text-2xl'>Humanity</h2>
         <p role='status' className={clsx('text-xs tracking-[0.15em] uppercase', overflow ? 'text-accent' : 'text-bone/45')}>
-          {overflow ? 'Degeneration' : `${humanity} · ${stains} ${stains === 1 ? 'stain' : 'stains'}`}
+          {overflow ? 'Degeneration' : `${humanity} · ${stains} ${stains === 1 ? 'Stain' : 'Stains'}`}
         </p>
       </div>
       <ol className='flex flex-wrap gap-1.5' aria-hidden>
@@ -173,7 +173,7 @@ export function HumanityTrack({
           <MdAdd aria-hidden /> Stain
         </button>
         <button type='button' className={tap} onClick={() => onStains(Math.max(0, stains - 1))} disabled={stains === 0}>
-          <MdRemove aria-hidden /> Clear stain
+          <MdRemove aria-hidden /> Clear Stain
         </button>
         <button type='button' className={tap} onClick={() => onHumanity(Math.max(0, humanity - 1))} disabled={humanity === 0}>
           <MdRemove aria-hidden /> Lose Humanity

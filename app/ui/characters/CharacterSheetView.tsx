@@ -216,7 +216,7 @@ export default function CharacterSheetView({
         )}
 
         {s.gifts && (
-          <Block title='Renown, gifts & rites'>
+          <Block title='Renown, Gifts & Rites'>
             {s.renown && (
               <ul className='mb-5 grid grid-cols-3 gap-3'>
                 {(['glory', 'honor', 'wisdom'] as const).map((r) => (
@@ -239,7 +239,7 @@ export default function CharacterSheetView({
         )}
 
         {s.edges && (
-          <Block title='Edges & perks'>
+          <Block title='Edges & Perks'>
             <ul className='flex flex-col gap-3'>
               {s.edges.map((e) => (
                 <li key={e.name}>
@@ -308,7 +308,7 @@ export default function CharacterSheetView({
         </Block>
 
         {(s.bane || s.favor || s.ban || s.tenets) && (
-          <Block title={s.bane ? 'Bane & tenets' : 'Favor & ban'}>
+          <Block title={s.bane ? 'Bane & tenets' : 'Favor & Ban'}>
             <div className='flex flex-col gap-4 text-sm'>
               {s.bane && <div><p className={label}>Clan bane</p><Prose text={s.bane} /></div>}
               {s.tenets && <div><p className={label}>Chronicle tenets</p><Prose text={s.tenets} /></div>}

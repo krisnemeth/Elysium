@@ -68,7 +68,7 @@ export default function PlaySheet({
             damage={health}
             onChange={setDamage('health')}
             downLabel={game === 'vampire' ? 'Torpor' : 'Incapacitated'}
-            impairedNote={`−${IMPAIRED_PENALTY} dice to Physical tests. The pool below takes it into account.`}
+            impairedNote={`−${IMPAIRED_PENALTY} dice to physical tests. The pool below takes it into account.`}
           />
           <DamageTrack
             label='Willpower'
@@ -76,11 +76,11 @@ export default function PlaySheet({
             damage={willpower}
             onChange={setDamage('willpower')}
             downLabel='Impaired'
-            impairedNote={`−${IMPAIRED_PENALTY} dice to Social and Mental tests. The pool below takes it into account.`}
+            impairedNote={`−${IMPAIRED_PENALTY} dice to social and mental tests. The pool below takes it into account.`}
           />
           {game === 'vampire' && (
             <>
-              <PointTrack label='Hunger' value={t.hunger ?? 0} onChange={setTracker('hunger')} shape='box' note='Rouse checks below raise it on a 1–5.' />
+              <PointTrack label='Hunger' value={t.hunger ?? 0} onChange={setTracker('hunger')} shape='box' note='A failed Rouse check (a 1–5) raises it.' />
               <HumanityTrack
                 humanity={t.humanity ?? 7}
                 stains={sheet.stains ?? 0}
