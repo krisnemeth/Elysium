@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type WheelEvent } from 'react';
 import { MdZoomIn, MdZoomOut } from 'react-icons/md';
+import { FULL_GUIDE, guidePath, type CropGuide } from '@/app/lib/image-frames';
 import { buttonGhost, buttonPrimary } from '@/app/ui/kit/styles';
 
 export type CropRect = { sx: number; sy: number; sw: number; sh: number };
@@ -10,16 +11,20 @@ const MAX_ZOOM = 4;
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
 
 /*
-  Choose which part of an image becomes the portrait: drag to move it, zoom
-  with the slider, the wheel, a pinch or +/−; arrow keys move it too. The
-  frame has the portrait's 3:4 shape. Opens on the automatic crop (centred,
-  faces near the top), so confirming straight away matches the old result.
+  Choose which part of an image becomes the portrait (or a loresheet's
+  picture): drag to move it, zoom with the slider, the wheel, a pinch or +/−;
+  arrow keys move it too. The frame has the stored shape (`aspect`); `guide`
+  outlines what the card will actually show (its arch or window), dimming the
+  rest. Opens on the automatic crop (centred, faces near the top), so
+  confirming straight away matches the old result.
 */
 export default function ImageCropper({
   url,
   width: iw,
   height: ih,
   aspect = 3 / 4,
+  guide = FULL_GUIDE,
+  noun = 'portrait',
   onCancel,
   onConfirm,
 }: {
@@ -27,6 +32,8 @@ export default function ImageCropper({
   width: number;
   height: number;
   aspect?: number;
+  guide?: CropGuide;
+  noun?: string;
   onCancel: () => void;
   onConfirm: (rect: CropRect) => void;
 }) {
@@ -107,21 +114,24 @@ export default function ImageCropper({
   return (
     <dialog
       ref={dialog}
-      aria-label='Crop the portrait'
+      aria-label={`Crop the ${noun}`}
       onCancel={(e) => {
         e.preventDefault();
         onCancel();
       }}
-      className='m-auto w-[min(26rem,92vw)] rounded-2xl border border-bone/15 bg-ink p-5 text-bone shadow-[0_2rem_6rem_rgb(0_0_0/0.8)] backdrop:bg-black/60 backdrop:backdrop-blur-md'
+      className='m-auto w-[min(30rem,92vw)] rounded-2xl border border-bone/15 bg-ink p-5 text-bone shadow-[0_2rem_6rem_rgb(0_0_0/0.8)] backdrop:bg-black/60 backdrop:backdrop-blur-md'
     >
-      <h2 className='font-display text-2xl'>Frame the portrait</h2>
-      <p className='mt-1 text-sm text-bone/60'>Drag to move, zoom to fit. Arrow keys and + / − work too.</p>
+      <h2 className='font-display text-2xl'>Frame the {noun}</h2>
+      <p className='mt-1 text-sm text-bone/60'>
+        Drag to move, zoom to fit. Arrow keys and + / − work too.
+        {guide !== FULL_GUIDE && ' The card shows what’s inside the outline.'}
+      </p>
 
       <div
         ref={frame}
         tabIndex={0}
         role='img'
-        aria-label='Portrait crop area'
+        aria-label={`${noun[0].toUpperCase()}${noun.slice(1)} crop area`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -133,6 +143,13 @@ export default function ImageCropper({
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- a local object URL, moved and scaled by hand */}
         <img src={url} alt='' draggable={false} className='pointer-events-none absolute max-w-none' style={{ left: at.x, top: at.y, width: dw, height: dh }} />
+        {/* The card's own shape: everything outside it is dimmed. */}
+        {guide !== FULL_GUIDE && (
+          <svg aria-hidden viewBox='0 0 100 100' preserveAspectRatio='none' className='pointer-events-none absolute inset-0 size-full'>
+            <path fillRule='evenodd' d={`M0 0H100V100H0Z ${guidePath(guide)}`} fill='rgb(0 0 0 / 0.62)' />
+            <path d={guidePath(guide)} fill='none' stroke='var(--color-accent)' strokeWidth='1.5' vectorEffect='non-scaling-stroke' />
+          </svg>
+        )}
         {/* Rule-of-thirds guides */}
         <div aria-hidden className='pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,transparent_33.2%,rgb(255_255_255/0.18)_33.3%,transparent_33.5%,transparent_66.5%,rgb(255_255_255/0.18)_66.6%,transparent_66.8%),linear-gradient(to_bottom,transparent_33.2%,rgb(255_255_255/0.18)_33.3%,transparent_33.5%,transparent_66.5%,rgb(255_255_255/0.18)_66.6%,transparent_66.8%)]' />
       </div>

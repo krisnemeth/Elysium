@@ -10,11 +10,13 @@ export type Loresheet = {
   title: string;
   character_id: string | null;
   content: Record<string, string>;
+  // An uploaded picture (/media/portraits/…), or null.
+  image: string | null;
   created_at: string;
   updated_at: string;
 };
 
-const COLUMNS = 'id, game, kind, title, character_id, content, created_at, updated_at';
+const COLUMNS = 'id, game, kind, title, character_id, content, image, created_at, updated_at';
 
 // RLS keeps loresheets private to their owner.
 export const getLoresheets = cache(async (game?: Game) => {

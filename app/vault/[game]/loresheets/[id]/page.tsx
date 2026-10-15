@@ -35,6 +35,7 @@ export default async function LoresheetPage({ params }: PageProps<'/vault/[game]
         kind={sheet.kind}
         initial={{ title: sheet.title, character_id: sheet.character_id, content: sheet.content }}
         characters={characters}
+        image={sheet.image}
       />
     </div>
   );

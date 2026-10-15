@@ -5,6 +5,7 @@ import type { Game } from '@/app/lib/games';
 import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
 import { deleteLoresheet, saveLoresheet } from '@/app/lib/actions/loresheets';
 import { fieldInput, fieldLabel, panel } from '@/app/ui/kit/styles';
+import LoreImagePicker from './LoreImagePicker';
 import SaveStatus from '@/app/ui/sheets/SaveStatus';
 import type { SaveState } from '@/app/ui/sheets/useCharacterSave';
 import { ActionButton } from '@/app/ui/social/forms';
@@ -19,12 +20,15 @@ export default function LoresheetEditor({
   kind,
   initial,
   characters,
+  image = null,
 }: {
   id: string;
   game: Game;
   kind: LoreKind;
   initial: Draft;
   characters: { id: string; name: string }[];
+  // Saved separately from the text (LoreImagePicker), so autosave never touches it.
+  image?: string | null;
 }) {
   const spec = LORE_KINDS[kind];
   const [draft, setDraft] = useState(initial);
@@ -93,6 +97,7 @@ export default function LoresheetEditor({
             className={`${fieldInput} font-display text-3xl`}
           />
         </div>
+        <LoreImagePicker id={id} game={game} kind={kind} title={draft.title} src={image} />
         {kind === 'pc' && (
           <div className='flex flex-col gap-1'>
             <label htmlFor={charId} className={fieldLabel}>Character</label>

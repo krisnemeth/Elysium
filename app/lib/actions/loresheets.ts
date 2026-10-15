@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/app/lib/supabase/server';
 import { isGame, type Game } from '@/app/lib/games';
+import { removeLoresheetImages } from '@/app/lib/actions/lore-images';
 import { LORE_KINDS, isLoreKind, type LoreKind } from '@/app/lib/loresheets';
 
 const path = (game: Game) => `/vault/${game}/loresheets`;
@@ -46,6 +47,7 @@ export async function saveLoresheet(
 
 export async function deleteLoresheet(id: string, game: Game) {
   const supabase = await createClient();
+  await removeLoresheetImages(id);
   await supabase.from('loresheets').delete().eq('id', id);
   revalidatePath(path(game));
   redirect(path(game));
