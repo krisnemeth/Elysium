@@ -24,7 +24,7 @@ const GLOSSARY: Record<string, Entry> = {
 
   // Skills
   Athletics: 'Running, climbing, jumping, swimming and throwing.',
-  Brawl: 'Fighting without weapons (or with fists, teeth and claws).',
+  Brawl: 'Fighting without weapons: fists, teeth and claws.',
   Craft: 'Making and fixing things with your hands. Pick a specialty: a craft you know.',
   Drive: 'Handling vehicles under pressure.',
   Firearms: 'Shooting, and knowing your way around guns.',
