@@ -3,11 +3,13 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { MdArrowBack } from 'react-icons/md';
 import { getCharacters } from '@/app/lib/data/characters';
-import { getLoresheet } from '@/app/lib/data/loresheets';
+import { getLoresheet, getLoresheetShares } from '@/app/lib/data/loresheets';
+import { getChronicles } from '@/app/lib/data/social';
 import { isGame } from '@/app/lib/games';
 import { LORE_KINDS } from '@/app/lib/loresheets';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import LoresheetEditor from '@/app/ui/loresheets/LoresheetEditor';
+import ShareLoresheet from '@/app/ui/loresheets/ShareLoresheet';
 
 export async function generateMetadata({ params }: PageProps<'/vault/[game]/loresheets/[id]'>): Promise<Metadata> {
   const { id } = await params;
@@ -22,6 +24,10 @@ export default async function LoresheetPage({ params }: PageProps<'/vault/[game]
   if (!sheet || sheet.game !== game) notFound();
   const characters = sheet.kind === 'pc' ? (await getCharacters(game)).map((c) => ({ id: c.id, name: c.name })) : [];
   const spec = LORE_KINDS[sheet.kind];
+  const [chronicles, shares] = await Promise.all([getChronicles(), getLoresheetShares(sheet.id)]);
+  const shareable = chronicles
+    .filter((c) => c.membership?.status === 'joined' && c.chronicle.game === game)
+    .map((c) => ({ id: c.chronicle.id, name: c.chronicle.name }));
 
   return (
     <div className='flex flex-col gap-8'>
@@ -36,6 +42,7 @@ export default async function LoresheetPage({ params }: PageProps<'/vault/[game]
         initial={{ title: sheet.title, character_id: sheet.character_id, content: sheet.content }}
         characters={characters}
       />
+      <ShareLoresheet loresheetId={sheet.id} chronicles={shareable} sharedWith={shares} />
     </div>
   );
 }

@@ -50,3 +50,14 @@ export async function deleteLoresheet(id: string, game: Game) {
   revalidatePath(path(game));
   redirect(path(game));
 }
+
+// Share a loresheet with one of your chronicles, or take it back (RLS: owner only).
+export async function setLoresheetShared(loresheetId: string, chronicleId: string, shared: boolean) {
+  const supabase = await createClient();
+  const { error } = shared
+    ? await supabase.from('chronicle_loresheets').upsert({ loresheet_id: loresheetId, chronicle_id: chronicleId }, { onConflict: 'chronicle_id,loresheet_id', ignoreDuplicates: true })
+    : await supabase.from('chronicle_loresheets').delete().eq('loresheet_id', loresheetId).eq('chronicle_id', chronicleId);
+  if (error) return { ok: false as const, error: 'Couldn’t change sharing. Try again.' };
+  revalidatePath(`/vault/chronicles/${chronicleId}`);
+  return { ok: true as const };
+}
