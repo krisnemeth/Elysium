@@ -138,6 +138,21 @@ export function usePortraitSource({
   const [library, setLibrary] = useState(false);
   const [cropping, setCropping] = useState<{ bitmap: ImageBitmap; url: string; revoke: boolean } | null>(null);
 
+  // If the component goes away with the cropper open, free its image too.
+  const open = useRef(cropping);
+  useEffect(() => {
+    open.current = cropping;
+  }, [cropping]);
+  useEffect(
+    () => () => {
+      const c = open.current;
+      if (!c) return;
+      if (c.revoke) URL.revokeObjectURL(c.url);
+      c.bitmap.close();
+    },
+    [],
+  );
+
   // A portrait is framed by the character card of the scene the player is in.
   const guide = () =>
     target.frame === 'card' ? portraitGuide(game, document.documentElement.dataset.theme === 'light' ? 'light' : 'dark') : FULL_GUIDE;
