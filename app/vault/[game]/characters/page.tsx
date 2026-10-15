@@ -14,12 +14,12 @@ import { GAMES, gamePath, isGame } from '@/app/lib/games';
 
 export const metadata: Metadata = { title: 'Characters' };
 
-const TITLES = { vampire: 'Your coterie.', werewolf: 'Your pack.', hunter: 'The cell.' };
+const TITLES = { vampire: 'Your coterie.', werewolf: 'Your pack.', hunter: 'Your cell.' };
 
 const EMPTY = {
   vampire: { title: 'The coterie is empty.', text: 'Every Kindred starts with an Embrace. Create one and their sheet will wait here between sessions.' },
   werewolf: { title: 'No Garou answer the howl.', text: 'Bring the first wolf to the pack. Their tribe, auspice and Gifts will be kept here.' },
-  hunter: { title: 'No files on the desk.', text: 'Open a file on your first hunter: their creed, drive and Edges, ready for the night.' },
+  hunter: { title: 'No files on the desk.', text: 'Open a file on your first hunter: their creed, Drive and Edges, ready for the night.' },
 };
 
 export default async function Characters({ params }: PageProps<'/vault/[game]/characters'>) {

@@ -66,7 +66,7 @@ export default async function Vault() {
                   ))}
                 </ul>
                 <Link href={gamePath(g)} className='group mt-auto inline-flex items-center gap-1.5 pt-6 text-sm text-bone transition-colors hover:text-accent'>
-                  Open the {GAMES[g].name.toLowerCase()} dashboard
+                  Open the {GAMES[g].name} dashboard
                   <MdArrowOutward aria-hidden className='transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
                 </Link>
               </section>

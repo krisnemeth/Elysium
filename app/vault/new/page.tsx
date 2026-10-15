@@ -7,9 +7,9 @@ import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
 export const metadata: Metadata = { title: 'Create a character' };
 
 const WHAT = {
-  vampire: 'Clan, disciplines, Hunger, Humanity and Blood Potency.',
-  werewolf: 'Tribe, auspice, Rage, Renown, Gifts and rites.',
-  hunter: 'Creed, Drive, Desperation, Danger, Edges and perks.',
+  vampire: 'Clan, Disciplines, Hunger, Humanity and Blood Potency.',
+  werewolf: 'Tribe, auspice, Rage, Renown, Gifts and Rites.',
+  hunter: 'Creed, Drive, Desperation, Danger, Edges and Perks.',
 };
 
 export default function ChooseGame() {

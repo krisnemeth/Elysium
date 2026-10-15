@@ -8,8 +8,8 @@ import { notFound } from 'next/navigation';
 export const metadata: Metadata = { title: 'Dice' };
 
 const COPY = {
-  vampire: { title: 'Roll with your Hunger.', body: 'Criticals, messy criticals, bestial failures, rouse checks and Willpower rerolls.' },
-  werewolf: { title: 'Let the Rage in.', body: 'Rage dice, Brutal outcomes, Rage checks and Willpower rerolls (Brutal results stay put).' },
+  vampire: { title: 'Roll with your Hunger.', body: 'Criticals, messy criticals, bestial failures, Rouse checks and Willpower rerolls.' },
+  werewolf: { title: 'Let the Rage in.', body: 'Rage dice, brutal outcomes, Rage checks and Willpower rerolls (brutal results stay put).' },
   hunter: { title: 'Roll for the cell.', body: 'Desperation dice, Overreach or Despair, Danger, and Willpower rerolls.' },
 };
 

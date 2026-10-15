@@ -94,7 +94,7 @@ const GAME_ICON = { vampire: GiBatWing, werewolf: GiWolfHowl, hunter: GiCrossbow
 // Jump between the three games' dashboards; the vault keeps one list of characters.
 export function GameSwitcher({ game, compact = false }: { game: Game; compact?: boolean }) {
   return (
-    <ul aria-label='Game' className={`grid grid-cols-3 gap-1 rounded-xl bg-bone/[0.04] p-1 ${compact ? 'w-full' : ''}`}>
+    <ul aria-label='Choose a game' className={`grid grid-cols-3 gap-1 rounded-xl bg-bone/[0.04] p-1 ${compact ? 'w-full' : ''}`}>
       {GAMES_ORDER.map((g) => {
         const Icon = GAME_ICON[g];
         return (

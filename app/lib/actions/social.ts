@@ -45,7 +45,7 @@ export async function sendFriendRequest(_: ActionState, form: FormData): Promise
   const { data, error } = await supabase.rpc('send_friend_request', { code });
   if (error) return { error: 'Couldn’t send the request. Try again.' };
   revalidatePath('/vault/friends');
-  return FRIEND_MESSAGES[data as string] ?? { error: 'Something went wrong.' };
+  return FRIEND_MESSAGES[data as string] ?? { error: 'Something went wrong. Try again.' };
 }
 
 export async function acceptFriend(friendshipId: string) {

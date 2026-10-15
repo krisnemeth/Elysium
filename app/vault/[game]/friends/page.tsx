@@ -31,7 +31,7 @@ export default async function Friends({ params }: PageProps<'/vault/[game]/frien
           <AddFriendForm />
           {incoming.length > 0 && (
             <div>
-              <h2 className='font-display text-2xl'>Asking to be friends</h2>
+              <h2 className='font-display text-2xl'>Friend requests</h2>
               <ul className='mt-3 flex flex-col'>
                 {incoming.map((f) => (
                   <li key={f.friendshipId} className='flex flex-wrap items-center justify-between gap-3 border-b border-bone/[0.07] py-3'>
@@ -47,7 +47,7 @@ export default async function Friends({ params }: PageProps<'/vault/[game]/frien
           )}
           {outgoing.length > 0 && (
             <div>
-              <h2 className='font-display text-xl text-bone/70'>Waiting for them</h2>
+              <h2 className='font-display text-xl text-bone/70'>Requests you sent</h2>
               <ul className='mt-2 flex flex-col'>
                 {outgoing.map((f) => (
                   <li key={f.friendshipId} className='flex items-center justify-between gap-3 border-b border-bone/[0.07] py-2.5 text-sm text-bone/70'>
