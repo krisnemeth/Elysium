@@ -22,7 +22,7 @@ Tickets are mirrored in Linear (THI-xx) and GitHub (#xx).
 | #27 / THI-26 Vampire scenes, Neon Nights cards | `sweep/vampire-themes` | | | Screenshot check-in; not in `ticket-sweep` |
 | #26 / THI-25 Werewolf forest and cave | `sweep/werewolf-themes` | | | Screenshot check-in; not in `ticket-sweep` |
 | #24 / THI-23 Hunter city, #25 / THI-24 Hunter cabin | `sweep/hunter-themes` | | | Screenshot check-in; not in `ticket-sweep` |
-| #38 / THI-36 Copy review | `sweep/copy-review` | | | In progress (built on top of `ticket-sweep`) |
+| #38 / THI-36 Copy review | `sweep/copy-review` | | | Built: 10 commits on top of `ticket-sweep` (`git log ticket-sweep..sweep/copy-review`), one per area; voice note in `plans/voice-and-terms.md` |
 
 Other branches:
 - `sweep/docs`: `CLAUDE.md` and roadmap updates for the built tickets (built on `ticket-sweep`; easiest to redo after you've picked).
