@@ -212,7 +212,7 @@ export function NoteComposer({ chronicleId, isStoryteller }: { chronicleId: stri
 
 type Live = { url: string; anonKey: string };
 
-// Reloads the page's server data when notes (including the bot's), votes or the party change.
+// Reloads the page's server data when notes (including the bot's), votes, shared lore or the party change.
 export function LiveRefresh({ chronicleId, live }: { chronicleId: string; live: Live }) {
   const router = useRouter();
   useEffect(() => {
@@ -220,7 +220,9 @@ export function LiveRefresh({ chronicleId, live }: { chronicleId: string; live: 
     const stopNotes = subscribe(live.url, live.anonKey, `notes:${chronicleId}`, 'chronicle_notes', filter, () => router.refresh());
     const stopVotes = subscribe(live.url, live.anonKey, `votes:${chronicleId}`, 'chronicle_votes', filter, () => router.refresh());
     const stopParty = subscribe(live.url, live.anonKey, `party:${chronicleId}`, 'chronicle_members', filter, () => router.refresh());
+    const stopLore = subscribe(live.url, live.anonKey, `lore:${chronicleId}`, 'chronicle_loresheets', filter, () => router.refresh());
     return () => {
+      stopLore();
       stopNotes();
       stopVotes();
       stopParty();
