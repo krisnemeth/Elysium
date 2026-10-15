@@ -62,7 +62,7 @@ const GUIDE: Record<StepKey, (game: Game) => string> = {
   attributes: () =>
     'Attributes are what you are born with. Place one at 4 dots, three at 3, four at 2 and one at 1. The counter below tells you what’s left. Stamina sets your Health; Composure and Resolve set your Willpower.',
   skills: () =>
-    'Skills are what you’ve learned. Choose how you want to spread them first, then click the dots. A roll usually adds an Attribute to a Skill, so think about what your character does well.',
+    'Skills are what you’ve learned. Choose how you want to spread them first, then click the dots. A roll usually adds an attribute to a skill, so think about what your character does well.',
   disciplines: () =>
     'Disciplines are your blood’s powers. Pick two of your clan’s Disciplines: one starts at two dots, the other at one. You’ll name your powers on the full sheet afterwards.',
   predator: () =>
