@@ -4,7 +4,7 @@ export const THEME_STORAGE_KEY = 'elysium-theme';
 
 // Site pages (landing, vault, chronicles, accounts) are dark only; the saved theme
 // applies to the game dashboards. Keep in step with app/ui/ForceDark.tsx.
-export const DARK_ONLY_PATHS = '^/(vampire)?$|^/vault/?$|^/vault/new/?$|^/vault/chronicles(/|$)|^/(login|signup|auth)(/|$)';
+export const DARK_ONLY_PATHS = '^/(vampire)?$|^/vault/?$|^/vault/new/?$|^/vault/chronicles(/|$)|^/(login|signup|auth)(/|$)|^/concept/landing(/|$)';
 
 /*
   Runs inline in <head> before first paint: applies the saved theme, or the
