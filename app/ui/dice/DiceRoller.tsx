@@ -56,7 +56,7 @@ const GAMES: Record<
     },
     check: {
       title: 'Rouse check',
-      body: 'Wake the blood for a discipline or Blood Surge. On a 1–5, your Hunger rises.',
+      body: 'Wake the blood for a Discipline or Blood Surge. On a 1–5, your Hunger rises.',
       button: 'Rouse check',
       calm: 'Rouse check: calm',
       bad: 'Rouse check: Hunger rises',
