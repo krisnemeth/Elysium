@@ -10,11 +10,13 @@ export type Loresheet = {
   title: string;
   character_id: string | null;
   content: Record<string, string>;
+  // An uploaded picture (/media/portraits/…), or null.
+  image: string | null;
   created_at: string;
   updated_at: string;
 };
 
-const COLUMNS = 'id, game, kind, title, character_id, content, created_at, updated_at';
+const COLUMNS = 'id, game, kind, title, character_id, content, image, created_at, updated_at';
 
 // Your own loresheets. RLS also lets chronicle members read the ones shared
 // with them, so these filter by owner; chronicles use getSharedLoresheets.
