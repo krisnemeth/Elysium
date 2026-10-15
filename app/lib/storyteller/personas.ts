@@ -178,7 +178,7 @@ export const PERSONAS: Record<PersonaId, Persona> = {
       },
       asides: [
         'Move.',
-        'Clock is running.',
+        'The clock is running.',
         'No second chances on this one.',
       ],
       pressure: [

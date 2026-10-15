@@ -164,7 +164,7 @@ export function TurnTracker() {
         {solo && myTurn ? (
           <>
             <span className='block font-display text-xl leading-tight text-accent'>Playing alone</span>
-            <span className='text-bone/45'>No turns to wait for. The game pauses when you leave.</span>
+            <span className='text-bone/45'>No turns to wait for. The table pauses when you leave.</span>
           </>
         ) : holder ? (
           <>

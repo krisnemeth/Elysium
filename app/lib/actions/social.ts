@@ -148,7 +148,7 @@ export async function respondToInvite(chronicleId: string, accept: boolean) {
 export async function leaveChronicle(chronicleId: string): Promise<ActionState> {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc('leave_chronicle', { cid: chronicleId });
-  if (error || !data) return { error: 'Couldn’t leave the game. Try again.' };
+  if (error || !data) return { error: 'Couldn’t leave the table. Try again.' };
   revalidatePath('/vault/chronicles');
   redirect('/vault/chronicles');
 }
@@ -168,7 +168,7 @@ export async function setChronicleCharacter(chronicleId: string, characterId: st
     .update({ character_id: characterId })
     .eq('chronicle_id', chronicleId)
     .eq('user_id', claims.claims.sub);
-  if (error) return { error: 'Couldn’t bring that character.' };
+  if (error) return { error: 'Couldn’t add that character. Try again.' };
   revalidatePath(chroniclePath(chronicleId));
   return { ok: true };
 }

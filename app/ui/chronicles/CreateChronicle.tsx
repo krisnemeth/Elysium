@@ -51,7 +51,7 @@ export default function CreateChronicle() {
       <fieldset className='flex flex-col gap-3'>
         <legend className={`${fieldLabel} mb-3`}>Who tells the story?</legend>
         <div className='grid gap-3 sm:grid-cols-2'>
-          <Choice name='storyteller' value='player' checked={ledBy === 'player'} onChange={() => setLedBy('player')} title='I’ll be the Storyteller' blurb='You run the game and can read the sheets your players bring.' />
+          <Choice name='storyteller' value='player' checked={ledBy === 'player'} onChange={() => setLedBy('player')} title='I’ll be the Storyteller' blurb='You run the chronicle and can read the sheets your players bring.' />
           <Choice name='storyteller' value='bot' checked={ledBy === 'bot'} onChange={() => setLedBy('bot')} title='The Storyteller bot' blurb='Pick a Storyteller and a setting; the bot builds a five-act story and the group chooses how it goes.' />
         </div>
       </fieldset>

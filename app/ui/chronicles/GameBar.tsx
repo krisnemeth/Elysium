@@ -116,8 +116,8 @@ export default function GameBar({
               <MdPause aria-hidden className='size-4' /> <span className='hidden @[52rem]:inline'>{pending ? 'Saving…' : 'Pause and exit'}</span>
             </button>
           ) : (
-            <button type='button' onClick={() => dialog.current?.showModal()} aria-label='Leave the game' className={`${buttonGhost} shrink-0 px-3 py-1.5 text-xs sm:px-4`}>
-              <MdLogout aria-hidden className='size-4' /> <span className='hidden @[52rem]:inline'>Leave the game</span>
+            <button type='button' onClick={() => dialog.current?.showModal()} aria-label='Leave the table' className={`${buttonGhost} shrink-0 px-3 py-1.5 text-xs sm:px-4`}>
+              <MdLogout aria-hidden className='size-4' /> <span className='hidden @[52rem]:inline'>Leave the table</span>
             </button>
           )}
         </div>
@@ -175,7 +175,7 @@ export default function GameBar({
         className='m-auto w-[min(28rem,92vw)] rounded-2xl border border-bone/15 bg-ink p-0 text-bone shadow-[0_2rem_6rem_rgb(0_0_0/0.8)] backdrop:bg-black/55 backdrop:backdrop-blur-md'
       >
         <div className='flex flex-col gap-4 p-6'>
-          <h2 id='leave-title' className='font-display text-3xl'>Leave the game?</h2>
+          <h2 id='leave-title' className='font-display text-3xl'>Leave the table?</h2>
           <p className='leading-relaxed text-bone/75'>
             You’ll leave the table and the party plays on without you. Your character keeps everything they have right now.
           </p>
@@ -188,7 +188,7 @@ export default function GameBar({
               Stay
             </button>
             <button type='button' disabled={pending} onClick={leave} className={buttonPrimary}>
-              {pending ? 'Leaving…' : 'Leave the game'}
+              {pending ? 'Leaving…' : 'Leave the table'}
             </button>
           </div>
         </div>
