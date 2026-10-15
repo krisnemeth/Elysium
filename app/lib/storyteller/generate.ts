@@ -29,12 +29,14 @@ import {
   type SettingKind,
   type Tone,
 } from './content';
+import { personaFor, type PersonaId } from './personas';
 
-export type BotSetup = { tone: Tone; setting: SettingKind; focus: Game };
+export type BotSetup = { persona: PersonaId; setting: SettingKind; focus: Game };
 // A group decision: one of the approaches (moves to the next act) or a
 // search for clues (stays in the scene).
 export type Choice = Approach | 'search';
-export type BotState = BotSetup & { seed: number; path: Choice[] };
+// Chronicles made before personas stored a tone instead; personaFor() maps it.
+export type BotState = Omit<BotSetup, 'persona'> & { persona?: PersonaId; tone?: Tone; seed: number; path: Choice[] };
 
 export type Npc = {
   role: Role;
@@ -69,6 +71,7 @@ export type Scene = {
 };
 
 export const ACT_COUNT = ACTS.length;
+const finishedAct = (act: number) => act >= ACT_COUNT - 1;
 const APPROACH_ORDER = Object.keys(APPROACHES) as Approach[];
 
 // mulberry32: small, fast, good enough for story dice.
@@ -160,13 +163,9 @@ function fill(text: string, arc: Arc, place: string) {
   );
 }
 
-const TONE_OPENERS: Record<Tone, string[]> = {
-  intrigue: ['Everyone you meet tonight wants something from you.', 'The invitation came on good paper, unsigned.'],
-  horror: ['Something about the quiet tonight feels arranged.', 'The streetlights flicker in a rhythm, like breathing.'],
-  action: ['Sirens somewhere close. Not for you, yet.', 'You have maybe an hour before this gets loud.'],
-};
-
-const SEARCHES_PER_ACT = 2;
+// How many searches fit in one act at each pace.
+const SEARCHES_PER_ACT = { unhurried: 2, steady: 2, brisk: 1 } as const;
+const clampDifficulty = (n: number) => Math.min(5, Math.max(2, n));
 // The order in which searches uncover people. The patron is met in the hook,
 // the culprit at the reckoning.
 const CLUE_ORDER = ['informant', 'victim', 'rival'] as const;
@@ -209,22 +208,41 @@ export function sceneFor(state: BotState, act = progress(state.path).act): Scene
   const r = rng(state.seed + 7919 * (act + 1) + before.reduce((n, a) => (n * 31 + APPROACH_ORDER.indexOf(a as Approach) + 2) % 1_000_003, 17));
   const place = pick(r, SETTINGS[state.setting].places);
   const f = (t: string) => fill(t, arc, place);
+  // The persona draws from its own stream, so its voice never shifts the
+  // story's facts (and the same seed always tells the same story).
+  const persona = personaFor(state);
+  const { voice } = persona;
+  const pr = rng((state.seed + 15485863 * (act + 1)) ^ 0x5bd1e995);
   const previous = approaches[act - 1];
   const key = ACTS[act].key;
   const narration: string[] = [];
-  const location = `${place[0].toUpperCase()}${place.slice(1)}, in ${arc.district}. ${pick(r, SENSES)}`;
+  // Spare personas skip the scenery; rich ones add a line of their own.
+  const sense = pick(r, SENSES);
+  const senses = persona.density === 'spare' ? '' : persona.density === 'rich' ? ` ${sense} ${pick(pr, voice.senses)}` : ` ${sense}`;
+  const location = `${place[0].toUpperCase()}${place.slice(1)}, in ${arc.district}.${senses}`;
 
   if (act === 0) {
-    narration.push(pick(r, TONE_OPENERS[state.tone]), f(arc.premise), arc.stakes);
+    narration.push(pick(pr, voice.openers), f(arc.premise), arc.stakes);
   } else {
-    if (previous) narration.push(f(pick(r, APPROACHES[previous].lines)), f(pick(r, CONSEQUENCES[previous])));
+    if (previous) {
+      narration.push(f(pick(r, APPROACHES[previous].lines)));
+      const consequence = f(pick(r, CONSEQUENCES[previous]));
+      if (persona.density !== 'spare') narration.push(consequence);
+    }
     if (key === 'twist') narration.push(f(pick(r, TWISTS)));
     if (key === 'clash') {
       const threat = THREATS[state.focus].find((t) => t.title === arc.title)!;
       narration.push(`It comes to a head at ${f(threat.climax)}.`, `${arc.npcs.find((n) => n.role === 'culprit')!.name} is waiting.`);
     }
-    if (key === 'after') narration.push(f(pick(r, ENDINGS)));
+    if (key === 'after') {
+      const own = f(pick(pr, voice.endings));
+      // Rich personas give both endings; the others give one of the two.
+      if (persona.density === 'rich') narration.push(f(pick(r, ENDINGS)), own);
+      else narration.push(persona.density === 'spare' || pr() < 0.5 ? own : f(pick(r, ENDINGS)));
+    }
   }
+  if (persona.density === 'rich' && !finishedAct(act)) narration.push(f(pick(pr, voice.asides)));
+  if (persona.density === 'spare' && act > 0 && !finishedAct(act)) narration.push(f(pick(pr, voice.asides)));
 
   // Clues found by this act's searches, using the global search count.
   const searchesBefore = before.filter((c) => c === 'search').length;
@@ -236,16 +254,16 @@ export function sceneFor(state: BotState, act = progress(state.path).act): Scene
     return pick(cr, CLUE_FINDS[role]!).replaceAll('{npc}', npc.name).replaceAll('{aff}', npc.affiliation);
   });
 
-  const finished = act >= ACT_COUNT - 1;
+  const finished = finishedAct(act);
   const options = shuffle(r, APPROACH_ORDER).slice(0, 3);
   const games: Game[] = ['vampire', 'werewolf', 'hunter'];
-  const canSearch = !finished && during.length < SEARCHES_PER_ACT && searchesBefore + during.length < CLUE_ORDER.length;
-  const searchTest = `Wits + Awareness or Intelligence + Investigation, difficulty ${2 + Math.min(act, 2)}`;
+  const canSearch = !finished && during.length < SEARCHES_PER_ACT[persona.pacing] && searchesBefore + during.length < CLUE_ORDER.length;
+  const searchTest = `Wits + Awareness or Intelligence + Investigation, difficulty ${clampDifficulty(2 + Math.min(act, 2) + persona.difficulty)}`;
   const choices: Scene['choices'] = finished
     ? []
     : [
-        ...(canSearch ? [{ id: 'search' as const, label: 'Search for clues', test: searchTest }] : []),
-        ...options.map((o) => ({ id: o, label: APPROACHES[o].label, test: `${pick(r, APPROACHES[o].tests)}, difficulty ${2 + Math.min(act, 3)}` })),
+        ...(canSearch ? [{ id: 'search' as const, label: voice.search, test: searchTest }] : []),
+        ...options.map((o) => ({ id: o, label: voice.labels[o], test: `${pick(r, APPROACHES[o].tests)}, difficulty ${clampDifficulty(2 + Math.min(act, 3) + persona.difficulty)}` })),
       ];
   return {
     act,
@@ -254,7 +272,7 @@ export function sceneFor(state: BotState, act = progress(state.path).act): Scene
     narration,
     clues,
     tests: choices.map((c) => `${c.label}: ${c.test}`),
-    pressure: finished ? [] : [pick(r, PRESSURE[pick(r, games)])],
+    pressure: finished ? [] : [pick(r, PRESSURE[pick(r, games)]), ...shuffle(pr, voice.pressure).slice(0, persona.push)],
     choices,
     finished,
   };

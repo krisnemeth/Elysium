@@ -4,7 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/app/lib/supabase/server';
 import { isGame, type Game } from '@/app/lib/games';
-import { TONES, SETTINGS, type SettingKind, type Tone } from '@/app/lib/storyteller/content';
+import { SETTINGS, type SettingKind } from '@/app/lib/storyteller/content';
+import { isPersonaId } from '@/app/lib/storyteller/personas';
 import { logEntry, newBotState, sceneFor, type BotState, type Choice } from '@/app/lib/storyteller/generate';
 import type { RollResult } from '@/app/lib/dice/rules';
 import { getTurn, type Turn } from '@/app/lib/data/social';
@@ -85,10 +86,10 @@ export async function createChronicle(_: ActionState, form: FormData): Promise<A
 
   let bot: BotState | null = null;
   if (ledBy === 'bot') {
-    const tone = String(form.get('tone'));
+    const persona = form.get('persona');
     const setting = String(form.get('setting'));
-    if (!(tone in TONES) || !(setting in SETTINGS)) return { error: 'Choose a tone and a setting for the Storyteller bot.' };
-    bot = newBotState({ tone: tone as Tone, setting: setting as SettingKind, focus: game });
+    if (!isPersonaId(persona) || !(setting in SETTINGS)) return { error: 'Choose a Storyteller and a setting for the bot.' };
+    bot = newBotState({ persona, setting: setting as SettingKind, focus: game });
   }
 
   const supabase = await createClient();
