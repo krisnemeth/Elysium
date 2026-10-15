@@ -34,7 +34,7 @@ The app was front-end only with sample data. This group makes characters persist
   Desperation and Willpower mid-session.
 - **Dice from the sheet**: pick e.g. Strength + Brawl to build the pool; the
   game's special dice come from the current tracker value.
-- ✅ **Dice graphics improvements** (2026-10-08): the 3D dice now match the official dice art: vector symbols (Werewolf/Hunter traced from the asset pack), placed where the printed faces have them, sharp 768px faces, true colours. A themed 3D tray per game (walnut, stone/slate, ammo crate/canvas) under one warm lamp, with dice bouncing off the walls and each other and coming to rest where they fall; pools capped to the official dice sets. Still open: dice surface texture.
+- ✅ **Dice graphics improvements** (2026-10-08): the 3D dice now match the official dice art: vector symbols (Werewolf/Hunter traced from the asset pack), placed where the printed faces have them, sharp 768px faces, true colours. A themed 3D tray per game (walnut, stone/slate, ammo crate/canvas) under one warm lamp, with dice bouncing off the walls and each other and coming to rest where they fall; pools capped to the official dice sets. Dice surface texture followed (2026-10-15): per-game normal and roughness maps (resin swirl, stone grain, worn paint) and engraved glyphs, `app/ui/dice3d/dice-surface.ts`.
 - **XP log**: record spends, with costs worked out from the rules.
 
 ## Group 3 — Friends, groups and Storytellers
@@ -63,7 +63,9 @@ The app was front-end only with sample data. This group makes characters persist
   dialog), condition tracking and dice on the chronicle page; a dice roller for
   the Storyteller.
 - ✅ **The chronicle table** (#41): a self-contained game mode that fits the screen (full-height character and dice sidebars, the game's own bar, story and turns in the middle; tabs on phones), over a location backdrop per act. Turn based: the current player's card rises; a Storyteller hands out turns, the bot enforces them with a 2-minute fuse. Leaving asks first and keeps your character for a re-invite; playing alone just pauses.
-- Next: the story engine proposal in `plans/storyteller-engine.md`.
+- ✅ **Storyteller personas** (#23): five narrators with their own pacing and voice, picked with the setting when a bot chronicle is created and named in the game bar (`app/lib/storyteller/personas.ts`).
+- ✅ **Loresheets shared with a chronicle** (#33): share from the loresheet page; members read them (images too) in a live Lore tab at the table.
+- Next: the story engine. Proposal in `plans/storyteller-engine.md`; the open decisions are laid out in `plans/storyteller-engine-brief.md` (#22), awaiting the owner's design talk. No engine code until then.
 
 ## Group 4 — Story and polish
 
@@ -87,13 +89,13 @@ The app was front-end only with sample data. This group makes characters persist
   scenes. One scene at a time, checking in after each.
 - ✅ Guided creation, second pass: Werewolf breed (required) and patron spirit,
   Hunter "what drives you" and Redemption notes.
-- Later: loresheets shared with a chronicle; a true server-generated PDF if browser
+- Later: a true server-generated PDF if browser
   printing isn't enough.
-- Storyteller's tones will have to be different, and Players should choose a storyteller identity for the chronicle. these should be varied bots with different styles of storytelling. it helps players pick one, based on a characterized approach.
+- ✅ Storyteller identities: done, see Storyteller personas in Group 3.
 
 ## Future theme rework (notes, 2026-10-07)
 
-Not scheduled yet. Do one theme at a time and check in after each.
+The Vampire, Werewolf and Hunter reworks are built on separate branches, not merged; each waits on the owner's check-in (see Pending the owner). Do one theme at a time and check in after each.
 
 **Guiding rule:** themes are a game-native kind of customisation, but keep the
 texture in check so it doesn't feel too "gamey". Ornament lives on frames and
@@ -133,7 +135,7 @@ element per theme, the rest quiet; text panels calm and readable everywhere.
 Nights, Rough.js (hand-drawn borders) for Hunter, CSS `border-image` 9-slice
 SVGs for ornate rectangular frames. Gothic ornament needs artwork, not a library.
 
-**3D dice** (`app/ui/dice3d/`): improve greatly on the dice's colour intensity
+**3D dice** (`app/ui/dice3d/`): surface texture and engraved glyphs are done (2026-10-15, `dice-surface.ts`). Original notes: improve greatly on the dice's colour intensity
 and surface texture. Today they read flat and pale (especially the special
 dice). Ideas: richer, more saturated per-game materials (deep blood-red
 Hunger dice, ember Rage dice, Desperation dice with a sharper accent);
@@ -149,10 +151,24 @@ soft environment map so edges and faces read clearly in every theme.
   illustrations: characters, antagonists, locations, scenes), tagged by game
   and kind, so players can give their locations, NPCs and other loresheets an
   image. Check the asset pack's terms for each image we host.
-- ✅ **Pick a character portrait from the library** (`app/lib/portrait-library.ts`, the site's own hosted portraits for now), as well as uploading one; both go through the cropper. On the classic sheet the portrait sits at the very end; guided creation ends with a Portrait step. Grow the library from the asset pack next.
+- ✅ **Pick a character portrait from the library** (`app/lib/image-library.ts`), as well as uploading one; both go through the cropper. On the classic sheet the portrait sits at the very end; guided creation ends with a Portrait step.
+- ✅ **Typed image library** (#30): tagged by game and kind (character, antagonist, location, scene); `scripts/add-library-images.mts` adds Dark Pack art from `brand-assets/` (run locally, then commit). Growing it from the pack is still to do; check the terms per image.
+- ✅ **Loresheet images** (#31): every loresheet takes a library or uploaded picture (`LoreImagePicker.tsx`, `app/lib/actions/lore-images.ts`); shared loresheets show theirs to chronicle members.
 - ✅ **Image cropper** (portraits): uploads open a 3:4 frame to drag and zoom
   (wheel, pinch, slider, keyboard) before saving. Later: the card's own frame
-  shape (e.g. the arch) as the crop guide, and the same tool for loresheet images.
+  shape (e.g. the arch) as the crop guide, and the same tool for loresheet images. Both done: the guide follows the theme's card (`app/lib/image-frames.ts`) and loresheets use the same cropper.
 - **Later:** these images could shape how a chronicle is laid out (scene
   backdrops, location cards, NPC portraits in the story engine; see
   `plans/storyteller-engine.md`).
+
+## Landing page
+
+- **Concept** (#39): two first-screen directions at `/concept/landing` (A, three doors) and `/concept/landing/b` (B, the vigil), details in `plans/landing-concept.md`. `/` is untouched.
+
+## Pending the owner
+
+- **Theme check-ins**: the Vampire, Werewolf and Hunter theme reworks are on separate branches, not merged, awaiting a look one at a time.
+- **Landing direction**: pick A, B or a mix before any section is built out.
+- **Story engine**: the design talk, using `plans/storyteller-engine-brief.md`.
+- **`supabase db push`**: the 2026-10-15 migrations (`…_loresheet_images.sql`, `…_shared_loresheets.sql`, `…_storyteller_personas.sql`, `…_shared_lore_images.sql`) aren't applied until it's run.
+- Sign-in providers, SMTP and redirect URLs (Group 1, item 7) stay dashboard work.
