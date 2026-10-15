@@ -7,6 +7,7 @@ import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import { deleteChronicle, deleteNote, removeMember, respondToInvite } from '@/app/lib/actions/social';
 import { getCharacter, getCharacters, toCharacter } from '@/app/lib/data/characters';
+import { getSharedLoresheets } from '@/app/lib/data/loresheets';
 import { getChronicle, getFriends, getNotes, getRolls, getTurn, getVotes } from '@/app/lib/data/social';
 import { GAMES } from '@/app/lib/games';
 import { isUploadedPortrait } from '@/app/lib/portraits';
@@ -19,6 +20,7 @@ import { ActionButton } from '@/app/ui/social/forms';
 import { BotVote, CharacterPicker, InviteFriends, LiveRefresh, LiveRolls, NoteComposer } from '@/app/ui/chronicles/parts';
 import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
 import { CLANS } from '@/app/lib/clans';
+import SharedLore from '@/app/ui/chronicles/SharedLore';
 import StorytellerDice from '@/app/ui/chronicles/StorytellerDice';
 import GameBar from '@/app/ui/chronicles/GameBar';
 import TableShell from '@/app/ui/chronicles/TableShell';
@@ -54,7 +56,14 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
   }
 
   const isStoryteller = membership.role === 'storyteller';
-  const [rolls, notes, myCharacters, friends, turn] = await Promise.all([getRolls(c.id), getNotes(c.id), getCharacters(), getFriends(), getTurn(c.id)]);
+  const [rolls, notes, myCharacters, friends, turn, sharedLore] = await Promise.all([
+    getRolls(c.id),
+    getNotes(c.id),
+    getCharacters(),
+    getFriends(),
+    getTurn(c.id),
+    getSharedLoresheets(c.id),
+  ]);
   const inParty = new Set(party.map((p) => p.user_id));
   const invitable = friends.filter((f) => f.status === 'accepted' && !inParty.has(f.userId)).map((f) => ({ id: f.userId, name: f.name }));
   const live = { url: SUPABASE_URL, anonKey: SUPABASE_KEY };
@@ -230,6 +239,11 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
     story && { id: 'scene', label: 'Scene', content: story },
     whosWho && { id: 'who', label: 'Who’s who', content: whosWho },
     { id: 'notes', label: 'Notes', content: notesList },
+    {
+      id: 'lore',
+      label: 'Lore',
+      content: <SharedLore items={sharedLore.map((l) => ({ id: l.id, kind: l.kind, title: l.title, content: l.content, by: names.get(l.shared_by) ?? 'Someone' }))} />,
+    },
     myCharacter && { id: 'party', label: 'Party', content: partyList },
   ] as (Tab | null | false | undefined)[]).filter((t): t is Tab => !!t);
   // The group's vote stays in view under the story.
