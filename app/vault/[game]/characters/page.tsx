@@ -8,7 +8,7 @@ import { buttonPrimary } from '@/app/ui/kit/styles';
 import EmptyState from '@/app/ui/kit/EmptyState';
 import VampireCard from '@/app/ui/characters/VampireCard';
 import Pack from '@/app/ui/game/werewolf/Pack';
-import CellFiles from '@/app/ui/game/hunter/CellFiles';
+import HunterCards from '@/app/ui/game/hunter/HunterCards';
 import { getCharacters, toCharacter } from '@/app/lib/data/characters';
 import { GAMES, gamePath, isGame } from '@/app/lib/games';
 
@@ -36,7 +36,7 @@ export default async function Characters({ params }: PageProps<'/vault/[game]/ch
         description={
           list.length === 0
             ? `No ${noun.many} on file yet.`
-            : `${list.length} ${list.length === 1 ? noun.one : noun.many} on file.${game === 'hunter' ? ' Scroll to leaf through the files.' : ' Open a sheet to update it between sessions.'}`
+            : `${list.length} ${list.length === 1 ? noun.one : noun.many} on file. Open a sheet to update it between sessions.`
         }
         actions={
           <Link href={gamePath(game, '/new')} className={buttonPrimary}>
@@ -50,7 +50,7 @@ export default async function Characters({ params }: PageProps<'/vault/[game]/ch
           {EMPTY[game].text}
         </EmptyState>
       ) : game === 'hunter' ? (
-        <CellFiles files={list} />
+        <HunterCards files={list} />
       ) : game === 'werewolf' ? (
         <Pack members={list} />
       ) : (

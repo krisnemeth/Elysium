@@ -5,6 +5,7 @@ import {
   Cinzel,
   Special_Elite,
   Courier_Prime,
+  Caveat,
 } from 'next/font/google';
 
 export const Jslab = Josefin_Slab({
@@ -48,4 +49,11 @@ export const CourierPrime = Courier_Prime({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-courier',
+});
+
+// Hunter, the city: the handwriting on instant-photo captions.
+export const CaveatFont = Caveat({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-caveat',
 });

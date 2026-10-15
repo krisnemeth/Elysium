@@ -52,7 +52,7 @@ export const GAMES: Record<Game, GameInfo> = {
     Logo: LogoHunter,
     figure: { src: '/art/hunter.webp', width: 900, height: 1886, alt: 'A hunter in a long dark coat, scarf over his face.' },
     noun: { one: 'Hunter', many: 'Hunters', group: 'cell', faction: 'Creed' },
-    modes: { dark: 'The cabin', light: 'The inn' },
+    modes: { dark: 'The cabin', light: 'The city' },
     greeting: 'Case files are open.',
   },
 };

@@ -35,11 +35,12 @@
   font-family: var(--font-courier), ui-monospace, monospace;
 }
 :root[data-theme='light'] [data-game='hunter'] {
-  /* The inn: a genuinely light room */
-  --ink: #f2e9d8;
-  --color-bone: #2b2119;
-  --accent: #b9530f;
-  --accent-deep: #e2c79c;
+  /* The city. A dark scene in the "light" slot: data-theme still says light
+     (the saved choice, the Tailwind dark: variant), but the palette is night. */
+  --ink: #0b1014;
+  --color-bone: #e3e6e2;
+  --accent: #e4503a;
+  --accent-deep: #17343d;
 }
 
 /* The overarching World of Darkness pages (landing, vault hub, game choice). */
@@ -141,63 +142,170 @@
   box-shadow: inset 0 0 1.5rem rgb(0 0 0 / 0.6);
 }
 
-/* Hunter, The cabin: weathered timber with nail heads. */
+/*
+  Hunter, The cabin: rough, dark planks held with nails. The border is a
+  9-slice of grainy, scorched timber; nail heads sit on the border only
+  (corners, then every so often along each side).
+*/
 :root[data-theme='dark'] [data-game='hunter'] .frame,
 :root:not([data-theme]) [data-game='hunter'] .frame,
 [data-skin='hunter-dark'] .skin-frame {
   border: 12px solid transparent;
   border-radius: 0;
-  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='3' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .22 0 0 0 0 .12 0 0 0 1.4 -.25'/%3E%3C/filter%3E%3Crect width='90' height='90' fill='%233a2414'/%3E%3Crect width='90' height='90' filter='url(%23w)'/%3E%3C/svg%3E") 30 stretch;
+  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.03 .22' numOctaves='4' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .12 0 0 0 0 .06 0 0 0 1.9 -.7'/%3E%3C/filter%3E%3Cfilter id='k'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' seed='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 -.35'/%3E%3C/filter%3E%3Crect width='90' height='90' fill='%23170e08'/%3E%3Crect width='90' height='90' filter='url(%23w)'/%3E%3Crect width='90' height='90' filter='url(%23k)' opacity='.55'/%3E%3C/svg%3E") 30 stretch;
+  background-color: rgb(13 8 5 / 0.9);
+  box-shadow:
+    inset 0 0 1.25rem rgb(0 0 0 / 0.7),
+    inset 0 0 0 1px rgb(0 0 0 / 0.55),
+    0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.9);
 }
 :root[data-theme='dark'] [data-game='hunter'] .frame::after,
 :root:not([data-theme]) [data-game='hunter'] .frame::after,
 [data-skin='hunter-dark'] .skin-frame::after {
+  --nail: #b7a68c 0 1.5px, #4d3b29 2.1px, #140c06 3.3px, transparent 3.6px;
   content: '';
   position: absolute;
-  inset: -8px;
+  inset: -12px;
   pointer-events: none;
   background:
-    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) top left / 12px 12px no-repeat,
-    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) top right / 12px 12px no-repeat,
-    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) bottom left / 12px 12px no-repeat,
-    radial-gradient(circle, #c7b49a 0 2px, #5a4632 2.5px, transparent 3.5px) bottom right / 12px 12px no-repeat;
+    radial-gradient(circle at 6px 6px, var(--nail)) top left / 12px 12px no-repeat,
+    radial-gradient(circle at 6px 6px, var(--nail)) top right / 12px 12px no-repeat,
+    radial-gradient(circle at 6px 6px, var(--nail)) bottom left / 12px 12px no-repeat,
+    radial-gradient(circle at 6px 6px, var(--nail)) bottom right / 12px 12px no-repeat,
+    radial-gradient(circle at 6px 54px, var(--nail)) left top / 12px 108px repeat-y,
+    radial-gradient(circle at 6px 54px, var(--nail)) right top / 12px 108px repeat-y;
 }
 
-/* Hunter, The inn: a clipboard. Hardboard back, steel clip, ruled notepaper. */
+/*
+  Clipboard notepaper (the cabin's sheets): aged paper under the bulb, a steel
+  clip over the top edge, the pad's lower pages peeking out beneath. Inside
+  it the colours swap, so dark ink on paper. Ruled lines only run inside
+  text areas, where the line height is fixed so the rules sit under the text.
+*/
+:root[data-theme='dark'] [data-game='hunter'] .sheet-paper,
+:root:not([data-theme]) [data-game='hunter'] .sheet-paper {
+  --ink: #e1d5ba;
+  --color-bone: #2a2017;
+  --accent: #a3400f;
+  --accent-deep: #c9b78f;
+  color: var(--color-bone);
+  background-color: #e1d5ba;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .27 0 0 0 0 .15 0 0 0 .2 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(to bottom, rgb(255 244 214 / 0.35), transparent 14%, transparent 90%, rgb(90 60 25 / 0.14));
+  border: 1px solid rgb(0 0 0 / 0.4);
+  border-radius: 3px;
+  backdrop-filter: none;
+  box-shadow:
+    0 3px 0 -1px #cbbd9c,
+    0 4px 0 -1px rgb(0 0 0 / 0.3),
+    0 7px 0 -2px #b9aa88,
+    0 8px 0 -2px rgb(0 0 0 / 0.3),
+    0 1.25rem 2rem -0.75rem rgb(0 0 0 / 0.85);
+}
+:root[data-theme='dark'] [data-game='hunter'] .sheet-paper textarea,
+:root:not([data-theme]) [data-game='hunter'] .sheet-paper textarea {
+  padding: 0 0.5rem;
+  line-height: 2rem;
+  border-width: 0 0 0 2px;
+  border-color: rgb(163 64 15 / 0.45);
+  border-radius: 0;
+  background-color: transparent;
+  background-image: repeating-linear-gradient(to bottom, transparent 0 calc(2rem - 1px), rgb(60 85 115 / 0.38) calc(2rem - 1px) 2rem);
+  background-attachment: local;
+  background-origin: padding-box;
+}
+.paper-clip {
+  display: none;
+}
+:root[data-theme='dark'] [data-game='hunter'] .paper:has(> .sheet-paper) > .paper-clip,
+:root:not([data-theme]) [data-game='hunter'] .paper:has(> .sheet-paper) > .paper-clip {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  top: -15px;
+  width: 92px;
+  height: 28px;
+  translate: -50% 0;
+  pointer-events: none;
+  border-radius: 6px 6px 10px 10px;
+  background: linear-gradient(to bottom, #ececec, #9b9b9b 42%, #cfcfcf 55%, #7d7d7d);
+  box-shadow: 0 3px 5px rgb(0 0 0 / 0.55), inset 0 1px 0 #fff;
+}
+
+/* The cabin's cards are solid, so the room behind them stays a backdrop. */
+:root[data-theme='dark'] [data-game='hunter'] .panel:not(.frame, .sheet-paper, .chronicle-table .panel) {
+  background-color: rgb(20 14 9 / 0.94);
+}
+
+/*
+  Hunter, The city: a street-name sign. Enamelled steel gone dull with rust at
+  the edges, a pale keyline just inside, bolts at the corners with rust
+  running from them. A dark scene living in the "light" slot (see
+  tokens). The sign's texture is the border only; the panel behind stays glass.
+*/
 :root[data-theme='light'] [data-game='hunter'] .frame,
 [data-skin='hunter-light'] .skin-frame {
-  border: 9px solid #6e4b2c;
-  border-radius: 12px;
-  background-color: #fbf7ee;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0 1.9rem,
-    rgb(90 120 150 / 0.16) 1.9rem calc(1.9rem + 1px)
-  );
+  border: 11px solid transparent;
+  border-radius: 9px;
+  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.05' numOctaves='4' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .27 0 0 0 0 .12 0 0 0 2.2 -1.05'/%3E%3C/filter%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .7 -.25'/%3E%3C/filter%3E%3Crect width='90' height='90' fill='%2315303a'/%3E%3Crect width='90' height='90' filter='url(%23r)'/%3E%3Crect width='90' height='90' filter='url(%23g)' opacity='.5'/%3E%3C/svg%3E") 30 stretch;
+  background-color: rgb(9 14 17 / 0.88);
   box-shadow:
-    inset 0 0 0 1px rgb(0 0 0 / 0.08),
-    0 1rem 1.75rem -0.75rem rgb(60 40 20 / 0.5);
+    inset 0 0 0 1.5px rgb(214 224 220 / 0.55),
+    inset 0 0 1.5rem rgb(0 0 0 / 0.55),
+    0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.9);
 }
+:root[data-theme='light'] [data-game='hunter'] .frame::after,
+[data-skin='hunter-light'] .skin-frame::after {
+  --bolt: #aeb7b4 0 1.6px, #4d575a 2.2px, #0e1417 3.3px, transparent 3.6px;
+  --rust: rgb(150 70 28 / 0.75), rgb(150 70 28 / 0);
+  content: '';
+  position: absolute;
+  inset: -11px;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, var(--rust)) 5px 17px / 2px 34px no-repeat,
+    linear-gradient(to bottom, var(--rust)) calc(100% - 7px) 17px / 2px 22px no-repeat,
+    radial-gradient(circle at 5.5px 5.5px, var(--bolt)) top left / 11px 11px no-repeat,
+    radial-gradient(circle at 5.5px 5.5px, var(--bolt)) top right / 11px 11px no-repeat,
+    radial-gradient(circle at 5.5px 5.5px, var(--bolt)) bottom left / 11px 11px no-repeat,
+    radial-gradient(circle at 5.5px 5.5px, var(--bolt)) bottom right / 11px 11px no-repeat;
+}
+/* Wet street: a thin sheen along the sign's top edge. */
 :root[data-theme='light'] [data-game='hunter'] .frame::before,
 [data-skin='hunter-light'] .skin-frame::before {
   content: '';
   position: absolute;
-  z-index: 2;
-  top: -17px;
-  left: 50%;
-  width: 92px;
-  height: 26px;
-  translate: -50% 0;
+  inset: -11px -11px auto;
+  height: 3px;
   pointer-events: none;
-  border-radius: 6px 6px 10px 10px;
-  background: linear-gradient(to bottom, #f2f2f2, #a9a9a9 45%, #d9d9d9 55%, #8e8e8e);
-  box-shadow: 0 3px 4px rgb(0 0 0 / 0.35), inset 0 1px 0 #fff;
+  border-radius: 9px 9px 0 0;
+  background: linear-gradient(to right, transparent, rgb(190 215 225 / 0.35) 30%, rgb(190 215 225 / 0.12) 70%, transparent);
 }
 
-/*
-  Taped paper (the inn only): strips of tape on two or three corners and
-  the odd torn-off corner, varied per card (see app/ui/game/Paper.tsx).
-*/
+/* The city's sheets: dark glass with a strip of masking tape across the top edge. */
+:root[data-theme='light'] [data-game='hunter'] .sheet-paper {
+  background-color: rgb(12 18 22 / 0.9);
+  border-color: rgb(214 224 220 / 0.14);
+  border-radius: 6px;
+}
+:root[data-theme='light'] [data-game='hunter'] .paper:has(> .sheet-paper) > .paper-clip {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  top: -10px;
+  width: 96px;
+  height: 22px;
+  translate: -50% 0;
+  rotate: -1.5deg;
+  pointer-events: none;
+  background: rgb(214 205 170 / 0.82);
+  border-inline: 1px solid rgb(120 105 70 / 0.3);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+  clip-path: polygon(2% 0, 98% 6%, 100% 50%, 97% 100%, 3% 92%, 0 45%);
+}
+
+/* Strips of tape on the instant photos. */
 .tape {
   display: none;
 }
@@ -207,23 +315,27 @@
   z-index: 3;
   height: 24px;
   pointer-events: none;
-  background: rgb(226 211 168 / 0.85);
-  border-inline: 1px solid rgb(150 125 80 / 0.22);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
-  clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 4% 94%, 0 45%);
+  background: rgb(214 205 170 / 0.85);
+  border-inline: 1px solid rgb(120 105 70 / 0.3);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  clip-path: polygon(2% 0, 98% 6%, 100% 50%, 97% 100%, 3% 92%, 0 45%);
 }
-:root[data-theme='light'] [data-game='hunter'] .torn-tl { clip-path: polygon(0 34px, 9px 27px, 6px 19px, 15px 13px, 13px 6px, 22px 4px, 34px 0, 100% 0, 100% 100%, 0 100%); }
-:root[data-theme='light'] [data-game='hunter'] .torn-tr { clip-path: polygon(0 0, calc(100% - 34px) 0, calc(100% - 22px) 4px, calc(100% - 13px) 6px, calc(100% - 15px) 13px, calc(100% - 6px) 19px, calc(100% - 9px) 27px, 100% 34px, 100% 100%, 0 100%); }
-:root[data-theme='light'] [data-game='hunter'] .torn-bl { clip-path: polygon(0 0, 100% 0, 100% 100%, 34px 100%, 22px calc(100% - 4px), 13px calc(100% - 6px), 15px calc(100% - 13px), 6px calc(100% - 19px), 9px calc(100% - 27px), 0 calc(100% - 34px)); }
-:root[data-theme='light'] [data-game='hunter'] .torn-br { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 34px), calc(100% - 9px) calc(100% - 27px), calc(100% - 6px) calc(100% - 19px), calc(100% - 15px) calc(100% - 13px), calc(100% - 13px) calc(100% - 6px), calc(100% - 22px) calc(100% - 4px), calc(100% - 34px) 100%, 0 100%); }
 
-/* Hunter's cards are solid, so the room behind them stays a backdrop. */
-:root[data-theme='dark'] [data-game='hunter'] .panel:not(.frame, .chronicle-table .panel) {
-  background-color: rgb(24 17 11 / 0.92);
+/* Hunter's cards are solid, so the scene behind them stays a backdrop. */
+:root[data-theme='light'] [data-game='hunter'] .panel:not(.frame, .sheet-paper, .chronicle-table .panel) {
+  background-color: rgb(11 17 21 / 0.9);
+  border-color: rgb(214 224 220 / 0.12);
 }
-:root[data-theme='light'] [data-game='hunter'] .panel:not(.frame, .chronicle-table .panel) {
-  background-color: #f8f1e2;
-  border-color: rgb(110 75 44 / 0.18);
+
+/* One card set per scene. */
+.htr-city {
+  display: none;
+}
+:root[data-theme='light'] .htr-city {
+  display: grid;
+}
+:root[data-theme='light'] .htr-cabin {
+  display: none;
 }
 
 /* ---------------------------------------------------------- table skins */
@@ -266,15 +378,14 @@
   --accent-deep: #4a2a12;
 }
 [data-skin='hunter-light'] {
-  --ink: #f2e9d8;
-  --color-bone: #2b2119;
-  --accent: #b9530f;
-  --accent-deep: #e2c79c;
+  --ink: #0b1014;
+  --color-bone: #e3e6e2;
+  --accent: #e4503a;
+  --accent-deep: #17343d;
 }
 
 /* Lighter glass than elsewhere, so the act's location shows through; the
-   sidebars a little more solid. The inn is a light room, so its panels
-   stay nearly opaque to keep dark text readable. */
+   sidebars a little more solid. */
 .chronicle-table .panel {
   background-color: color-mix(in srgb, var(--ink) 45%, transparent);
   backdrop-filter: blur(16px);
@@ -285,12 +396,6 @@
 /* The story itself sits on darker glass, for reading. */
 .chronicle-table .story-panel {
   background-color: color-mix(in srgb, var(--ink) 86%, transparent);
-}
-.chronicle-table[data-skin='hunter-light'] .panel {
-  background-color: color-mix(in srgb, var(--ink) 90%, transparent);
-}
-.chronicle-table[data-skin='hunter-light'] .skin-frame {
-  background-color: #fbf7ee;
 }
 
 /* -------------------------------------------------------------- ambience */
@@ -324,6 +429,13 @@
   0%, 70% { translate: 0 0; opacity: 0; scale: 1 0.6; }
   72% { opacity: 1; scale: 1 1; }
   100% { translate: 0 60vh; opacity: 0.8; scale: 0.8 1.4; }
+}
+
+/* Patrol lights washing the clouds: two slow swells, well under three a second. */
+@keyframes siren {
+  0%, 30%, 100% { opacity: 0; }
+  10% { opacity: 0.3; }
+  20% { opacity: 0.08; }
 }
 
 @keyframes lamp-swing {

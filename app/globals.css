@@ -29,6 +29,7 @@
   --color-accent: var(--accent);
   --color-accent-deep: var(--accent-deep);
   --font-display: var(--font-cormorant), 'Times New Roman', serif;
+  --font-hand: var(--font-caveat), 'Segoe Print', cursive;
 
   /* /concept page */
   --font-c-serif: var(--nf-instrument), Georgia, serif;

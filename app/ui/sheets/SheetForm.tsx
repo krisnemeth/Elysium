@@ -20,7 +20,7 @@ export default function SheetForm({ game }: { game: Game }) {
         {sections.map(({ id, label, body }, i) => (
           <Paper key={id} index={i}>
             {(torn) => (
-              <section id={id} aria-labelledby={`${id}-title`} className={`reveal scroll-mt-48 p-5 md:scroll-mt-24 md:p-8 ${torn} ${panel}`}>
+              <section id={id} aria-labelledby={`${id}-title`} className={`reveal scroll-mt-48 p-5 md:scroll-mt-24 md:p-8 ${torn} ${panel} sheet-paper`}>
                 <CategoryDividers id={`${id}-title`} title={label} />
                 <div className='mt-8'>{body}</div>
               </section>

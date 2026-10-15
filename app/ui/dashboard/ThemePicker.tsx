@@ -19,8 +19,8 @@ export const PREVIEWS: Record<Game, Record<Theme, { mood: string; bg: string; fr
     light: { mood: 'Firelight on old stone.', bg: 'radial-gradient(circle at 30% 85%,#f59e0b55,transparent 45%),linear-gradient(170deg,#3a322a,#14110e 70%)', frame: { border: '3px solid #443b31' }, accent: '#f59e0b' },
   },
   hunter: {
-    dark: { mood: 'A lamp, a map, a long night.', bg: 'radial-gradient(circle at 80% 15%,#f59e0b44,transparent 40%),linear-gradient(170deg,#2a1c11,#120c07 70%)', frame: { border: '3px solid #3a2414' }, accent: '#f59e0b' },
-    light: { mood: 'A warm room in town (being reworked).', bg: 'linear-gradient(170deg,#f8f1e2,#e9dcc2)', frame: { border: '1px solid #6e4b2c55' }, accent: '#b45309' },
+    dark: { mood: 'Dark planks, a bulb, a storm outside.', bg: 'radial-gradient(circle at 80% 15%,#f59e0b44,transparent 40%),linear-gradient(170deg,#2a1c11,#120c07 70%)', frame: { border: '3px solid #3a2414' }, accent: '#f59e0b' },
+    light: { mood: 'Rain, rust and a long stakeout.', bg: 'radial-gradient(circle at 25% 90%,#e4503a33,transparent 45%),linear-gradient(170deg,#17343d,#0b1014 70%)', frame: { border: '3px solid #15303a', borderRadius: 3, boxShadow: 'inset 0 0 0 1px #d6e0dc88' }, accent: '#e4503a' },
   },
 };
 
