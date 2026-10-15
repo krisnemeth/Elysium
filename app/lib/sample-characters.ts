@@ -9,6 +9,8 @@ export type Character = {
   // Vampire clan, Werewolf tribe or Hunter creed.
   faction: string;
   clan?: ClanKey;
+  // Werewolf auspice (moon phase), read from the sheet.
+  auspice?: string;
   status: 'finished' | 'draft';
   // Uploaded portraits are already sized in the browser, so they skip next/image optimisation.
   image: { src: string; width: number; height: number; unoptimized?: boolean };
@@ -109,6 +111,7 @@ export const CHARACTERS: Character[] = [
     name: 'Grey-Fang',
     game: 'werewolf',
     faction: 'Red Talons',
+    auspice: 'Ahroun',
     status: 'finished',
     image: { src: '/portraits/garou-crinos.webp', width: 600, height: 800 },
     description: 'An Ahroun who stopped counting the hunters he has buried. Speaks rarely, and only to the pack.',
@@ -118,6 +121,7 @@ export const CHARACTERS: Character[] = [
     name: 'Rosa "Static" Vex',
     game: 'werewolf',
     faction: 'Glass Walkers',
+    auspice: 'Ragabash',
     status: 'finished',
     image: { src: '/portraits/garou-punk.webp', width: 600, height: 800 },
     description: 'A Ragabash who hacks Pentex payrolls for fun and spirit-talks the city grid for the pack.',
@@ -127,6 +131,7 @@ export const CHARACTERS: Character[] = [
     name: 'Old Tom Marrow',
     game: 'werewolf',
     faction: 'Bone Gnawers',
+    auspice: 'Galliard',
     status: 'draft',
     image: { src: '/portraits/garou-drifter.webp', width: 600, height: 800 },
     description: 'A Galliard who sings the forgotten caerns of the rail yards. Knows every stray by name.',

@@ -33,6 +33,7 @@ export function toCharacter(row: CharacterRecord): Character {
     game: row.game,
     faction: row.faction ?? '',
     clan: isClan ? (row.faction as ClanKey) : undefined,
+    auspice: row.game === 'werewolf' ? row.sheet?.profile?.auspice || undefined : undefined,
     status: row.status,
     image: {
       src: row.portrait ?? GAMES[row.game].figure.src,

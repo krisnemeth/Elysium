@@ -14,6 +14,9 @@ function Backdrop({ src, className }: { src: string; className: string }) {
   return <Image src={src} alt='' fill sizes='100vw' className={`object-cover ${className}`} />;
 }
 
+// A box that covers the screen like object-cover, so the light sits on the same spot of the painting at any size.
+const coverBox = 'absolute top-1/2 left-1/2 aspect-[1566/1134] w-[max(100vw,calc(100vh*1.381))] -translate-x-1/2 -translate-y-1/2';
+
 function Particles({ count, className, anim, spread = 100 }: { count: number; className: string; anim: string; spread?: number }) {
   return (
     <>
@@ -68,14 +71,41 @@ function Werewolf() {
         <div className='absolute top-8 right-0 h-24 w-2/3 rounded-[50%] bg-[#0a110e]/70 blur-2xl' style={{ animation: 'drift-x 30s ease-in-out infinite alternate' }} />
         <Particles count={14} anim='float-up' className='size-1.5 bg-[#e8f5a8] shadow-[0_0_0.6rem_0.15rem_#d8f07a]' />
       </div>
-      {/* The cave */}
+      {/* The cave: the light is a fire in the alcove of the painting; it flickers, and everything else is lit from there. */}
       <div className='absolute inset-0 dark:hidden'>
-        <Backdrop src='/art/ww-cave.webp' className='opacity-35 sepia' />
+        <div className={coverBox}>
+          <Backdrop src='/art/ww-cave.webp' className='opacity-50 sepia' />
+        </div>
         <div className='absolute inset-0 bg-[linear-gradient(to_bottom,transparent,var(--ink)_80%)]' />
-        <div
-          className='absolute -bottom-1/3 -left-1/4 size-[80vmax] rounded-full bg-[radial-gradient(circle,rgb(239_138_60/0.35),transparent_60%)]'
-          style={{ animation: 'firelight 3.2s ease-in-out infinite' }}
-        />
+        <div className={coverBox}>
+          {/* Wide wash on the walls and ceiling */}
+          <div
+            className='absolute top-[43%] left-[60.5%] aspect-square w-[95%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle,rgb(239_138_60/0.3),rgb(239_138_60/0.1)_40%,transparent_65%)] mix-blend-screen'
+            style={{ animation: 'firelight 3.7s ease-in-out 0.4s infinite' }}
+          />
+          {/* The flame's own glow in the mouth of the alcove */}
+          <div
+            className='absolute top-[43%] left-[60.5%] aspect-square w-[24%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(circle,rgb(255_215_150/1),rgb(239_138_60/0.55)_30%,transparent_70%)] mix-blend-screen'
+            style={{ animation: 'firelight 3.2s ease-in-out infinite' }}
+          />
+          {/* Light bounced onto the floor below */}
+          <div className='absolute top-[84%] left-[58%] h-[22%] w-[45%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[radial-gradient(ellipse,rgb(239_138_60/0.14),transparent_70%)] mix-blend-screen' style={{ animation: 'firelight 3.2s ease-in-out 0.2s infinite' }} />
+          {/* A few embers lifting off the fire */}
+          {[0, 1, 2, 3].map((i) => (
+            <span
+              key={i}
+              className='absolute size-1 rounded-full bg-[#ffc27a] shadow-[0_0_0.4rem_0.1rem_#ef8a3c]'
+              style={
+                {
+                  top: '42%',
+                  left: `${59.5 + i * 0.8}%`,
+                  animation: `float-up ${5 + i * 1.3}s ease-in ${i * 1.7}s infinite`,
+                  '--dx': `${(i % 2 ? 1 : -1) * (1 + i * 0.4)}rem`,
+                } as CSSProperties
+              }
+            />
+          ))}
+        </div>
         {[18, 46, 71].map((x, i) => (
           <span
             key={x}
