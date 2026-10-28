@@ -12,7 +12,7 @@ export default function Switcher() {
         A · Three doors
       </Link>
       <Link href='/concept/landing/b' aria-current={path === '/concept/landing/b' ? 'page' : undefined}>
-        B · The vigil
+        B · The cover
       </Link>
     </nav>
   );

@@ -5,11 +5,13 @@ import Navbar from '@/app/ui/navbar';
 import { LogoWod } from '@/app/ui/svgs/official';
 import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
 import Footer from './Footer';
+import Sections, { SECTIONS } from './Sections';
 
 /*
   Direction A, "Three doors": one dim night city, three tall arches of equal
   weight, one per game. On scroll the doors lift at different speeds, the head
   dissolves and the first section rises over the pinned scene on a curved edge.
+  The shared sections (Sections.tsx) follow.
 */
 
 const GLOW = { vampire: 'lc-glow-v', werewolf: 'lc-glow-w', hunter: 'lc-glow-h' } as const;
@@ -18,11 +20,7 @@ const ROMAN = ['I', 'II', 'III'];
 export default function LandingA() {
   return (
     <>
-      <Navbar
-        sections={[
-          { href: '#games', label: 'Games' },
-        ]}
-      />
+      <Navbar sections={SECTIONS} />
       <main id='main'>
         <div className='lc-stage'>
           <section aria-labelledby='lc-title' className='lc-sticky lc-grain'>
@@ -104,6 +102,7 @@ export default function LandingA() {
             </div>
           </div>
         </section>
+        <Sections />
       </main>
       <Footer />
     </>

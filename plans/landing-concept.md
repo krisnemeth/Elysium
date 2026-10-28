@@ -1,8 +1,8 @@
 # Landing page concept (ticket #39 / THI-37)
 
-Status: concept only. `/` is untouched. Two first-screen directions, each with the opening scroll handover into the first section, live under `/concept/landing` (A) and `/concept/landing/b` (B). A small switcher (bottom right, top right on phones) flips between them; it is review-only. Code: `app/concept/landing/` (`page.tsx`, `b/page.tsx`, `landing.css`, `layout.tsx`, `Footer.tsx`, `Switcher.tsx`). `/concept/landing` is added to `DARK_ONLY_PATHS` so a saved light theme never flashes.
+Status: concept only. `/` is untouched. Two first-screen directions live under `/concept/landing` (A) and `/concept/landing/b` (B); after their own first section both run the live landing's sections at full length (`Sections.tsx`: Inside Elysium, any character across games, the six themes, the dice, the final call) and its footer. A small switcher (bottom right, top right on phones) flips between them; on B a second one swaps the cover character (`?cover=trixx`). Both are review-only. Code: `app/concept/landing/` (`page.tsx`, `b/page.tsx`, `Sections.tsx`, `landing.css`, `layout.tsx`, `Footer.tsx`, `Switcher.tsx`). `/concept/landing` is added to `DARK_ONLY_PATHS` so a saved light theme never flashes.
 
-Check in with the owner: pick A, B or a mix before any section is built out.
+Owner feedback (2026-10-28): A's direction is good, especially the parallax; B should resemble the original cover. Check in again with both at full length before building `/`.
 
 ## The two directions
 
@@ -10,7 +10,7 @@ Both open on the same promise ("A vault for the creatures of the dark."), give t
 
 **A. Three doors.** One dim night city (`public/locations/location-53.webp`) behind a centred headline, and three tall arches of identical size, one per game, bleeding off the bottom edge like doorways. Greyscale art with a faint game-colour tint at the base; hover/focus brings colour back and lights the arch ring in the game's colour (crimson, moss green, amber). The logo sits inside each arch. Calm, symmetrical, ceremonial: the front door of a product. On phones the arches become three narrow tall slits that fill the screen below the headline.
 
-**B. The vigil.** One wide establishing shot (`public/art/city-night.webp`), the name set very large in the lower-left with the italic tagline, and the three games as an equal three-column strip along the bottom (Roman numeral, logo, one line each, a game-colour rule that grows on hover). Cinematic and editorial, closer to a film poster or a book title page. The art does the talking; the games are a quiet index.
+**B. The cover** (reworked 2026-10-28 after the owner's review, replacing "the vigil"). The original Elysium book-cover hero (`/vampire`, `app/ui/home/Hero.tsx`) brought to all three games: one character in the middle (Claire Voyant by default, Trixx Laveau with `?cover=trixx`), sticky, with the backdrop tinted to the art; the World of Darkness circle mark (a brushed moon with WoD cut into it) rises from behind their head as the page opens and climbs a little further, waking into a glow, on scroll; book spines down both sides (clans on the left, tribes and creeds on the right); "Welcome to Elysium", the three game logos, the tagline and the buttons at the foot of the cover. Then "Three games. One night." slides up over the character from the front, as Features did over the original cover. The mark sits above the head rather than as a halo behind it because both portraits have solid backgrounds; a cut-out portrait would let it sit behind the head.
 
 Trade-off: A shows the characters (the product's subject) straight away and is the safer "equal weight" read. B is the more atmospheric and more "premium", but the three games are present as typography only until you scroll.
 
@@ -28,7 +28,7 @@ Opening sequence (CSS only, once, about 1.5 s): the scene settles (scale 1.12 to
 
 Scroll (CSS scroll-driven animations on the pinned stage, 0 to 100svh):
 - A: the background pushes in and dims; the head blurs and lifts away; the three doors lift at different speeds (parallax); from about 50svh the next section rises over the stage on a curved edge with a hairline highlight, so the doors disappear behind it. Then the section's own elements reveal on entry.
-- B: the camera pushes in (scale 1 to 1.4, dimming and softening), the title lifts away, the strip drops out; a second scene (`public/acts/hook.webp`) wipes up from the bottom edge via `clip-path` while sitting on its own slow parallax; the three portrait cards then sit over it.
+- B: the backdrop, character and mark stay pinned for 160svh; the mark rises 8svh and brightens over the first 70svh (`lc-mark-rise`, with the global `ankh-wake` glow), the character recedes (`portrait-recede`), the cover text fades by 26svh, and the first section slides up over the character on a rounded edge (negative margin, no animation needed).
 
 Everything moving is inside `prefers-reduced-motion: no-preference` and `@supports (animation-timeline: scroll())`. Without them the stage is static and its extra 100svh of pin height collapses (no dead scroll). Hover effects only on `(hover: hover)`. No JavaScript drives any animation.
 
@@ -37,7 +37,7 @@ Everything moving is inside `prefers-reduced-motion: no-preference` and `@suppor
 The concept uses what is in `public/`. Swaps for the real build (all from the Dark Pack asset pack, cropped per breakpoint):
 - A backdrop: a wide, high-resolution night-city or rooftop location, exported at 2880 px wide (current one is 2400).
 - A doors: three official character illustrations at 3:5 or taller with the subject in the upper two thirds: a Kindred, a Garou in war form, a hunter. The current hunter art is a headless torso crop and the werewolf is cropped to the head on phones, so better source art matters most here.
-- B hero: a cleaner establishing shot; current `city-night.webp` is 2000 px and soft on a 2x phone.
+- B cover: a cut-out version of the cover character (transparent background) so the mark can sit behind the head as a halo; Claire's and Trixx's portraits are 700–735 px wide, soft on large screens. Their provenance is not recorded (see the image-library note), so check it before shipping either.
 - B second scene: a location with a lit building (a mansion or cathedral), 2400 px.
 - Per-game accents (optional): official clan/tribe/creed symbols as small marks in the strip.
 
