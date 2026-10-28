@@ -16,7 +16,7 @@
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 16.3.8 (App Router, Turbopack) + React 19 |
+| Framework | Next.js 16.4.3 (App Router, Turbopack) + React 19 |
 | Language | TypeScript 5.9 (strict) |
 | Styling | Tailwind CSS 4 (CSS-first config in `app/globals.css`; per-game themes in `app/games.css`) |
 | Database, auth, storage, realtime | **Supabase** (`@supabase/ssr`, migrations in `supabase/migrations/`, CLI linked to project "Elysium") |
@@ -110,7 +110,7 @@ Supabase is only called on the server (Server Components, Server Actions, `proxy
 
 ## Next.js 16 Notes
 
-Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06). Things that differ from older Next.js knowledge:
+Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06); on 16.4.3 since 2026-10-28 (security fixes). Things that differ from older Next.js knowledge:
 
 - **Turbopack is the default** for `next dev` and `next build`. Don't add a `webpack()` function to `next.config.mjs` — a custom webpack config makes `next build` fail. Loaders go in `turbopack.rules`.
 - **`next lint` is removed.** `npm run lint` runs `eslint .` with the flat config. Stay on ESLint 9: `eslint-plugin-react` (pulled in by `eslint-config-next`) crashes on ESLint 10.
