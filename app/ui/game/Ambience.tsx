@@ -88,46 +88,71 @@ function Werewolf() {
   );
 }
 
-// Wood grain and wallpaper as inline SVG textures.
-const PLANKS = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='400'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.015 .35' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .18 0 0 0 0 .09 0 0 0 1.2 -.35'/%3E%3C/filter%3E%3Crect width='140' height='400' fill='%23281a10'/%3E%3Crect width='140' height='400' filter='url(%23g)'/%3E%3Crect x='138' width='2' height='400' fill='%23100a05'/%3E%3C/svg%3E")`;
+// The inn's wallpaper as an inline SVG texture.
 const WALLPAPER = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='88'%3E%3Cg fill='none' stroke='%23c9b48c' stroke-width='1.2' opacity='.55'%3E%3Cpath d='M32 8c8 10 8 22 0 32-8-10-8-22 0-32zM32 48c8 10 8 22 0 32-8-10-8-22 0-32z'/%3E%3Cpath d='M0 44c10-6 22-6 32 0M32 44c10 6 22 6 32 0'/%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='2' fill='%23c9b48c' opacity='.5'/%3E%3Ccircle cx='64' cy='88' r='2' fill='%23c9b48c' opacity='.5'/%3E%3C/svg%3E")`;
 
 function Hunter() {
   return (
     <div className={`${fixed} ambience overflow-hidden`}>
-      {/* The cabin: timber walls, a rain-streaked window with lightning, a swinging bulb */}
+      {/* The hideout: the cell's basement den under its one lamp, a cigarette left burning on the desk */}
       <div className='absolute inset-0 hidden dark:block'>
-        <div className='absolute inset-0 opacity-70' style={{ backgroundImage: PLANKS }} />
-        <Backdrop src='/art/htr-cabin.webp' className='opacity-20 mix-blend-luminosity' />
-
-        {/* Window */}
-        <div className='absolute top-[14%] left-[3%] hidden h-[34vh] w-[24vw] max-w-[22rem] lg:block'>
-          <div className='absolute inset-0 overflow-hidden rounded-sm bg-[linear-gradient(to_bottom,#0b1a2b,#16304a_60%,#1d3a52)] shadow-[inset_0_0_2rem_rgb(0_0_0/0.8)]'>
-            <div className='absolute top-[14%] right-[18%] size-10 rounded-full bg-[#dfe6ea]/70 blur-[2px] shadow-[0_0_2.5rem_1rem_rgb(180_200_215/0.25)]' />
-            <svg aria-hidden viewBox='0 0 300 120' preserveAspectRatio='none' className='absolute inset-x-0 bottom-0 h-1/2 w-full fill-[#05090e]'>
-              <path d='M0 120V70l12-30 12 30 10-45 12 45 14-60 14 60 9-35 11 35 13-50 13 50 10-25 12 25 15-55 14 55 9-30 12 30 14-48 13 48 10-28 12 28 15-58 13 58 11-36 12 36V120z' />
-            </svg>
-            <div className='absolute inset-0 opacity-50 [background-image:repeating-linear-gradient(105deg,transparent_0_9px,rgb(190_210_225/0.35)_9px_10px)] [background-size:40px_140px]' style={{ animation: 'rain 0.5s linear infinite' }} />
-            <div className='absolute inset-0 bg-[#e8f0ff]' style={{ animation: 'lightning 9s linear infinite' }} />
+        {/*
+          The art (mirrored) keeps its proportions, placed so its lamp hangs at the top right,
+          over the pages' actions rather than behind their headings. Only a little larger than
+          the screen, as the painting is small: its left and bottom edges fade into the dark
+          (the sidebar and the panels cover them anyway).
+        */}
+        <div
+          className='absolute top-0 aspect-[1000/603] w-[max(105vw,170vh)] -translate-y-[18.6%]'
+          style={{
+            left: 'calc(85vw - 0.606 * max(105vw, 170vh))',
+            maskImage: 'linear-gradient(to right, transparent, #000 12%), linear-gradient(to top, transparent, #000 22%)',
+            maskComposite: 'intersect',
+          }}
+        >
+          <Image src='/art/htr-den.webp' alt='' fill unoptimized className='-scale-x-100 opacity-55 brightness-90 sepia-[.45] saturate-[.85]' />
+          {/* The lamp: the shade lit warm, a cone of light down onto the desk, dust and old smoke hanging in it */}
+          <div className='absolute top-[30.5%] left-[60.6%] -translate-1/2' style={{ animation: 'bulb-buzz 11s linear infinite' }}>
+            <div className='size-[14vh] rounded-full bg-[radial-gradient(circle,rgb(255_226_170/0.85),rgb(255_180_90/0.35)_35%,transparent_70%)] mix-blend-screen' />
+            <div className='absolute top-1/2 left-1/2 size-[70vh] -translate-1/2 rounded-full bg-[radial-gradient(circle,rgb(255_190_110/0.22),transparent_60%)]' />
           </div>
-          {/* Frame and mullions */}
-          <div className='absolute -inset-2 rounded-sm border-[10px] border-[#3a2616] shadow-[0_0.75rem_2rem_rgb(0_0_0/0.6)]' />
-          <div className='absolute inset-y-0 left-1/2 w-2 -translate-x-1/2 bg-[#3a2616]' />
-          <div className='absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 bg-[#3a2616]' />
-        </div>
-        {/* The lightning washes faintly over the room too */}
-        <div className='absolute inset-0 bg-[#cfe0ff] mix-blend-overlay' style={{ animation: 'lightning-room 9s linear infinite' }} />
+          <div className='absolute top-[31%] left-[60.6%] h-[52%] w-[46%] -translate-x-1/2 mix-blend-screen' style={{ animation: 'bulb-buzz 11s linear infinite' }}>
+            {/* Clipped to a cone, then blurred, so its edges are soft */}
+            <div className='absolute inset-0 blur-xl'>
+              <div className='size-full bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgb(255_200_130/0.24),transparent_85%)] [clip-path:polygon(41%_0,59%_0,100%_100%,0_100%)]' />
+            </div>
+            <div className='absolute inset-x-[10%] top-[8%] h-1/2 rounded-[50%] bg-[#e8dccb]/10 blur-xl' style={{ animation: 'haze-drift 26s ease-in-out infinite' }} />
+            <Particles count={14} anim='motes' spread={90} className='size-1 bg-[#ffd9a0]/60' />
+          </div>
 
-        <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,transparent_10%,rgb(10_7_4/0.85)_75%)]' />
-
-        {/* A bare bulb swinging on its wire, top right */}
-        <div className='absolute top-0 right-[6%] h-[70vh] w-[46vw] translate-x-1/2 origin-top md:right-[12%]' style={{ animation: 'lamp-swing 7s ease-in-out infinite' }}>
-          <div className='mx-auto h-16 w-px bg-[#c7b49a]/40' />
-          <div className='mx-auto size-3 rounded-full bg-[#ffd9a0] shadow-[0_0_2rem_0.75rem_rgb(255_190_110/0.5)]' style={{ animation: 'firelight 2.6s ease-in-out infinite' }} />
-          <div className='relative mx-auto h-[60vh] w-full bg-[radial-gradient(ellipse_50%_80%_at_50%_0%,rgb(240_160_70/0.18),transparent_70%)] [clip-path:polygon(45%_0,55%_0,100%_100%,0_100%)]'>
-            <Particles count={12} anim='motes' spread={80} className='size-1 bg-[#ffd9a0]/60' />
+          {/* A cigarette left on the desk under the lamp: its ember, and the smoke curling up into the light */}
+          <div className='absolute top-[60%] left-[57%]'>
+            <span className='absolute -top-0.5 -left-0.5 size-1 rounded-full bg-[#ff8a3a] shadow-[0_0_0.5rem_0.2rem_rgb(255_120_40/0.6)]' style={{ animation: 'firelight 2.4s ease-in-out infinite' }} />
+            <div className='absolute bottom-0 left-1/2 h-[26rem] w-48 -translate-x-1/2 [filter:url(#smoke-curl)_blur(1.5px)]'>
+              {Array.from({ length: 10 }, (_, i) => (
+                <span
+                  key={i}
+                  className='absolute bottom-0 left-1/2 h-20 w-1.5 rounded-full bg-[#ddd6ca]'
+                  style={
+                    {
+                      animation: `smoke-rise ${8 + (i % 4) * 0.9}s cubic-bezier(.3,.1,.6,1) ${i * 0.85}s infinite`,
+                      '--sway': `${((i * 7) % 5) - 2}rem`,
+                      '--o': `${0.18 + (i % 3) * 0.05}`,
+                    } as CSSProperties
+                  }
+                />
+              ))}
+            </div>
           </div>
         </div>
+        <svg aria-hidden className='absolute size-0'>
+          <filter id='smoke-curl'>
+            <feTurbulence type='fractalNoise' baseFrequency='0.03 0.06' numOctaves='2' seed='7' />
+            <feDisplacementMap in='SourceGraphic' scale='46' />
+          </filter>
+        </svg>
+
+        <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,transparent_20%,rgb(10_7_4/0.8)_80%)]' />
       </div>
 
       {/* The inn: wallpaper and wainscot, a sunlit window onto the city, curtains, a fire */}
