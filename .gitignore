@@ -37,3 +37,6 @@ next-env.d.ts
 
 # Official World of Darkness Dark Pack asset pack (large; not committed)
 /brand-assets/
+
+# Edge studio material downloads (CC0, ambientCG)
+/scripts/edge-studio/.cache/

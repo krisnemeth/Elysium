@@ -1,0 +1,31 @@
+<!doctype html>
+<meta charset='utf-8' />
+<script type='importmap'>
+  { "imports": { "three": "/three.module.js" } }
+</script>
+<script type='module'>
+  import * as THREE from 'three';
+  import { SUPERSAMPLE } from '/studio.js';
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x000000, 0);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  // Renders one piece of a theme's frame and returns it as a PNG data URL.
+  window.renderPiece = async (skin, name) => {
+    const theme = (await import(`/themes/${skin}.js`)).default;
+    const piece = theme.pieces[name];
+    const scene = new THREE.Scene();
+    // One unit is one CSS pixel; y runs up from the piece's bottom edge.
+    const camera = new THREE.OrthographicCamera(0, piece.width, piece.height, 0, -1000, 1000);
+    camera.position.z = 500;
+    await piece.build(scene);
+    renderer.setSize(piece.width * SUPERSAMPLE, piece.height * SUPERSAMPLE, false);
+    renderer.render(scene, camera);
+    return renderer.domElement.toDataURL('image/png');
+  };
+  window.pieceNames = async (skin) => Object.keys((await import(`/themes/${skin}.js`)).default.pieces);
+  window.studioReady = true;
+</script>
