@@ -14,6 +14,8 @@ const nextConfig = {
       // Friends and Settings live inside each game's dashboard (with the sidebar).
       { source: '/vault/friends', destination: '/vault/vampire/friends', permanent: false },
       { source: '/vault/settings', destination: '/vault/vampire/settings', permanent: false },
+      // The landing concept's chosen direction moved up from /b; the other and the lab are gone.
+      { source: '/concept/landing/:rest(b|lab)', destination: '/concept/landing', permanent: false },
     ];
   },
   turbopack: {

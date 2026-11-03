@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Cormorant_Garamond, Josefin_Sans } from 'next/font/google';
 import ForceDark from '@/app/ui/ForceDark';
-import Switcher from './Switcher';
 import './landing.css';
 
 // Own font variables: /concept remaps --font-cormorant to its editorial serif.
@@ -13,13 +12,12 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-// Concept for the landing redesign (ticket #39). Not linked from anywhere.
+// The landing redesign (ticket #39), not yet live. Not linked from anywhere.
 export default function LandingConceptLayout({ children }: { children: React.ReactNode }) {
   return (
     <div data-game='wod' className={`lc ${display.variable} ${sans.variable}`}>
       <ForceDark />
       {children}
-      <Switcher />
     </div>
   );
 }

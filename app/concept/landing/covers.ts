@@ -39,6 +39,7 @@ export type Cover = {
   from the floor. wind: Werewolf's leaves and debris blown across; fog: low banks drifting. steam:
   Hunter's steam rising from below; wisp: a thin curl of smoke from a point
   on the art (fractions of its width and height), the match or cigarette.
+  rain: the city's rain, slanting with the wind (slant: sideways per unit fallen), with splashes.
 */
 export type Fx = {
   smoke?: { color: string; rim: string; opacity: number };
@@ -46,6 +47,7 @@ export type Fx = {
   fog?: { color: string; opacity: number };
   steam?: { opacity: number };
   wisp?: { x: number; y: number };
+  rain?: { opacity: number; slant: number };
 };
 
 // The tallest art's height over its width (941 x 1672): every character fits
@@ -156,7 +158,8 @@ export const COVERS: Cover[] = [
     head: 0.3,
     headX: 0,
     scene: { src: '/locations/location-3.webp', position: 'center 55%' },
-    fx: { steam: { opacity: 0.26 } },
+    // Steam a little thinner than the hideout's, to leave room for the rain.
+    fx: { steam: { opacity: 0.2 }, rain: { opacity: 1, slant: 0.14 } },
   },
 ];
 
@@ -188,17 +191,3 @@ export function coverIndex(wanted: string | undefined) {
   const i = COVERS.findIndex((c) => c.id === wanted || c.game === wanted);
   return i < 0 ? 0 : i;
 }
-
-/*
-  Where the game logos sit: top / foot, the logo row under the navbar or
-  above the buttons; -arrows adds thin chevrons at the rail's ends. B uses
-  foot-arrows. The picker lab (/concept/landing/lab) still compares where
-  the tagline lives and how strong the peek is.
-*/
-export const PICKER_PLACES = ['top', 'top-arrows', 'foot', 'foot-arrows'] as const;
-export type PickerPlace = (typeof PICKER_PLACES)[number];
-export const TAGLINE_PLACES = ['foot', 'top', 'side', 'none'] as const;
-export type TaglinePlace = (typeof TAGLINE_PLACES)[number];
-// The peek: the one lean ('soft'), or twice with a light along the rail ('strong').
-export const PEEK_STYLES = ['strong', 'soft'] as const;
-export type PeekStyle = (typeof PEEK_STYLES)[number];

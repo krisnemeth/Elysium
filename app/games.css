@@ -394,9 +394,47 @@
   50% { translate: 4% -3%; opacity: 0.9; }
 }
 
-@keyframes curtain {
-  0%, 100% { rotate: 0deg; }
-  50% { rotate: 1.6deg; }
+/* Cloud passing over the moon, left to right (SceneBits.tsx). */
+@keyframes cloud-pass {
+  from { translate: -95% 0; }
+  to { translate: -5% 0; }
+}
+
+/* A firefly: drifts a little way and blinks, on and off and on, then out. */
+@keyframes firefly {
+  0% { translate: 0 0; opacity: 0; }
+  12% { opacity: 1; }
+  24% { opacity: 0.15; }
+  38% { opacity: 0.95; }
+  55% { translate: var(--dx, 1rem) var(--dy, -2rem); opacity: 0.8; }
+  70% { opacity: 0; }
+  100% { translate: calc(var(--dx, 1rem) * 1.6) calc(var(--dy, -2rem) * 0.5); opacity: 0; }
+}
+
+/* A searchlight sweeping slowly from side to side. */
+@keyframes searchlight {
+  from { rotate: -24deg; }
+  to { rotate: 20deg; }
+}
+
+/* Steam off the street: rises, swells and thins. */
+@keyframes steam-up {
+  0% { translate: 0 0; scale: 0.5; opacity: 0; }
+  25% { opacity: var(--o, 0.14); }
+  100% { translate: var(--sway, 2vw) -70vh; scale: 2.6 2; opacity: 0; }
+}
+
+/* A leaf on the wind: in from the top left, carried right and down. */
+@keyframes leaf-blow {
+  0% { translate: 0 0; opacity: 0; }
+  6% { opacity: 1; }
+  45% { translate: 50vw calc(var(--fall, 50vh) * 0.4); }
+  94% { opacity: 1; }
+  100% { translate: 112vw var(--fall, 50vh); opacity: 0; }
+}
+@keyframes leaf-tumble {
+  from { transform: rotate3d(1, 0.6, 0.3, 0deg); }
+  to { transform: rotate3d(1, 0.6, 0.3, 360deg); }
 }
 
 @keyframes moon-glow {

@@ -6,7 +6,7 @@ import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 /*
   The vault's row of characters, kept inside the content column: it scrolls
   sideways (snapping card by card; a trackpad, a swipe or shift + wheel), and
-  the arrows under it turn a screenful at a time. Its edges fade only on the
+  the arrows right under it (at its right edge) turn a screenful at a time. Its edges fade only on the
   side that has more to show (data-more, landing.css).
 */
 export default function Strip({ label, children }: { label: string; children: React.ReactNode }) {
@@ -50,7 +50,7 @@ export default function Strip({ label, children }: { label: string; children: Re
       >
         {children}
       </ul>
-      <div className='mt-[clamp(0.75rem,2svh,1.25rem)] flex items-center justify-end gap-2'>
+      <div className='flex items-center justify-end gap-2 pt-3'>
         <button type='button' onClick={() => turn(-1)} disabled={!more.back} aria-label='Earlier characters' className={arrow}>
           <MdChevronLeft aria-hidden className='size-6' />
         </button>

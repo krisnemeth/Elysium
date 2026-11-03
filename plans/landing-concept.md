@@ -1,6 +1,6 @@
 # Landing page concept (ticket #39 / THI-37)
 
-Status: concept only. `/` is untouched. Two first-screen directions live under `/concept/landing` (A) and `/concept/landing/b` (B); after their own first section both run the live landing's sections at full length (`Sections.tsx`: Inside Elysium, any character across games, the six themes, the dice, the final call) and its footer. A small switcher (bottom right, top right on phones) flips between them; on B a second one swaps the cover character (`?cover=trixx`). Both are review-only. Code: `app/concept/landing/` (`page.tsx`, `b/page.tsx`, `Sections.tsx`, `landing.css`, `layout.tsx`, `Footer.tsx`, `Switcher.tsx`). `/concept/landing` is added to `DARK_ONLY_PATHS` so a saved light theme never flashes.
+Status: concept, not live (`/` is untouched). One direction, chosen 2026-11-03: **the cover** (formerly "B"), at `/concept/landing` (the old `/concept/landing/b` and `/lab` redirect there). Direction A ("Three doors"), the A/B switch and the picker lab are removed; the cover keeps the rail under the logos at the foot and the tagline at the foot. Code: `app/concept/landing/` (`page.tsx`, `CoverPicker.tsx`, `Rail.tsx`, `covers.ts`, `Atmosphere.tsx`, `GamesSection.tsx`, `Screens.tsx`, `landing.css`, `layout.tsx`, `Footer.tsx`). `/concept/landing` is in `DARK_ONLY_PATHS`. The notes below are the history; paths under `b/` now sit one level up, and A's and the lab's parts no longer exist.
 
 Owner feedback (2026-10-28): A's direction is good, especially the parallax; B should resemble the original cover. Check in again with both at full length before building `/`.
 
@@ -101,3 +101,13 @@ Screenshots (desktop 1440x900 and phone 390x844, scroll positions 0, 25, 50, 80,
 - **Games cards** each have a character of their own, none from the cover: the Toreador, the brawler and the researcher, cut-outs standing in their game's scene.
 - **The vault** is a row inside the content column (`b/Strip.tsx`): it scrolls sideways with snapping, the arrows under it turn a screenful, and its edges fade only where there's more. The drifting marquee is gone.
 - The navbar links every section: Games, Inside, Creation, Vault, Themes, Dice, Chronicles.
+
+## Scenes trade pieces; the switcher calls (2026-11-03)
+
+- **Shared scene pieces** (`app/ui/game/SceneBits.tsx`, keyframes in `app/games.css`), used by both the app's scenes and the cover's backdrops: the moon veiled behind passing cloud, fireflies, searchlights, street steam, leaves on the wind.
+  - Moonlit forest: the cover gains the moon (soft, behind cloud) and fireflies; the app gains leaves. Leaves everywhere now come in from the top left and fall away to the bottom right on the wind; the cover's painted leaves are matte (no sheen), same colours and shapes.
+  - The city: the cover gains rain (WebGL streaks at several depths, slanting, catching the lamps low down, with splashes in front) and its steam is a little thinner to make room; the app's city gains steam.
+  - Masquerade gets its own moving piece in both: two searchlights, one crimson, sweeping the low cloud over the city.
+- **Creation cards**: the clip fills the top half (a still until hovered), the title, line and three points the bottom half.
+- **The peek is gone.** The switcher under the logos (`b/Switchers.tsx`) invites a turn instead, until the ring is first turned: on B's rail a pulse of the character's colour runs left from two thirds along and peaks on the left arrowhead, which flares. The lab (`/concept/landing/lab?switcher=`) compares it with Faces (round portraits; a light sweeps round the next one's ring), the Dial (studs on an arc in each character's colour; the needle trembles towards the next) and Roll call (the name and numeral between arrows; a glint through the next name).
+- **Haptics**: each turn calls `haptic()`: the Vibration API on Android, the native switch input's tick on iPhone (iOS 18+). No browser exposes a Mac trackpad's Force Touch haptics to web pages, so Macs get none.

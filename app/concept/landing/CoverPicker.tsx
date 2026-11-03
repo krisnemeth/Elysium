@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { MdArrowDownward, MdArrowOutward, MdChevronLeft, MdChevronRight } from 'react-icons/md';
+import { MdArrowDownward, MdArrowOutward } from 'react-icons/md';
 import {
   ClanBanuHaqim,
   ClanBrujah,
@@ -27,7 +27,9 @@ import {
 } from '@/app/ui/svgs/official';
 import { GAMES, GAMES_ORDER, type Game } from '@/app/lib/games';
 import { TRIBES, glyphUrl } from '@/app/lib/factions';
-import { ART_RATIO, COVERS, MARKS, type MarkKey, type PeekStyle, type PickerPlace, type TaglinePlace } from './covers';
+import { Fireflies, Searchlights, VeiledMoon } from '@/app/ui/game/SceneBits';
+import { ART_RATIO, COVERS, MARKS, type MarkKey } from './covers';
+import Rail, { haptic } from './Rail';
 import type { ArtBox } from './Atmosphere';
 import { setScene } from './scene';
 
@@ -163,19 +165,26 @@ function Tagline({ game, className }: { game: Game; className: string }) {
   );
 }
 
-export default function CoverPicker({
-  initial,
-  picker = 'foot-arrows',
-  tagline = 'foot',
-  peekStyle = 'strong',
-}: {
-  initial: number;
-  picker?: PickerPlace;
-  tagline?: TaglinePlace;
-  peekStyle?: PeekStyle;
-}) {
-  const pickerTop = picker.startsWith('top');
-  const arrows = picker.endsWith('arrows');
+// What moves in a scene besides its weather (SceneBits.tsx, shared with the
+// app's scenes): the forest's moon behind cloud and its fireflies, the
+// searchlights over Masquerade's city. Fades with the scene; .ambience
+// stops it under reduced motion.
+function SceneExtras({ id, on }: { id: string; on: boolean }) {
+  const bits =
+    id === 'forest' ? (
+      <>
+        <VeiledMoon className='top-[13%] right-[16%] size-[clamp(4.5rem,9vw,8rem)]' />
+        <Fireflies count={16} />
+      </>
+    ) : id === 'masquerade' ? (
+      // Brighter here: the cover's colour wash sits over the scene.
+      <Searchlights className='brightness-[1.8]' />
+    ) : null;
+  if (!bits) return null;
+  return <div className={clsx('ambience absolute inset-0 transition-opacity [transition-duration:var(--pick-dur)]', on ? 'opacity-100' : 'opacity-0')}>{bits}</div>;
+}
+
+export default function CoverPicker({ initial }: { initial: number }) {
   const [current, setCurrent] = useState(initial);
   // The cover sliding out, which way everything moves (1 is rightwards), and
   // whether anything has been picked yet (the first character doesn't slide in).
@@ -269,6 +278,7 @@ export default function CoverPicker({
     setDir(slot > 0 ? -1 : 1);
     setCurrent(next);
     setMoved(true);
+    haptic();
   }
 
   const step = (by: 1 | -1) => pick((current + by + N) % N);
@@ -308,28 +318,11 @@ export default function CoverPicker({
     };
   }, []);
 
-  // The peek: once, if nobody has turned the ring four seconds in (and the
-  // page is still at the top), the cover leans towards the next character
-  // and back while its logo brightens, to show it turns (landing.css; not
-  // under reduced motion). 'strong': the lean comes twice, and a light runs
-  // along the rail from this character's tick to the next one and back.
-  const [peek, setPeek] = useState(false);
-  const peeked = useRef(false);
-  useEffect(() => {
-    if (moved || peeked.current) return;
-    const t = setTimeout(() => {
-      if (window.scrollY > 40 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      peeked.current = true;
-      setPeek(true);
-    }, 4000);
-    return () => clearTimeout(t);
-  }, [moved]);
 
-  // The picker: the logo row (the chosen game in the middle), and under it a
-  // rail of six ticks, one per character, the current one lit in its
-  // scene's colour; with arrows, thin chevrons at the rail's ends.
+  // The picker: the logo row (the chosen game in the middle), and under it
+  // the rail for the six characters (Rail.tsx).
   const pickerUi = (
-    <div className={clsx('lc-picker pointer-events-auto flex w-full flex-col items-center', peek && 'lc-peeking', peekStyle === 'strong' && 'lc-peek-strong')}>
+    <div className='lc-picker pointer-events-auto flex w-full flex-col items-center'>
       <div role='group' aria-label='Choose a game' className='relative h-(--logos-h) w-full max-w-3xl [--logo-gap:clamp(7.5rem,24vw,13rem)]'>
         {COVERS.map((c, i) => {
           const { Logo, title } = GAMES[c.game];
@@ -356,40 +349,7 @@ export default function CoverPicker({
           );
         })}
       </div>
-      <div className='relative mt-1 flex items-center gap-2'>
-        <span aria-hidden className='absolute top-1/2 left-1/2 h-px w-[min(20rem,70vw)] -translate-x-1/2 bg-linear-to-r from-transparent via-bone/30 to-transparent' />
-        {arrows && (
-          <button type='button' aria-label='Previous character' onClick={() => step(-1)} className='relative grid size-7 place-items-center rounded-md text-bone/55 transition-colors hover:text-bone focus-visible:outline-2 focus-visible:outline-bone'>
-            <MdChevronLeft aria-hidden className='size-5' />
-          </button>
-        )}
-        <div role='group' aria-label='Characters' className='relative flex items-center'>
-          {peekStyle === 'strong' && <span aria-hidden className='lc-peek-rail' style={{ left: `calc(${current} * 1rem + 0.5rem)` }} />}
-          {COVERS.map((c, i) => (
-            <button
-              key={c.id}
-              type='button'
-              onClick={() => pick(i)}
-              aria-label={`${c.name}, ${GAMES[c.game].name}`}
-              aria-current={i === current ? 'true' : undefined}
-              className='group grid h-6 w-4 place-items-center rounded-xs focus-visible:outline-2 focus-visible:outline-bone'
-            >
-              <span
-                aria-hidden
-                className={clsx(
-                  'block rounded-full transition-all duration-500',
-                  i === current ? 'h-4 w-0.5 bg-(--lc-scene-glow) shadow-[0_0_0.5rem_var(--lc-scene-glow)]' : 'h-2 w-px bg-bone/45 group-hover:h-3 group-hover:bg-bone/80',
-                )}
-              />
-            </button>
-          ))}
-        </div>
-        {arrows && (
-          <button type='button' aria-label='Next character' onClick={() => step(1)} className='relative grid size-7 place-items-center rounded-md text-bone/55 transition-colors hover:text-bone focus-visible:outline-2 focus-visible:outline-bone'>
-            <MdChevronRight aria-hidden className='size-5' />
-          </button>
-        )}
-      </div>
+      <Rail current={current} moved={moved} pick={pick} step={step} />
     </div>
   );
 
@@ -403,8 +363,8 @@ export default function CoverPicker({
       style={{ '--art-ratio': ART_RATIO, '--accent': cover.glow, '--pick-dir': dir } as React.CSSProperties}
       className={clsx(
         'lc-snap relative isolate h-[200svh] overflow-x-clip',
-        // The character starts 18px under the navbar, or under the logos when they're at the top.
-        pickerTop ? '[--art-top:calc(5.5rem+var(--logos-h))]' : '[--art-top:5.5rem]',
+        // The character starts 18px under the navbar.
+        '[--art-top:5.5rem]',
         '[--cover:min(100vw,calc((100svh-var(--art-top))/var(--art-ratio)),48rem)] [--logos-h:3.75rem] md:[--logos-h:4.5rem]',
       )}
     >
@@ -442,6 +402,7 @@ export default function CoverPicker({
                   i === current ? 'opacity-100' : 'opacity-0',
                 )}
               />
+              <SceneExtras id={c.id} on={i === current} />
             </div>
           ))}
         </div>
@@ -461,11 +422,7 @@ export default function CoverPicker({
               <div
                 key={c.id}
                 style={{ '--head-x': c.headX, '--mark-w': mark.width, '--mark-lift': c.head - mark.focus } as React.CSSProperties}
-                onAnimationEnd={() => setPeek(false)}
-                className={clsx(
-                  'lc-pick-mark flex translate-x-[calc(var(--cover)*var(--head-x))] justify-center self-start pt-[calc(var(--art-top)+var(--cover)*var(--mark-lift))] [grid-area:1/1]',
-                  peek && i === current && clsx('lc-peek lc-peek-mark', peekStyle === 'strong' && 'lc-peek-strong'),
-                )}
+                className='lc-pick-mark flex translate-x-[calc(var(--cover)*var(--head-x))] justify-center self-start pt-[calc(var(--art-top)+var(--cover)*var(--mark-lift))] [grid-area:1/1]'
               >
                 <div className={layer(i)}>
                   <Mark mark={c.mark} />
@@ -476,7 +433,7 @@ export default function CoverPicker({
         </div>
 
         {/* The characters */}
-        <div className={clsx('pointer-events-none z-10 flex justify-center [grid-area:1/1]', peek && 'lc-peek', peek && peekStyle === 'strong' && 'lc-peek-strong')}>
+        <div className='pointer-events-none z-10 flex justify-center [grid-area:1/1]'>
           {/* The bottom fade is on each image, not this box: a mask clips to its
               box, so a character sliding past the box's sides would be cut off
               in a hard vertical edge. */}
@@ -518,7 +475,7 @@ export default function CoverPicker({
         <button type='button' aria-hidden tabIndex={-1} onClick={() => step(-1)} className='lc-half lc-half-prev absolute inset-y-0 left-0 z-[25] hidden w-[28%] cursor-w-resize [@media(hover:hover)]:block' />
         <button type='button' aria-hidden tabIndex={-1} onClick={() => step(1)} className='lc-half lc-half-next absolute inset-y-0 right-0 z-[25] hidden w-[28%] cursor-e-resize [@media(hover:hover)]:block' />
 
-        {/* Cover text: the picker (at the top or the foot), the tagline and the buttons */}
+        {/* Cover text, at the foot: the picker, the tagline and the buttons */}
         <div className='pointer-events-none relative z-30 flex flex-col items-center px-5 [grid-area:1/1]'>
           <div className='lc-ho-foot absolute inset-x-0 bottom-0 -z-10 h-[58svh] bg-linear-to-t from-[#0a0809] from-10% via-[#0a0809]/60 to-transparent' />
           {/* No visible title: the navbar carries the wordmark and the character gets the room. */}
@@ -526,17 +483,13 @@ export default function CoverPicker({
             Elysium, a character vault for the World of Darkness
           </h1>
 
-          {pickerTop && <div className='lc-ho-logos mt-[5.5rem] w-full'>{pickerUi}</div>}
-          {tagline === 'top' && <Tagline game={cover.game} className={clsx('lc-ho-logos justify-items-center text-center text-xl md:text-2xl', pickerTop ? 'mt-3' : 'mt-[6.5rem]')} />}
           <p aria-live='polite' className='sr-only'>
             {cover.name}, {GAMES[cover.game].title}
           </p>
 
           <div className='lc-ho-foot pointer-events-auto mt-auto mb-[4svh] flex w-full max-w-3xl flex-col items-center gap-4 text-center'>
-            {!pickerTop && pickerUi}
-            {(tagline === 'foot' || tagline === 'side') && (
-              <Tagline game={cover.game} className={clsx('justify-items-center text-xl text-balance md:text-2xl', tagline === 'side' && 'md:hidden')} />
-            )}
+            {pickerUi}
+            <Tagline game={cover.game} className='justify-items-center text-xl text-balance md:text-2xl' />
             <div className='flex flex-wrap items-center justify-center gap-3'>
               <Link href='/vault/new' className='lc-btn lc-btn-cover lc-btn-ghost lc-btn-glow'>
                 Create a character
@@ -549,13 +502,6 @@ export default function CoverPicker({
             </div>
           </div>
 
-          {/* The tagline set large at the side, beside the character (wide screens) */}
-          {tagline === 'side' && (
-            <Tagline
-              game={cover.game}
-              className='lc-ho-foot absolute bottom-[34svh] left-[max(5.5rem,7vw)] hidden max-w-[13ch] text-left text-4xl leading-[1.05] md:grid lg:text-5xl xl:max-w-[14ch]'
-            />
-          )}
         </div>
       </div>
     </section>

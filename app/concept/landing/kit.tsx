@@ -1,6 +1,6 @@
 import type React from 'react';
 
-// Shared bits for B's screens (Screens.tsx, GamesSection.tsx).
+// Shared bits for the screens (Screens.tsx, GamesSection.tsx).
 
 // A screen's content column, above its wash and weather.
 export const BODY = 'relative z-2 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col';

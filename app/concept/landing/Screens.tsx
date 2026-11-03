@@ -6,7 +6,7 @@ import type { IconType } from 'react-icons';
 import { GiBookmarklet, GiCrossedSwords, GiQuillInk, GiRoundTable, GiScrollUnfurled, GiSmartphone } from 'react-icons/gi';
 import { MdArrowOutward } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
-import Footer from '../Footer';
+import Footer from './Footer';
 import { COVERS } from './covers';
 import Clip from './Clip';
 import Strip from './Strip';
@@ -15,7 +15,7 @@ import SceneWeather from './SceneWeather';
 import ScreenWatch from './ScreenWatch';
 
 /*
-  B's sections after "Three games. One night.", each one screen tall
+  The sections after "Three games. One night.", each one screen tall
   (.lc-screen, landing.css), its content starting 16px under the navbar.
   They carry the chosen cover down the page: its colours (--lc-scene-glow and
   --lc-scene-tint on <html>), its game's type for the headings
@@ -120,7 +120,7 @@ const SCENE_CLIPS: Record<string, string> = { masquerade: 'scene-masquerade', ne
 // table's own act art stands in).
 const CHRONICLE_SHOT = { src: '/acts/hook.webp', alt: 'The chronicle table in Elysium.' };
 
-// The navbar's section links on B.
+// The navbar's section links.
 export const SECTIONS = [
   { href: '#games', label: 'Games' },
   { href: '#inside', label: 'Inside' },
@@ -193,16 +193,37 @@ export default function Screens({ initial }: { initial: number }) {
               Let the guide walk you through it, a choice at a time with the rules kept for you, or take the blank sheet and fill it in your own order.
             </p>
           </div>
-          <div className='mt-[clamp(1.25rem,4svh,3rem)] grid flex-1 gap-4 md:grid-cols-2'>
+          <div className='mt-[clamp(1.25rem,4svh,3rem)] grid min-h-0 flex-1 gap-4 md:grid-cols-2'>
             {[
-              { name: 'guided-vampire', title: 'Guided', line: 'Eleven short steps, from a name to a finished sheet.' },
-              { name: 'classic-vampire', title: 'Classic', line: 'The whole sheet at once, laid out like the book.' },
+              {
+                name: 'guided-vampire',
+                title: 'Guided',
+                line: 'Eleven short steps, from a name to a finished sheet.',
+                points: ['One choice at a time, each one explained', 'Points and dots counted for you', 'Ends on the full sheet, ready to play'],
+              },
+              {
+                name: 'classic-vampire',
+                title: 'Classic',
+                line: 'The whole sheet at once, laid out like the book.',
+                points: ['Every field of the printed sheet, in any order', 'Click a dot to rate, or use the arrow keys', 'Saved as you go'],
+              },
             ].map((c, i) => (
-              <figure key={c.name} data-clip-host className='lc-in lc-in-wipe relative min-h-56 overflow-hidden rounded-xl border border-bone/15 bg-[#050405] shadow-[0_2rem_4rem_-2rem_rgb(0_0_0/0.8)]' style={at(i + 3)}>
-                <Clip {...clip(c.name)} label={`${c.title} character creation in Elysium.`} className='absolute inset-0 size-full object-cover object-top' />
-                <figcaption className='absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 via-black/50 to-transparent px-5 pt-14 pb-4'>
-                  <span className='lc-display lc-scene-type block text-[clamp(1.4rem,3.3svh,1.9rem)]'>{c.title}</span>
-                  <span className='mt-0.5 block text-sm text-bone/65'>{c.line}</span>
+              <figure key={c.name} data-clip-host className='lc-in lc-in-wipe flex min-h-0 flex-col overflow-hidden rounded-xl border border-bone/15 bg-[#0a0809]/60 shadow-[0_2rem_4rem_-2rem_rgb(0_0_0/0.8)] backdrop-blur-[3px]' style={at(i + 3)}>
+                {/* The clip, a still until hovered, on the top half */}
+                <div className='relative min-h-36 basis-1/2 overflow-hidden border-b border-bone/10 bg-[#050405]'>
+                  <Clip {...clip(c.name)} label={`${c.title} character creation in Elysium.`} className='absolute inset-0 size-full object-cover object-top' />
+                </div>
+                <figcaption className='flex flex-1 flex-col justify-center px-[clamp(1rem,2.4vw,1.75rem)] py-[clamp(0.75rem,2.4svh,1.5rem)]'>
+                  <span className='lc-display lc-scene-type block text-[clamp(1.5rem,3.6svh,2.1rem)] leading-tight'>{c.title}</span>
+                  <span className='mt-1 block text-[clamp(0.85rem,1.8svh,1rem)] text-bone/70'>{c.line}</span>
+                  <ul className='mt-[clamp(0.5rem,1.6svh,1rem)] grid gap-1.5 text-[clamp(0.78rem,1.6svh,0.9rem)] text-bone/55'>
+                    {c.points.map((pt) => (
+                      <li key={pt} className='flex items-baseline gap-2.5'>
+                        <span aria-hidden className='size-1 shrink-0 translate-y-[-0.15em] rounded-full bg-(--lc-glow)' />
+                        {pt}
+                      </li>
+                    ))}
+                  </ul>
                 </figcaption>
               </figure>
             ))}
@@ -221,7 +242,7 @@ export default function Screens({ initial }: { initial: number }) {
               Your Toreador, your Glass Walker and the hunter on both their trails live in the same vault. Crossover chronicles welcome.
             </p>
           </div>
-          <div className='lc-in mt-[clamp(1.25rem,4svh,3rem)] flex min-h-0 flex-1 flex-col' style={at(3)}>
+          <div className='lc-in mt-[clamp(1.25rem,4svh,3rem)] flex min-h-0 flex-1 flex-col pb-[clamp(1.5rem,6svh,4rem)]' style={at(3)}>
             <Strip label='Characters in the vault'>
               {people.map((p) => (
                 <li key={p.key} data-game={p.game ?? undefined} style={p.game ? undefined : ({ '--here': 1 } as React.CSSProperties)} className='lc-bx-face snap-start'>

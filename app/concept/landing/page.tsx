@@ -1,110 +1,34 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { MdArrowOutward } from 'react-icons/md';
 import Navbar from '@/app/ui/navbar';
-import { LogoWod } from '@/app/ui/svgs/official';
-import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
-import Footer from './Footer';
-import Sections, { SECTIONS } from './Sections';
+
+import CoverPicker from './CoverPicker';
+import GamesSection from './GamesSection';
+import Screens, { SECTIONS } from './Screens';
+import { COVERS, coverIndex } from './covers';
 
 /*
-  Direction A, "Three doors": one dim night city, three tall arches of equal
-  weight, one per game. On scroll the doors lift at different speeds, the head
-  dissolves and the first section rises over the pinned scene on a curved edge.
-  The shared sections (Sections.tsx) follow.
+  The landing, "the cover": after the original 2023 Elysium hero (the `legacy`
+  branch: app/ui/home/HomePageArt.tsx and WelcomeText.tsx, as /vampire rebuilt
+  it), turned into a character picker across the three games (CoverPicker.tsx):
+  one cut-out character per theme (two per game), the game's mark behind their head (the
+  clan symbol, the Glass Walkers glyph or claw marks, the flame), its spines down the sides and its theme's
+  colours, chosen from the game logos under the navbar. The first section
+  slides up over the character from the front; the sections
+  (Screens.tsx) follow, one screen each, in the chosen cover's colours. `?cover=<theme id or game>` opens on that cover.
 */
 
-const GLOW = { vampire: 'lc-glow-v', werewolf: 'lc-glow-w', hunter: 'lc-glow-h' } as const;
-const ROMAN = ['I', 'II', 'III'];
+export default async function Landing({ searchParams }: PageProps<'/concept/landing'>) {
+  const { cover: wanted } = await searchParams;
+  const initial = coverIndex(typeof wanted === 'string' ? wanted : undefined);
 
-export default function LandingA() {
   return (
     <>
       <Navbar sections={SECTIONS} />
       <main id='main'>
-        <div className='lc-stage'>
-          <section aria-labelledby='lc-title' className='lc-sticky lc-grain'>
-            <div className='lc-a-bg'>
-              <div className='lc-a-bg-s absolute inset-0'>
-                <Image src='/locations/location-53.webp' alt='' fill preload sizes='100vw' />
-              </div>
-            </div>
-            <div aria-hidden className='lc-a-veil' />
-            <div aria-hidden className='lc-a-moon' />
+        <CoverPicker initial={initial} />
 
-            <div className='lc-a-layout'>
-              <div className='lc-a-head lc-a-head-s'>
-                <div className='lc-in-1'>
-                  <LogoWod role='img' aria-label='World of Darkness' className='h-auto w-32 text-[#ece8e1]/85 sm:w-40' />
-                </div>
-                <h1 id='lc-title' className='lc-display lc-a-h1 lc-in-2'>
-                  A vault for the <em>creatures</em> of the dark.
-                </h1>
-                <div className='lc-a-actions lc-in-3'>
-                  <Link href='/vault/new' className='lc-btn lc-btn-solid'>
-                    Create a character
-                    <MdArrowOutward aria-hidden />
-                  </Link>
-                  <Link href='/vault' className='lc-btn lc-btn-ghost'>
-                    Open your vault
-                  </Link>
-                </div>
-              </div>
-
-              <div className='lc-a-doors'>
-                {GAMES_ORDER.map((g, i) => {
-                  const { Logo, title, figure } = GAMES[g];
-                  return (
-                    <div key={g} className='lc-door-wrap'>
-                      <Link href={gamePath(g)} aria-label={`Enter ${title}`} className={`lc-door ${GLOW[g]}`}>
-                        <Image src={figure.src} alt='' fill preload={i === 0} sizes='(max-width: 1120px) 33vw, 370px' />
-                        <span aria-hidden className='lc-door-tint' />
-                        <span aria-hidden className='lc-door-fade' />
-                        <span aria-hidden className='lc-door-ring' />
-                        <span className='lc-door-label'>
-                          <Logo aria-hidden className='text-[#ece8e1]' />
-                        </span>
-                      </Link>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <section id='games' aria-labelledby='lc-games' className='lc-a-next'>
-          <div className='lc-a-inner'>
-            <p className='lc-eyebrow lc-reveal'>Three games, one vault</p>
-            <h2 id='lc-games' className='lc-display lc-a-h2 lc-reveal'>
-              Three games. One night.
-            </h2>
-            <p className='lc-a-lede lc-reveal'>
-              Each game has its own sheet, its own dice and a room of its own. Step through a door and the whole vault changes around you.
-            </p>
-            <div className='lc-a-cols'>
-              {GAMES_ORDER.map((g, i) => {
-                const { title, tagline, modes } = GAMES[g];
-                return (
-                  <Link key={g} href={gamePath(g)} className={`lc-a-col lc-reveal ${GLOW[g]}`}>
-                    <span className='lc-num'>{ROMAN[i]}</span>
-                    <h3 className='lc-display'>{title}</h3>
-                    <p>{tagline}</p>
-                    <span className='lc-modes'>
-                      {modes.dark} · {modes.light}
-                    </span>
-                    <span className='lc-enter'>
-                      Enter <span aria-hidden><MdArrowOutward /></span>
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-        <Sections />
+        <GamesSection glow={COVERS[initial].glow} />
+        <Screens initial={initial} />
       </main>
-      <Footer />
     </>
   );
 }

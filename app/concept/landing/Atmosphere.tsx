@@ -8,8 +8,8 @@ import { COVERS, type Fx } from './covers';
 
 /*
   The weather round the cover's characters (covers.ts, `fx`): Vampire's black
-  smoke, Werewolf's wind with leaves and debris, Hunter's steam and the curl
-  of smoke from a match. Two canvases, one behind the character and one in
+  smoke, Werewolf's wind with leaves and debris, Hunter's steam, the curl
+  of smoke from a match and the city's rain. Two canvases, one behind the character and one in
   front, so things pass both ways. Every particle's path is worked out in
   its vertex shader from the time and its own seed, so nothing is updated on
   the CPU but a few uniforms. Each cover's systems fade in and out with the
@@ -236,9 +236,9 @@ let puff: THREE.DataTexture | null = null;
 const PUFF = () => (puff ??= puffTexture());
 
 /* ---------------------------------------------------------------- */
-/* Fliers: leaves and debris carried across on the wind, left to      */
-/* right, tumbling in 3D (the shading follows the face's turn, so a   */
-/* leaf flashes as it flips). aSeed.w is depth: near ones are bigger, */
+/* Fliers: leaves and debris on the wind, from the top left falling  */
+/* to the bottom right, tumbling in 3D (the shading follows its turn, */
+/* matte, shaded as it turns). aSeed.w is depth: near ones bigger,   */
 /* faster and more opaque; uDepth picks this layer's slice of it.     */
 /* ---------------------------------------------------------------- */
 const FLIER_VERT = /* glsl */ `
@@ -264,8 +264,10 @@ const FLIER_VERT = /* glsl */ `
     // Gusts: the crossing speeds up and slows down along the way.
     float run = life + 0.05 * sin(life * 9.0 + aSeed.z * 6.2831);
     float x = -span * 0.5 + span * run;
-    float y = (hash(aSeed.y * 31.1 + cycle * 3.7) - 0.45) * uView.y * 1.1;
-    y += sin(life * 7.0 + aSeed.y * 6.2831) * uFlutter * (0.5 + depth) - life * uFall * (0.4 + depth);
+    // In from the top left (some from above the top edge), falling away to
+    // the bottom right as the wind carries them.
+    float y = (hash(aSeed.y * 31.1 + cycle * 3.7) * 0.95 - 0.2) * uView.y;
+    y += sin(life * 7.0 + aSeed.y * 6.2831) * uFlutter * (0.5 + depth) - life * uFall * (0.6 + 0.6 * depth);
     float size = mix(uSize.x, uSize.y, depth) * (0.75 + 0.5 * aSeed.z);
     vec3 spin = vec3(1.3, 0.9, 0.5) * (0.5 + aSeed.zyx) * uSpin;
     mat3 R = rz(aSeed.x * 6.2831 + uTime * spin.z) * ry(aSeed.y * 6.2831 + uTime * spin.y) * rx(aSeed.z * 6.2831 + uTime * spin.x);
@@ -302,16 +304,15 @@ const FLIER_FRAG = /* glsl */ `
       vec4 c = texture2D(uAtlas, (cell + vUv) / ${ATLAS_N}.0, smoothstep(0.8, 1.0, vDepth) * 2.0);
       float a = smoothstep(0.2, 0.6, c.a);
       if (a < 0.01) discard;
-      // Lit by the moon, up and to the right: shaded across its curve, a
-      // cool sheen where it faces the light, and warm light through it when
-      // its back is turned to the moon.
+      // Matte, lit by the moon up and to the right: softly shaded across its
+      // curve (wrapped, so no face goes black or flashes), with a little warm
+      // light through it when its back is turned to the moon. No sheen.
       vec3 n = normalize(vNormal) * (gl_FrontFacing ? 1.0 : -1.0);
       vec3 L = normalize(vec3(0.5, 0.75, 0.55));
-      float diff = max(dot(n, L), 0.0);
+      float diff = clamp((dot(n, L) + 0.5) / 1.5, 0.0, 1.0);
       float through = max(dot(-n, L), 0.0);
-      float sheen = pow(max(dot(n, normalize(L + vec3(0.0, 0.0, 1.0))), 0.0), 26.0);
       vec3 paint = c.rgb * vColor * vec3(0.8, 0.84, 0.86);
-      vec3 col = paint * (0.22 + 0.78 * diff) + paint * vec3(1.0, 0.92, 0.55) * through * 0.4 + vec3(0.7, 0.8, 0.85) * sheen * 0.3;
+      vec3 col = paint * (0.4 + 0.6 * diff) + paint * vec3(1.0, 0.92, 0.55) * through * 0.25;
       gl_FragColor = vec4(col, vAlpha * a);
     }
     #include <colorspace_fragment>
@@ -517,10 +518,165 @@ function Fliers({ spec, active }: { spec: FlierSpec; active: boolean }) {
   return <mesh ref={mesh} geometry={geometry} material={material} frustumCulled={false} />;
 }
 
+
+/* ---------------------------------------------------------------- */
+/* Rain: thin streaks, each a quad stretched along its fall (motion   */
+/* blur at a camera's shutter), slanting with the wind. aSeed.w is    */
+/* depth: far drops are short, faint and slow, near ones long, wider  */
+/* and brighter, catching the streetlamps' amber low down. Splashes:  */
+/* small crowns spreading on the ground in front.                     */
+/* ---------------------------------------------------------------- */
+const RAIN_VERT = /* glsl */ `
+  attribute vec4 aSeed;
+  uniform float uTime, uAmount, uOpacity, uSlant;
+  uniform vec2 uView, uDepth;
+  varying vec2 vUv;
+  varying float vAlpha, vY;
+  ${HASH}
+  void main() {
+    float d = mix(uDepth.x, uDepth.y, aSeed.w);
+    float speed = uView.y * mix(0.9, 2.3, d);
+    float len = speed * mix(0.03, 0.065, d) * (0.8 + 0.4 * aSeed.z);
+    float width = mix(0.7, 1.9, d * d);
+    float travel = uView.y + len + 60.0;
+    float t = uTime * speed / travel + aSeed.x;
+    float life = fract(t);
+    float cycle = floor(t);
+    float y = uView.y * 0.5 + len * 0.5 + 30.0 - life * travel;
+    float x = (hash(aSeed.y * 13.1 + cycle * 7.3) - 0.5) * (uView.x + uView.y * abs(uSlant) * 2.0);
+    x += uSlant * (uView.y * 0.5 - y);
+    vec2 dir = normalize(vec2(uSlant, -1.0));
+    vec2 across = vec2(-dir.y, dir.x);
+    // Three pixels wide whatever its width, so the edges stay soft.
+    vec2 p = vec2(x, y) + across * position.x * 3.0 * max(width, 1.0) + dir * position.y * -len;
+    vUv = vec2(uv.x, uv.y);
+    vY = p.y / uView.y + 0.5;
+    vAlpha = uAmount * uOpacity * mix(0.06, 0.34, d) * (0.6 + 0.4 * aSeed.z) * min(width, 1.0);
+    gl_Position = projectionMatrix * viewMatrix * vec4(p, 0.0, 1.0);
+  }
+`;
+const RAIN_FRAG = /* glsl */ `
+  uniform vec3 uColor, uLamp;
+  varying vec2 vUv;
+  varying float vAlpha, vY;
+  void main() {
+    float across = 1.0 - abs(vUv.x * 2.0 - 1.0);
+    float core = pow(across, 3.0);
+    // Brighter at its head (the bottom), fading up its tail.
+    float along = mix(0.25, 1.0, smoothstep(0.0, 1.0, 1.0 - vUv.y));
+    float a = core * along * vAlpha;
+    if (a < 0.002) discard;
+    // Low down, the drops catch the streetlamps.
+    vec3 col = mix(uColor, uLamp, smoothstep(0.55, 0.1, vY) * 0.45);
+    gl_FragColor = vec4(col, a);
+    #include <colorspace_fragment>
+  }
+`;
+
+const SPLASH_VERT = /* glsl */ `
+  attribute vec4 aSeed;
+  uniform float uTime, uAmount, uOpacity;
+  uniform vec2 uView;
+  varying vec2 vUv;
+  varying float vLife, vAlpha;
+  ${HASH}
+  void main() {
+    float len = 0.45 + 0.35 * aSeed.z;
+    float t = uTime / len + aSeed.x * 7.0;
+    float life = fract(t);
+    float cycle = floor(t);
+    float x = (hash(aSeed.y * 17.3 + cycle * 3.1) - 0.5) * uView.x;
+    // The ground, in perspective: nearer splashes lower and bigger.
+    float near = hash(aSeed.z * 41.7 + cycle * 1.9);
+    float y = -uView.y * mix(0.36, 0.5, near);
+    float size = mix(5.0, 16.0, near) * (0.4 + life);
+    vec2 p = vec2(x, y) + position.xy * vec2(size * 2.2, size);
+    vUv = uv;
+    vLife = life;
+    vAlpha = uAmount * uOpacity * mix(0.15, 0.4, near) * (1.0 - life);
+    gl_Position = projectionMatrix * viewMatrix * vec4(p, 0.0, 1.0);
+  }
+`;
+const SPLASH_FRAG = /* glsl */ `
+  uniform vec3 uLamp;
+  varying vec2 vUv;
+  varying float vLife, vAlpha;
+  void main() {
+    // A thin ring spreading out, flattened onto the ground.
+    float r = length(vUv - 0.5) * 2.0;
+    float ring = smoothstep(0.12, 0.0, abs(r - 0.85));
+    float a = ring * vAlpha;
+    if (a < 0.003) discard;
+    gl_FragColor = vec4(mix(vec3(0.75, 0.8, 0.85), uLamp, 0.35), a);
+    #include <colorspace_fragment>
+  }
+`;
+
+type RainSpec = { kind: 'streaks' | 'splashes'; count: number; opacity: number; slant: number; depth: [number, number] };
+
+function Rain({ spec, active }: { spec: RainSpec; active: boolean }) {
+  const mesh = useRef<THREE.Mesh>(null);
+  const amount = useRef(active ? 1 : 0);
+  const size = useThree((s) => s.size);
+
+  const geometry = useMemo(() => {
+    const g = new THREE.InstancedBufferGeometry().copy(new THREE.PlaneGeometry(1, 1) as unknown as THREE.InstancedBufferGeometry);
+    const rand = mulberry32(spec.count * 313 + Math.round(spec.depth[0] * 100));
+    g.setAttribute('aSeed', new THREE.InstancedBufferAttribute(new Float32Array(spec.count * 4).map(rand), 4));
+    g.instanceCount = spec.count;
+    return g;
+  }, [spec]);
+
+  const material = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: spec.kind === 'streaks' ? RAIN_VERT : SPLASH_VERT,
+        fragmentShader: spec.kind === 'streaks' ? RAIN_FRAG : SPLASH_FRAG,
+        transparent: true,
+        depthWrite: false,
+        depthTest: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uTime: { value: 0 },
+          uAmount: { value: 0 },
+          uOpacity: { value: spec.opacity },
+          uSlant: { value: spec.slant },
+          uView: { value: new THREE.Vector2() },
+          uDepth: { value: new THREE.Vector2(...spec.depth) },
+          uColor: { value: new THREE.Color('#aebccb') },
+          uLamp: { value: new THREE.Color('#f2b23a') },
+        },
+      }),
+    [spec],
+  );
+
+  useEffect(
+    () => () => {
+      geometry.dispose();
+      material.dispose();
+    },
+    [geometry, material],
+  );
+
+  useFrame((state, dt) => {
+    const target = active ? 1 : 0;
+    amount.current += (target - amount.current) * (1 - Math.exp(-dt * RATE));
+    if (!mesh.current) return;
+    mesh.current.visible = amount.current > 0.003;
+    if (!mesh.current.visible) return;
+    const u = material.uniforms;
+    u.uTime.value = state.clock.elapsedTime + 60;
+    u.uAmount.value = amount.current;
+    u.uView.value.set(size.width, size.height);
+  });
+
+  return <mesh ref={mesh} geometry={geometry} material={material} frustumCulled={false} />;
+}
+
 /* ---------------------------------------------------------------- */
 /* Each cover's weather, per layer.                                   */
 /* ---------------------------------------------------------------- */
-type System = { kind: 'puffs'; spec: PuffSpec } | { kind: 'fliers'; spec: FlierSpec };
+type System = { kind: 'puffs'; spec: PuffSpec } | { kind: 'fliers'; spec: FlierSpec } | { kind: 'rain'; spec: RainSpec };
 
 function systems(fx: Fx, cover: number, layer: Layer): System[] {
   const out: System[] = [];
@@ -548,6 +704,15 @@ function systems(fx: Fx, cover: number, layer: Layer): System[] {
       out.push({ kind: 'puffs', spec: { count: 14, color, opacity: opacity * 0.7, life: 9, origin: [-0.45, -0.58], spread: [0.4, 0.04], vel: [0.012, 0.06], swirl: 0.04, size: [0.18, 0.55] } });
     }
   }
+  if (fx.rain) {
+    // Far rain behind the character, near rain (fewer, longer, brighter) and the splashes in front.
+    const { opacity, slant } = fx.rain;
+    if (back) out.push({ kind: 'rain', spec: { kind: 'streaks', count: 520, opacity, slant, depth: [0, 0.55] } });
+    else {
+      out.push({ kind: 'rain', spec: { kind: 'streaks', count: 110, opacity, slant, depth: [0.6, 1] } });
+      out.push({ kind: 'rain', spec: { kind: 'splashes', count: 46, opacity, slant, depth: [0, 1] } });
+    }
+  }
   if (fx.wisp && !back) {
     // A thin curl from the match: small, many, swaying harder as it rises.
     out.push({
@@ -568,9 +733,9 @@ function systems(fx: Fx, cover: number, layer: Layer): System[] {
   if (fx.wind) {
     const { leaves, debris } = fx.wind;
     const depth: [number, number] = back ? [0, 0.5] : [0.55, 1];
-    out.push({ kind: 'fliers', spec: { shape: 'leaf', count: back ? 20 : 6, colors: leaves, life: 12, size: [0.018, 0.07], depth, spin: 1.2, fall: 0.08, flutter: 0.06 } });
-    out.push({ kind: 'fliers', spec: { shape: 'twig', count: back ? 6 : 2, colors: [debris, leaves[leaves.length - 1]], life: 9, size: [0.012, 0.045], depth, spin: 2, fall: 0.1, flutter: 0.03 } });
-    out.push({ kind: 'fliers', spec: { shape: 'grit', count: back ? 36 : 12, colors: [debris, '#3a3326', '#514634'], life: 7, size: [0.003, 0.009], depth, spin: 3, fall: 0.04, flutter: 0.02 } });
+    out.push({ kind: 'fliers', spec: { shape: 'leaf', count: back ? 20 : 6, colors: leaves, life: 12, size: [0.018, 0.07], depth, spin: 1.2, fall: 0.62, flutter: 0.06 } });
+    out.push({ kind: 'fliers', spec: { shape: 'twig', count: back ? 6 : 2, colors: [debris, leaves[leaves.length - 1]], life: 9, size: [0.012, 0.045], depth, spin: 2, fall: 0.7, flutter: 0.03 } });
+    out.push({ kind: 'fliers', spec: { shape: 'grit', count: back ? 36 : 12, colors: [debris, '#3a3326', '#514634'], life: 7, size: [0.003, 0.009], depth, spin: 3, fall: 0.45, flutter: 0.02 } });
   }
   return out;
 }
@@ -581,7 +746,13 @@ function Weather({ current, layer, box }: { current: number; layer: Layer; box: 
     <>
       {all.map((list, i) =>
         list.map((s, j) =>
-          s.kind === 'puffs' ? <Puffs key={`${i}-${j}`} spec={s.spec} active={i === current} box={box} /> : <Fliers key={`${i}-${j}`} spec={s.spec} active={i === current} />,
+          s.kind === 'puffs' ? (
+            <Puffs key={`${i}-${j}`} spec={s.spec} active={i === current} box={box} />
+          ) : s.kind === 'rain' ? (
+            <Rain key={`${i}-${j}`} spec={s.spec} active={i === current} />
+          ) : (
+            <Fliers key={`${i}-${j}`} spec={s.spec} active={i === current} />
+          ),
         ),
       )}
     </>

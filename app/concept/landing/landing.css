@@ -1,5 +1,5 @@
 /*
-  Landing concept (/concept/landing, /concept/landing/b).
+  The landing redesign (/concept/landing).
   Self-contained: fixed colours (these pages are dark only), its own fonts
   (--lc-display, --lc-sans from layout.tsx) and scroll choreography written
   with CSS scroll-driven animations. Everything that moves sits inside
@@ -78,10 +78,6 @@
   outline-offset: 4px;
 }
 .lc-btn:active { transform: scale(0.98); }
-.lc-btn-solid {
-  background: var(--lc-bone);
-  color: var(--lc-ink);
-}
 .lc-btn-ghost {
   border: 1px solid rgb(236 232 225 / 0.34);
   color: var(--lc-bone);
@@ -89,68 +85,57 @@
   backdrop-filter: blur(10px);
 }
 @media (hover: hover) {
-  .lc-btn-solid:hover { transform: translateY(-2px); box-shadow: 0 0 2.5rem -0.5rem var(--lc-vampire); }
   .lc-btn-ghost:hover { border-color: rgb(236 232 225 / 0.75); background: rgb(236 232 225 / 0.07); }
 }
 
-/* B's picker hints. Hovering a side of the stage, or the peek, brightens
-   the logo on that side; the peek leans the character (and, further, its
-   mark) towards the next one and back. */
+/* The picker hint: hovering a side of the stage brightens the logo on that side. */
 .lc-cover-stage:has(.lc-half-prev:hover) .lc-picker [data-slot='-1'],
-.lc-cover-stage:has(.lc-half-next:hover) .lc-picker [data-slot='1'],
-.lc-peeking [data-slot='1'] { opacity: 0.95; }
-@keyframes lc-peek {
-  0%, 100% { transform: none; }
-  40%, 62% { transform: translateX(var(--peek, -2.5%)); }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .lc-peek { animation: lc-peek 1.9s var(--pick-ease) both; }
-  .lc-peek-mark { --peek: -3.5%; }
-}
-/* The strong peek: the lean comes twice, settling, while a light runs along
-   the rail from this character's tick to the next one and back, and the
-   tick it left dims. */
-@keyframes lc-peek-strong {
-  0%, 100% { transform: none; }
-  26%, 44% { transform: translateX(calc(var(--peek, -2.5%) * 1.6)); }
-  60% { transform: translateX(calc(var(--peek, -2.5%) * -0.25)); }
-  74% { transform: translateX(calc(var(--peek, -2.5%) * 0.7)); }
-  88% { transform: translateX(calc(var(--peek, -2.5%) * -0.1)); }
-}
-@keyframes lc-peek-rail {
-  0% { opacity: 0; translate: -50% -50%; }
-  10% { opacity: 1; translate: -50% -50%; }
-  26%, 44% { opacity: 1; translate: calc(-50% + 1rem) -50%; }
-  60% { opacity: 1; translate: -50% -50%; }
-  74% { opacity: 1; translate: calc(-50% + 0.7rem) -50%; }
-  90% { opacity: 1; translate: -50% -50%; }
-  100% { opacity: 0; translate: -50% -50%; }
-}
-.lc-peek-rail {
+.lc-cover-stage:has(.lc-half-next:hover) .lc-picker [data-slot='1'] { opacity: 0.95; }
+
+/*
+  The rail's invitation (Rail.tsx), playing until the ring is first
+  turned (--accent is the chosen character's colour, CoverPicker): a pulse runs leftwards from two thirds of the way along,
+  growing and brightening, peaking on the left arrowhead, which flares.
+*/
+.lc-rail-pulse {
   position: absolute;
   top: 50%;
+  left: 66%;
   z-index: 1;
-  width: 0.125rem;
-  height: 1rem;
+  width: 1.5rem;
+  height: 2px;
   border-radius: 999px;
-  background: var(--lc-scene-glow);
-  box-shadow: 0 0 0.8rem var(--lc-scene-glow), 0 0 0.25rem #fff;
+  background: radial-gradient(closest-side, #fff, var(--accent) 45%, transparent);
+  box-shadow: 0 0 0.9rem 0.15rem var(--accent);
   opacity: 0;
   translate: -50% -50%;
   pointer-events: none;
 }
+@keyframes lc-rail-pulse {
+  0% { left: 66%; opacity: 0; width: 1rem; filter: brightness(0.8); }
+  6% { opacity: 0.3; }
+  24% { left: 0.55rem; opacity: 1; width: 3rem; filter: brightness(1.8); }
+  30% { left: 0.45rem; opacity: 0; width: 1rem; }
+  100% { left: 0.45rem; opacity: 0; }
+}
+@keyframes lc-rail-arrow {
+  0%, 18% { color: rgb(236 232 225 / 0.55); filter: none; }
+  24% { color: #fff; filter: drop-shadow(0 0 0.35rem var(--accent)) drop-shadow(0 0 0.8rem var(--accent)); }
+  36%, 100% { color: rgb(236 232 225 / 0.55); filter: none; }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .lc-peek.lc-peek-strong { animation: lc-peek-strong 2.6s var(--pick-ease) both; }
-  .lc-peeking.lc-peek-strong .lc-peek-rail { animation: lc-peek-rail 2.6s var(--pick-ease) both; }
+  .lc-rail-calling .lc-rail-pulse { animation: lc-rail-pulse 6.5s cubic-bezier(0.45, 0, 0.25, 1) 2.5s infinite; }
+  .lc-rail-calling .lc-rail-arrow { animation: lc-rail-arrow 6.5s cubic-bezier(0.45, 0, 0.25, 1) 2.5s infinite; }
 }
 
 /* Sideways trackpad swipes turn the cover, not the browser's history. */
 html:has(.lc-cover-stage) { overscroll-behavior-x: none; }
 
-/* B's cover buttons take the navbar CTA's corners (rounded-lg). */
+/* The cover buttons take the navbar CTA's corners (rounded-lg). */
 .lc-btn-cover { border-radius: 0.5rem; }
 
-/* B's calls to action: ghost buttons lit by the chosen scene
+/* The calls to action: ghost buttons lit by the chosen scene
    (--lc-scene-glow, set on <html> by CoverPicker.tsx), and the navbar's
    while the cover is showing (data-lc-cover; SiteIsland marks its button
    data-site-cta), so all three match. */
@@ -184,258 +169,13 @@ html[data-lc-cover] .lc [data-site-cta] {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* The pinned stage: 200svh tall, its sticky child holds the first screen. */
-.lc-stage { position: relative; height: 200svh; }
-.lc-sticky {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: hidden;
-  isolation: isolate;
-}
-@media (prefers-reduced-motion: reduce) {
-  .lc-stage { height: auto; }
-  .lc-sticky { position: relative; }
-}
-
 /* ------------------------------------------------------------------ */
-/* Direction A: Three doors                                            */
-/* ------------------------------------------------------------------ */
-
-.lc-a-bg { position: absolute; inset: 0; z-index: -3; transform-origin: 50% 70%; }
-.lc-a-bg img { object-fit: cover; object-position: 50% 55%; opacity: 0.85; }
-.lc-a-veil {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 55%, rgb(10 8 9 / 0) 0%, rgb(10 8 9 / 0.4) 65%, var(--lc-ink) 100%),
-    linear-gradient(to bottom, rgb(10 8 9 / 0.7), rgb(10 8 9 / 0.1) 40%, rgb(10 8 9 / 0.35));
-}
-.lc-a-moon {
-  position: absolute;
-  z-index: -2;
-  left: 50%;
-  top: 18%;
-  width: min(90vw, 70rem);
-  aspect-ratio: 2 / 1;
-  translate: -50% -30%;
-  background: radial-gradient(ellipse at center, rgb(236 232 225 / 0.1), transparent 62%);
-  pointer-events: none;
-}
-.lc-a-layout {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 5.5rem 1rem 0;
-}
-.lc-a-head {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  flex: none;
-}
-.lc-a-h1 {
-  margin-top: 1rem;
-  max-width: 17ch;
-  font-size: clamp(2.3rem, 5.4vw + 0.4rem, 5.4rem);
-  line-height: 0.95;
-  text-wrap: balance;
-  text-shadow: 0 0.25rem 2rem rgb(0 0 0 / 0.8);
-}
-.lc-a-h1 em { font-style: italic; color: var(--lc-bone-2); }
-.lc-a-actions { margin-top: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
-.lc-a-doors {
-  flex: 1;
-  min-height: 0;
-  width: min(100%, 1120px);
-  margin-top: 2rem;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: minmax(0, 1fr);
-  gap: clamp(0.4rem, 1.6vw, 1.5rem);
-  align-items: end;
-}
-.lc-door {
-  --glow: var(--lc-bone);
-  position: relative;
-  display: block;
-  height: 100%;
-  max-height: 44rem;
-  isolation: isolate;
-  border-radius: 999px 999px 0 0;
-  overflow: hidden;
-  outline-offset: 4px;
-}
-.lc-door:focus-visible { outline: 2px solid var(--lc-bone); }
-.lc-door img {
-  object-fit: cover;
-  object-position: 50% 18%;
-  filter: grayscale(0.75) contrast(1.05) brightness(0.8);
-  transition: filter 1.1s var(--lc-ease), scale 1.6s var(--lc-ease);
-}
-.lc-door .lc-door-tint {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(to top, color-mix(in oklab, var(--glow) 55%, transparent), transparent 55%);
-  mix-blend-mode: color;
-  opacity: 0.8;
-  transition: opacity 0.9s var(--lc-ease);
-}
-.lc-door .lc-door-fade {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: linear-gradient(to top, rgb(10 8 9 / 0.92) 0%, rgb(10 8 9 / 0.45) 30%, transparent 60%);
-}
-.lc-door .lc-door-ring {
-  position: absolute;
-  inset: 0.5rem 0.5rem 0;
-  z-index: 3;
-  border: 1px solid rgb(236 232 225 / 0.28);
-  border-bottom: 0;
-  border-radius: 999px 999px 0 0;
-  pointer-events: none;
-  transition: border-color 0.7s, inset 0.9s var(--lc-ease);
-}
-.lc-door-label {
-  position: absolute;
-  inset: auto 0 clamp(1rem, 3vh, 2rem);
-  z-index: 4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0 0.5rem;
-  text-align: center;
-}
-.lc-door-label svg { width: min(78%, 11rem); height: auto; }
-.lc-door-label small {
-  font-size: 0.66rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--lc-bone-2);
-}
-@media (max-width: 40rem) {
-  .lc-door-label small { display: none; }
-  .lc-door-label svg { width: 84%; }
-}
-@media (hover: hover) {
-  .lc-door:hover img { filter: grayscale(0) contrast(1.05) brightness(0.95); scale: 1.04; }
-  .lc-door:hover .lc-door-tint { opacity: 0.35; }
-  .lc-door:hover .lc-door-ring { border-color: var(--glow); inset: 0.35rem 0.35rem 0; }
-}
-
-/* Short laptops: tighten the head so the doors keep their height. */
-@media (max-height: 800px) and (min-width: 48rem) {
-  .lc-a-layout { padding-top: 4.75rem; }
-  .lc-a-h1 { font-size: clamp(2.3rem, 4.4vw, 4.2rem); margin-top: 0.5rem; }
-  .lc-a-actions { margin-top: 1rem; }
-  .lc-a-doors { margin-top: 1.25rem; }
-}
-
-/* Section 1 of A: rises over the pinned hero. */
-.lc-a-next {
-  position: relative;
-  z-index: 2;
-  margin-top: -52svh;
-  background: var(--lc-ink);
-  border-radius: 50% 50% 0 0 / 5rem 5rem 0 0;
-  box-shadow: 0 -2.5rem 6rem rgb(0 0 0 / 0.7), 0 -1px 0 rgb(236 232 225 / 0.18);
-  padding: clamp(5rem, 11vw, 9rem) 1.25rem clamp(5rem, 9vw, 8rem);
-}
-.lc-a-next::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgb(200 16 46 / 0.12), transparent 70%);
-  pointer-events: none;
-}
-.lc-a-inner { position: relative; max-width: 72rem; margin: 0 auto; }
-.lc-a-h2 {
-  margin-top: 1.25rem;
-  font-size: clamp(2.4rem, 5vw, 4.6rem);
-  line-height: 0.98;
-  text-wrap: balance;
-  max-width: 16ch;
-}
-.lc-a-lede { margin-top: 1.25rem; max-width: 52ch; color: var(--lc-bone-2); line-height: 1.7; text-wrap: pretty; }
-.lc-a-cols {
-  margin-top: clamp(2.5rem, 6vw, 5rem);
-  display: grid;
-  gap: 0;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 48rem) {
-  .lc-a-cols { grid-template-columns: repeat(3, 1fr); }
-}
-.lc-a-col {
-  --glow: var(--lc-bone);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 2rem 0 2.25rem;
-  border-top: 1px solid var(--lc-line);
-  isolation: isolate;
-}
-@media (min-width: 48rem) {
-  .lc-a-col { padding: 2.25rem 2rem 2.5rem; border-left: 1px solid var(--lc-line); }
-  .lc-a-col:first-child { padding-left: 0; border-left: 0; }
-}
-.lc-a-col::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: -1px;
-  height: 2px;
-  width: 3.5rem;
-  background: var(--glow);
-  transition: width 0.9s var(--lc-ease);
-}
-@media (min-width: 48rem) {
-  .lc-a-col:not(:first-child)::before { left: 2rem; }
-}
-.lc-a-col .lc-num { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--lc-bone-3); }
-.lc-a-col h3 { margin-top: 1.25rem; font-size: clamp(1.8rem, 2.3vw, 2.2rem); line-height: 1.02; text-wrap: balance; }
-.lc-a-col p { margin-top: 0.9rem; color: var(--lc-bone-2); line-height: 1.65; max-width: 30ch; }
-.lc-a-col .lc-modes { margin-top: 1.25rem; font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--lc-bone-3); }
-.lc-a-col .lc-enter {
-  margin-top: auto;
-  padding-top: 1.75rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.875rem;
-  color: var(--lc-bone);
-}
-.lc-a-col .lc-enter span { transition: translate 0.5s var(--lc-ease), color 0.3s; }
-.lc-a-col:focus-visible { outline: 2px solid var(--lc-bone); outline-offset: 4px; }
-@media (hover: hover) {
-  .lc-a-col:hover::before { width: 8rem; }
-  .lc-a-col:hover .lc-enter span { translate: 0.25rem -0.25rem; color: var(--glow); }
-}
-
-/* ------------------------------------------------------------------ */
-/* Direction B: The cover (hero in b/page.tsx, Tailwind + the global   */
+/* The cover (CoverPicker.tsx, Tailwind + the global                  */
 /* ankh-wake / portrait-recede / cover-fade scroll animations, as on    */
 /* /vampire)                                                            */
 /* ------------------------------------------------------------------ */
 
-/* Hunter's spines: the creed names, in the stencilled type of its sheets. */
-.lc-spine-text {
-  font-family: var(--font-special-elite), 'Courier Prime', monospace;
-  font-size: 0.8rem;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  text-shadow: 0 0 0.6rem #000;
-}
-
-/* B's character picker (CoverPicker.tsx). --pick-dir is the way the logo row
+/* The character picker (CoverPicker.tsx). --pick-dir is the way the logo row
    turns (-1, leftwards, when the right logo was chosen). The logos, the
    characters, their marks, the backdrop and the spines run on one clock
    (--pick-dur, --pick-ease), in depth: the logos travel furthest (one gap),
@@ -483,7 +223,7 @@ html[data-lc-cover] .lc [data-site-cta] {
 }
 
 /* ------------------------------------------------------------------ */
-/* B's hand-over: the cover (CoverPicker.tsx) holds its stage for one  */
+/* The hand-over: the cover (CoverPicker.tsx) holds its stage for one  */
 /* screen of scrolling (h-[200svh], a sticky h-svh stage) while the     */
 /* next section (GamesSection.tsx, -mt-[100svh]) takes over; the hero   */
 /* is fully covered before the page scrolls on. Everything is scrubbed  */
@@ -511,7 +251,7 @@ html[data-lc-cover] .lc [data-site-cta] {
 
 /* The cover text leaves first, before it can sit over a body; the weather
    thins out as the next section arrives. */
-@keyframes lc-ho-logos-out { to { opacity: 0; translate: 0 -1.5rem; filter: blur(6px); } }
+
 @keyframes lc-ho-foot-out { to { opacity: 0; translate: 0 1.5rem; filter: blur(6px); } }
 @keyframes lc-ho-fx-out { to { opacity: 0; } }
 
@@ -524,7 +264,6 @@ html[data-lc-cover] .lc [data-site-cta] {
 
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: scroll()) {
-    .lc-ho-logos { animation: lc-ho-logos-out 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 18svh; }
     .lc-ho-foot { animation: lc-ho-foot-out 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 14svh; }
     .lc-ho-fx { animation: lc-ho-fx-out 1s linear both; animation-timeline: scroll(root); animation-range: 0 70svh; }
 
@@ -537,7 +276,7 @@ html[data-lc-cover] .lc [data-site-cta] {
   }
 }
 
-/* The three game cards in B's first section. */
+/* The three game cards in the first section. */
 .lc-b-cards {
   margin-top: clamp(2.5rem, 6vw, 4.5rem);
   display: grid;
@@ -587,93 +326,16 @@ html[data-lc-cover] .lc [data-site-cta] {
 .lc-footer p a { text-decoration: underline; text-underline-offset: 3px; }
 .lc-footer a:hover { color: var(--lc-bone); }
 
-/* Direction switcher (concept review only) */
-.lc-switch {
-  position: fixed;
-  z-index: 70;
-  right: 0.75rem;
-  bottom: 0.75rem;
-  display: flex;
-  gap: 2px;
-  padding: 3px;
-  border-radius: 999px;
-  background: rgb(10 8 9 / 0.8);
-  border: 1px solid var(--lc-line);
-  backdrop-filter: blur(10px);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-}
-.lc-switch a { padding: 0.35rem 0.8rem; border-radius: 999px; color: var(--lc-bone-2); }
-.lc-switch a[aria-current='page'] { background: var(--lc-bone); color: var(--lc-ink); }
-
 /* ------------------------------------------------------------------ */
 /* Motion                                                              */
 /* ------------------------------------------------------------------ */
 
-@keyframes lc-rise {
-  from { opacity: 0; translate: 0 1.5rem; }
-}
-@keyframes lc-door-in {
-  from { opacity: 0; translate: 0 4rem; }
-}
-@keyframes lc-settle {
-  from { scale: 1.12; opacity: 0; }
-}
-@keyframes lc-reveal-up {
-  from { opacity: 0; translate: 0 2rem; }
-}
-
-/* Scroll keyframes (hero stage: scroll 0 to 100svh) */
-@keyframes lc-a-bg {
-  to { scale: 1.22; filter: brightness(0.55); }
-}
-@keyframes lc-a-head {
-  to { opacity: 0; translate: 0 -7svh; filter: blur(6px); }
-}
-@keyframes lc-a-door-1 { to { translate: 0 -9svh; } }
-@keyframes lc-a-door-2 { to { translate: 0 -15svh; } }
-@keyframes lc-a-door-3 { to { translate: 0 -6svh; } }
-
-@media (prefers-reduced-motion: no-preference) {
-  /* Opening sequence: the scene settles, the head rises, the doors follow. */
-  .lc-a-bg { animation: lc-settle 2.4s var(--lc-ease) both; }
-  .lc-in-1 { animation: lc-rise 1.4s var(--lc-ease) 0.25s both; }
-  .lc-in-2 { animation: lc-rise 1.4s var(--lc-ease) 0.4s both; }
-  .lc-in-3 { animation: lc-rise 1.4s var(--lc-ease) 0.55s both; }
-  .lc-in-4 { animation: lc-rise 1.4s var(--lc-ease) 0.7s both; }
-  .lc-door-wrap:nth-child(1) { animation: lc-door-in 1.8s var(--lc-ease) 0.5s both; }
-  .lc-door-wrap:nth-child(2) { animation: lc-door-in 1.8s var(--lc-ease) 0.65s both; }
-  .lc-door-wrap:nth-child(3) { animation: lc-door-in 1.8s var(--lc-ease) 0.8s both; }
-
-  @supports (animation-timeline: scroll()) {
-    .lc-a-bg-s { animation: lc-a-bg linear both; animation-timeline: scroll(root); animation-range: 0 110svh; }
-    .lc-a-head { animation: lc-a-head linear both; animation-timeline: scroll(root); animation-range: 0 55svh; }
-    .lc-door-wrap:nth-child(1) .lc-door { animation: lc-a-door-1 linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    .lc-door-wrap:nth-child(2) .lc-door { animation: lc-a-door-2 linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    .lc-door-wrap:nth-child(3) .lc-door { animation: lc-a-door-3 linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-
-
-    .lc-reveal { animation: lc-reveal-up linear both; animation-timeline: view(); animation-range: entry 5% entry 65%; }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lc-a-next { margin-top: 0; }
-}
-
-.lc-door-wrap { height: 100%; max-height: 44rem; min-height: 0; align-self: end; }
-.lc-door-wrap .lc-door { max-height: none; }
-
 @media (max-width: 40rem) {
   .lc-btn { min-height: 2.9rem; padding: 0 1.15rem; font-size: 0.82rem; }
-  .lc-a-actions { flex-wrap: nowrap; }
-  .lc-a-layout { padding-top: 5rem; }
-  .lc-a-doors { margin-top: 1.5rem; }
-  .lc-switch { bottom: auto; top: 5.25rem; right: 1rem; opacity: 0.9; }
 }
 
 /* ------------------------------------------------------------------ */
-/* B's screens (b/Screens.tsx, b/GamesSection.tsx): every section one    */
+/* The screens (Screens.tsx, GamesSection.tsx): every section one    */
 /* screen tall, its content 16px under the navbar, the page gliding     */
 /* from screen to screen; the chosen cover carried down in colour       */
 /* (--lc-scene-glow, --lc-scene-tint), type (.lc-scene-type), weather   */
@@ -759,7 +421,6 @@ html[data-lc-game='vampire'] [data-game='vampire'],
 html[data-lc-game='werewolf'] [data-game='werewolf'],
 html[data-lc-game='hunter'] [data-game='hunter'] { --here: 1; }
 
-
 /* Games: the three cards fill what's left of the screen; the chosen game lit. */
 .lc-screen .lc-b-cards { flex: 1; min-height: 15rem; margin-top: clamp(1.25rem, 4svh, 3rem); }
 @media (min-width: 40rem) {
@@ -770,7 +431,7 @@ html[data-lc-game='hunter'] [data-game='hunter'] { --here: 1; }
   box-shadow: 0 0 calc(var(--here, 0) * 3rem) calc(var(--here, 0) * -0.6rem) var(--lc-scene-glow, #c81e2b);
 }
 .lc-screen .lc-b-card img { object-position: 50% 18%; filter: grayscale(calc(0.6 - var(--here, 0) * 0.6)) brightness(calc(0.8 + var(--here, 0) * 0.1)); }
-/* B's cards: the game's scene, dim and soft, with its character cut out in front, standing on the card's foot. */
+/* The cards: the game's scene, dim and soft, with its character cut out in front, standing on the card's foot. */
 .lc-screen .lc-b-card .lc-b-card-scene { filter: grayscale(calc(0.8 - var(--here, 0) * 0.5)) brightness(calc(0.3 + var(--here, 0) * 0.15)) blur(2px); scale: 1.08; }
 .lc-screen .lc-b-card .lc-b-card-face {
   position: absolute;
@@ -789,11 +450,11 @@ html[data-lc-game='hunter'] [data-game='hunter'] { --here: 1; }
   .lc-screen .lc-b-card:hover .lc-b-card-scene { filter: brightness(0.5) blur(2px); }
 }
 
-/* One vault: the row of characters (Strip.tsx), faded at whichever edge has more. */
-.lc-bx-strip { --fade: 3rem; }
-.lc-bx-strip[data-more='on'] { mask-image: linear-gradient(90deg, #000 calc(100% - var(--fade)), transparent); }
-.lc-bx-strip[data-more='back'] { mask-image: linear-gradient(90deg, transparent, #000 var(--fade)); }
-.lc-bx-strip[data-more='back on'] { mask-image: linear-gradient(90deg, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent); }
+/* One vault: the row of characters (Strip.tsx), dimmed a little at whichever edge has more. */
+.lc-bx-strip { --fade: 1.5rem; --edge: rgb(0 0 0 / 0.45); }
+.lc-bx-strip[data-more='on'] { mask-image: linear-gradient(90deg, #000 calc(100% - var(--fade)), var(--edge)); }
+.lc-bx-strip[data-more='back'] { mask-image: linear-gradient(90deg, var(--edge), #000 var(--fade)); }
+.lc-bx-strip[data-more='back on'] { mask-image: linear-gradient(90deg, var(--edge), #000 var(--fade), #000 calc(100% - var(--fade)), var(--edge)); }
 .lc-bx-face { flex: none; height: var(--face-h, 24rem); width: calc(var(--face-h, 24rem) * 0.75); }
 .lc-bx-face > span { box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--lc-scene-glow, #c81e2b) calc(var(--here, 0) * 70%), rgb(236 232 225 / 0.1)); }
 /* Each character a cut-out standing in their game's scene. */
@@ -844,7 +505,6 @@ html[data-lc-game='hunter'] [data-game='hunter'] { --here: 1; }
   .lc-bx-room:hover .lc-bx-room-art { filter: none; scale: 1.06; }
 }
 
-
 /* Dice: three tables, the chosen game's lit. */
 .lc-bx-dice {
   border-radius: 1rem;
@@ -877,7 +537,7 @@ html[data-lc-game='hunter'] [data-game='hunter'] { --here: 1; }
 }
 .lc-bx .lc-footer { z-index: auto; background: transparent; padding: clamp(1.25rem, 3.5svh, 2.5rem) 0 0; border-top-color: rgb(236 232 225 / 0.1); }
 
-/* Entrances: once, when a screen comes into view (b/ScreenWatch.tsx), each
+/* Entrances: once, when a screen comes into view (ScreenWatch.tsx), each
    piece after the last (--i). Text rises out of a blur; headings come up
    from behind their baseline; rules draw in the scene's colour; cards and
    rooms open from the bottom with their pictures settling; the dice tumble
@@ -908,7 +568,6 @@ html[data-lc-game='hunter'] [data-game='hunter'] { --here: 1; }
   .lc-in-die { --d: calc(var(--i, 0) * 110ms + 380ms); }
 
   html[data-lc-armed] .lc-screen:not([data-in]) .lc-bx-return img { translate: 0 12svh; filter: brightness(0.15) blur(4px); }
-
 
   @supports (animation-timeline: view()) {
     .lc-bx-drift { scale: 1.14; animation: lc-bx-drift linear both; animation-timeline: view(); animation-range: cover; }

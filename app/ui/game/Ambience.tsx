@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import type { Game } from '@/app/lib/games';
+import { BlownLeaves, Fireflies, Searchlights, Steam, VeiledMoon } from './SceneBits';
 
 /*
   Backdrop art plus one looping animated element per game and mode.
@@ -44,10 +45,11 @@ function Particles({ count, className, anim, spread = 100 }: { count: number; cl
 function Vampire() {
   return (
     <div className={`${fixed} ambience overflow-hidden`}>
-      {/* Masquerade: the city at night from above, as on the landing cover */}
+      {/* Masquerade: the city at night from above, as on the landing cover, searchlights sweeping its cloud */}
       <div className='absolute inset-0 hidden dark:block'>
         <Backdrop src='/art/city-night.webp' className='object-[center_70%] opacity-45 saturate-[.7]' />
         <div className='absolute inset-0 bg-[linear-gradient(to_bottom,rgb(10_8_9/0.3),var(--ink)_88%)]' />
+        <Searchlights className='opacity-80' />
       </div>
       {/* Neon Nights: an alley under rose neon that stutters now and then */}
       <div className='absolute inset-0 dark:hidden'>
@@ -72,16 +74,13 @@ function Vampire() {
 function Werewolf() {
   return (
     <div className={`${fixed} ambience overflow-hidden`}>
-      {/* Moonlit forest */}
+      {/* Moonlit forest: the moon behind passing cloud, fireflies, leaves on the wind */}
       <div className='absolute inset-0 hidden dark:block'>
         <Backdrop src='/art/ww-forest.webp' className='opacity-30 grayscale' />
         <div className='absolute inset-0 bg-[linear-gradient(to_bottom,rgb(20_45_40/0.55),var(--ink)_85%)]' />
-        <div
-          className='absolute top-10 right-[12%] size-28 rounded-full bg-[radial-gradient(circle_at_40%_40%,#fbf8ec,#d9dccb_60%,#a9b0a0)] shadow-[0_0_4rem_1rem_rgb(230_235_215/0.35),0_0_10rem_4rem_rgb(160_190_170/0.15)] md:size-36'
-          style={{ animation: 'moon-glow 9s ease-in-out infinite' }}
-        />
-        <div className='absolute top-8 right-0 h-24 w-2/3 rounded-[50%] bg-[#0a110e]/70 blur-2xl' style={{ animation: 'drift-x 30s ease-in-out infinite alternate' }} />
-        <Particles count={14} anim='float-up' className='size-1.5 bg-[#e8f5a8] shadow-[0_0_0.6rem_0.15rem_#d8f07a]' />
+        <VeiledMoon className='top-12 right-[14%] size-24 md:size-32' />
+        <Fireflies count={14} />
+        <BlownLeaves count={10} />
       </div>
       {/* The cave */}
       <div className='absolute inset-0 dark:hidden'>
@@ -192,6 +191,7 @@ function Hunter() {
             />
           ))}
         </div>
+        <Steam count={7} opacity={0.15} />
         {/* Fog banks rolling in off the water */}
         <div className='absolute inset-x-[-20%] top-[30%] h-[40%] rounded-[50%] bg-[#9aa6b4]/10 blur-3xl' style={{ animation: 'haze-drift 34s ease-in-out infinite' }} />
         <div className='absolute inset-x-[-10%] bottom-[-10%] h-[35%] rounded-[50%] bg-[#8995a3]/12 blur-3xl' style={{ animation: 'haze-drift 26s ease-in-out -9s infinite reverse' }} />
