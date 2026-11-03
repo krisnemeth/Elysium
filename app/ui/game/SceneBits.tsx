@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 
 /*
   Moving pieces shared by the app's scenes (Ambience.tsx) and the landing
-  cover's backdrops (app/concept/landing/CoverPicker.tsx): the moon behind
+  cover's backdrops (app/ui/landing/CoverPicker.tsx): the moon behind
   passing cloud, fireflies, searchlights over the city, steam off the
   street, leaves blown across. CSS only; the keyframes are in app/games.css
   and stop under reduced motion (.ambience, and the landing's own rule).

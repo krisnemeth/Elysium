@@ -1,5 +1,5 @@
 /*
-  The landing redesign (/concept/landing).
+  The landing (/, app/(landing)/).
   Self-contained: fixed colours (these pages are dark only), its own fonts
   (--lc-display, --lc-sans from layout.tsx) and scroll choreography written
   with CSS scroll-driven animations. Everything that moves sits inside
