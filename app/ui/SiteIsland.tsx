@@ -153,6 +153,7 @@ export default function SiteIsland({
             <Link
               href={ctaHref}
               onClick={closeAll}
+              data-site-cta
               className={`group inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_0_1.5rem_-0.5rem_var(--accent)] transition duration-300 hover:brightness-110 active:scale-[0.98] ${focus}`}
             >
               {signedIn ? 'Your vault' : 'Sign up'}

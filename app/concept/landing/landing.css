@@ -89,6 +89,29 @@
   .lc-btn-ghost:hover { border-color: rgb(236 232 225 / 0.75); background: rgb(236 232 225 / 0.07); }
 }
 
+/* B's calls to action: ghost buttons lit by the chosen scene
+   (--lc-scene-glow, set on <html> by CoverPicker.tsx), and the navbar's
+   while the cover is showing (data-lc-cover; SiteIsland marks its button
+   data-site-cta), so all three match. */
+.lc-btn-glow,
+html[data-lc-cover] .lc [data-site-cta] {
+  border: 1px solid color-mix(in oklab, var(--lc-scene-glow) 55%, transparent);
+  color: var(--lc-bone);
+  background: rgb(10 8 9 / 0.35);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 1.75rem -0.4rem var(--lc-scene-glow), inset 0 0 1.25rem -0.75rem var(--lc-scene-glow);
+  transition: transform 0.4s var(--lc-ease), background-color 0.3s, border-color 0.9s, box-shadow 0.9s;
+}
+@media (hover: hover) {
+  .lc-btn-glow:hover,
+  html[data-lc-cover] .lc [data-site-cta]:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--lc-scene-glow) 85%, transparent);
+    background: color-mix(in oklab, var(--lc-scene-glow) 10%, rgb(10 8 9 / 0.35));
+    box-shadow: 0 0 2.5rem -0.3rem var(--lc-scene-glow), inset 0 0 1.25rem -0.5rem var(--lc-scene-glow);
+  }
+}
+
 /* Film grain over the whole stage, cheap: one tiled SVG noise. */
 .lc-grain::after {
   content: '';
@@ -337,32 +360,171 @@
 
 /* ------------------------------------------------------------------ */
 /* Direction B: The cover (hero in b/page.tsx, Tailwind + the global   */
-/* ankh-wake / portrait-recede / cover-fade scroll animations)          */
+/* ankh-wake / portrait-recede / cover-fade scroll animations, as on    */
+/* /vampire)                                                            */
 /* ------------------------------------------------------------------ */
 
-.lc-spines {
-  color: rgb(236 232 225 / 0.42);
-  font-size: 0.62rem;
-  letter-spacing: 0.38em;
+/* Hunter's spines: the creed names, in the stencilled type of its sheets. */
+.lc-spine-text {
+  font-family: var(--font-special-elite), 'Courier Prime', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
+  white-space: nowrap;
   text-shadow: 0 0 0.6rem #000;
 }
 
-/* The moon rises from behind the character as the page opens, then climbs a
-   little further on scroll. */
-@keyframes lc-moon-in {
-  from { translate: 0 30svh; }
+/* B's character picker (CoverPicker.tsx). --pick-dir is the way the logo row
+   turns (-1, leftwards, when the right logo was chosen). The logos, the
+   characters, their marks, the backdrop and the spines run on one clock
+   (--pick-dur, --pick-ease), in depth: the logos travel furthest (one gap),
+   the marks a little less, the characters least, sinking back and blurring as
+   they leave and stepping forward as they arrive. Without motion the swap is
+   instant: only the end states apply. */
+.lc {
+  --pick-dur: 0.9s;
+  --pick-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --pick-shift: 22%;
+  --pick-mark-shift: 40%;
+  --pick-scale-out: 0.9;
+  --pick-scale-in: 1.06;
+  --pick-blur: 6px;
 }
-@keyframes lc-mark-rise {
-  to { translate: 0 -8svh; opacity: 0.9; }
+.lc-pick-out,
+.lc-pick-off { opacity: 0; }
+.lc-pick-in,
+.lc-pick-out { --shift: var(--pick-shift); }
+.lc-pick-mark > .lc-pick-in,
+.lc-pick-mark > .lc-pick-out { --shift: var(--pick-mark-shift); }
+/* The scenes are furthest back, so they travel least. */
+.lc-pick-scene > .lc-pick-in,
+.lc-pick-scene > .lc-pick-out { --shift: 4%; }
+@keyframes lc-pick-out {
+  from { opacity: 1; transform: none; filter: none; }
+  to { opacity: 0; transform: translateX(calc(var(--pick-dir) * var(--shift))) scale(var(--pick-scale-out)); filter: blur(var(--pick-blur)); }
 }
-.lc-mark-rise { opacity: 0.5; }
+@keyframes lc-pick-in {
+  from { opacity: 0; transform: translateX(calc(var(--pick-dir) * -1 * var(--shift))) scale(var(--pick-scale-in)); filter: blur(var(--pick-blur)); }
+}
+/* The logos share the clock (their transition is set in CoverPicker.tsx). */
+.lc-pick-logo {
+  transition-property: translate, scale, opacity;
+  transition-duration: var(--pick-dur);
+  transition-timing-function: var(--pick-ease);
+}
 @media (prefers-reduced-motion: no-preference) {
-  .lc-moon-in { animation: lc-moon-in 2.6s var(--lc-ease) 0.3s both; }
+  .lc-pick-out { animation: lc-pick-out var(--pick-dur) var(--pick-ease) both; }
+  .lc-pick-in { animation: lc-pick-in var(--pick-dur) var(--pick-ease) both; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lc *[class*='transition-'],
+  .lc-pick-logo { transition: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* B's hand-over: the cover (CoverPicker.tsx) holds its stage for one  */
+/* screen of scrolling (h-[200svh], a sticky h-svh stage) while the     */
+/* next section (GamesSection.tsx, -mt-[100svh]) takes over; the hero   */
+/* is fully covered before the page scrolls on. Everything is scrubbed  */
+/* by the scroll over 0..100svh. Three hand-overs, compared in          */
+/* /concept/landing/lab; their vocabulary is the portfolio's            */
+/* (portfolio 2.0, src/lib/reveal.ts and globals.css):                  */
+/*   - power2.inOut for shapes that open (the oval reveal's 1.5 s ease) */
+/*   - power3.out for things that lift and settle (the letter roll)     */
+/*   - the "settle" curve (0.32, 0.72, 0, 1) for what leaves first      */
+/*   - a 6px blur on whatever leaves (the page-out motif)               */
+/*   - an accent bar riding the edge of a wipe                          */
+/* Without scroll-driven animations the section simply rises over the  */
+/* held hero, square-edged; under reduced motion the same, unanimated.  */
+/* ------------------------------------------------------------------ */
+.lc {
+  --e-inout: cubic-bezier(0.45, 0, 0.55, 1);
+  --e-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --e-settle: cubic-bezier(0.32, 0.72, 0, 1);
+}
+.lc-handover-rim { background: var(--accent); opacity: 0; }
+
+/* Shared: the cover text leaves first, before it can sit over a body. */
+@keyframes lc-ho-logos-out { to { opacity: 0; translate: 0 -1.5rem; filter: blur(6px); } }
+@keyframes lc-ho-foot-out { to { opacity: 0; translate: 0 1.5rem; filter: blur(6px); } }
+/* The iris and the slash hold the section still in the viewport (it would
+   otherwise rise with the scroll) while their shape opens over the hero. */
+/* The weather thins out as the next section arrives. */
+@keyframes lc-ho-fx-out { to { opacity: 0; } }
+@keyframes lc-ho-hold { from { translate: 0 -100svh; } to { translate: 0 0; } }
+
+/* 1. Moonrise: a dome rises from below and flattens as it reaches the top,
+   lit along its rim. The character sinks back into the dark, the mark
+   floats up (slower than the dome: parallax), the spines sink away. */
+@keyframes lc-mr-sheet { from { border-radius: 50% 50% 0 0 / 34svh 34svh 0 0; } to { border-radius: 0; } }
+@keyframes lc-mr-rim { from { opacity: 0.9; border-radius: 50% 50% 0 0 / 34svh 34svh 0 0; } to { opacity: 0; border-radius: 0; } }
+@keyframes lc-mr-char { to { scale: 0.86; translate: 0 8svh; filter: brightness(0.3) blur(4px); } }
+@keyframes lc-mr-mark { to { translate: 0 -20svh; opacity: 0; } }
+@keyframes lc-mr-back { to { filter: brightness(0.35); } }
+@keyframes lc-mr-spines { to { translate: 0 10svh; opacity: 0; } }
+
+/* 2. Iris: the portfolio's oval reveal at full size. A flat ellipse at the
+   foot of the screen opens until it fills it, an accent ring just ahead of
+   its edge. The character pushes towards the camera and burns down, the
+   mark turns and swells behind them, the spines spread outwards. */
+@keyframes lc-ir-sheet {
+  from { clip-path: ellipse(24% 0% at 50% 100svh); }
+  to { clip-path: ellipse(150% 170svh at 50% 100svh); }
+}
+@keyframes lc-ir-rim {
+  from { clip-path: ellipse(25% 1.5svh at 50% 100svh); opacity: 1; }
+  to { clip-path: ellipse(152% 172svh at 50% 100svh); opacity: 0.4; }
+}
+@keyframes lc-ir-char { to { scale: 1.14; filter: brightness(0.25) saturate(0.6); } }
+@keyframes lc-ir-mark { to { rotate: -14deg; scale: 1.3; opacity: 0.3; } }
+@keyframes lc-ir-back { to { filter: brightness(0.3); scale: 1.08; } }
+@keyframes lc-ir-spines { to { scale: 1.12 1; opacity: 0; } }
+
+/* 3. Slash: a blade cuts up from the bottom right corner to the top left,
+   steep, an accent edge riding it (the portfolio's wipe bar). The
+   character is pushed left and blurs out, the mark slides the other way,
+   the backdrop drains. */
+@keyframes lc-sl-sheet {
+  from { clip-path: polygon(0 150svh, 100% 100svh, 100% 100%, 0 100%); }
+  to { clip-path: polygon(0 0, 100% -50svh, 100% 100%, 0 100%); }
+}
+@keyframes lc-sl-rim {
+  from { clip-path: polygon(0 calc(150svh - 3px), 100% calc(100svh - 3px), 100% 100%, 0 100%); }
+  to { clip-path: polygon(0 -3px, 100% calc(-50svh - 3px), 100% 100%, 0 100%); }
+}
+@keyframes lc-sl-char { to { translate: -14vw 2svh; rotate: -3deg; filter: brightness(0.35) blur(6px); } }
+@keyframes lc-sl-mark { to { translate: 18vw -6svh; rotate: 8deg; opacity: 0; } }
+@keyframes lc-sl-back { to { filter: brightness(0.3) saturate(0.4); } }
+@keyframes lc-sl-spines { to { opacity: 0; } }
+
+@media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: scroll()) {
-    .lc-mark-rise { animation: lc-mark-rise linear both; animation-timeline: scroll(root); animation-range: 0 70svh; }
-    /* The cover text is gone before it reaches the moon. */
-    .lc .cover-fade { animation-range: 0 26svh; }
+    .lc-ho-logos { animation: lc-ho-logos-out 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 18svh; }
+    .lc-ho-foot { animation: lc-ho-foot-out 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 14svh; }
+    .lc-ho-fx { animation: lc-ho-fx-out 1s linear both; animation-timeline: scroll(root); animation-range: 0 70svh; }
+
+    [data-handover='moonrise'] .lc-ho-char { animation: lc-mr-char 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    [data-handover='moonrise'] .lc-ho-mark { animation: lc-mr-mark 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 60svh; }
+    [data-handover='moonrise'] .lc-ho-back { animation: lc-mr-back 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    [data-handover='moonrise'] .lc-ho-spines { animation: lc-mr-spines 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 50svh; }
+    .lc-handover[data-handover='moonrise'] .lc-handover-sheet { animation: lc-mr-sheet 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-handover[data-handover='moonrise'] .lc-handover-rim { inset: -1px 0 auto; height: 100%; animation: lc-mr-rim 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+
+    [data-handover='iris'] .lc-ho-char { animation: lc-ir-char 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    [data-handover='iris'] .lc-ho-mark { animation: lc-ir-mark 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    [data-handover='iris'] .lc-ho-back { animation: lc-ir-back 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    [data-handover='iris'] .lc-ho-spines { animation: lc-ir-spines 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 40svh; }
+    .lc-handover[data-handover='iris'] { animation: lc-ho-hold 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-handover[data-handover='iris'] .lc-handover-sheet { animation: lc-ir-sheet 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-handover[data-handover='iris'] .lc-handover-rim { animation: lc-ir-rim 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+
+    [data-handover='slash'] .lc-ho-char { animation: lc-sl-char 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 5svh 95svh; }
+    [data-handover='slash'] .lc-ho-mark { animation: lc-sl-mark 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 80svh; }
+    [data-handover='slash'] .lc-ho-back { animation: lc-sl-back 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    [data-handover='slash'] .lc-ho-spines { animation: lc-sl-spines 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 30svh; }
+    .lc-handover[data-handover='slash'] { animation: lc-ho-hold 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-handover[data-handover='slash'] .lc-handover-sheet { animation: lc-sl-sheet 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-handover[data-handover='slash'] .lc-handover-rim { opacity: 1; animation: lc-sl-rim 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
   }
 }
 
@@ -434,7 +596,6 @@
 }
 .lc-switch a { padding: 0.35rem 0.8rem; border-radius: 999px; color: var(--lc-bone-2); }
 .lc-switch a[aria-current='page'] { background: var(--lc-bone); color: var(--lc-ink); }
-.lc-switch-cover { bottom: 3.4rem; }
 
 /* ------------------------------------------------------------------ */
 /* Motion                                                              */
@@ -500,5 +661,4 @@
   .lc-a-layout { padding-top: 5rem; }
   .lc-a-doors { margin-top: 1.5rem; }
   .lc-switch { bottom: auto; top: 5.25rem; right: 1rem; opacity: 0.9; }
-  .lc-switch-cover { top: 7.75rem; }
 }
