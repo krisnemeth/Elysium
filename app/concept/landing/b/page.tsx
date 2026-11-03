@@ -1,8 +1,8 @@
 import Navbar from '@/app/ui/navbar';
-import Footer from '../Footer';
-import Sections, { SECTIONS } from '../Sections';
+
 import CoverPicker from './CoverPicker';
 import GamesSection from './GamesSection';
+import Screens, { SECTIONS } from './Screens';
 import { COVERS, coverIndex } from './covers';
 
 /*
@@ -12,8 +12,8 @@ import { COVERS, coverIndex } from './covers';
   one cut-out character per theme (two per game), the game's mark behind their head (the
   clan symbol, the Glass Walkers glyph or claw marks, the flame), its spines down the sides and its theme's
   colours, chosen from the game logos under the navbar. The first section
-  slides up over the character from the front; the shared sections
-  (Sections.tsx) follow. `?cover=<theme id or game>` opens on that cover.
+  slides up over the character from the front; B's own sections
+  (Screens.tsx) follow, one screen each, in the chosen cover's colours. `?cover=<theme id or game>` opens on that cover.
 */
 
 export default async function LandingB({ searchParams }: PageProps<'/concept/landing/b'>) {
@@ -24,12 +24,11 @@ export default async function LandingB({ searchParams }: PageProps<'/concept/lan
     <>
       <Navbar sections={SECTIONS} />
       <main id='main'>
-        <CoverPicker initial={initial} handover='moonrise' />
+        <CoverPicker initial={initial} />
 
-        <GamesSection glow={COVERS[initial].glow} handover='moonrise' />
-        <Sections />
+        <GamesSection glow={COVERS[initial].glow} />
+        <Screens initial={initial} />
       </main>
-      <Footer />
     </>
   );
 }

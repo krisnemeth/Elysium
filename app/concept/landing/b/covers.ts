@@ -6,8 +6,9 @@ import type { Game } from '@/app/lib/games';
 */
 
 export type Cover = {
-  // The theme it stands for (?cover=<id>).
+  // The theme it stands for (?cover=<id>), and its name in the app.
   id: string;
+  name: string;
   game: Game;
   src: string;
   width: number;
@@ -16,8 +17,8 @@ export type Cover = {
   mark: MarkKey;
   // The backdrop's colour round the art (the theme's tokens in app/games.css
   // and globals.css), and the light of its scene: the glow on the call to
-  // action and on the next section's rim (the forest's moonlight, the cave's
-  // fire, the hideout's lamp).
+  // action and on the next section's rim (Neon Nights' rose neon, the
+  // forest's and the cave's moonlit green, the hideout's lamp).
   tint: string;
   glow: string;
   // The centre of the character's head, as fractions of --cover: below the
@@ -55,11 +56,11 @@ export const ART_RATIO = 1.78;
   A ring, in picker order: each game's dark theme, then each game's second
   scene, so the three logos on show are always three different games. All are
   cut-outs (transparent backgrounds), so the mark shows round each head.
-  Hunter's second scene keeps the hideout's amber until its city theme lands.
 */
 export const COVERS: Cover[] = [
   {
     id: 'masquerade',
+    name: 'Masquerade',
     game: 'vampire',
     src: '/art/cover-ventrue.webp',
     width: 948,
@@ -75,6 +76,7 @@ export const COVERS: Cover[] = [
   },
   {
     id: 'forest',
+    name: 'Moonlit forest',
     game: 'werewolf',
     src: '/art/cover-garou-2.webp',
     width: 941,
@@ -91,6 +93,7 @@ export const COVERS: Cover[] = [
   },
   {
     id: 'hideout',
+    name: 'The hideout',
     game: 'hunter',
     src: '/art/cover-hunter.webp',
     width: 941,
@@ -106,45 +109,50 @@ export const COVERS: Cover[] = [
   },
   {
     id: 'neon',
+    name: 'Neon Nights',
     game: 'vampire',
     // Cropped mid-thigh up from cover-neon.webp, to stand as close as the others.
-    src: '/art/cover-neon-close.webp',
-    width: 646,
-    height: 1150,
+    src: '/art/cover-neon-mid.webp',
+    width: 702,
+    height: 1250,
     alt: 'A violet-haired vampire in a long black coat and thigh boots, fingertips pressed to her temples.',
     mark: 'malkavian',
     tint: '#4c1d95',
-    glow: '#9b6cf0',
-    head: 0.285,
+    // The rose of the theme's flickering neon (--accent, globals.css).
+    glow: '#e11d48',
+    head: 0.262,
     headX: 0,
     scene: { src: '/locations/location-1.webp', position: 'center 38%' },
     fx: { smoke: { color: '#07040d', rim: '#3a1c66', opacity: 0.72 } },
   },
   {
     id: 'cave',
+    name: 'The cave',
     game: 'werewolf',
     src: '/art/cover-garou.webp',
     width: 941,
     height: 1672,
     alt: 'A bearded Garou in a worn leather jacket and harness, hands in his pockets.',
     mark: 'claw',
-    tint: '#7a4a22',
-    glow: '#ef8a3c',
+    tint: '#2c5a3f',
+    glow: '#7fb894',
     head: 0.26,
     headX: -0.05,
     scene: { src: '/art/ww-cave.webp', position: 'center 40%' },
-    fx: { fog: { color: '#b8946a', opacity: 0.12 } },
+    fx: { fog: { color: '#a8bdb0', opacity: 0.12 } },
   },
   {
     id: 'hunter-2',
+    name: 'The city',
     game: 'hunter',
     src: '/art/cover-hunter-2.webp',
     width: 1003,
     height: 1568,
     alt: 'A scarred hunter with a shaved head and a black scarf, arms folded over a tactical vest.',
     mark: 'flame',
-    tint: '#9a4a12',
-    glow: '#f08a24',
+    tint: '#1d2b3c',
+    // The city's sodium streetlamps (--accent, app/games.css).
+    glow: '#f2b23a',
     head: 0.3,
     headX: 0,
     scene: { src: '/locations/location-3.webp', position: 'center 55%' },
@@ -167,7 +175,7 @@ export const COVERS: Cover[] = [
 */
 export const MARKS = {
   ventrue: { width: 0.95, focus: 0.4 },
-  malkavian: { width: 0.7, focus: 0.34 },
+  malkavian: { width: 0.74, focus: 0.34 },
   glassWalkers: { width: 0.9, focus: 0.42, src: '/werewolf/glass-walkers-mark.png', ratio: '447/800' },
   claw: { width: 0.62, focus: 0.33, src: '/dice/glyphs/wta-claw.svg', ratio: '496/524' },
   flame: { width: 0.56, focus: 0.34, src: '/dice/glyphs/htr-flame.svg', ratio: '404/528' },
@@ -181,7 +189,16 @@ export function coverIndex(wanted: string | undefined) {
   return i < 0 ? 0 : i;
 }
 
-// How the next section takes over from the cover on scroll (landing.css),
-// compared in /concept/landing/lab.
-export const HANDOVERS = ['moonrise', 'iris', 'slash'] as const;
-export type Handover = (typeof HANDOVERS)[number];
+/*
+  Where the game logos sit: top / foot, the logo row under the navbar or
+  above the buttons; -arrows adds thin chevrons at the rail's ends. B uses
+  foot-arrows. The picker lab (/concept/landing/lab) still compares where
+  the tagline lives and how strong the peek is.
+*/
+export const PICKER_PLACES = ['top', 'top-arrows', 'foot', 'foot-arrows'] as const;
+export type PickerPlace = (typeof PICKER_PLACES)[number];
+export const TAGLINE_PLACES = ['foot', 'top', 'side', 'none'] as const;
+export type TaglinePlace = (typeof TAGLINE_PLACES)[number];
+// The peek: the one lean ('soft'), or twice with a light along the rail ('strong').
+export const PEEK_STYLES = ['strong', 'soft'] as const;
+export type PeekStyle = (typeof PEEK_STYLES)[number];

@@ -36,19 +36,23 @@
   --radius-2xl: 1rem;
 }
 .lc ::selection {
-  background: var(--lc-vampire);
+  background: var(--lc-scene-glow, var(--lc-vampire));
   color: #fff;
 }
-.lc-display {
-  font-family: var(--lc-display), Georgia, serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+@layer components {
+  .lc-display {
+    font-family: var(--lc-display), Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
 }
-.lc-eyebrow {
-  font-size: 0.72rem;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--lc-bone-3);
+@layer components {
+  .lc-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--lc-bone-3);
+  }
 }
 .lc-glow-v { --glow: var(--lc-vampire); }
 .lc-glow-w { --glow: var(--lc-werewolf); }
@@ -88,6 +92,63 @@
   .lc-btn-solid:hover { transform: translateY(-2px); box-shadow: 0 0 2.5rem -0.5rem var(--lc-vampire); }
   .lc-btn-ghost:hover { border-color: rgb(236 232 225 / 0.75); background: rgb(236 232 225 / 0.07); }
 }
+
+/* B's picker hints. Hovering a side of the stage, or the peek, brightens
+   the logo on that side; the peek leans the character (and, further, its
+   mark) towards the next one and back. */
+.lc-cover-stage:has(.lc-half-prev:hover) .lc-picker [data-slot='-1'],
+.lc-cover-stage:has(.lc-half-next:hover) .lc-picker [data-slot='1'],
+.lc-peeking [data-slot='1'] { opacity: 0.95; }
+@keyframes lc-peek {
+  0%, 100% { transform: none; }
+  40%, 62% { transform: translateX(var(--peek, -2.5%)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lc-peek { animation: lc-peek 1.9s var(--pick-ease) both; }
+  .lc-peek-mark { --peek: -3.5%; }
+}
+/* The strong peek: the lean comes twice, settling, while a light runs along
+   the rail from this character's tick to the next one and back, and the
+   tick it left dims. */
+@keyframes lc-peek-strong {
+  0%, 100% { transform: none; }
+  26%, 44% { transform: translateX(calc(var(--peek, -2.5%) * 1.6)); }
+  60% { transform: translateX(calc(var(--peek, -2.5%) * -0.25)); }
+  74% { transform: translateX(calc(var(--peek, -2.5%) * 0.7)); }
+  88% { transform: translateX(calc(var(--peek, -2.5%) * -0.1)); }
+}
+@keyframes lc-peek-rail {
+  0% { opacity: 0; translate: -50% -50%; }
+  10% { opacity: 1; translate: -50% -50%; }
+  26%, 44% { opacity: 1; translate: calc(-50% + 1rem) -50%; }
+  60% { opacity: 1; translate: -50% -50%; }
+  74% { opacity: 1; translate: calc(-50% + 0.7rem) -50%; }
+  90% { opacity: 1; translate: -50% -50%; }
+  100% { opacity: 0; translate: -50% -50%; }
+}
+.lc-peek-rail {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  width: 0.125rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: var(--lc-scene-glow);
+  box-shadow: 0 0 0.8rem var(--lc-scene-glow), 0 0 0.25rem #fff;
+  opacity: 0;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lc-peek.lc-peek-strong { animation: lc-peek-strong 2.6s var(--pick-ease) both; }
+  .lc-peeking.lc-peek-strong .lc-peek-rail { animation: lc-peek-rail 2.6s var(--pick-ease) both; }
+}
+
+/* Sideways trackpad swipes turn the cover, not the browser's history. */
+html:has(.lc-cover-stage) { overscroll-behavior-x: none; }
+
+/* B's cover buttons take the navbar CTA's corners (rounded-lg). */
+.lc-btn-cover { border-radius: 0.5rem; }
 
 /* B's calls to action: ghost buttons lit by the chosen scene
    (--lc-scene-glow, set on <html> by CoverPicker.tsx), and the navbar's
@@ -426,16 +487,20 @@ html[data-lc-cover] .lc [data-site-cta] {
 /* screen of scrolling (h-[200svh], a sticky h-svh stage) while the     */
 /* next section (GamesSection.tsx, -mt-[100svh]) takes over; the hero   */
 /* is fully covered before the page scrolls on. Everything is scrubbed  */
-/* by the scroll over 0..100svh. Three hand-overs, compared in          */
-/* /concept/landing/lab; their vocabulary is the portfolio's            */
+/* by the scroll over 0..100svh, in the portfolio's vocabulary          */
 /* (portfolio 2.0, src/lib/reveal.ts and globals.css):                  */
-/*   - power2.inOut for shapes that open (the oval reveal's 1.5 s ease) */
+/*   - power2.inOut for what opens and pushes in                        */
 /*   - power3.out for things that lift and settle (the letter roll)     */
 /*   - the "settle" curve (0.32, 0.72, 0, 1) for what leaves first      */
 /*   - a 6px blur on whatever leaves (the page-out motif)               */
-/*   - an accent bar riding the edge of a wipe                          */
-/* Without scroll-driven animations the section simply rises over the  */
-/* held hero, square-edged; under reduced motion the same, unanimated.  */
+/* Chosen 2026-11-03 from a lab of three (moonrise, iris, slash): the   */
+/* moonrise's shape, a dome rising from below that flattens as it      */
+/* reaches the top, lit along its rim; under it, the iris's motion:     */
+/* the character pushes towards the camera and burns down, the mark     */
+/* turns and swells behind them, the backdrop darkens and closes in,    */
+/* the spines spread outwards. Without scroll-driven animations the     */
+/* section simply rises over the held hero, square-edged; under reduced */
+/* motion the same, unanimated.                                         */
 /* ------------------------------------------------------------------ */
 .lc {
   --e-inout: cubic-bezier(0.45, 0, 0.55, 1);
@@ -444,58 +509,18 @@ html[data-lc-cover] .lc [data-site-cta] {
 }
 .lc-handover-rim { background: var(--accent); opacity: 0; }
 
-/* Shared: the cover text leaves first, before it can sit over a body. */
+/* The cover text leaves first, before it can sit over a body; the weather
+   thins out as the next section arrives. */
 @keyframes lc-ho-logos-out { to { opacity: 0; translate: 0 -1.5rem; filter: blur(6px); } }
 @keyframes lc-ho-foot-out { to { opacity: 0; translate: 0 1.5rem; filter: blur(6px); } }
-/* The iris and the slash hold the section still in the viewport (it would
-   otherwise rise with the scroll) while their shape opens over the hero. */
-/* The weather thins out as the next section arrives. */
 @keyframes lc-ho-fx-out { to { opacity: 0; } }
-@keyframes lc-ho-hold { from { translate: 0 -100svh; } to { translate: 0 0; } }
 
-/* 1. Moonrise: a dome rises from below and flattens as it reaches the top,
-   lit along its rim. The character sinks back into the dark, the mark
-   floats up (slower than the dome: parallax), the spines sink away. */
-@keyframes lc-mr-sheet { from { border-radius: 50% 50% 0 0 / 34svh 34svh 0 0; } to { border-radius: 0; } }
-@keyframes lc-mr-rim { from { opacity: 0.9; border-radius: 50% 50% 0 0 / 34svh 34svh 0 0; } to { opacity: 0; border-radius: 0; } }
-@keyframes lc-mr-char { to { scale: 0.86; translate: 0 8svh; filter: brightness(0.3) blur(4px); } }
-@keyframes lc-mr-mark { to { translate: 0 -20svh; opacity: 0; } }
-@keyframes lc-mr-back { to { filter: brightness(0.35); } }
-@keyframes lc-mr-spines { to { translate: 0 10svh; opacity: 0; } }
-
-/* 2. Iris: the portfolio's oval reveal at full size. A flat ellipse at the
-   foot of the screen opens until it fills it, an accent ring just ahead of
-   its edge. The character pushes towards the camera and burns down, the
-   mark turns and swells behind them, the spines spread outwards. */
-@keyframes lc-ir-sheet {
-  from { clip-path: ellipse(24% 0% at 50% 100svh); }
-  to { clip-path: ellipse(150% 170svh at 50% 100svh); }
-}
-@keyframes lc-ir-rim {
-  from { clip-path: ellipse(25% 1.5svh at 50% 100svh); opacity: 1; }
-  to { clip-path: ellipse(152% 172svh at 50% 100svh); opacity: 0.4; }
-}
-@keyframes lc-ir-char { to { scale: 1.14; filter: brightness(0.25) saturate(0.6); } }
-@keyframes lc-ir-mark { to { rotate: -14deg; scale: 1.3; opacity: 0.3; } }
-@keyframes lc-ir-back { to { filter: brightness(0.3); scale: 1.08; } }
-@keyframes lc-ir-spines { to { scale: 1.12 1; opacity: 0; } }
-
-/* 3. Slash: a blade cuts up from the bottom right corner to the top left,
-   steep, an accent edge riding it (the portfolio's wipe bar). The
-   character is pushed left and blurs out, the mark slides the other way,
-   the backdrop drains. */
-@keyframes lc-sl-sheet {
-  from { clip-path: polygon(0 150svh, 100% 100svh, 100% 100%, 0 100%); }
-  to { clip-path: polygon(0 0, 100% -50svh, 100% 100%, 0 100%); }
-}
-@keyframes lc-sl-rim {
-  from { clip-path: polygon(0 calc(150svh - 3px), 100% calc(100svh - 3px), 100% 100%, 0 100%); }
-  to { clip-path: polygon(0 -3px, 100% calc(-50svh - 3px), 100% 100%, 0 100%); }
-}
-@keyframes lc-sl-char { to { translate: -14vw 2svh; rotate: -3deg; filter: brightness(0.35) blur(6px); } }
-@keyframes lc-sl-mark { to { translate: 18vw -6svh; rotate: 8deg; opacity: 0; } }
-@keyframes lc-sl-back { to { filter: brightness(0.3) saturate(0.4); } }
-@keyframes lc-sl-spines { to { opacity: 0; } }
+@keyframes lc-ho-sheet { from { border-radius: 50% 50% 0 0 / 34svh 34svh 0 0; } to { border-radius: 0; } }
+@keyframes lc-ho-rim { from { opacity: 0.9; border-radius: 50% 50% 0 0 / 34svh 34svh 0 0; } to { opacity: 0; border-radius: 0; } }
+@keyframes lc-ho-char { to { scale: 1.14; filter: brightness(0.25) saturate(0.6); } }
+@keyframes lc-ho-mark { to { rotate: -14deg; scale: 1.3; opacity: 0.3; } }
+@keyframes lc-ho-back { to { filter: brightness(0.3); scale: 1.08; } }
+@keyframes lc-ho-spines { to { scale: 1.12 1; opacity: 0; } }
 
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: scroll()) {
@@ -503,28 +528,12 @@ html[data-lc-cover] .lc [data-site-cta] {
     .lc-ho-foot { animation: lc-ho-foot-out 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 14svh; }
     .lc-ho-fx { animation: lc-ho-fx-out 1s linear both; animation-timeline: scroll(root); animation-range: 0 70svh; }
 
-    [data-handover='moonrise'] .lc-ho-char { animation: lc-mr-char 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    [data-handover='moonrise'] .lc-ho-mark { animation: lc-mr-mark 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 60svh; }
-    [data-handover='moonrise'] .lc-ho-back { animation: lc-mr-back 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    [data-handover='moonrise'] .lc-ho-spines { animation: lc-mr-spines 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 50svh; }
-    .lc-handover[data-handover='moonrise'] .lc-handover-sheet { animation: lc-mr-sheet 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    .lc-handover[data-handover='moonrise'] .lc-handover-rim { inset: -1px 0 auto; height: 100%; animation: lc-mr-rim 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-
-    [data-handover='iris'] .lc-ho-char { animation: lc-ir-char 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    [data-handover='iris'] .lc-ho-mark { animation: lc-ir-mark 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    [data-handover='iris'] .lc-ho-back { animation: lc-ir-back 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    [data-handover='iris'] .lc-ho-spines { animation: lc-ir-spines 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 40svh; }
-    .lc-handover[data-handover='iris'] { animation: lc-ho-hold 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    .lc-handover[data-handover='iris'] .lc-handover-sheet { animation: lc-ir-sheet 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    .lc-handover[data-handover='iris'] .lc-handover-rim { animation: lc-ir-rim 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-
-    [data-handover='slash'] .lc-ho-char { animation: lc-sl-char 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 5svh 95svh; }
-    [data-handover='slash'] .lc-ho-mark { animation: lc-sl-mark 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 80svh; }
-    [data-handover='slash'] .lc-ho-back { animation: lc-sl-back 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    [data-handover='slash'] .lc-ho-spines { animation: lc-sl-spines 1s var(--e-settle) both; animation-timeline: scroll(root); animation-range: 0 30svh; }
-    .lc-handover[data-handover='slash'] { animation: lc-ho-hold 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    .lc-handover[data-handover='slash'] .lc-handover-sheet { animation: lc-sl-sheet 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
-    .lc-handover[data-handover='slash'] .lc-handover-rim { opacity: 1; animation: lc-sl-rim 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-ho-char { animation: lc-ho-char 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-ho-mark { animation: lc-ho-mark 1s var(--e-inout) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-ho-back { animation: lc-ho-back 1s linear both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-ho-spines { animation: lc-ho-spines 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 40svh; }
+    .lc-handover-sheet { animation: lc-ho-sheet 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
+    .lc-handover-rim { inset: -1px 0 auto; height: 100%; animation: lc-ho-rim 1s var(--e-out) both; animation-timeline: scroll(root); animation-range: 0 100svh; }
   }
 }
 
@@ -661,4 +670,247 @@ html[data-lc-cover] .lc [data-site-cta] {
   .lc-a-layout { padding-top: 5rem; }
   .lc-a-doors { margin-top: 1.5rem; }
   .lc-switch { bottom: auto; top: 5.25rem; right: 1rem; opacity: 0.9; }
+}
+
+/* ------------------------------------------------------------------ */
+/* B's screens (b/Screens.tsx, b/GamesSection.tsx): every section one    */
+/* screen tall, its content 16px under the navbar, the page gliding     */
+/* from screen to screen; the chosen cover carried down in colour       */
+/* (--lc-scene-glow, --lc-scene-tint), type (.lc-scene-type), weather   */
+/* (.lc-bx-weather) and marks (--here, set where data-scene or          */
+/* data-game matches the cover).                                        */
+/* ------------------------------------------------------------------ */
+/* The navbar's section dots and anything else on --accent take the scene's light. */
+.lc {
+  --lc-nav: 4.125rem;
+  --accent: var(--lc-scene-glow, var(--lc-vampire));
+  /* The scene's light, for utilities: text-(--lc-glow-text), border-(--lc-glow)… */
+  --lc-glow: var(--lc-scene-glow, #c81e2b);
+  --lc-glow-text: color-mix(in oklab, var(--lc-glow) 72%, var(--lc-bone));
+}
+@media (min-width: 48rem) { .lc { --lc-nav: 4.375rem; } }
+
+html:has(.lc-bx) { scroll-behavior: smooth; }
+@media (min-width: 48rem) and (min-height: 37.5rem) {
+  html:has(.lc-bx) { scroll-snap-type: y mandatory; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.lc-bx) { scroll-behavior: auto; }
+}
+.lc-snap { scroll-snap-align: start; }
+
+.lc-bx { position: relative; z-index: 3; isolation: isolate; background: var(--lc-ink); }
+
+.lc-screen {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--lc-nav) + 1rem) clamp(1.25rem, 4vw, 2.5rem) clamp(1.25rem, 4svh, 2.5rem);
+  scroll-snap-align: start;
+}
+/* The scene's colour washing in from one side of each screen. */
+.lc-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 75% 65% at var(--wash-at, 50% 0%), color-mix(in oklab, var(--lc-scene-tint, #991b1b) 30%, transparent), transparent 72%);
+}
+/* Content above the wash and the weather; a layer, so utilities on a child (a backdrop's absolute z-0) win. */
+@layer components {
+  .lc-screen > * { position: relative; z-index: 2; }
+}
+
+/* The cover's weather behind the text (SceneWeather.tsx). */
+.lc-bx-weather {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s var(--lc-ease);
+}
+.lc-bx-weather[data-on] { opacity: 0.6; }
+
+/* The scene's light on the small things. */
+.lc-in-rule::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--lc-scene-glow, #c81e2b), rgb(236 232 225 / 0.16) 45%, rgb(236 232 225 / 0.08));
+}
+
+/* The chosen game's type for the headings (sized to match by x-height). */
+html[data-lc-game='werewolf'] .lc-scene-type { font-family: var(--font-cinzel), serif; font-weight: 400; letter-spacing: 0.01em; font-size-adjust: ex-height 0.42; }
+html[data-lc-game='hunter'] .lc-scene-type { font-family: var(--font-special-elite), monospace; font-weight: 400; letter-spacing: -0.01em; font-size-adjust: ex-height 0.42; }
+
+/* Where the chosen cover comes up again. */
+html[data-lc-scene='masquerade'] [data-scene='masquerade'],
+html[data-lc-scene='neon'] [data-scene='neon'],
+html[data-lc-scene='forest'] [data-scene='forest'],
+html[data-lc-scene='cave'] [data-scene='cave'],
+html[data-lc-scene='hideout'] [data-scene='hideout'],
+html[data-lc-scene='hunter-2'] [data-scene='hunter-2'],
+html[data-lc-game='vampire'] [data-game='vampire'],
+html[data-lc-game='werewolf'] [data-game='werewolf'],
+html[data-lc-game='hunter'] [data-game='hunter'] { --here: 1; }
+
+
+/* Games: the three cards fill what's left of the screen; the chosen game lit. */
+.lc-screen .lc-b-cards { flex: 1; min-height: 15rem; margin-top: clamp(1.25rem, 4svh, 3rem); }
+@media (min-width: 40rem) {
+  .lc-screen .lc-b-card { aspect-ratio: auto; }
+}
+.lc-screen .lc-b-card {
+  border-color: color-mix(in oklab, var(--lc-scene-glow, #c81e2b) calc(var(--here, 0) * 100%), rgb(236 232 225 / 0.16));
+  box-shadow: 0 0 calc(var(--here, 0) * 3rem) calc(var(--here, 0) * -0.6rem) var(--lc-scene-glow, #c81e2b);
+}
+.lc-screen .lc-b-card img { object-position: 50% 18%; filter: grayscale(calc(0.6 - var(--here, 0) * 0.6)) brightness(calc(0.8 + var(--here, 0) * 0.1)); }
+/* B's cards: the game's scene, dim and soft, with its character cut out in front, standing on the card's foot. */
+.lc-screen .lc-b-card .lc-b-card-scene { filter: grayscale(calc(0.8 - var(--here, 0) * 0.5)) brightness(calc(0.3 + var(--here, 0) * 0.15)) blur(2px); scale: 1.08; }
+.lc-screen .lc-b-card .lc-b-card-face {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: auto;
+  height: 96%;
+  max-width: none;
+  object-fit: contain;
+  translate: -50% 0;
+  transform-origin: 50% 100%;
+  mask-image: linear-gradient(to bottom, #000 70%, transparent 96%);
+}
+@media (hover: hover) {
+  .lc-screen .lc-b-card:hover .lc-b-card-face { scale: 1.04; }
+  .lc-screen .lc-b-card:hover .lc-b-card-scene { filter: brightness(0.5) blur(2px); }
+}
+
+/* One vault: the row of characters (Strip.tsx), faded at whichever edge has more. */
+.lc-bx-strip { --fade: 3rem; }
+.lc-bx-strip[data-more='on'] { mask-image: linear-gradient(90deg, #000 calc(100% - var(--fade)), transparent); }
+.lc-bx-strip[data-more='back'] { mask-image: linear-gradient(90deg, transparent, #000 var(--fade)); }
+.lc-bx-strip[data-more='back on'] { mask-image: linear-gradient(90deg, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent); }
+.lc-bx-face { flex: none; height: var(--face-h, 24rem); width: calc(var(--face-h, 24rem) * 0.75); }
+.lc-bx-face > span { box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--lc-scene-glow, #c81e2b) calc(var(--here, 0) * 70%), rgb(236 232 225 / 0.1)); }
+/* Each character a cut-out standing in their game's scene. */
+.lc-bx-face .lc-bx-face-scene { filter: grayscale(calc(1 - var(--here, 0) * 0.6)) brightness(calc(0.28 + var(--here, 0) * 0.17)) blur(2px); scale: 1.08; }
+.lc-bx-face .lc-bx-face-art {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: auto;
+  height: 94%;
+  max-width: none;
+  translate: -50% 0;
+  transform-origin: 50% 100%;
+  filter: grayscale(calc(1 - var(--here, 0))) brightness(calc(0.66 + var(--here, 0) * 0.3)) drop-shadow(0 0 1.5rem rgb(0 0 0 / 0.7));
+  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  transition: filter 1s var(--lc-ease), scale 1.6s var(--lc-ease);
+}
+@media (hover: hover) {
+  .lc-bx-face:hover .lc-bx-face-art { filter: drop-shadow(0 0 1.5rem rgb(0 0 0 / 0.7)); scale: 1.04; }
+}
+
+/* Six rooms: the scenes alone, two to a column, game by game, each named underneath. */
+.lc-bx-rooms {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: clamp(0.5rem, 1.4vw, 1rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(8.5rem, 1fr));
+  grid-auto-flow: column;
+}
+@media (max-width: 48rem) {
+  .lc-bx-rooms { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-flow: row; grid-auto-rows: 13rem; }
+}
+.lc-bx-room {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  isolation: isolate;
+  border: 1px solid color-mix(in oklab, var(--lc-scene-glow, #c81e2b) calc(var(--here, 0) * 100%), rgb(236 232 225 / 0.14));
+  box-shadow: 0 0 calc(var(--here, 0) * 2.5rem) calc(var(--here, 0) * -0.5rem) var(--lc-scene-glow, #c81e2b);
+}
+.lc-bx-room-art {
+  filter: grayscale(calc(0.3 - var(--here, 0) * 0.3)) brightness(calc(0.9 + var(--here, 0) * 0.15));
+  transition: filter 1s var(--lc-ease), scale 1.6s var(--lc-ease);
+}
+@media (hover: hover) {
+  .lc-bx-room:hover .lc-bx-room-art { filter: none; scale: 1.06; }
+}
+
+
+/* Dice: three tables, the chosen game's lit. */
+.lc-bx-dice {
+  border-radius: 1rem;
+  border: 1px solid color-mix(in oklab, var(--lc-scene-glow, #c81e2b) calc(var(--here, 0) * 90%), rgb(236 232 225 / 0.1));
+  background:
+    radial-gradient(ellipse at 50% 38%, color-mix(in oklab, var(--lc-scene-tint, #991b1b) calc(var(--here, 0) * 35%), transparent), transparent 70%),
+    rgb(10 8 9 / 0.45);
+  backdrop-filter: blur(3px);
+  transition: border-color 0.6s, translate 0.7s var(--lc-ease);
+}
+@media (hover: hover) {
+  .lc-bx-dice:hover { translate: 0 -0.25rem; border-color: color-mix(in oklab, var(--lc-scene-glow, #c81e2b) 70%, transparent); }
+}
+@media (max-width: 48rem) {
+  .lc-bx-dice { min-height: 13rem; }
+}
+
+/* The last screen: the chosen character back at the edge of the light. */
+.lc-bx-return {
+  position: absolute;
+  right: max(0rem, calc(50% - 38rem));
+  bottom: 0;
+  height: min(90svh, 62rem);
+  opacity: calc(var(--here, 0) * 0.85);
+  mask-image: linear-gradient(to bottom, #000 42%, transparent 76%);
+}
+.lc-bx-return img { transition: translate 2.6s var(--lc-ease), filter 2.6s var(--lc-ease); }
+@media (max-width: 48rem) {
+  .lc-bx-return { right: -30vw; opacity: calc(var(--here, 0) * 0.3); }
+}
+.lc-bx .lc-footer { z-index: auto; background: transparent; padding: clamp(1.25rem, 3.5svh, 2.5rem) 0 0; border-top-color: rgb(236 232 225 / 0.1); }
+
+/* Entrances: once, when a screen comes into view (b/ScreenWatch.tsx), each
+   piece after the last (--i). Text rises out of a blur; headings come up
+   from behind their baseline; rules draw in the scene's colour; cards and
+   rooms open from the bottom with their pictures settling; the dice tumble
+   down onto the table; the last character steps up out of the dark. */
+@keyframes lc-bx-unzoom { from { scale: 1.35; } }
+@keyframes lc-bx-drift { from { translate: 0 -5%; } to { translate: 0 5%; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .lc-in {
+    --d: calc(var(--i, 0) * 85ms + 120ms);
+    transition: opacity 1s var(--lc-ease) var(--d), translate 1.4s var(--lc-ease) var(--d), filter 1.2s var(--lc-ease) var(--d), clip-path 1.5s var(--lc-ease) var(--d);
+  }
+  html[data-lc-armed] .lc-screen:not([data-in]) .lc-in { opacity: 0; translate: 0 2.25rem; filter: blur(10px); }
+
+  .lc-in-curtain { clip-path: inset(-0.3em -0.3em -0.4em -0.3em); }
+  html[data-lc-armed] .lc-screen:not([data-in]) .lc-in-curtain { opacity: 1; filter: none; translate: 0 0.7em; clip-path: inset(100% -0.3em -0.4em -0.3em); }
+
+  .lc-in-rule::before { transition: scale 1.6s var(--lc-ease) calc(var(--d) + 150ms); }
+  html[data-lc-armed] .lc-screen:not([data-in]) .lc-in-rule::before { scale: 0 1; }
+
+  .lc-in-wipe { clip-path: inset(0 round 0.75rem); }
+  html[data-lc-armed] .lc-screen:not([data-in]) .lc-in-wipe { opacity: 1; filter: none; translate: 0 3rem; clip-path: inset(100% 0 0 0 round 0.75rem); }
+  .lc-screen[data-in] .lc-in-wipe img { animation: lc-bx-unzoom 2.4s var(--lc-ease) var(--d) backwards; }
+
+  .lc-in-die { transition: translate 1.1s cubic-bezier(0.34, 1.45, 0.64, 1) var(--d), rotate 1.4s var(--lc-ease) var(--d), opacity 0.5s var(--d); }
+  html[data-lc-armed] .lc-screen:not([data-in]) .lc-in-die { opacity: 0; translate: 0 -38svh; rotate: -220deg; }
+  html[data-lc-armed] .lc-screen:not([data-in]) .lc-in-die + .lc-in-die { rotate: 190deg; }
+  .lc-in-die { --d: calc(var(--i, 0) * 110ms + 380ms); }
+
+  html[data-lc-armed] .lc-screen:not([data-in]) .lc-bx-return img { translate: 0 12svh; filter: brightness(0.15) blur(4px); }
+
+
+  @supports (animation-timeline: view()) {
+    .lc-bx-drift { scale: 1.14; animation: lc-bx-drift linear both; animation-timeline: view(); animation-range: cover; }
+  }
 }

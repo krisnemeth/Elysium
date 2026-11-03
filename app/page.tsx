@@ -13,7 +13,7 @@ import { DARK_PACK_LOGO, DARK_PACK_NOTICE, NOT_OFFICIAL_NOTICE, WORLD_OF_DARKNES
 import forest from '@/public/art/ww-forest.webp';
 import cave from '@/public/art/ww-cave.webp';
 import hideout from '@/public/art/htr-den.webp';
-import inn from '@/public/art/sheet-study.webp';
+import city from '@/public/locations/location-3.webp';
 import vampireDark from '@/public/art/city-night.webp';
 import vampireLight from '@/public/art/lore-dark.webp';
 
@@ -32,7 +32,7 @@ const ATMOSPHERES = [
   { game: 'werewolf', mode: 'Moonlit forest', frame: 'Leaves', image: forest, loop: 'Moon, clouds, fireflies' },
   { game: 'werewolf', mode: 'The cave', frame: 'Stone', image: cave, loop: 'Firelight, dripping water' },
   { game: 'hunter', mode: 'The hideout', frame: 'Steel pipe', image: hideout, loop: 'A lamp, cigarette smoke' },
-  { game: 'hunter', mode: 'The inn', frame: 'Paper & tape', image: inn, loop: 'Dust in a sunbeam' },
+  { game: 'hunter', mode: 'The city', frame: 'Flyers & tape', image: city, loop: 'Rain, fog, streetlamps' },
 ] as const;
 
 const DICE = [

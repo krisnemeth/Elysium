@@ -35,11 +35,11 @@
   font-family: var(--font-courier), ui-monospace, monospace;
 }
 :root[data-theme='light'] [data-game='hunter'] {
-  /* The inn: a genuinely light room */
-  --ink: #f2e9d8;
-  --color-bone: #2b2119;
-  --accent: #b9530f;
-  --accent-deep: #e2c79c;
+  /* The city: wet streets at night under sodium lamps */
+  --ink: #0d1117;
+  --color-bone: #e7e2d7;
+  --accent: #f2b23a;
+  --accent-deep: #1d2b3c;
 }
 
 /* The overarching World of Darkness pages (landing, vault hub, game choice). */
@@ -215,39 +215,24 @@
     var(--frame-bottom) bottom left / var(--frame-bottom-tile) repeat-x;
 }
 
-/* Hunter, The inn: a clipboard. Hardboard back, steel clip, ruled notepaper. */
+/* Hunter, The city: flyers taped up on a wall at night. A dark board, wet
+   at the edges, lit along its top by the streetlamp; the tape and the torn
+   corners (below) do the rest. */
 :root[data-theme='light'] [data-game='hunter'] .frame,
 [data-skin='hunter-light'] .skin-frame {
-  border: 9px solid #6e4b2c;
-  border-radius: 12px;
-  background-color: #fbf7ee;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0 1.9rem,
-    rgb(90 120 150 / 0.16) 1.9rem calc(1.9rem + 1px)
-  );
+  border: 1px solid rgb(231 226 215 / 0.14);
+  border-radius: 6px;
+  background-color: rgb(14 18 25 / 0.9);
+  background-image:
+    linear-gradient(to bottom, rgb(242 178 58 / 0.14), transparent 3.5rem),
+    radial-gradient(ellipse 120% 60% at 50% 120%, rgb(90 120 160 / 0.12), transparent 70%);
   box-shadow:
-    inset 0 0 0 1px rgb(0 0 0 / 0.08),
-    0 1rem 1.75rem -0.75rem rgb(60 40 20 / 0.5);
-}
-:root[data-theme='light'] [data-game='hunter'] .frame::before,
-[data-skin='hunter-light'] .skin-frame::before {
-  content: '';
-  position: absolute;
-  z-index: 2;
-  top: -17px;
-  left: 50%;
-  width: 92px;
-  height: 26px;
-  translate: -50% 0;
-  pointer-events: none;
-  border-radius: 6px 6px 10px 10px;
-  background: linear-gradient(to bottom, #f2f2f2, #a9a9a9 45%, #d9d9d9 55%, #8e8e8e);
-  box-shadow: 0 3px 4px rgb(0 0 0 / 0.35), inset 0 1px 0 #fff;
+    inset 0 1px 0 rgb(242 178 58 / 0.35),
+    0 1.25rem 2rem -1rem rgb(0 0 0 / 0.8);
 }
 
 /*
-  Taped paper (the inn only): strips of tape on two or three corners and
+  Taped paper (the city only): strips of tape on two or three corners and
   the odd torn-off corner, varied per card (see app/ui/game/Paper.tsx).
 */
 .tape {
@@ -259,9 +244,10 @@
   z-index: 3;
   height: 24px;
   pointer-events: none;
-  background: rgb(226 211 168 / 0.85);
-  border-inline: 1px solid rgb(150 125 80 / 0.22);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.14);
+  /* Gaffer tape, grey and a little shiny under the lamp */
+  background: linear-gradient(to bottom, rgb(150 152 150 / 0.75), rgb(105 108 108 / 0.75));
+  border-inline: 1px solid rgb(0 0 0 / 0.25);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5);
   clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 4% 94%, 0 45%);
 }
 :root[data-theme='light'] [data-game='hunter'] .torn-tl { clip-path: polygon(0 34px, 9px 27px, 6px 19px, 15px 13px, 13px 6px, 22px 4px, 34px 0, 100% 0, 100% 100%, 0 100%); }
@@ -274,8 +260,8 @@
   background-color: rgb(24 17 11 / 0.92);
 }
 :root[data-theme='light'] [data-game='hunter'] .panel:not(.frame, .chronicle-table .panel) {
-  background-color: #f8f1e2;
-  border-color: rgb(110 75 44 / 0.18);
+  background-color: rgb(16 21 29 / 0.92);
+  border-color: rgb(231 226 215 / 0.1);
 }
 
 /* ---------------------------------------------------------- table skins */
@@ -318,15 +304,14 @@
   --accent-deep: #4a2a12;
 }
 [data-skin='hunter-light'] {
-  --ink: #f2e9d8;
-  --color-bone: #2b2119;
-  --accent: #b9530f;
-  --accent-deep: #e2c79c;
+  --ink: #0d1117;
+  --color-bone: #e7e2d7;
+  --accent: #f2b23a;
+  --accent-deep: #1d2b3c;
 }
 
 /* Lighter glass than elsewhere, so the act's location shows through; the
-   sidebars a little more solid. The inn is a light room, so its panels
-   stay nearly opaque to keep dark text readable. */
+   sidebars a little more solid. */
 .chronicle-table .panel {
   background-color: color-mix(in srgb, var(--ink) 45%, transparent);
   backdrop-filter: blur(16px);
@@ -338,18 +323,17 @@
 .chronicle-table .story-panel {
   background-color: color-mix(in srgb, var(--ink) 86%, transparent);
 }
-.chronicle-table[data-skin='hunter-light'] .panel {
-  background-color: color-mix(in srgb, var(--ink) 90%, transparent);
-}
-.chronicle-table[data-skin='hunter-light'] .skin-frame {
-  background-color: #fbf7ee;
-}
 
 /* -------------------------------------------------------------- ambience */
 
 @keyframes neon-flicker {
   0%, 18%, 22%, 62%, 64%, 100% { opacity: 1; }
   20%, 63% { opacity: 0.55; }
+}
+
+@keyframes rain-fall {
+  from { background-position: 0 0; }
+  to { background-position: -6rem 24rem; }
 }
 
 @keyframes drift-x {

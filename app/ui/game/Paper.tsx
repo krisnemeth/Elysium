@@ -24,7 +24,7 @@ const TILT: Record<Corner, number> = { tl: -34, tr: 32, bl: 30, br: -33 };
 
 /*
   Wraps a card in taped paper. The tape and torn corner only show in
-  Hunter's inn theme (.tape / .torn-* in app/games.css); elsewhere this is
+  Hunter's city theme (.tape / .torn-* in app/games.css); elsewhere this is
   just a wrapper.
 */
 export default function Paper({ index, className = '', children }: { index: number; className?: string; children: (tornClass: string) => ReactNode }) {

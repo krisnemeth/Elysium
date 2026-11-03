@@ -44,12 +44,27 @@ function Particles({ count, className, anim, spread = 100 }: { count: number; cl
 function Vampire() {
   return (
     <div className={`${fixed} ambience overflow-hidden`}>
-      <div className='grain absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_60%_-10%,var(--accent-deep),transparent_70%),radial-gradient(ellipse_50%_40%_at_0%_100%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent_70%)] opacity-70' />
-      {/* Crimson mist drifting slowly across */}
+      {/* Masquerade: the city at night from above, as on the landing cover */}
+      <div className='absolute inset-0 hidden dark:block'>
+        <Backdrop src='/art/city-night.webp' className='object-[center_70%] opacity-45 saturate-[.7]' />
+        <div className='absolute inset-0 bg-[linear-gradient(to_bottom,rgb(10_8_9/0.3),var(--ink)_88%)]' />
+      </div>
+      {/* Neon Nights: an alley under rose neon that stutters now and then */}
+      <div className='absolute inset-0 dark:hidden'>
+        <Backdrop src='/locations/location-1.webp' className='object-[center_38%] opacity-45 saturate-[.8]' />
+        <div className='absolute inset-0 bg-[linear-gradient(to_bottom,rgb(20_8_30/0.3),var(--ink)_88%)]' />
+        <div
+          className='absolute -top-1/4 right-[6%] size-[60vmax] rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--accent)_32%,transparent),transparent_60%)] mix-blend-screen'
+          style={{ animation: 'neon-flicker 7s steps(1) infinite' }}
+        />
+      </div>
+      <div className='grain absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_60%_-10%,var(--accent-deep),transparent_70%),radial-gradient(ellipse_50%_40%_at_0%_100%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent_70%)] opacity-60' />
+      {/* Crimson mist drifting slowly across, and low smoke rolling along the street */}
       <div
         className='absolute -bottom-1/4 left-0 h-2/3 w-[140%] rounded-[50%] bg-accent/10 blur-3xl'
         style={{ animation: 'drift-x 38s ease-in-out infinite alternate' }}
       />
+      <div className='absolute -bottom-[12%] -left-1/4 h-[38%] w-[150%] rounded-[50%] bg-black/55 blur-3xl' style={{ animation: 'drift-x 26s ease-in-out infinite alternate-reverse' }} />
     </div>
   );
 }
@@ -88,8 +103,17 @@ function Werewolf() {
   );
 }
 
-// The inn's wallpaper as an inline SVG texture.
-const WALLPAPER = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='88'%3E%3Cg fill='none' stroke='%23c9b48c' stroke-width='1.2' opacity='.55'%3E%3Cpath d='M32 8c8 10 8 22 0 32-8-10-8-22 0-32zM32 48c8 10 8 22 0 32-8-10-8-22 0-32z'/%3E%3Cpath d='M0 44c10-6 22-6 32 0M32 44c10 6 22 6 32 0'/%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='2' fill='%23c9b48c' opacity='.5'/%3E%3Ccircle cx='64' cy='88' r='2' fill='%23c9b48c' opacity='.5'/%3E%3C/svg%3E")`;
+// Rain on the city: thin slanted streaks, tiled and scrolled down (rain-fall).
+const RAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='192'%3E%3Cg stroke='%23c8d4e0' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M12 8l-5 20' opacity='.5'/%3E%3Cpath d='M58 40l-5 20' opacity='.35'/%3E%3Cpath d='M84 96l-5 20' opacity='.45'/%3E%3Cpath d='M30 120l-5 20' opacity='.3'/%3E%3Cpath d='M70 160l-5 20' opacity='.4'/%3E%3C/g%3E%3C/svg%3E")`;
+
+// Lamps on the waterfront, as fractions of the art; each flickers on its own clock.
+const LAMPS = [
+  { x: 41, y: 74, size: 'size-[9vh]', delay: '0s' },
+  { x: 35, y: 72, size: 'size-[6vh]', delay: '-1.3s' },
+  { x: 44, y: 44, size: 'size-[7vh]', delay: '-2.6s' },
+  { x: 65, y: 54, size: 'size-[8vh]', delay: '-5.1s' },
+  { x: 71.5, y: 51, size: 'size-[6vh]', delay: '-3.7s' },
+];
 
 function Hunter() {
   return (
@@ -155,35 +179,26 @@ function Hunter() {
         <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,transparent_20%,rgb(10_7_4/0.8)_80%)]' />
       </div>
 
-      {/* The inn: wallpaper and wainscot, a sunlit window onto the city, curtains, a fire */}
-      <div className='absolute inset-0 dark:hidden'>
-        <div className='absolute inset-0 bg-[#efe4cf]' style={{ backgroundImage: WALLPAPER }} />
-        <div className='absolute inset-x-0 bottom-0 h-[22vh] border-t-[6px] border-[#8a6440] bg-[repeating-linear-gradient(to_right,#b98f62_0_2px,#a77e53_2px_120px)] opacity-80' />
-        <Backdrop src='/art/sheet-study.webp' className='opacity-[0.08] mix-blend-multiply sepia' />
-
-        {/* Window with curtains */}
-        <div className='absolute top-[10%] right-[4%] hidden h-[42vh] w-[26vw] max-w-[24rem] lg:block'>
-          <div className='absolute inset-0 overflow-hidden rounded-t-[999px] bg-[linear-gradient(to_bottom,#cfe3ef,#eef3ee_70%,#f6efe0)]'>
-            <svg aria-hidden viewBox='0 0 300 100' preserveAspectRatio='none' className='absolute inset-x-0 bottom-0 h-2/5 w-full fill-[#9fb2bd]/70'>
-              <path d='M0 100V60h18V40h14v20h10V25h20v35h12V50h16V30h8V15h6v15h10v40h14V45h18v15h12V35h22v25h10V48h16v52z' />
-            </svg>
-            <div className='absolute top-[12%] left-[20%] size-14 rounded-full bg-[#fff6d8] blur-md' />
-          </div>
-          <div className='absolute -inset-2 rounded-t-[999px] border-[10px] border-[#8a6440] shadow-[0_0.75rem_2rem_-0.5rem_rgb(80_55_30/0.5)]' />
-          <div className='absolute inset-y-0 left-1/2 w-2 -translate-x-1/2 bg-[#8a6440]' />
-          {/* Curtains, swaying a little */}
-          <div className='absolute -top-6 -left-10 h-[115%] w-1/3 origin-top rounded-b-[40%] bg-[linear-gradient(to_right,#8f3a2c,#b4553f_40%,#8f3a2c)] shadow-lg' style={{ animation: 'curtain 6s ease-in-out infinite' }} />
-          <div className='absolute -top-6 -right-10 h-[115%] w-1/3 origin-top rounded-b-[40%] bg-[linear-gradient(to_right,#8f3a2c,#b4553f_60%,#8f3a2c)] shadow-lg' style={{ animation: 'curtain 6s ease-in-out 1.5s infinite reverse' }} />
+      {/* The city: the harbour at night in fog and rain, under sodium streetlamps */}
+      <div className='absolute inset-0 bg-[#07090d] dark:hidden'>
+        {/* The art keeps its proportions (covering the screen) so the glows sit on its lamps */}
+        <div className='absolute top-[60%] left-1/2 aspect-[2400/1433] w-[max(100vw,167.5vh)] -translate-x-1/2 -translate-y-[60%]'>
+          <Image src='/locations/location-3.webp' alt='' fill sizes='max(100vw, 167.5vh)' className='opacity-70 saturate-[.8]' />
+          {LAMPS.map((l) => (
+            <div
+              key={`${l.x}-${l.y}`}
+              className={`absolute ${l.size} -translate-1/2 rounded-full bg-[radial-gradient(circle,rgb(255_206_120/0.6),rgb(242_150_40/0.2)_30%,transparent_70%)] mix-blend-screen`}
+              style={{ left: `${l.x}%`, top: `${l.y}%`, animation: `bulb-buzz 9s linear ${l.delay} infinite` }}
+            />
+          ))}
         </div>
-
-        {/* Sunbeam from the window, with dust */}
-        <div className='absolute -top-1/4 right-[16%] h-[150%] w-[30rem] -rotate-[28deg] bg-[linear-gradient(to_right,transparent,rgb(255_244_214/0.5),transparent)] blur-xl' />
-        <div className='absolute top-0 right-[18%] h-full w-[34rem] -rotate-[28deg]'>
-          <Particles count={18} anim='motes' spread={90} className='size-1 bg-[#b9874a]/60' />
-        </div>
-        {/* Fire in the hearth, bottom left */}
-        <div className='absolute -bottom-1/4 -left-[10%] size-[50vmax] rounded-full bg-[radial-gradient(circle,rgb(240_140_60/0.28),transparent_60%)]' style={{ animation: 'firelight 3s ease-in-out infinite' }} />
-        <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_60%_30%,transparent_40%,rgb(120_85_50/0.18))]' />
+        {/* Fog banks rolling in off the water */}
+        <div className='absolute inset-x-[-20%] top-[30%] h-[40%] rounded-[50%] bg-[#9aa6b4]/10 blur-3xl' style={{ animation: 'haze-drift 34s ease-in-out infinite' }} />
+        <div className='absolute inset-x-[-10%] bottom-[-10%] h-[35%] rounded-[50%] bg-[#8995a3]/12 blur-3xl' style={{ animation: 'haze-drift 26s ease-in-out -9s infinite reverse' }} />
+        {/* Rain, two layers at different speeds for depth */}
+        <div className='absolute inset-0 opacity-50' style={{ backgroundImage: RAIN, animation: 'rain-fall 0.9s linear infinite' }} />
+        <div className='absolute inset-0 scale-150 opacity-25 blur-[0.5px]' style={{ backgroundImage: RAIN, animation: 'rain-fall 1.4s linear infinite' }} />
+        <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_50%_55%,transparent_30%,rgb(5_7_10/0.75)_85%)]' />
       </div>
     </div>
   );
