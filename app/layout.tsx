@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Jsans, Cormorant, CinzelFont, SpecialElite, CourierPrime } from './fonts';
-import { themeScript } from './lib/theme';
+import { startOnCoverScript, themeScript } from './lib/theme';
 import ThemeColor from './ui/ThemeColor';
 
 export const metadata: Metadata = {
@@ -47,6 +47,7 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: startOnCoverScript }} />
       </head>
       <body className={Jsans.className}>
         {children}

@@ -30,3 +30,27 @@ export const themeScript = `(() => {
   apply();
   media.addEventListener('change', apply);
 })();`;
+
+/*
+  A refresh of the landing starts on the cover. Left alone, the browser restores
+  the scroll while only the cover has loaded, so it clamps to the page's height
+  then, one screen down: the Games section. Browsers decide to restore as the
+  refresh begins, so scrollRestoration only stops the later ones: the restore
+  itself is undone from its scroll event, which runs before that frame paints.
+  Listening ends with the load or the first touch, so it can't fight the reader.
+  A link to a section and the back button are untouched.
+*/
+export const startOnCoverScript = `if (location.pathname === '/' && performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+  history.scrollRestoration = 'manual';
+  if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
+  const top = () => scrollTo({ top: 0, behavior: 'instant' });
+  const stop = () => {
+    removeEventListener('scroll', top);
+    removeEventListener('touchstart', stop);
+    removeEventListener('wheel', stop);
+  };
+  addEventListener('scroll', top, { passive: true });
+  addEventListener('touchstart', stop, { passive: true });
+  addEventListener('wheel', stop, { passive: true });
+  addEventListener('load', () => { top(); stop(); });
+}`;

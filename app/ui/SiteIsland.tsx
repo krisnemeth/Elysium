@@ -100,6 +100,16 @@ export default function SiteIsland({
     scrollToSection(href.slice(1));
   };
 
+  // On the landing already, the logo goes back up to the cover (a link to the same page wouldn't move), keeping the chosen one (?cover=).
+  const onHomeClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    closeAll();
+    if (window.location.pathname !== '/' || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search);
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+  };
+
   let hashIndex = -1;
 
   return (
@@ -108,7 +118,7 @@ export default function SiteIsland({
       <IslandBackdrop open={expanded} onClose={closeAll} />
       <div className='frame relative mx-auto flex max-w-6xl flex-col rounded-2xl border border-bone/15 bg-ink/70 px-2 shadow-[0_8px_32px_-8px_rgb(0_0_0/0.6),inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur-xl'>
         <nav aria-label='Main' className='flex h-14 items-center justify-between pl-2'>
-          <Link href='/' aria-label='Elysium home' onClick={closeAll} className={`rounded-md ${focus}`}>
+          <Link href='/' aria-label='Elysium home' onClick={onHomeClick} className={`rounded-md ${focus}`}>
             <Elysium1 aria-hidden className='mt-1 h-auto w-20 text-bone/90' />
           </Link>
 
