@@ -365,7 +365,8 @@ export default function CoverPicker({ initial }: { initial: number }) {
       aria-labelledby='lc-title'
       style={{ '--art-ratio': ART_RATIO, '--accent': cover.glow, '--pick-dir': dir } as React.CSSProperties}
       className={clsx(
-        'lc-snap relative isolate h-[200svh] overflow-x-clip',
+        // On touch screens the page's colour fills what the browser's bars leave (plans/ios-safari-edges.md).
+        'lc-snap relative isolate h-[200svh] overflow-x-clip [@media(hover:none)]:bg-(--page-bg)',
         // The character starts 18px under the navbar.
         '[--art-top:5.5rem]',
         '[--cover:min(100vw,calc((100svh-var(--art-top))/var(--art-ratio)),48rem)] [--logos-h:3.75rem] md:[--logos-h:4.5rem]',
@@ -381,6 +382,8 @@ export default function CoverPicker({ initial }: { initial: number }) {
         onPointerCancel={() => (swipe.current = null)}
         className='lc-cover-stage sticky top-0 grid h-lvh touch-pan-y overflow-hidden'
       >
+        {/* Phones: the scene's top edge fades into the status bar's colour, so there's no seam under it. */}
+        <div aria-hidden className='pointer-events-none absolute inset-x-0 top-0 -z-[5] hidden h-24 bg-linear-to-b from-(--page-bg) to-transparent [@media(hover:none)]:block' />
         {/* Backdrops: each theme's scene, sliding with the picker a little
             (oversized so its edges never show), washed in the theme's colour */}
         <div className='lc-ho-back -z-10 grid [grid-area:1/1]'>
@@ -480,7 +483,7 @@ export default function CoverPicker({ initial }: { initial: number }) {
 
         {/* Cover text, at the foot: the picker, the tagline and the buttons */}
         <div className='pointer-events-none relative z-30 flex flex-col items-center px-5 [grid-area:1/1]'>
-          <div className='lc-ho-foot absolute inset-x-0 bottom-0 -z-10 h-[58svh] bg-linear-to-t from-[#0a0809] from-10% via-[#0a0809]/60 to-transparent' />
+          <div className='lc-ho-foot absolute inset-x-0 bottom-0 -z-10 h-[58svh] bg-linear-to-t from-[#0a0809] from-10% via-[#0a0809]/60 to-transparent [@media(hover:none)]:from-(--page-bg) [@media(hover:none)]:via-[color-mix(in_srgb,var(--page-bg)_60%,transparent)]' />
           {/* No visible title: the navbar carries the wordmark and the character gets the room. */}
           <h1 id='lc-title' className='sr-only'>
             Elysium, a character vault for the World of Darkness
@@ -508,7 +511,7 @@ export default function CoverPicker({ initial }: { initial: number }) {
         </div>
       </div>
       {/* Over the whole cover, so Safari's edge check (app/globals.css) finds this
-          and not the sticky stage, and lets the scene run on behind its bars. */}
+          and not the sticky stage, and doesn't paint a bar of its own. */}
       <div aria-hidden className='pointer-events-none absolute inset-0 z-10' />
     </section>
   );

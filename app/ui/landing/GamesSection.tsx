@@ -5,7 +5,7 @@ import { at, BODY, Here } from './kit';
 
 /*
   "Three games. One night.", the section that takes over from the cover. It
-  starts a full screen up (at 100lvh: the stage reaches under Safari's toolbar) over the cover's held stage, so it
+  starts a full screen up (on touch screens 4rem lower, so its edge isn't under Safari's toolbar at rest) over the cover's held stage, so it
   covers the whole hero before the page scrolls on; how it arrives (its shape
   and the accent rim along its edge) is the hand-over in landing.css. One
   screen tall like the sections after it (Screens.tsx), the chosen cover's
@@ -20,7 +20,7 @@ const FACES: Record<Game, { src: string; width: number; height: number; scene: s
 };
 export default function GamesSection({ glow }: { glow: string }) {
   return (
-    <div style={{ '--accent': `var(--lc-scene-glow, ${glow})` } as React.CSSProperties} className='lc-handover relative z-40 -mt-[calc(200svh-100lvh)]'>
+    <div style={{ '--accent': `var(--lc-scene-glow, ${glow})` } as React.CSSProperties} className='lc-handover relative z-40 -mt-[calc(200svh-100lvh)] [@media(hover:none)]:-mt-[calc(200svh-100lvh-4rem)]'>
       <div aria-hidden className='lc-handover-rim pointer-events-none absolute inset-0' />
       <section id='games' aria-labelledby='lc-games' className='lc-handover-sheet lc-grain lc-screen relative overflow-hidden bg-[#0a0809] [--wash-at:50%_0%]'>
         <div className={BODY}>

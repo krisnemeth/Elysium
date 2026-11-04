@@ -119,17 +119,12 @@
   kept in step by app/ui/ThemeColor.tsx). Each game x mode sets it from its
   ink (app/games.css), the landing from the chosen cover (CoverPicker.tsx).
 
-  Safari 26 on iPhone lets the page run on under its status bar and toolbar
-  unless a fixed or sticky element sits at the screen's edge: it hit-tests
-  4px in from the middle of the top and bottom edges, and if what it hits
-  has a fixed/sticky ancestor about the screen's width, it paints a solid bar
-  there. So: fixed bars are offset from the edges (top/bottom: max(gap,
-  env(safe-area-inset-*))), never padded to them; full-screen fixed
-  backdrops sit at a negative z-index or overhang the screen; menu
-  backdrops and click-through overlays are visibility:hidden when off (a
-  skipped pointer-events:none layer makes Safari look again beneath it); a
-  sticky full-screen stage has a transparent overlay above it. Details:
-  plans/ios-safari-edges.md.
+  Safari on iPhone fills the status bar with this colour while the page is at
+  rest: nothing a page paints gets there until it's scrolled (tested on an
+  iPhone, plans/ios-safari-edges.md). So scenes fade into --page-bg at the seam.
+  Safari can also paint a solid bar when a fixed or sticky element is at an
+  edge, which is why fixed bars are offset rather than padded to the edges, and
+  closed backdrops and click-through overlays are visibility:hidden.
 */
 html {
   background-color: var(--page-bg, var(--ink));
