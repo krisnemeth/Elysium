@@ -38,7 +38,7 @@ export default function PhoneIsland({ game }: { game: Game }) {
   useIsland({ open: expanded, onEscape, onBreakpoint: closeAll, trigger: themes ? themesButton : menuButton });
 
   return (
-    <header className='fixed inset-x-0 top-0 z-40 px-3 pt-3 md:hidden'>
+    <header className='fixed inset-x-0 top-0 z-40 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] md:hidden'>
       <IslandBackdrop open={expanded} onClose={closeAll} />
       <div className={`frame relative flex flex-col gap-2 px-3 py-2 ${panel}`}>
         <div className='flex h-10 items-center justify-between'>

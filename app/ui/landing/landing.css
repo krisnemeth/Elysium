@@ -258,7 +258,13 @@ html[data-lc-cover] .lc [data-site-cta] {
 @keyframes lc-ho-sheet { from { border-radius: 50% 50% 0 0 / 34svh 34svh 0 0; } to { border-radius: 0; } }
 @keyframes lc-ho-rim { from { opacity: 0.9; border-radius: 50% 50% 0 0 / 34svh 34svh 0 0; } to { opacity: 0; border-radius: 0; } }
 @keyframes lc-ho-char { to { scale: 1.14; filter: brightness(0.25) saturate(0.6); } }
-@keyframes lc-ho-mark { to { rotate: -14deg; scale: 1.3; opacity: 0.3; } }
+/* The faction's mark stays out of sight at rest and shows only as the cover hands over. */
+.lc-ho-mark { opacity: 0; }
+@keyframes lc-ho-mark {
+  0% { opacity: 0; scale: 0.85; }
+  35% { opacity: 1; scale: 1; }
+  100% { rotate: -14deg; scale: 1.15; opacity: 0.3; }
+}
 @keyframes lc-ho-back { to { filter: brightness(0.3); scale: 1.08; } }
 @keyframes lc-ho-spines { to { scale: 1.12 1; opacity: 0; } }
 

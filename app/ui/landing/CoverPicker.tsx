@@ -184,6 +184,13 @@ function SceneExtras({ id, on }: { id: string; on: boolean }) {
   return <div className={clsx('ambience absolute inset-0 transition-opacity [transition-duration:var(--pick-dur)]', on ? 'opacity-100' : 'opacity-0')}>{bits}</div>;
 }
 
+// The scene's tint sunk into the night (a fifth of it over near-black), the colour round the cover's edges.
+function pageColor(tint: string) {
+  const n = parseInt(tint.slice(1), 16);
+  const mix = (c: number) => Math.round(10 + (c - 10) * 0.2).toString(16).padStart(2, '0');
+  return `#${mix(n >> 16)}${mix((n >> 8) & 255)}${mix(n & 255)}`;
+}
+
 export default function CoverPicker({ initial }: { initial: number }) {
   const [current, setCurrent] = useState(initial);
   // The cover sliding out, which way everything moves (1 is rightwards), and
@@ -207,6 +214,8 @@ export default function CoverPicker({ initial }: { initial: number }) {
     const root = document.documentElement;
     root.style.setProperty('--lc-scene-glow', cover.glow);
     root.style.setProperty('--lc-scene-tint', cover.tint);
+    // The page's colour (globals.css): the phone's status bar and toolbar take it.
+    root.style.setProperty('--page-bg', pageColor(cover.tint));
     root.dataset.lcCover = '';
     root.dataset.lcScene = cover.id;
     root.dataset.lcGame = cover.game;
@@ -217,6 +226,7 @@ export default function CoverPicker({ initial }: { initial: number }) {
       const root = document.documentElement;
       root.style.removeProperty('--lc-scene-glow');
       root.style.removeProperty('--lc-scene-tint');
+      root.style.removeProperty('--page-bg');
       delete root.dataset.lcCover;
       delete root.dataset.lcScene;
       delete root.dataset.lcGame;

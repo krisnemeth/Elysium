@@ -19,7 +19,7 @@ export default async function GameLayout({ children, params }: LayoutProps<'/vau
     <div data-game={game} data-frames={preferences.simpleFrames ? 'simple' : undefined} className='relative isolate min-h-svh bg-ink text-bone transition-colors duration-500'>
       <Ambience game={game} />
       <SideNav game={game} />
-      <main id='main' className='relative px-4 pt-32 pb-32 md:pt-10 md:pr-8 md:pb-16 md:pl-72'>
+      <main id='main' className='relative px-4 pt-[calc(8rem+env(safe-area-inset-top))] pb-32 md:pt-10 md:pr-8 md:pb-16 md:pl-72'>
         <div className='mx-auto max-w-6xl'>
           <PreferencesProvider value={preferences}>{children}</PreferencesProvider>
         </div>

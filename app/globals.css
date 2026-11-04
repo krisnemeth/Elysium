@@ -113,11 +113,22 @@
   --die-hunger: var(--color-blood);
 }
 
+/*
+  --page-bg is the page's own colour: phones' browsers paint their bars with
+  it (Safari on iPhone samples the page's background colour, others read
+  <meta name="theme-color">, kept in step by app/ui/ThemeColor.tsx). Each
+  game x mode sets it from its ink (app/games.css), the landing from the
+  chosen cover's scene (CoverPicker.tsx); elsewhere it's the theme's ink.
+*/
+html {
+  background-color: var(--page-bg, var(--ink));
+  transition: background-color 0.6s;
+}
 body {
   color: var(--foreground-hex);
   background: radial-gradient(circle,
       var(--background-middle-hex),
-      var(--background-end-hex)) var(--background-start-hex);
+      var(--background-end-hex)) var(--page-bg, var(--ink));
 }
 
 ::selection {

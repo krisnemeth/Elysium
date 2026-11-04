@@ -103,7 +103,7 @@ export default function SiteIsland({
   let hashIndex = -1;
 
   return (
-    <header className='fixed inset-x-0 top-0 z-50 px-2 pt-2 md:px-4 md:pt-3'>
+    <header className='fixed inset-x-0 top-0 z-50 px-2 pt-[max(0.5rem,env(safe-area-inset-top))] md:px-4 md:pt-[max(0.75rem,env(safe-area-inset-top))]'>
       <ForceDark />
       <IslandBackdrop open={expanded} onClose={closeAll} />
       <div className='frame relative mx-auto flex max-w-6xl flex-col rounded-2xl border border-bone/15 bg-ink/70 px-2 shadow-[0_8px_32px_-8px_rgb(0_0_0/0.6),inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur-xl'>

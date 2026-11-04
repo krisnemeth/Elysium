@@ -324,6 +324,14 @@
   background-color: color-mix(in srgb, var(--ink) 86%, transparent);
 }
 
+/* The page's colour (globals.css, --page-bg) in each game's scenes: its ink. */
+:root:has([data-game='vampire']) { --page-bg: #0d0a0b; }
+:root[data-theme='light']:has([data-game='vampire']) { --page-bg: #0d0717; }
+:root:has([data-game='werewolf']) { --page-bg: #0a110e; }
+:root[data-theme='light']:has([data-game='werewolf']) { --page-bg: #16110c; }
+:root:has([data-game='hunter']) { --page-bg: #120d09; }
+:root[data-theme='light']:has([data-game='hunter']) { --page-bg: #0d1117; }
+
 /* -------------------------------------------------------------- ambience */
 
 @keyframes neon-flicker {

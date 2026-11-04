@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Jsans, Cormorant, CinzelFont, SpecialElite, CourierPrime } from './fonts';
 import { themeScript } from './lib/theme';
+import ThemeColor from './ui/ThemeColor';
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -25,10 +26,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#1a0b2e' },
-    { media: '(prefers-color-scheme: dark)', color: '#0d0a0b' },
-  ],
+  // ThemeColor keeps it in step with the page's colour (--page-bg).
+  themeColor: '#0d0a0b',
+  // Draw under the phone's status bar and toolbar; fixed bars keep clear with env(safe-area-inset-*).
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -47,7 +48,10 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className={Jsans.className}>{children}</body>
+      <body className={Jsans.className}>
+        {children}
+        <ThemeColor />
+      </body>
     </html>
   );
 }

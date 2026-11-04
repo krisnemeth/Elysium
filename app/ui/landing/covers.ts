@@ -177,11 +177,11 @@ export const COVERS: Cover[] = [
   top (also of --cover).
 */
 export const MARKS = {
-  ventrue: { width: 0.95, focus: 0.4 },
-  malkavian: { width: 0.74, focus: 0.34 },
-  glassWalkers: { width: 0.9, focus: 0.42, src: '/werewolf/glass-walkers-mark.png', ratio: '447/800' },
-  claw: { width: 0.62, focus: 0.33, src: '/dice/glyphs/wta-claw.svg', ratio: '496/524' },
-  flame: { width: 0.56, focus: 0.34, src: '/dice/glyphs/htr-flame.svg', ratio: '404/528' },
+  ventrue: { width: 0.76, focus: 0.4 },
+  malkavian: { width: 0.59, focus: 0.34 },
+  glassWalkers: { width: 0.72, focus: 0.42, src: '/werewolf/glass-walkers-mark.png', ratio: '447/800' },
+  claw: { width: 0.5, focus: 0.33, src: '/dice/glyphs/wta-claw.svg', ratio: '496/524' },
+  flame: { width: 0.45, focus: 0.34, src: '/dice/glyphs/htr-flame.svg', ratio: '404/528' },
 } satisfies Record<string, { width: number; focus: number; src?: string; ratio?: string }>;
 
 export type MarkKey = keyof typeof MARKS;
