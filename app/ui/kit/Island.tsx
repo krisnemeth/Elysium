@@ -43,8 +43,10 @@ export function IslandBackdrop({ open, onClose, className = '' }: { open: boolea
       aria-hidden
       onClick={onClose}
       className={clsx(
-        'fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 ease-out motion-reduce:transition-none',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0',
+        // visibility, not just opacity, when closed: hidden from Safari's edge check
+        // (app/globals.css), which would otherwise take the bar it sits in for an edge bar.
+        'fixed inset-0 bg-black/40 backdrop-blur-md transition-[opacity,visibility] duration-300 ease-out motion-reduce:transition-none',
+        open ? 'visible opacity-100' : 'pointer-events-none invisible opacity-0',
         className,
       )}
     />

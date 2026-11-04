@@ -28,7 +28,7 @@ import {
 import { GAMES, GAMES_ORDER, type Game } from '@/app/lib/games';
 import { TRIBES, glyphUrl } from '@/app/lib/factions';
 import { Fireflies, Searchlights, VeiledMoon } from '@/app/ui/game/SceneBits';
-import { ART_RATIO, COVERS, MARKS, type MarkKey } from './covers';
+import { ART_RATIO, COVERS, MARKS, pageColor, type MarkKey } from './covers';
 import Rail, { haptic } from './Rail';
 import type { ArtBox } from './Atmosphere';
 import { setScene } from './scene';
@@ -182,13 +182,6 @@ function SceneExtras({ id, on }: { id: string; on: boolean }) {
     ) : null;
   if (!bits) return null;
   return <div className={clsx('ambience absolute inset-0 transition-opacity [transition-duration:var(--pick-dur)]', on ? 'opacity-100' : 'opacity-0')}>{bits}</div>;
-}
-
-// The scene's tint sunk into the night (a fifth of it over near-black), the colour round the cover's edges.
-function pageColor(tint: string) {
-  const n = parseInt(tint.slice(1), 16);
-  const mix = (c: number) => Math.round(10 + (c - 10) * 0.2).toString(16).padStart(2, '0');
-  return `#${mix(n >> 16)}${mix((n >> 8) & 255)}${mix(n & 255)}`;
 }
 
 export default function CoverPicker({ initial }: { initial: number }) {
@@ -386,7 +379,7 @@ export default function CoverPicker({ initial }: { initial: number }) {
         onPointerDown={swipeStart}
         onPointerUp={swipeEnd}
         onPointerCancel={() => (swipe.current = null)}
-        className='lc-cover-stage sticky top-0 grid h-svh touch-pan-y overflow-hidden'
+        className='lc-cover-stage sticky top-0 grid h-lvh touch-pan-y overflow-hidden'
       >
         {/* Backdrops: each theme's scene, sliding with the picker a little
             (oversized so its edges never show), washed in the theme's colour */}
@@ -497,7 +490,7 @@ export default function CoverPicker({ initial }: { initial: number }) {
             {cover.name}, {GAMES[cover.game].title}
           </p>
 
-          <div className='lc-ho-foot pointer-events-auto mt-auto mb-[4svh] flex w-full max-w-3xl flex-col items-center gap-4 text-center'>
+          <div className='lc-ho-foot pointer-events-auto mt-auto mb-[calc(4svh+100lvh-100svh)] flex w-full max-w-3xl flex-col items-center gap-4 text-center'>
             {pickerUi}
             <Tagline game={cover.game} className='justify-items-center text-xl text-balance md:text-2xl' />
             <div className='flex flex-wrap items-center justify-center gap-3'>
@@ -514,6 +507,9 @@ export default function CoverPicker({ initial }: { initial: number }) {
 
         </div>
       </div>
+      {/* Over the whole cover, so Safari's edge check (app/globals.css) finds this
+          and not the sticky stage, and lets the scene run on behind its bars. */}
+      <div aria-hidden className='pointer-events-none absolute inset-0 z-10' />
     </section>
   );
 }

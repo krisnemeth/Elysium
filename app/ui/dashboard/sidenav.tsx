@@ -64,7 +64,7 @@ export default function SideNav({ game }: { game: Game }) {
       <PhoneIsland game={game} />
 
       {/* Phone tab bar */}
-      <nav aria-label='Dashboard' className='fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden'>
+      <nav aria-label='Dashboard' className='fixed inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 px-3 md:hidden'>
         <div className={`frame ${panel}`}>
           <TabBarLinks game={game} />
         </div>

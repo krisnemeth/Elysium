@@ -4,7 +4,7 @@ import Navbar from '@/app/ui/navbar';
 import CoverPicker from '@/app/ui/landing/CoverPicker';
 import GamesSection from '@/app/ui/landing/GamesSection';
 import Screens, { SECTIONS } from '@/app/ui/landing/Screens';
-import { COVERS, coverIndex } from '@/app/ui/landing/covers';
+import { COVERS, coverIndex, pageColor } from '@/app/ui/landing/covers';
 
 /*
   The landing (/), "the cover": after the original 2023 Elysium hero (the `legacy`
@@ -29,6 +29,8 @@ export default async function Landing({ searchParams }: PageProps<'/'>) {
 
   return (
     <>
+      {/* The page's colour from the first paint (Safari samples it as the page loads); CoverPicker keeps it in step after. */}
+      <style>{`:root{--page-bg:${pageColor(COVERS[initial].tint)}}`}</style>
       <Navbar sections={SECTIONS} />
       <main id='main'>
         <CoverPicker initial={initial} />

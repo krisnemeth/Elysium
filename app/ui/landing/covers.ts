@@ -191,3 +191,10 @@ export function coverIndex(wanted: string | undefined) {
   const i = COVERS.findIndex((c) => c.id === wanted || c.game === wanted);
   return i < 0 ? 0 : i;
 }
+
+// The scene's tint sunk into the night (a fifth of it over near-black), the colour round the cover's edges.
+export function pageColor(tint: string) {
+  const n = parseInt(tint.slice(1), 16);
+  const mix = (c: number) => Math.round(10 + (c - 10) * 0.2).toString(16).padStart(2, '0');
+  return `#${mix(n >> 16)}${mix((n >> 8) & 255)}${mix(n & 255)}`;
+}

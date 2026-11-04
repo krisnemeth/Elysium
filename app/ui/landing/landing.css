@@ -394,13 +394,17 @@ html:has(.lc-bx) { scroll-behavior: smooth; }
 /* The cover's weather behind the text (SceneWeather.tsx). */
 .lc-bx-weather {
   position: fixed;
-  inset: 0;
+  /* Overhangs the screen: Safari 26 only takes fixed layers up to ~105% of
+     the screen's height for edge bars (see app/globals.css). */
+  inset: -6lvh 0;
   z-index: 1;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 1.4s var(--lc-ease);
+  /* Hidden, not just faded, while off: out of Safari's edge check over the cover. */
+  visibility: hidden;
+  transition: opacity 1.4s var(--lc-ease), visibility 0s 1.4s;
 }
-.lc-bx-weather[data-on] { opacity: 0.6; }
+.lc-bx-weather[data-on] { opacity: 0.6; visibility: visible; transition: opacity 1.4s var(--lc-ease); }
 
 /* The scene's light on the small things. */
 .lc-in-rule::before {
