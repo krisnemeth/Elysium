@@ -32,7 +32,7 @@
 
 ```
 app/
-├── (landing)/, vampire/      # Landing pages (the cover at /, the Vampire book cover)
+├── (landing)/                # The landing (the cover at /)
 ├── login/, signup/, auth/    # Accounts (Supabase Auth)
 ├── vault/
 │   ├── page.tsx              # All characters across games
@@ -59,7 +59,6 @@ plans/                        # Roadmap and design notes
 | Path | Purpose |
 |---|---|
 | `/` | The landing: the cover, a character picker across the three games |
-| `/vampire` | The Vampire book-cover landing |
 | `/login`, `/signup`, `/auth/*` | Accounts |
 | `/vault` | All your characters across games |
 | `/vault/new` | Choose a game before creating a character |
@@ -67,7 +66,7 @@ plans/                        # Roadmap and design notes
 | `/vault/[game]/characters` (+ `/[id]`, `/[id]/edit`, `/[id]/play`) | Coterie/Pack/Cell, sheet view, editor, play mode |
 | `/vault/[game]/new` (+ `/guided`, `/classic`) | New character |
 | `/vault/[game]/loresheets` (+ `/[id]`) | Loresheets |
-| `/vault/[game]/dice`, `/settings`, `/friends` | Dice roller, Settings, Friends (`/vault/settings` and `/vault/friends` redirect) |
+| `/vault/[game]/dice`, `/settings`, `/friends` | Dice roller, Settings, Friends (`/vault/settings` and `/vault/friends` go to the last game you were in) |
 | `/vault/chronicles` (+ `/[id]`, `/[id]/characters/[characterId]`) | Chronicles, a Storyteller's read-only view of players' sheets |
 | `/vault/print/[id]` | Printable sheet |
 | `/concept`, `/concept/dashboard/*` | Editorial "case files" prototype (kept for reference) |
@@ -123,14 +122,14 @@ Migrated from Next.js 14 → 16.3.8 / React 19 (2026-10-06); on 16.4.3 since 202
 
 - `/` (`app/(landing)/page.tsx` and `layout.tsx`, components and `landing.css` in `app/ui/landing/`): "the cover". Six cut-out characters, one per theme, turned with the game logos and the rail at the foot (`CoverPicker.tsx`, `Rail.tsx`, data in `covers.ts`), each in its scene with WebGL weather (`Atmosphere.tsx`) and the shared scene pieces (`app/ui/game/SceneBits.tsx`). Then one-screen sections (`GamesSection.tsx`, `Screens.tsx`: Games, Inside, Creation, Vault, Themes, Dice, Chronicles, the last call and the footer) in the chosen cover's colours; the navbar links each. Clips in `public/landing/` are recorded from the dev-only `/capture/[game]/[view]` route and play on hover, one at a time. Design history: `plans/landing-concept.md`. `/concept/landing` redirects here.
 - **Page colour and phone chrome:** `--page-bg` is the page's own colour (html/body background in `globals.css`); phones paint their status bar and toolbar with it (Safari from the background; `app/ui/ThemeColor.tsx` keeps `<meta name="theme-color">` in step for the rest). Each game × mode sets it to its ink (`app/games.css`), the landing to the chosen cover's tint sunk into black (`CoverPicker.tsx`). On an iPhone nothing a page paints reaches the status bar at rest, so on touch screens the cover fades into that colour at its edges; fixed bars are offset from the edges, not padded to them. Measurements and the recipe: `plans/ios-safari-edges.md`.
-- **Site pages are dark only** (landing, `/vampire`, `/vault`, `/vault/new`, chronicles, login/signup/auth, 404): no theme switch in the site navbar; `DARK_ONLY_PATHS` in `app/lib/theme.ts` handles first loads and `app/ui/ForceDark.tsx` in-app navigation, without touching the player's saved theme (which the dashboards use).
-- `/vampire`: the book-cover hero (`app/ui/home/Hero.tsx`). The portrait and ankh are sized from one `--cover` width so the ankh halo stays behind the portrait at every viewport; the ankh rises on scroll because the backdrop/portrait layers are sticky. Swap cover art via `COVER_ART` in `Hero.tsx`.
+- **Public pages are dark only** (landing, login/signup/auth, 404), and so is the chronicle table: no theme switch in the site navbar; `DARK_ONLY_PATHS` in `app/lib/theme.ts` handles first loads and `app/ui/ForceDark.tsx` in-app navigation, without touching the player's saved theme (which everything else past login uses).
 - `/concept`: experimental editorial redesign, kept for reference.
 - Scroll-driven effects use CSS `animation-timeline` in `globals.css`, with a static fallback and `prefers-reduced-motion` respected.
 
 ## App UI (dashboard)
 
-- Shell: `app/vault/[game]/layout.tsx` (ambient backdrop + `ui/dashboard/sidenav.tsx`: glass sidebar on desktop; on phones a top bar that grows into a menu, `PhoneIsland.tsx`, plus a bottom tab bar).
+- **One navigation per area:** public pages (landing, login, signup, auth) have the top navbar (`app/ui/navbar.tsx` → `SiteIsland.tsx`). Past login everything is in `app/ui/dashboard/AppShell.tsx`: ambient backdrop + `sidenav.tsx` (glass sidebar on desktop; on phones a top bar that grows into a menu, `PhoneIsland.tsx`, plus a bottom tab bar). `/vault/[game]/*` uses it through its layout, `/vault` and `/vault/new` directly, chronicle pages through `app/ui/social/SocialShell.tsx`. Focus screens stay outside it: the chronicle table (its `GameBar`) and the printable sheet.
+- Pages spanning all three games wear the last game you were in (`RememberGame.tsx` sets the `elysium-game` cookie, `app/lib/current-game.ts` reads it), Vampire until then; chronicle invitations and shared sheets wear the chronicle's game.
 - Shared kit in `app/ui/kit/`: `styles.ts` (panel, buttons, field classes), `PageHeader`, `Stagger` (cascading entrance), `DotRating` (V5 dot/box ratings, keyboard slider). Themes: `app/ui/dashboard/ThemePicker.tsx` (sidebar, grows in place; also in the phone menu); every switch goes through `switchTheme` in `app/lib/theme-switch.ts` (View Transition crossfade). Theme script: `app/lib/theme.ts`. Island menus: `app/ui/kit/Island.tsx`.
 - Character sheets: one `Sheet` object (`app/lib/sheets/types.ts`) held by `app/ui/sheets/CharacterEditor.tsx`, which autosaves it (900 ms debounce) through the server actions in `app/lib/actions/characters.ts`. Sections (`app/ui/sheets/sections/`) read and write it via `useSheet()` / `useSheetFields()` from `SheetContext.tsx`; per-game section lists are in `game-sheets.tsx`. Inputs are in `fields.tsx`.
 - Characters live in Supabase (`public.characters`, RLS: owner only); reads go through `app/lib/data/characters.ts`. New accounts get copies of the 9 starters (`app/lib/starters/`, validated and turned into a migration by `node scripts/build-starters.mts <file>`).
@@ -160,7 +159,6 @@ Elysium is a cross-game vault for Vampire: The Masquerade, Werewolf: The Apocaly
 | Route | What |
 |---|---|
 | `/` | The landing: the cover, a character picker across the three games |
-| `/vampire` | The Vampire book-cover landing (the earlier revamp) |
 | `/vault` | All characters across games |
 | `/vault/new` | Choose a game before creating a character |
 | `/vault/[game]` (+ `/characters`, `/new`, `/loresheets`, `/dice`, `/settings`, `/friends`) | Each game's dashboard and pages |
@@ -170,7 +168,7 @@ Elysium is a cross-game vault for Vampire: The Masquerade, Werewolf: The Apocaly
 - **Themes = game × mode.** `app/vault/[game]/layout.tsx` sets `data-game` on a wrapper; the mode is `<html data-theme>` (toggle). `app/games.css` holds per-game tokens, fonts (Werewolf: Cinzel; Hunter: Special Elite + Courier Prime), the `.frame` borders (gothic, neon, paper & tape; Werewolf's two and the hideout are rendered, see "Rendered frames") and ambient keyframes. Vampire uses the root tokens. Hunter's second scene is the city (wet harbour streets at night, flyers taped to a dark board); every scene is dark.
 - **Rendered frames (edge studio, in progress):** `scripts/edge-studio/` renders theme frames once with three.js in headless Chrome (`node scripts/edge-studio/render.mts <skin>`; needs Google Chrome) from CC0 ambientCG materials (downloaded into the git-ignored `.cache/`) into `public/frames/<skin>/` (`rim.webp`, a 9-slice border; corner pieces `top-left`/`top-right`/`bottom-left`/`bottom-right` whose long ornaments keep to the 32px side gutter (border + padding); `top`/`bottom`, a short tiled fringe that ends before the content). Every theme shares one scene (`studio.js`: the same rim profile and width, the light at the panel's middle) and supplies its material, light colour and ornaments (`themes/<skin>.js`). In `app/games.css` one block of rules draws them (`--frame-rim`, `--frame-top`, `--frame-bottom`); ornament strips only on tall frames (`.frame-tall`, the chronicle's `.skin-frame`). Shared building blocks in `studio.js`: `rim` (with `band` for a second material along its inner edge, e.g. moss), `mound`, `spike`, `limb` (a tapering gnarled branch/root), `atlasLeaves` (leaves cut from a CC0 leaf atlas), `bracket` (bracket fungus) and `mushroom`. So far: the cave (`werewolf-light`: Rock020, stalactites and stalagmites) the hideout (`hunter-dark`, a basement ops base: the rim is a worn steel pipe (Metal021, with a thin clear coat for sheen) bending round each corner, built in the theme rather than by `rim`, with rust (Metal022) only in patches round the clamps, joints and lower bends; a valve with its handwheel and a flange, an ammo can, spent shotgun shells, strap clamps; lit by one directional light from the upper right, where the backdrop's lamp hangs, plus a small room environment with the lamp in it for reflections, instead of the shared rig) and Moonlit forest (`werewolf-dark`: Bark014 grown over with Moss002, branches and roots thick with ivy from LeafSet017, bracket fungi and mushrooms).
 - **Ambience:** `app/ui/game/Ambience.tsx`, one backdrop + looping element per game and mode. The hideout's backdrop is the cell's basement den from the asset pack (`public/art/htr-den.webp`, Locations64, mirrored) in a box that keeps its proportions, placed so its lamp hangs at the top right, clear of the headings; overlays sit on the art: the lamp's glow and light cone (`bulb-buzz`), a cigarette's smoke curling up into it (`smoke-rise` through the SVG filter `#smoke-curl`).
-- **Navigation:** `app/ui/navbar.tsx` → `app/ui/SiteIsland.tsx` (site pages: links on the right, phone menu, section dots; no theme switch) and `app/ui/dashboard/sidenav.tsx` (dashboards: game switcher, nav items, Chronicles, Themes, Settings, Friends, Log out); the theme frame comes from `.frame`.
+- **Navigation:** `app/ui/navbar.tsx` → `app/ui/SiteIsland.tsx` (public pages: links on the right, phone menu, section dots; no theme switch) and `app/ui/dashboard/sidenav.tsx` (past login: game switcher, Your vault, nav items, Chronicles, Themes, Settings, Friends, Log out); the theme frame comes from `.frame`.
 - **Game config:** `app/lib/games.ts` (names, logos, nouns, mode names). Factions: `app/lib/factions.ts`. Sheets per game: `app/ui/sheets/game-sheets.tsx` (sections in `app/ui/sheets/sections/`).
 - **Dice:** rules for all three games in `app/lib/dice/rules.ts` (tested cases in git history: Hunger, Rage/Brutal, Desperation/Overreach/Despair). `app/ui/dice/DiceRoller.tsx` takes `game`. 3D dice: `app/ui/dice3d/` (React Three Fiber + three.js): `d10.ts` builds a true pentagonal trapezohedron and per-game face textures from the official glyphs in `public/dice/glyphs/`; `DiceScene.tsx` throws them into a per-game tray (`Tray.tsx`, procedural textures in `tray-look.ts`: walnut, stone and slate, ammo crate and canvas), lit by one warm lamp. `throw.ts` simulates each throw up front (floor, walls, dice knocking each other, friction, rolling spin), each die until it stops (capped by `MAX_THROW_SECONDS`), and the scene reports the end through `onSettled`; dice stay where they fall, and the rolled value is reached by offsetting each die's orientation once (`landing`), not by steering it. Before a roll the dice wait in rows. `timing.ts` is shared with the roller. Dice-set limits (pool and special dice per game) are `DICE_SET` in `app/lib/dice/rules.ts`. Symbols are vector SVGs placed by `GLYPH_BOX` (measured from the official dice art) and colours are sampled from it (`DICE_STYLES`). Faces glow a little (emissive map) so colours read true; the studio environment's strength is `scene.environmentIntensity` (three.js ignores a material's `envMapIntensity` when lighting comes from `scene.environment`). The `react-hooks/immutability` lint rule is disabled in that file because R3F mutates three.js objects in the render loop.
 - Werewolf tribe/auspice glyphs: `public/werewolf/*.png` (used as CSS masks). Sample portraits: `public/portraits/`.
@@ -178,7 +176,7 @@ Elysium is a cross-game vault for Vampire: The Masquerade, Werewolf: The Apocaly
 ## Licensing (Dark Pack)
 
 Elysium uses World of Darkness IP under the [Dark Pack Agreement](https://www.paradoxinteractive.com/games/world-of-darkness/community/dark-pack-agreement). Requirements:
-- Show the verbatim copyright notice, a "not official World of Darkness material" notice, and the Dark Pack logo. All three live in `app/lib/dark-pack.ts` and are rendered in both landing page footers; don't paraphrase the notice.
+- Show the verbatim copyright notice, a "not official World of Darkness material" notice, and the Dark Pack logo. All three live in `app/lib/dark-pack.ts` and are rendered in the landing page's footer; don't paraphrase the notice.
 - The rights holder named in the notice is Paradox Interactive AB. White Wolf is Paradox's World of Darkness brand, not a separate rights holder.
 - Character generators/apps must stay free: no in-app purchases, paywalls or other monetised transactions. Donations (Patreon, ko-fi) are allowed.
 - The official asset pack is linked from the agreement page under "Download free materials". It's extracted (git-ignored, ~490 MB) in `brand-assets/`: VtM clan/sect/discipline/dice symbols and logos, plus ~300 official illustrations (characters, antagonists, locations, scenes). See `brand-assets/README.md`.
@@ -188,7 +186,7 @@ Elysium uses World of Darkness IP under the [Dark Pack Agreement](https://www.pa
 `app/ui/svgs/official/` holds 57 SVGs generated from the official EPS/AI artwork: 16 clan symbols (incl. Ministry, Salubri, Caitiff, Thin-blood), 14 clan name logos, Camarilla/Anarch/Sabbat symbols and names, 12 discipline badges, 6 dice symbols, the ankh and V5 logos. Import named components from `@/app/ui/svgs/official` (e.g. `ClanBrujah`, `ClanNameBrujah`, `DisciplineAuspex`, `DiceMessyCritical`).
 - Shapes use `currentColor`, so style them with `text-*`. White inner details use `var(--knockout, #fff)`; set `--knockout` (e.g. to the background colour) to recolour or "cut out" those details.
 - Regenerate with `scripts/convert-brand-svgs.sh` (needs `brew install ghostscript poppler`). Each file's ids are prefixed so inline SVGs don't share clip-path ids; `next.config.mjs` disables svgr's `cleanupIds` to keep them.
-- The older hand-sourced SVGs in `app/ui/svgs/` are still used by the hero and dashboard; prefer the official set for new work.
+- The older hand-sourced SVGs in `app/ui/svgs/` are still used by the dashboard; prefer the official set for new work.
 
 ## Tailwind 4 Notes
 

@@ -16,7 +16,7 @@ export default function NotFound() {
           This page doesn&apos;t exist, or it has slipped beneath the Masquerade.
         </p>
         <div className='mt-8 flex flex-wrap justify-center gap-3'>
-          <Link href='/dashboard' className={buttonPrimary}>
+          <Link href='/vault' className={buttonPrimary}>
             Back to the vault
           </Link>
           <Link href='/' className={buttonGhost}>

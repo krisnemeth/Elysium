@@ -15,7 +15,7 @@ export default function Footer() {
         </div>
         <nav aria-label='Games' className='flex flex-col gap-2 md:col-span-3'>
           {GAMES_ORDER.map((g) => (
-            <Link key={g} href={g === 'vampire' ? '/vampire' : gamePath(g)} className='no-underline transition-colors hover:text-bone'>
+            <Link key={g} href={gamePath(g)} className='no-underline transition-colors hover:text-bone'>
               {GAMES[g].title}
             </Link>
           ))}

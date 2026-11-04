@@ -1,8 +1,7 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { Elysium1 } from '@/app/ui/svgs';
-import ForceDark from '@/app/ui/ForceDark';
+import Navbar from '@/app/ui/navbar';
+import { SECTIONS } from '@/app/ui/landing/sections';
 import { GAMES, GAMES_ORDER } from '@/app/lib/games';
 
 // Shared frame for login, sign-up and the other auth screens. Dark only, like
@@ -10,6 +9,7 @@ import { GAMES, GAMES_ORDER } from '@/app/lib/games';
 export default function AuthShell({ title, lead, children }: { title: string; lead?: ReactNode; children: ReactNode }) {
   return (
     <div data-game='wod' className='relative isolate grid min-h-svh bg-ink text-bone transition-colors duration-500 lg:grid-cols-[1fr_minmax(26rem,32rem)]'>
+      <Navbar sections={SECTIONS.map((s) => ({ ...s, href: `/${s.href}` }))} />
       {/* The three worlds, faint, behind the form on phones and beside it on desktop */}
       <div aria-hidden className='absolute inset-0 -z-10 flex lg:relative lg:z-0'>
         {GAMES_ORDER.map((g) => (
@@ -20,13 +20,7 @@ export default function AuthShell({ title, lead, children }: { title: string; le
         <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--ink)_85%)] lg:bg-[linear-gradient(to_right,transparent_40%,var(--ink))]' />
       </div>
 
-      <main id='main' className='page-in relative flex flex-col px-6 py-8 md:px-12'>
-        <ForceDark />
-        <div className='flex items-center'>
-          <Link href='/' aria-label='Elysium home' className='rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone'>
-            <Elysium1 aria-hidden className='h-auto w-24 text-bone' />
-          </Link>
-        </div>
+      <main id='main' className='page-in relative flex flex-col px-6 pt-24 pb-8 md:px-12'>
         <div className='my-auto w-full max-w-sm self-center py-12'>
           <h1 className='font-display text-5xl leading-tight tracking-tight'>{title}</h1>
           {lead && <p className='mt-3 leading-relaxed text-bone/65'>{lead}</p>}

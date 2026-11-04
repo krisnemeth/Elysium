@@ -58,3 +58,7 @@ export const GAMES: Record<Game, GameInfo> = {
 };
 
 export const gamePath = (game: Game, path = '') => `/vault/${game}${path}`;
+
+// The game you were last in (RememberGame.tsx), for the pages that span all three; Vampire until you've been in one.
+export const GAME_COOKIE = 'elysium-game';
+export const DEFAULT_GAME: Game = 'vampire';

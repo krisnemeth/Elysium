@@ -121,15 +121,6 @@ const SCENE_CLIPS: Record<string, string> = { masquerade: 'scene-masquerade', ne
 const CHRONICLE_SHOT = { src: '/acts/hook.webp', alt: 'The chronicle table in Elysium.' };
 
 // The navbar's section links.
-export const SECTIONS = [
-  { href: '#games', label: 'Games' },
-  { href: '#inside', label: 'Inside' },
-  { href: '#create', label: 'Creation' },
-  { href: '#vault', label: 'Vault' },
-  { href: '#atmospheres', label: 'Themes' },
-  { href: '#dice', label: 'Dice' },
-  { href: '#chronicles', label: 'Chronicles' },
-];
 
 
 

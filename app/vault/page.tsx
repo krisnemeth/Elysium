@@ -2,10 +2,13 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MdAdd, MdArrowOutward } from 'react-icons/md';
-import Navbar from '@/app/ui/navbar';
+import AppShell from '@/app/ui/dashboard/AppShell';
+import PageHeader from '@/app/ui/kit/PageHeader';
+import { buttonPrimary, panel } from '@/app/ui/kit/styles';
 import Stagger from '@/app/ui/kit/Stagger';
 import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
 import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
+import { currentGame } from '@/app/lib/current-game';
 import { getCharacters, toCharacter } from '@/app/lib/data/characters';
 
 export const metadata: Metadata = { title: 'Your vault' };
@@ -13,32 +16,29 @@ export const metadata: Metadata = { title: 'Your vault' };
 export default async function Vault() {
   const CHARACTERS = (await getCharacters()).map(toCharacter);
   return (
-    <div data-game='wod' className='min-h-svh bg-ink text-bone transition-colors duration-500'>
-      <Navbar
-        sections={[...GAMES_ORDER.map((g) => ({ href: gamePath(g), label: GAMES[g].name })), { href: '/vault/chronicles', label: 'Chronicles' }, { href: '/vault/friends', label: 'Friends' }, { href: '/vault/settings', label: 'Settings' }]}
-      />
-      <main id='main' className='page-in mx-auto max-w-6xl px-6 pt-32 pb-24'>
-        <header className='flex flex-col gap-6 md:flex-row md:items-end md:justify-between'>
-          <div>
-            <p className='text-xs tracking-[0.3em] text-accent uppercase'>Your vault</p>
-            <h1 className='mt-3 font-display text-6xl leading-[0.95] tracking-tight'>Every creature, one vault.</h1>
-            <p className='mt-4 max-w-[56ch] leading-relaxed text-bone/65'>
-              {CHARACTERS.length === 0
-                ? 'Nobody here yet. Pick a game and create your first character; it saves as you go.'
-                : `${CHARACTERS.length} character${CHARACTERS.length === 1 ? '' : 's'} across three games. Step into a game to see its dashboard, or start someone new.`}
-            </p>
-          </div>
-          <Link href='/vault/new' className='group inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-bone px-6 py-3 text-sm font-semibold text-ink transition hover:-translate-y-0.5 active:scale-[0.98] md:self-auto'>
-            <MdAdd aria-hidden className='transition-transform duration-300 group-hover:rotate-90' /> Create a character
-          </Link>
-        </header>
+    <AppShell game={await currentGame()}>
+      <div className='page-in'>
+        <PageHeader
+          eyebrow='Your vault'
+          title='Every creature, one vault.'
+          description={
+            CHARACTERS.length === 0
+              ? 'Nobody here yet. Pick a game and create your first character; it saves as you go.'
+              : `${CHARACTERS.length} character${CHARACTERS.length === 1 ? '' : 's'} across three games. Step into a game to see its dashboard, or start someone new.`
+          }
+          actions={
+            <Link href='/vault/new' className={buttonPrimary}>
+              <MdAdd aria-hidden className='transition-transform duration-300 group-hover:rotate-90' /> Create a character
+            </Link>
+          }
+        />
 
         <Stagger className='mt-14 grid gap-5 lg:grid-cols-3'>
           {GAMES_ORDER.map((g) => {
             const { Logo, title, noun } = GAMES[g];
             const list = CHARACTERS.filter((c) => c.game === g);
             return (
-              <section key={g} aria-label={title} className='flex flex-col rounded-2xl border border-bone/10 bg-bone/[0.03] p-6'>
+              <section key={g} aria-label={title} className={`flex flex-col p-6 ${panel}`}>
                 <Logo aria-label={title} role='img' className='h-12 w-auto self-start text-bone' />
                 <p className='mt-4 text-xs tracking-[0.2em] text-bone/50 uppercase'>
                   {list.length} {list.length === 1 ? noun.one : noun.many}
@@ -73,7 +73,7 @@ export default async function Vault() {
             );
           })}
         </Stagger>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

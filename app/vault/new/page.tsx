@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import Navbar from '@/app/ui/navbar';
+import AppShell from '@/app/ui/dashboard/AppShell';
+import { currentGame } from '@/app/lib/current-game';
 import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
 
 export const metadata: Metadata = { title: 'Create a character' };
@@ -12,18 +13,15 @@ const WHAT = {
   hunter: 'Creed, Drive, Desperation, Danger, Edges and perks.',
 };
 
-export default function ChooseGame() {
+export default async function ChooseGame() {
   return (
-    <div data-game='wod' className='flex min-h-svh flex-col bg-ink text-bone transition-colors duration-500'>
-      <Navbar
-        sections={[]}
-      />
-      <main id='main' className='page-in flex grow flex-col px-4 pt-28 pb-8 md:px-6'>
+    <AppShell game={await currentGame()}>
+      <div className='page-in flex flex-col'>
         <header className='mx-auto max-w-3xl text-center'>
           <p className='text-xs tracking-[0.3em] text-accent uppercase'>New character</p>
           <h1 className='mt-3 font-display text-5xl leading-[0.95] tracking-tight text-balance md:text-7xl'>Who are you bringing into the night?</h1>
         </header>
-        <ul className='mt-10 flex min-h-[70svh] grow flex-col gap-3 md:flex-row'>
+        <ul className='mt-10 flex min-h-[70svh] grow flex-col gap-3 lg:flex-row'>
           {GAMES_ORDER.map((g) => {
             const { Logo, title, figure, tagline } = GAMES[g];
             return (
@@ -45,7 +43,7 @@ export default function ChooseGame() {
             );
           })}
         </ul>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

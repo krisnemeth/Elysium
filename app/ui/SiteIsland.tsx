@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import { MdArrowOutward, MdClose, MdMenu } from 'react-icons/md';
 import { signOut } from '@/app/lib/actions/auth';
@@ -46,6 +47,8 @@ export default function SiteIsland({
   useIsland({ open: expanded, onEscape: closeAll, onBreakpoint: closeAll, trigger: menuButton });
 
   // Never repeat a destination the buttons already offer (the call to action, Log in).
+  // Nor offer the page you're on (Sign up on sign-up, Log in on login).
+  const pathname = usePathname();
   const ctaHref = signedIn ? '/vault' : '/signup';
   const sections = allSections.filter((s) => s.href !== ctaHref && s.href !== '/login');
 
@@ -154,13 +157,13 @@ export default function SiteIsland({
                 <form action={signOut}>
                   <button className={quiet}>Log out</button>
                 </form>
-              ) : (
+              ) : pathname !== '/login' && (
                 <Link href='/login' className={quiet}>
                   Log in
                 </Link>
               )}
             </div>
-            <Link
+            {pathname !== ctaHref && <Link
               href={ctaHref}
               onClick={closeAll}
               data-site-cta
@@ -168,7 +171,7 @@ export default function SiteIsland({
             >
               {signedIn ? 'Your vault' : 'Sign up'}
               <MdArrowOutward aria-hidden className='transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
-            </Link>
+            </Link>}
             <button
               ref={menuButton}
               type='button'
@@ -196,7 +199,7 @@ export default function SiteIsland({
                 <form action={signOut}>
                   <button className={quiet}>Log out</button>
                 </form>
-              ) : (
+              ) : pathname !== '/login' && (
                 <Link href='/login' onClick={closeAll} className={quiet}>
                   Log in
                 </Link>

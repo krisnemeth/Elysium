@@ -60,7 +60,7 @@ export default function SideNav({ game }: { game: Game }) {
         </div>
       </aside>
 
-      {/* Phone top bar: grows into a menu (Settings, Friends, Themes, Log out). */}
+      {/* Phone top bar: grows into a menu (Your vault, Settings, Friends, Themes, Log out). */}
       <PhoneIsland game={game} />
 
       {/* Phone tab bar */}

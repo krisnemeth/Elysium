@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useRef, useState } from 'react';
 import { FaPowerOff } from 'react-icons/fa';
+import { GiLockedChest } from 'react-icons/gi';
 import { MdClose, MdExpandMore, MdMenu, MdOutlinePalette, MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
 import { signOut } from '@/app/lib/actions/auth';
 import { gamePath, type Game } from '@/app/lib/games';
@@ -17,7 +18,7 @@ const row =
 
 /*
   The phone top bar as a "dynamic island": the menu button grows the bar
-  itself to show Settings, Friends, Themes and Log out; Themes grows it
+  itself to show Your vault, Settings, Friends, Themes and Log out; Themes grows it
   further with the scene tiles. The page behind blurs while it's open.
 */
 export default function PhoneIsland({ game }: { game: Game }) {
@@ -64,6 +65,9 @@ export default function PhoneIsland({ game }: { game: Game }) {
 
         <IslandSection open={open} id='phone-menu'>
           <nav aria-label='Account' className='flex flex-col gap-1 pt-2 pb-1'>
+            <Link href='/vault' onClick={closeAll} className={row}>
+              <GiLockedChest aria-hidden className='size-5' /> Your vault
+            </Link>
             <Link href={gamePath(game, '/settings')} onClick={closeAll} className={row}>
               <MdOutlineSettings aria-hidden className='size-5' /> Settings
             </Link>

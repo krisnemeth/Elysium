@@ -170,9 +170,7 @@ html[data-lc-cover] .lc [data-site-cta] {
 }
 
 /* ------------------------------------------------------------------ */
-/* The cover (CoverPicker.tsx, Tailwind + the global                  */
-/* ankh-wake / portrait-recede / cover-fade scroll animations, as on    */
-/* /vampire)                                                            */
+/* The cover (CoverPicker.tsx, Tailwind).                              */
 /* ------------------------------------------------------------------ */
 
 /* The character picker (CoverPicker.tsx). --pick-dir is the way the logo row

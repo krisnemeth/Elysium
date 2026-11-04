@@ -3,13 +3,13 @@ import Navbar from '@/app/ui/navbar';
 
 import CoverPicker from '@/app/ui/landing/CoverPicker';
 import GamesSection from '@/app/ui/landing/GamesSection';
-import Screens, { SECTIONS } from '@/app/ui/landing/Screens';
+import Screens from '@/app/ui/landing/Screens';
+import { SECTIONS } from '@/app/ui/landing/sections';
 import { COVERS, coverIndex, pageColor } from '@/app/ui/landing/covers';
 
 /*
   The landing (/), "the cover": after the original 2023 Elysium hero (the `legacy`
-  branch: app/ui/home/HomePageArt.tsx and WelcomeText.tsx, as /vampire rebuilt
-  it), turned into a character picker across the three games (app/ui/landing/CoverPicker.tsx):
+  branch: app/ui/home/HomePageArt.tsx and WelcomeText.tsx), turned into a character picker across the three games (app/ui/landing/CoverPicker.tsx):
   one cut-out character per theme (two per game), the game's mark behind their head (the
   clan symbol, the Glass Walkers glyph or claw marks, the flame), its spines down the sides and its theme's
   colours, chosen from the game logos under the navbar. The first section
