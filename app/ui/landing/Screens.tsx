@@ -51,7 +51,7 @@ const FEATURES: { numeral: string; Icon: IconType; eyebrow: string; title: strin
   {
     numeral: 'IV',
     Icon: GiRoundTable,
-    eyebrow: 'Chronicles',
+    eyebrow: 'Chronicles · coming soon',
     title: 'Run a chronicle with friends',
     body: 'Invite your coterie, pack or cell. A Storyteller, or the Storyteller bot, runs the scene while everyone takes turns, rolls in the open and votes on what happens next.',
   },

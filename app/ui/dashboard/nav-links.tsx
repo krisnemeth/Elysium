@@ -23,7 +23,6 @@ type NavLink = { name: string; href: string; icon: IconType };
 
 const OVERVIEW = { name: 'Overview', href: '/vault', icon: GiLockedChest };
 const PRINTABLE = { name: 'Printable sheets', href: '/vault/print', icon: MdOutlinePrint };
-const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
 const accountLinks = (game: Game) => [
   { name: 'Settings', href: gamePath(game, '/settings'), icon: MdOutlineSettings },
   { name: 'Friends', href: gamePath(game, '/friends'), icon: MdPeopleOutline },
@@ -65,10 +64,28 @@ function NavItem({ link: { name, href, icon: Icon }, active, detail, badge }: { 
   );
 }
 
+// Chronicles are being reworked: no link in any navigation for now. The pages still work, for open tables and shared links.
+function ChroniclesSoon() {
+  return (
+    <li className='flex cursor-not-allowed items-center gap-2 rounded-xl py-3 pr-1 pl-4 text-sm text-bone/30'>
+      <GiCampfire aria-hidden className='mr-1 size-5 shrink-0' />
+      <span className='min-w-0 grow truncate'>Chronicles</span>
+      <span className='shrink-0 rounded-full border border-bone/15 px-1.5 py-0.5 text-[0.55rem] tracking-widest text-bone/40 uppercase'>Soon</span>
+    </li>
+  );
+}
+
 // Vertical list for a game's sidebar.
 export function SideNavLinks({ game, group = 'main' }: { game: Game; group?: 'main' | 'chronicles' | 'account' }) {
   const pathname = usePathname();
-  const links = group === 'main' ? [OVERVIEW, ...linksFor(game)] : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
+  if (group === 'chronicles') {
+    return (
+      <ul className='flex flex-col gap-1'>
+        <ChroniclesSoon />
+      </ul>
+    );
+  }
+  const links = group === 'main' ? [OVERVIEW, ...linksFor(game)] : accountLinks(game);
   return (
     <ul className='flex flex-col gap-1'>
       {links.map((link) => (
@@ -86,11 +103,7 @@ export function OverviewLinks({ resume }: { resume: { href: string; name: string
       <NavItem link={OVERVIEW} active={pathname === OVERVIEW.href} />
       {resume && <NavItem link={{ name: 'Continue', href: resume.href, icon: MdPlayArrow }} active={false} detail={resume.name} />}
       <NavItem link={PRINTABLE} active={pathname.startsWith(PRINTABLE.href)} />
-      <li className='flex cursor-not-allowed items-center gap-2 rounded-xl py-3 pr-1 pl-4 text-sm text-bone/30'>
-        <CHRONICLES.icon aria-hidden className='mr-1 size-5 shrink-0' />
-        <span className='min-w-0 grow truncate'>{CHRONICLES.name}</span>
-        <span className='shrink-0 rounded-full border border-bone/15 px-1.5 py-0.5 text-[0.55rem] tracking-widest text-bone/40 uppercase'>Soon</span>
-      </li>
+      <ChroniclesSoon />
     </ul>
   );
 }
@@ -109,8 +122,8 @@ export function OverviewAccountLinks({ friendRequests }: { friendRequests: numbe
 export function TabBarLinks({ game }: { game: Game }) {
   const pathname = usePathname();
   return (
-    <ul className='grid grid-cols-5'>
-      {[...linksFor(game), CHRONICLES].map(({ name, href, icon: Icon }) => {
+    <ul className='grid grid-cols-4'>
+      {linksFor(game).map(({ name, href, icon: Icon }) => {
         const active = isActive(pathname, href, game);
         return (
           <li key={href}>

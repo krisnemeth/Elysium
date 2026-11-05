@@ -10,12 +10,21 @@ import type { Character } from '@/app/lib/sample-characters';
 
 export type LoresheetLink = { id: string; game: Game; title: string; kind: LoreKind };
 
+function ShelfTitle({ id, title, count }: { id: string; title: string; count: number }) {
+  return (
+    <h2 id={id} className='flex items-baseline gap-2 px-2 font-display text-2xl'>
+      {title}
+      {count > 0 && <span className='text-base text-bone/45 tabular-nums'>{count}</span>}
+    </h2>
+  );
+}
+
 // The overview's drafts and loresheets, from all three games, each marked with its game.
 export default function OverviewShelves({ drafts, loresheets }: { drafts: Character[]; loresheets: LoresheetLink[] }) {
   return (
     <div className='grid gap-3 lg:grid-cols-2 desk:min-h-40 desk:flex-1 desk:grid-rows-[minmax(0,1fr)]'>
       <section aria-labelledby='drafts-title' className={`overflow-y-auto p-4 ${panel}`}>
-        <h2 id='drafts-title' className='px-2 font-display text-2xl'>Drafts</h2>
+        <ShelfTitle id='drafts-title' title='Drafts' count={drafts.length} />
         {drafts.length > 0 ? (
           <Stagger as='ul' className='mt-3 flex flex-col'>
             {drafts.map((c) => (
@@ -28,7 +37,7 @@ export default function OverviewShelves({ drafts, loresheets }: { drafts: Charac
       </section>
 
       <section aria-labelledby='lore-title' className={`flex flex-col overflow-y-auto p-4 ${panel}`}>
-        <h2 id='lore-title' className='px-2 font-display text-2xl'>Loresheets</h2>
+        <ShelfTitle id='lore-title' title='Loresheets' count={loresheets.length} />
         {loresheets.length ? (
           <ul className='mt-3 flex flex-col'>
             {loresheets.map((l) => {
