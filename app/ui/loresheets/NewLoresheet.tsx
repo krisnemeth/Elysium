@@ -5,11 +5,11 @@ import { MdAdd } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, type Game } from '@/app/lib/games';
 import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
 import { createLoresheet } from '@/app/lib/actions/loresheets';
-import { buttonGhost, buttonPrimary } from '@/app/ui/kit/styles';
+import { buttonPrimary } from '@/app/ui/kit/styles';
 import { LORE_ICONS } from './icons';
 
 // "+ New loresheet" with a small menu of the three kinds; from the overview (no `game`) it also asks which game.
-export default function NewLoresheet({ game, initialGame = 'vampire', ghost = false }: { game?: Game; initialGame?: Game; ghost?: boolean }) {
+export default function NewLoresheet({ game, initialGame = 'vampire', buttonClass = buttonPrimary }: { game?: Game; initialGame?: Game; buttonClass?: string }) {
   const [open, setOpen] = useState(false);
   const [picked, setPicked] = useState(initialGame);
   const target = game ?? picked;
@@ -31,8 +31,8 @@ export default function NewLoresheet({ game, initialGame = 'vampire', ghost = fa
 
   return (
     <div ref={root} className='relative'>
-      <button type='button' aria-expanded={open} aria-controls={menuId} onClick={() => setOpen((o) => !o)} className={ghost ? buttonGhost : buttonPrimary}>
-        <MdAdd aria-hidden className='size-4 transition-transform duration-300 group-hover:rotate-90' />
+      <button type='button' aria-expanded={open} aria-controls={menuId} onClick={() => setOpen((o) => !o)} className={buttonClass}>
+        <MdAdd aria-hidden className='size-4' />
         New loresheet
       </button>
       {open && (

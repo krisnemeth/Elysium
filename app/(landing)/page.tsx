@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import Navbar from '@/app/ui/navbar';
 
 import CoverPicker from '@/app/ui/landing/CoverPicker';
 import GamesSection from '@/app/ui/landing/GamesSection';
 import Screens from '@/app/ui/landing/Screens';
 import { SECTIONS } from '@/app/ui/landing/sections';
-import { COVERS, coverIndex, pageColor } from '@/app/ui/landing/covers';
+import { COVER_COOKIE, COVERS, coverIndex, pageColor } from '@/app/ui/landing/covers';
 
 /*
   The landing (/), "the cover": after the original 2023 Elysium hero (the `legacy`
@@ -25,7 +26,8 @@ export const metadata: Metadata = {
 
 export default async function Landing({ searchParams }: PageProps<'/'>) {
   const { cover: wanted } = await searchParams;
-  const initial = coverIndex(typeof wanted === 'string' ? wanted : undefined);
+  // A link's ?cover= first, then the cover last chosen (here or in the overview's Themes).
+  const initial = coverIndex(typeof wanted === 'string' ? wanted : (await cookies()).get(COVER_COOKIE)?.value);
 
   return (
     <>

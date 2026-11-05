@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GiLockedChest, GiVampireCape, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
-import { MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
+import { MdOutlinePrint, MdOutlineSettings, MdPeopleOutline, MdPlayArrow } from 'react-icons/md';
+import type { IconType } from 'react-icons';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 
 const GAME_ICON = { vampire: GiBatWing, werewolf: GiWolfHowl, hunter: GiCrossbow };
@@ -18,52 +19,88 @@ const linksFor = (game: Game) => [
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
 ];
 
+type NavLink = { name: string; href: string; icon: IconType };
+
 const OVERVIEW = { name: 'Overview', href: '/vault', icon: GiLockedChest };
+const PRINTABLE = { name: 'Printable sheets', href: '/vault/print', icon: MdOutlinePrint };
 const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
 const accountLinks = (game: Game) => [
   { name: 'Settings', href: gamePath(game, '/settings'), icon: MdOutlineSettings },
   { name: 'Friends', href: gamePath(game, '/friends'), icon: MdPeopleOutline },
 ];
 
-const OVERVIEW_ACCOUNT = [
-  { name: 'Settings', href: '/vault/settings', icon: MdOutlineSettings },
-  { name: 'Friends', href: '/vault/friends', icon: MdPeopleOutline },
-];
-
-function isActive(pathname: string, href: string, game?: Game) {
-  return href === OVERVIEW.href || (game && href === gamePath(game)) ? pathname === href : pathname.startsWith(href);
+function isActive(pathname: string, href: string, game: Game) {
+  return href === OVERVIEW.href || href === gamePath(game) ? pathname === href : pathname.startsWith(href);
 }
 
-// Vertical list for the desktop sidebar.
-export function SideNavLinks({ game, group = 'main' }: { game?: Game; group?: 'main' | 'chronicles' | 'account' | 'overview' | 'overview-account' }) {
+function NavItem({ link: { name, href, icon: Icon }, active, detail, badge }: { link: NavLink; active: boolean; detail?: string; badge?: number }) {
+  return (
+    <li>
+      <Link
+        href={href}
+        aria-current={active ? 'page' : undefined}
+        className={`group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+          active ? 'bg-bone/[0.07] text-bone' : 'text-bone/60 hover:bg-bone/[0.04] hover:text-bone'
+        }`}
+      >
+        <span
+          aria-hidden
+          className={`absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0.75rem_var(--accent)] transition-[scale,opacity] duration-500 ease-(--ease-spring) ${
+            active ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
+          }`}
+        />
+        <Icon aria-hidden className={`size-5 shrink-0 transition-[color,scale] duration-300 ease-(--ease-spring) group-hover:scale-110 ${active ? 'text-accent' : ''}`} />
+        <span className='min-w-0 grow'>
+          {name}
+          {detail && <span className='block truncate text-xs text-bone/45'>{detail}</span>}
+        </span>
+        {badge ? (
+          <span className='grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-accent px-1.5 text-[0.65rem] font-semibold text-white'>
+            {badge}
+            <span className='sr-only'> waiting</span>
+          </span>
+        ) : null}
+      </Link>
+    </li>
+  );
+}
+
+// Vertical list for a game's sidebar.
+export function SideNavLinks({ game, group = 'main' }: { game: Game; group?: 'main' | 'chronicles' | 'account' }) {
   const pathname = usePathname();
-  const links =
-    group === 'overview' ? [OVERVIEW] : group === 'overview-account' ? OVERVIEW_ACCOUNT : !game ? [] : group === 'main' ? [OVERVIEW, ...linksFor(game)] : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
+  const links = group === 'main' ? [OVERVIEW, ...linksFor(game)] : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
   return (
     <ul className='flex flex-col gap-1'>
-      {links.map(({ name, href, icon: Icon }) => {
-        const active = isActive(pathname, href, game);
-        return (
-          <li key={href}>
-            <Link
-              href={href}
-              aria-current={active ? 'page' : undefined}
-              className={`group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
-                active ? 'bg-bone/[0.07] text-bone' : 'text-bone/60 hover:bg-bone/[0.04] hover:text-bone'
-              }`}
-            >
-              <span
-                aria-hidden
-                className={`absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_0.75rem_var(--accent)] transition-[scale,opacity] duration-500 ease-(--ease-spring) ${
-                  active ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
-                }`}
-              />
-              <Icon aria-hidden className={`size-5 transition-[color,scale] duration-300 ease-(--ease-spring) group-hover:scale-110 ${active ? 'text-accent' : ''}`} />
-              {name}
-            </Link>
-          </li>
-        );
-      })}
+      {links.map((link) => (
+        <NavItem key={link.href} link={link} active={isActive(pathname, link.href, game)} />
+      ))}
+    </ul>
+  );
+}
+
+// The overview's sidebar. `resume` is the character or chronicle to pick up (app/lib/continue.ts).
+export function OverviewLinks({ resume }: { resume: { href: string; name: string } | null }) {
+  const pathname = usePathname();
+  return (
+    <ul className='flex flex-col gap-1'>
+      <NavItem link={OVERVIEW} active={pathname === OVERVIEW.href} />
+      {resume && <NavItem link={{ name: 'Continue', href: resume.href, icon: MdPlayArrow }} active={false} detail={resume.name} />}
+      <NavItem link={PRINTABLE} active={pathname.startsWith(PRINTABLE.href)} />
+      <li className='flex cursor-not-allowed items-center gap-2 rounded-xl py-3 pr-1 pl-4 text-sm text-bone/30'>
+        <CHRONICLES.icon aria-hidden className='mr-1 size-5 shrink-0' />
+        <span className='min-w-0 grow truncate'>{CHRONICLES.name}</span>
+        <span className='shrink-0 rounded-full border border-bone/15 px-1.5 py-0.5 text-[0.55rem] tracking-widest text-bone/40 uppercase'>Soon</span>
+      </li>
+    </ul>
+  );
+}
+
+export function OverviewAccountLinks({ friendRequests }: { friendRequests: number }) {
+  const pathname = usePathname();
+  return (
+    <ul className='flex flex-col gap-1'>
+      <NavItem link={{ name: 'Settings', href: '/vault/settings', icon: MdOutlineSettings }} active={pathname === '/vault/settings'} />
+      <NavItem link={{ name: 'Friends', href: '/vault/friends', icon: MdPeopleOutline }} active={pathname === '/vault/friends'} badge={friendRequests} />
     </ul>
   );
 }
@@ -99,7 +136,7 @@ export function TabBarLinks({ game }: { game: Game }) {
 }
 
 // Jump between the three games' vaults.
-export function GameSwitcher({ game, compact = false }: { game: Game; compact?: boolean }) {
+export function GameSwitcher({ game, compact = false }: { game?: Game; compact?: boolean }) {
   return (
     <ul aria-label='Game' className={`grid grid-cols-3 gap-1 rounded-xl bg-bone/[0.04] p-1 ${compact ? 'w-full' : ''}`}>
       {GAMES_ORDER.map((g) => {

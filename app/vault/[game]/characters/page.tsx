@@ -1,16 +1,20 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { MdAdd } from 'react-icons/md';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import Stagger from '@/app/ui/kit/Stagger';
-import { buttonPrimary } from '@/app/ui/kit/styles';
+import { buttonPrimary, panel } from '@/app/ui/kit/styles';
 import EmptyState from '@/app/ui/kit/EmptyState';
+import CharacterRow from '@/app/ui/dashboard/CharacterRow';
+import ViewSwitch from '@/app/ui/dashboard/ViewSwitch';
 import VampireCard from '@/app/ui/characters/VampireCard';
 import Pack from '@/app/ui/game/werewolf/Pack';
 import CellFiles from '@/app/ui/game/hunter/CellFiles';
 import { getCharacters, toCharacter } from '@/app/lib/data/characters';
 import { GAMES, gamePath, isGame } from '@/app/lib/games';
+import { toVaultView, VAULT_VIEW_COOKIE } from '@/app/lib/vault-view';
 
 export const metadata: Metadata = { title: 'Characters' };
 
@@ -49,16 +53,30 @@ export default async function Characters({ params }: PageProps<'/vault/[game]/ch
         <EmptyState title={EMPTY[game].title} action={{ href: gamePath(game, '/new'), label: `Create your first ${noun.one}` }}>
           {EMPTY[game].text}
         </EmptyState>
-      ) : game === 'hunter' ? (
-        <CellFiles files={list} />
-      ) : game === 'werewolf' ? (
-        <Pack members={list} />
       ) : (
-        <Stagger className='grid gap-5 sm:grid-cols-2 xl:grid-cols-3'>
-          {list.map((c) => (
-            <VampireCard key={c.slug} character={c} />
-          ))}
-        </Stagger>
+        <ViewSwitch
+          initial={toVaultView((await cookies()).get(VAULT_VIEW_COOKIE)?.value)}
+          grid={
+            game === 'hunter' ? (
+              <CellFiles files={list} />
+            ) : game === 'werewolf' ? (
+              <Pack members={list} />
+            ) : (
+              <Stagger className='grid gap-5 sm:grid-cols-2 xl:grid-cols-3'>
+                {list.map((c) => (
+                  <VampireCard key={c.slug} character={c} />
+                ))}
+              </Stagger>
+            )
+          }
+          list={
+            <ul className={`grid gap-x-4 p-3 sm:grid-cols-2 xl:grid-cols-3 ${panel}`}>
+              {list.map((c) => (
+                <CharacterRow key={c.slug} character={c} showStatus />
+              ))}
+            </ul>
+          }
+        />
       )}
     </div>
   );

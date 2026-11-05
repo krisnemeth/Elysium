@@ -8,7 +8,7 @@ import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-
 import { panel } from '@/app/ui/kit/styles';
 import { GAMES, type Game } from '@/app/lib/games';
 
-function LogOut({ compact = false }: { compact?: boolean }) {
+export function LogOut({ compact = false }: { compact?: boolean }) {
   return (
     <form action={signOut}>
       <button

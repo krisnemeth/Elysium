@@ -1,36 +1,45 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { CSSProperties, ReactNode } from 'react';
-import { FaPowerOff } from 'react-icons/fa';
-import { MdAdd } from 'react-icons/md';
-import { signOut } from '@/app/lib/actions/auth';
-import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
+import { GAMES } from '@/app/lib/games';
 import type { Preferences } from '@/app/lib/preferences';
 import { Drawer, DrawerButton, DrawerProvider } from '@/app/ui/dashboard/Drawer';
-import { SideNavLinks } from '@/app/ui/dashboard/nav-links';
+import { GameSwitcher, OverviewAccountLinks, OverviewLinks } from '@/app/ui/dashboard/nav-links';
+import { LogOut } from '@/app/ui/dashboard/sidenav';
 import ForceDark from '@/app/ui/ForceDark';
-import { PreferencesProvider } from '@/app/ui/PreferencesContext';
+import { panel } from '@/app/ui/kit/styles';
 import type { Cover } from '@/app/ui/landing/covers';
+import '@/app/ui/landing/buttons.css';
+import { PreferencesProvider } from '@/app/ui/PreferencesContext';
 import { Elysium1 } from '@/app/ui/svgs';
-
-// The outside pages' glass (the site navbar, SiteIsland.tsx), for the navbar and sidebar here.
-const glass = 'rounded-2xl border border-bone/15 bg-ink/70 shadow-[0_8px_32px_-8px_rgb(0_0_0/0.6),inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur-xl';
-const focus = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bone';
+import CoverThemes from './CoverThemes';
 
 /*
-  The first page past login, and the pages it leads to directly (a new
-  character, Settings, Friends). It looks like the outside pages: the top navbar,
-  plain glass with no theme frames, and the scene of the cover you came in through
-  (its game and mode set the colours and fonts). A short sidebar; the full one, with themes, is
-  in each game. Phones and tablets get the sidebar as a drawer.
+  The first page past login, and the pages it leads to directly (a new character,
+  Printable sheets, Settings, Friends): the scene of the cover you came in through
+  (its game and mode set the colours and fonts), with the games' sidebar layout.
+  Phones and tablets have a small top bar for the drawer's button.
 */
-export default function OverviewShell({ cover, preferences, children }: { cover: Cover; preferences: Preferences; children: ReactNode }) {
+export default function OverviewShell({
+  cover,
+  preferences,
+  resume,
+  friendRequests,
+  children,
+}: {
+  cover: Cover;
+  preferences: Preferences;
+  resume: { href: string; name: string } | null;
+  friendRequests: number;
+  children: ReactNode;
+}) {
+  const { Logo, title } = GAMES[cover.game];
   return (
     <div
       data-game={cover.game}
       data-frames={preferences.simpleFrames ? 'simple' : undefined}
       className='relative isolate min-h-svh bg-ink text-bone'
-      style={{ '--accent': cover.glow } as CSSProperties}
+      style={{ '--accent': cover.glow, '--lc-scene-glow': cover.glow } as CSSProperties}
     >
       <ForceDark theme={cover.mode} />
       {/* The cover's scene, as on the landing: dimmed, its colour washed over, sinking into the page's ink. */}
@@ -48,51 +57,40 @@ export default function OverviewShell({ cover, preferences, children }: { cover:
       </div>
 
       <DrawerProvider>
-        <header className='fixed inset-x-0 top-[max(0.5rem,env(safe-area-inset-top))] z-50 px-2 md:top-[max(0.75rem,env(safe-area-inset-top))] md:px-4'>
-          <nav aria-label='Main' className={`flex h-14 items-center justify-between px-2 pl-4 ${glass}`}>
-            <Link href='/' aria-label='Elysium home' className={`rounded-md ${focus}`}>
-              <Elysium1 aria-hidden className='mt-1 h-auto w-20 text-bone/90' />
-            </Link>
-            <div className='flex items-center gap-1'>
-              <ul className='mr-3 hidden items-center gap-6 text-sm text-bone/70 md:flex'>
-                {GAMES_ORDER.map((g) => (
-                  <li key={g}>
-                    <Link href={gamePath(g)} className={`rounded-sm py-1 transition-colors duration-200 hover:text-bone ${focus}`}>
-                      {GAMES[g].name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href='/vault/new'
-                className={`group inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_0_1.5rem_-0.5rem_var(--accent)] transition duration-300 hover:brightness-110 active:scale-[0.98] ${focus}`}
-              >
-                <MdAdd aria-hidden className='transition-transform duration-300 group-hover:rotate-90' />
-                New character
-              </Link>
-              <DrawerButton />
-            </div>
-          </nav>
-        </header>
-
-        <Drawer label='Overview menu' className={`p-3 undesk:pt-14 desk:top-[calc(max(0.75rem,env(safe-area-inset-top))+4.5rem)] desk:bottom-4 desk:left-4 desk:w-60 ${glass}`}>
+        <Drawer label='Overview menu' className={`group/side frame frame-tall p-4 desk:inset-y-4 desk:left-4 desk:w-60 ${panel}`}>
+          <Link href='/' aria-label='Elysium home' className='mt-2 flex justify-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent'>
+            <Elysium1 aria-hidden className='h-auto w-32 text-bone/90 drop-shadow-[0_0_0.6rem_var(--accent)]' />
+          </Link>
+          <div className='mt-6 mb-6'>
+            <GameSwitcher />
+          </div>
           <nav aria-label='Overview' className='flex min-h-0 grow flex-col overflow-y-auto'>
-            <SideNavLinks group='overview' />
-            <div className='grow' />
+            <OverviewLinks resume={resume} />
+            {/* As in a game's sidebar: the logo shrinks to fit, and steps aside while Themes is open. */}
+            <div className='flex min-h-0 grow items-center justify-center overflow-hidden px-2 group-has-[[data-themes=open]]/side:hidden'>
+              <Logo aria-label={title} role='img' className='h-auto max-h-full w-full max-w-40 text-bone/40' />
+            </div>
+            <CoverThemes current={cover.id} />
             <div aria-hidden className='mx-4 my-2 border-t border-bone/10' />
-            <SideNavLinks group='overview-account' />
+            <OverviewAccountLinks friendRequests={friendRequests} />
           </nav>
-          <form action={signOut} className='mt-1'>
-            <button className='flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-bone/60 transition-colors duration-300 hover:bg-bone/[0.04] hover:text-bone focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'>
-              <FaPowerOff aria-hidden className='size-4' />
-              Log out
-            </button>
-          </form>
+          <div className='mt-1'>
+            <LogOut />
+          </div>
         </Drawer>
+
+        <header className='fixed inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-40 px-3 desk:hidden'>
+          <div className={`frame flex h-14 items-center justify-between px-3 ${panel}`}>
+            <Link href='/' aria-label='Elysium home'>
+              <Elysium1 aria-hidden className='h-auto w-24 text-bone/90' />
+            </Link>
+            <DrawerButton />
+          </div>
+        </header>
       </DrawerProvider>
 
-      <main id='main' className='relative px-4 pt-[calc(5.5rem+env(safe-area-inset-top))] pb-16 md:pt-[calc(6.5rem+env(safe-area-inset-top))] md:pr-8 desk:pl-72'>
-        <div className='mx-auto max-w-6xl'>
+      <main id='main' className='relative px-4 pt-[calc(5.5rem+env(safe-area-inset-top))] pb-8 desk:pt-4 desk:pb-4 desk:pl-[17.25rem]'>
+        <div className='mx-auto max-w-[100rem]'>
           <PreferencesProvider value={preferences}>{children}</PreferencesProvider>
         </div>
       </main>

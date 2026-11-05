@@ -10,7 +10,7 @@ export const THEME_STORAGE_KEY = 'elysium-theme';
 export const DARK_ONLY_PATHS = '^/$|^/vault/chronicles/[^/]+/?$|^/(login|signup|auth)(/|$)';
 
 // The overview's pages wear the theme of the cover you came in through (app/lib/entry-cover.ts), also without touching the saved one.
-export const OVERVIEW_PATHS = '^/vault(/(new|settings|friends))?/?$';
+export const OVERVIEW_PATHS = '^/vault(/(new|settings|friends|print))?/?$';
 const SECOND_SCENE_COVERS = ['neon', 'cave', 'hunter-2'];
 
 /*

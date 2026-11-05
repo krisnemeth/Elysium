@@ -1,5 +1,6 @@
 import { Cormorant_Garamond, Josefin_Sans } from 'next/font/google';
 import ForceDark from '@/app/ui/ForceDark';
+import '@/app/ui/landing/buttons.css';
 import '@/app/ui/landing/landing.css';
 
 // Own font variables: /concept remaps --font-cormorant to its editorial serif.
