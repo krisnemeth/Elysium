@@ -42,10 +42,11 @@ export default function NewLoresheet({ game, initialGame = 'vampire', buttonClas
               {GAMES_ORDER.map((g) => (
                 <button
                   key={g}
+                  data-tint={g}
                   type='button'
                   aria-pressed={picked === g}
                   onClick={() => setPicked(g)}
-                  className={`rounded-lg py-1.5 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-accent ${picked === g ? 'bg-accent text-white' : 'text-bone/60 hover:text-bone'}`}
+                  className={`rounded-lg py-1.5 text-xs transition-colors focus-visible:outline-2 focus-visible:outline-accent ${picked === g ? 'bg-accent text-on-accent' : 'text-bone/60 hover:text-bone'}`}
                 >
                   {GAMES[g].name}
                 </button>

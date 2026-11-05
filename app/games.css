@@ -13,7 +13,8 @@
   /* Moonlit forest */
   --ink: #0a110e;
   --color-bone: #e3e9df;
-  --accent: #e0562e;
+  --accent: #7fb894;
+  --on-accent: #0a110e;
   --accent-deep: #1d3a2a;
   --font-cormorant: var(--font-cinzel);
 }
@@ -21,7 +22,7 @@
   /* The cave */
   --ink: #16110c;
   --color-bone: #efe5d3;
-  --accent: #ef8a3c;
+  --accent: #7fb894;
   --accent-deep: #4d2f17;
 }
 
@@ -274,12 +275,14 @@
   game keeps its fonts and dice.
 */
 [data-skin='vampire-dark'] {
+  --on-accent: #fff;
   --ink: #0d0a0b;
   --color-bone: #e7e1d8;
   --accent: #c81e2b;
   --accent-deep: #7f1d1d;
 }
 [data-skin='vampire-light'] {
+  --on-accent: #fff;
   --ink: #0d0717;
   --color-bone: #e7e1d8;
   --accent: #e11d48;
@@ -288,22 +291,26 @@
 [data-skin='werewolf-dark'] {
   --ink: #0a110e;
   --color-bone: #e3e9df;
-  --accent: #e0562e;
+  --accent: #7fb894;
+  --on-accent: #0a110e;
   --accent-deep: #1d3a2a;
 }
 [data-skin='werewolf-light'] {
   --ink: #16110c;
   --color-bone: #efe5d3;
-  --accent: #ef8a3c;
+  --accent: #7fb894;
+  --on-accent: #0a110e;
   --accent-deep: #4d2f17;
 }
 [data-skin='hunter-dark'] {
+  --on-accent: #fff;
   --ink: #120d09;
   --color-bone: #f1e6d2;
   --accent: #f08a24;
   --accent-deep: #4a2a12;
 }
 [data-skin='hunter-light'] {
+  --on-accent: #fff;
   --ink: #0d1117;
   --color-bone: #e7e2d7;
   --accent: #f2b23a;

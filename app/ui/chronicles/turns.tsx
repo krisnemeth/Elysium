@@ -3,10 +3,12 @@
 import Image from 'next/image';
 import clsx from 'clsx';
 import { createContext, use, useEffect, useRef, useState, useTransition, type ReactNode } from 'react';
+import { haptic } from '@/app/lib/haptics';
 import { giveTurn, passTurn } from '@/app/lib/actions/social';
 import type { Turn } from '@/app/lib/data/social';
 import { GAMES, type Game } from '@/app/lib/games';
 import { subscribe } from '@/app/lib/supabase/browser';
+import { buttonPrimarySmall, buttonGhostSmall } from '@/app/ui/kit/styles';
 
 /*
   Turns at the table. A Storyteller (person) hands them out; with the
@@ -123,6 +125,12 @@ export function TurnProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expired]);
 
+  // Your turn has come round.
+  const isMine = !!holder && holder.userId === me;
+  useEffect(() => {
+    if (isMine) haptic('success');
+  }, [isMine]);
+
   const value: TurnState = {
     turn,
     seats,
@@ -130,7 +138,7 @@ export function TurnProvider({
     me,
     bot,
     isStoryteller,
-    myTurn: !!holder && holder.userId === me,
+    myTurn: isMine,
     left,
     pending,
     error,
@@ -186,12 +194,12 @@ export function TurnTracker() {
       </p>
       <span className='flex flex-wrap gap-2'>
         {((myTurn && !solo) || (isStoryteller && holder)) && (
-          <button type='button' disabled={pending} onClick={t.pass} className='rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:brightness-110 disabled:opacity-60'>
+          <button type='button' disabled={pending} onClick={t.pass} className={buttonPrimarySmall}>
             {myTurn ? 'End your turn' : 'Next player'}
           </button>
         )}
         {isStoryteller && holder && (
-          <button type='button' disabled={pending} onClick={() => t.give(null)} className='rounded-full border border-bone/20 px-4 py-1.5 text-xs text-bone/80 transition hover:border-bone/50 hover:text-bone'>
+          <button type='button' disabled={pending} onClick={() => t.give(null)} className={buttonGhostSmall}>
             Pause turns
           </button>
         )}

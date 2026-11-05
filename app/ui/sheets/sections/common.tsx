@@ -17,7 +17,7 @@ import { glyphUrl } from '@/app/lib/factions';
 const groupTitle = 'mb-2 text-xs tracking-[0.25em] text-accent uppercase';
 const smallInput = 'w-full bg-transparent text-sm text-bone placeholder:text-bone/25 focus:outline-none';
 const addButton =
-  'mt-3 inline-flex items-center gap-1.5 rounded-full border border-dashed border-bone/25 px-3 py-1.5 text-xs text-bone/60 transition-colors hover:border-bone/50 hover:text-bone focus-visible:outline-2 focus-visible:outline-accent';
+  'mt-3 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-bone/25 px-3 py-1.5 text-xs text-bone/60 transition-colors hover:border-bone/50 hover:text-bone focus-visible:outline-2 focus-visible:outline-accent';
 const removeButton =
   'grid size-7 shrink-0 place-items-center rounded-full text-bone/30 transition-colors hover:bg-bone/[0.06] hover:text-bone focus-visible:outline-2 focus-visible:outline-accent';
 

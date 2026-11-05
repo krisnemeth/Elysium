@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Game } from '@/app/lib/games';
 import type { Sheet } from '@/app/lib/sheets/types';
 import { createCharacter, updateCharacter } from '@/app/lib/actions/characters';
+import { haptic } from '@/app/lib/haptics';
 
 export type SaveState = 'saved' | 'dirty' | 'saving' | 'error';
 
@@ -48,6 +49,7 @@ export function useCharacterSave(game: Game, initialId: string | null, initialSh
         if (!result.ok) {
           setState('error');
           setError(result.error);
+          haptic('error');
           return;
         }
         if (!idRef.current) {

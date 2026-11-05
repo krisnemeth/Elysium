@@ -2,13 +2,14 @@
 
 import { useRef, type ReactNode } from 'react';
 import { MdClose, MdOpenInFull } from 'react-icons/md';
+import { buttonGhostSmall } from '@/app/ui/kit/styles';
 
 // The full sheet in a dialog over a blurred page. Esc, the close button or a
 // click outside closes it.
 export default function SheetModal({
   label,
   trigger = 'Full sheet',
-  triggerClassName = 'inline-flex items-center gap-1.5 rounded-full border border-bone/20 px-4 py-1.5 text-xs text-bone/85 transition hover:border-bone/50 hover:text-bone',
+  triggerClassName = buttonGhostSmall,
   children,
 }: {
   label: string;

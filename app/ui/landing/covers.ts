@@ -1,6 +1,6 @@
 import type { Game } from '@/app/lib/games';
 
-// The cover last chosen on the landing: the overview wears its theme (app/lib/entry-cover.ts).
+// The cover last chosen on the landing: it opens on it next time.
 export const COVER_COOKIE = 'elysium-cover';
 
 // In the browser only.

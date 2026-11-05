@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { GiLockedChest, GiVampireCape, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
-import { MdOutlinePrint, MdOutlineSettings, MdPeopleOutline, MdPlayArrow } from 'react-icons/md';
+import { MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
 import type { IconType } from 'react-icons';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 
@@ -15,24 +15,24 @@ const groupName = (game: Game) => GAMES[game].noun.group[0].toUpperCase() + GAME
 const linksFor = (game: Game) => [
   { name: GAMES[game].name, href: gamePath(game), icon: GAME_ICON[game] },
   { name: groupName(game), href: gamePath(game, '/characters'), icon: GiVampireCape },
-  { name: 'Loresheets', href: gamePath(game, '/loresheets'), icon: GiScrollUnfurled },
+  { name: 'Loresheets', href: `/vault/loresheets?game=${game}`, icon: GiScrollUnfurled },
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
 ];
 
 type NavLink = { name: string; href: string; icon: IconType };
 
 const OVERVIEW = { name: 'Overview', href: '/vault', icon: GiLockedChest };
-const PRINTABLE = { name: 'Printable sheets', href: '/vault/print', icon: MdOutlinePrint };
-const accountLinks = (game: Game) => [
-  { name: 'Settings', href: gamePath(game, '/settings'), icon: MdOutlineSettings },
-  { name: 'Friends', href: gamePath(game, '/friends'), icon: MdPeopleOutline },
+const LORESHEETS = { name: 'Loresheets', href: '/vault/loresheets', icon: GiScrollUnfurled };
+const ACCOUNT = [
+  { name: 'Settings', href: '/vault/settings', icon: MdOutlineSettings },
+  { name: 'Friends', href: '/vault/friends', icon: MdPeopleOutline },
 ];
 
 function isActive(pathname: string, href: string, game: Game) {
   return href === OVERVIEW.href || href === gamePath(game) ? pathname === href : pathname.startsWith(href);
 }
 
-function NavItem({ link: { name, href, icon: Icon }, active, detail, badge }: { link: NavLink; active: boolean; detail?: string; badge?: number }) {
+function NavItem({ link: { name, href, icon: Icon }, active, badge }: { link: NavLink; active: boolean; badge?: number }) {
   return (
     <li>
       <Link
@@ -49,12 +49,9 @@ function NavItem({ link: { name, href, icon: Icon }, active, detail, badge }: { 
           }`}
         />
         <Icon aria-hidden className={`size-5 shrink-0 transition-[color,scale] duration-300 ease-(--ease-spring) group-hover:scale-110 ${active ? 'text-accent' : ''}`} />
-        <span className='min-w-0 grow'>
-          {name}
-          {detail && <span className='block truncate text-xs text-bone/45'>{detail}</span>}
-        </span>
+        <span className='min-w-0 grow'>{name}</span>
         {badge ? (
-          <span className='grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-accent px-1.5 text-[0.65rem] font-semibold text-white'>
+          <span className='grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-accent px-1.5 text-[0.65rem] font-semibold text-on-accent'>
             {badge}
             <span className='sr-only'> waiting</span>
           </span>
@@ -85,7 +82,7 @@ export function SideNavLinks({ game, group = 'main' }: { game: Game; group?: 'ma
       </ul>
     );
   }
-  const links = group === 'main' ? [OVERVIEW, ...linksFor(game)] : accountLinks(game);
+  const links = group === 'main' ? [OVERVIEW, ...linksFor(game)] : ACCOUNT;
   return (
     <ul className='flex flex-col gap-1'>
       {links.map((link) => (
@@ -95,14 +92,13 @@ export function SideNavLinks({ game, group = 'main' }: { game: Game; group?: 'ma
   );
 }
 
-// The overview's sidebar. `resume` is the character or chronicle to pick up (app/lib/continue.ts).
-export function OverviewLinks({ resume }: { resume: { href: string; name: string } | null }) {
+// The neutral pages' sidebar.
+export function OverviewLinks() {
   const pathname = usePathname();
   return (
     <ul className='flex flex-col gap-1'>
       <NavItem link={OVERVIEW} active={pathname === OVERVIEW.href} />
-      {resume && <NavItem link={{ name: 'Continue', href: resume.href, icon: MdPlayArrow }} active={false} detail={resume.name} />}
-      <NavItem link={PRINTABLE} active={pathname.startsWith(PRINTABLE.href)} />
+      <NavItem link={LORESHEETS} active={pathname.startsWith(LORESHEETS.href)} />
       <ChroniclesSoon />
     </ul>
   );
@@ -134,7 +130,7 @@ export function TabBarLinks({ game }: { game: Game }) {
             >
               <span
                 className={`grid h-8 w-12 place-items-center rounded-full transition-[background-color,scale] duration-500 ease-(--ease-spring) ${
-                  active ? 'scale-100 bg-accent/90 text-white shadow-[0_0_1rem_-0.25rem_var(--accent)]' : 'scale-90'
+                  active ? 'scale-100 bg-accent/90 text-on-accent shadow-[0_0_1rem_-0.25rem_var(--accent)]' : 'scale-90'
                 }`}
               >
                 <Icon aria-hidden className='size-5' />
@@ -158,10 +154,11 @@ export function GameSwitcher({ game, compact = false }: { game?: Game; compact?:
           <li key={g}>
             <Link
               href={gamePath(g)}
+              data-tint={g}
               title={GAMES[g].title}
               aria-current={g === game ? 'true' : undefined}
               className={`grid place-items-center rounded-lg py-2 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-accent ${
-                g === game ? 'bg-accent text-white shadow-[0_0_1rem_-0.4rem_var(--accent)]' : 'text-bone/55 hover:bg-bone/[0.05] hover:text-bone'
+                g === game ? 'bg-accent text-on-accent shadow-[0_0_1rem_-0.4rem_var(--accent)]' : 'text-bone/55 hover:bg-bone/[0.05] hover:text-bone'
               }`}
             >
               <Icon aria-hidden className='size-5' />

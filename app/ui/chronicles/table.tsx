@@ -49,7 +49,7 @@ export function TableColumns({ bar, left, right, children, leftLabel = 'Characte
             role='tab'
             aria-selected={shown === c.id}
             onClick={() => setShown(c.id)}
-            className={clsx('rounded-full px-4 py-1.5 text-sm transition-colors', shown === c.id ? 'bg-accent text-white' : 'text-bone/70 hover:text-bone')}
+            className={clsx('rounded-full px-4 py-1.5 text-sm transition-colors', shown === c.id ? 'bg-accent text-on-accent' : 'text-bone/70 hover:text-bone')}
           >
             {c.id === 'left' ? leftLabel : c.label}
           </button>

@@ -1,13 +1,12 @@
 import { acceptFriend, removeFriend } from '@/app/lib/actions/social';
 import { getFriends, getMe } from '@/app/lib/data/social';
 import PageHeader from '@/app/ui/kit/PageHeader';
-import { panel } from '@/app/ui/kit/styles';
+import { panel, buttonGhostSmall, buttonPrimarySmall } from '@/app/ui/kit/styles';
 import { ActionButton, AddFriendForm, FriendCode } from '@/app/ui/social/forms';
 
-const small = 'rounded-full border border-bone/20 px-4 py-1.5 text-xs text-bone/80 transition hover:border-bone/50 hover:text-bone';
-const smallPrimary = 'rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:brightness-110';
+const small = buttonGhostSmall;
+const smallPrimary = buttonPrimarySmall;
 
-// Shown in the overview (/vault/friends) and in each game (/vault/[game]/friends).
 export default async function FriendsPage() {
   const [me, friends] = await Promise.all([getMe(), getFriends()]);
   const incoming = friends.filter((f) => f.status === 'pending' && f.direction === 'incoming');

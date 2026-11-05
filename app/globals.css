@@ -30,6 +30,7 @@
 @theme inline {
   --color-ink: var(--ink);
   --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent, #fff);
   --color-accent-deep: var(--accent-deep);
   --font-display: var(--font-cormorant), 'Times New Roman', serif;
 
@@ -50,6 +51,25 @@
   textarea::placeholder {
     color: var(--color-gray-400);
   }
+}
+
+/*
+  Fields the browser has filled in: the theme's colours, not its pale blue or yellow.
+  Browsers lock an autofilled field's background, so an inset shadow paints over it.
+  Outside any layer, to win over the fields' own focus shadow; focus puts its ring back.
+*/
+input:is(:autofill, :-webkit-autofill) {
+  --autofill-fill: inset 0 0 0 100vmax color-mix(in oklab, var(--accent) 14%, var(--ink));
+  border-color: color-mix(in oklab, var(--accent) 55%, transparent);
+  box-shadow: var(--autofill-fill);
+  caret-color: var(--color-bone);
+  filter: none;
+  -webkit-text-fill-color: var(--color-bone);
+}
+
+input:is(:autofill, :-webkit-autofill):focus {
+  border-color: var(--accent);
+  box-shadow: var(--autofill-fill), 0 0 0 3px color-mix(in oklab, var(--accent) 25%, transparent);
 }
 
 :root {

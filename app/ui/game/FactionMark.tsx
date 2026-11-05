@@ -19,12 +19,13 @@ export function FactionMark({ character, className = '' }: { character: Characte
     return (
       <span
         aria-hidden
+        data-mark
         className={`inline-block aspect-square bg-current [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] ${className}`}
         style={{ maskImage: url, WebkitMaskImage: url } as CSSProperties}
       />
     );
   }
-  return <Glyph name='htr-flame.svg' className={`inline-block aspect-square ${className}`} />;
+  return <Glyph data-mark name='htr-flame.svg' className={`inline-block aspect-square ${className}`} />;
 }
 
 // Display name of the faction (clan names come from the clan list).

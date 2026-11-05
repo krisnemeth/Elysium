@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { MdAdd } from 'react-icons/md';
 import CharacterRow from '@/app/ui/dashboard/CharacterRow';
-import type { Cover } from '@/app/ui/landing/covers';
 import NewLoresheet from '@/app/ui/loresheets/NewLoresheet';
 import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
 import type { Character } from '@/app/lib/sample-characters';
@@ -9,7 +8,7 @@ import GameCard from './GameCard';
 import OverviewShelves, { type LoresheetLink } from './OverviewShelves';
 
 // Everything in one place, sized to fit a desktop screen: each game with its characters, the drafts and loresheets.
-export default function OverviewPage({ name, cover, characters, loresheets }: { name?: string; cover: Cover; characters: Character[]; loresheets: LoresheetLink[] }) {
+export default function OverviewPage({ name, characters, loresheets }: { name?: string; characters: Character[]; loresheets: LoresheetLink[] }) {
   const drafts = characters.filter((c) => c.status === 'draft');
 
   return (
@@ -24,7 +23,7 @@ export default function OverviewPage({ name, cover, characters, loresheets }: { 
             <MdAdd aria-hidden className='size-4' />
             New character
           </Link>
-          <NewLoresheet initialGame={cover.game} buttonClass='lc-btn lc-btn-cover lc-btn-ghost' />
+          <NewLoresheet buttonClass='lc-btn lc-btn-cover lc-btn-ghost' />
         </div>
       </header>
 

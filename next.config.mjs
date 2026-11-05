@@ -11,7 +11,11 @@ const nextConfig = {
       { source: '/dashboard/characters', destination: '/vault/vampire/characters', permanent: true },
       { source: '/dashboard/dice', destination: '/vault/vampire/dice', permanent: true },
       { source: '/dashboard/sheets/:path*', destination: '/vault/new', permanent: true },
-      // Friends and Settings live inside each game's dashboard (with the sidebar).
+      // Loresheets, Friends and Settings are one page each, across all three games.
+      { source: '/vault/:game(vampire|werewolf|hunter)/loresheets', destination: '/vault/loresheets?game=:game', permanent: false },
+      { source: '/vault/:game(vampire|werewolf|hunter)/loresheets/:id', destination: '/vault/loresheets/:id', permanent: false },
+      { source: '/vault/:game(vampire|werewolf|hunter)/settings', destination: '/vault/settings', permanent: false },
+      { source: '/vault/:game(vampire|werewolf|hunter)/friends', destination: '/vault/friends', permanent: false },
       // The Vampire landing went when the cover became the landing; it opens on Vampire.
       { source: '/vampire', destination: '/?cover=vampire', permanent: true },
       // The landing concept is now the landing.

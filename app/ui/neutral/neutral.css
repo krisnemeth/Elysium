@@ -1,0 +1,118 @@
+/*
+  Neutral ground: the pages where all three games meet. Black, bone and greyscale;
+  a game's colour shows only on the one thing under the pointer, or under the finger
+  while it's pressed. Elements name their game with data-tint.
+  The --n-* values are the look; /lab/neutral changes them live to try others.
+*/
+[data-tint='vampire'] { --tint: #c81e2b; }
+[data-tint='werewolf'] { --tint: #7fb894; }
+[data-tint='hunter'] { --tint: #f08a24; }
+
+[data-neutral] {
+  --n-ink: #0b0b0c;
+  --n-image: url(/art/city-night.webp);
+  --n-bright: 0.8;
+  --n-blur: 0px;
+  --n-dim: 0.75;
+  --n-vignette: 0.5;
+  --n-grain: 0.6;
+  --n-panel: 0.72;
+  --n-border: 0.1;
+  --n-gray: 1;
+  --n-rest: 0.7;
+  --n-row-gray: 0.5;
+  --n-glow: 1;
+
+  --ink: var(--n-ink);
+  --color-bone: #ece8e1;
+  --accent: #ece8e1;
+  --on-accent: #0b0b0c;
+  --accent-deep: #2b2b30;
+  --page-bg: var(--n-ink);
+  --lc-scene-glow: #ece8e1;
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  background: var(--n-ink);
+  color: var(--color-bone);
+}
+
+/* Pages with their own shell (login, signup) sit on the same ground. */
+[data-neutral] [data-game='wod'] {
+  --ink: var(--n-ink);
+  --accent: #ece8e1;
+  --on-accent: #0b0b0c;
+  background: transparent;
+}
+
+/* ---- the ground ---- */
+.n-back { position: fixed; inset: 0; z-index: -10; overflow: hidden; }
+.n-back > * { position: absolute; inset: 0; }
+.n-back-image {
+  background: var(--n-image) center / cover no-repeat;
+  filter: grayscale(1) brightness(var(--n-bright)) blur(var(--n-blur));
+}
+.n-back-shade {
+  background:
+    radial-gradient(ellipse at 50% 40%, transparent 30%, color-mix(in srgb, var(--n-ink) calc(var(--n-vignette) * 100%), transparent)),
+    linear-gradient(to bottom, color-mix(in srgb, var(--n-ink) calc(var(--n-dim) * 60%), transparent), color-mix(in srgb, var(--n-ink) calc(var(--n-dim) * 100%), transparent) 65%, var(--n-ink));
+}
+.n-back-grain {
+  opacity: var(--n-grain);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- surfaces ---- */
+[data-neutral] .panel {
+  background-color: color-mix(in srgb, var(--n-ink) calc(var(--n-panel) * 100%), transparent);
+  border-color: rgb(236 232 225 / var(--n-border));
+}
+[data-neutral][data-n-frame='none'] .panel { border-color: transparent; }
+/* Small corner ticks: ornament on the edges only. */
+[data-neutral][data-n-frame='corners'] .panel {
+  --t: rgb(236 232 225 / calc(var(--n-border) * 4));
+  background-image:
+    linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t)),
+    linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t));
+  background-size: 1.1rem 1px, 1px 1.1rem, 1.1rem 1px, 1px 1.1rem, 1.1rem 1px, 1px 1.1rem, 1.1rem 1px, 1px 1.1rem;
+  background-position: 0.5rem 0.5rem, 0.5rem 0.5rem, calc(100% - 0.5rem) 0.5rem, calc(100% - 0.5rem) 0.5rem, 0.5rem calc(100% - 0.5rem), 0.5rem calc(100% - 0.5rem), calc(100% - 0.5rem) calc(100% - 0.5rem), calc(100% - 0.5rem) calc(100% - 0.5rem);
+  background-repeat: no-repeat;
+}
+
+/* ---- one game's colour at a time ---- */
+[data-neutral] [data-tint] { --lit: 0; }
+[data-neutral] [data-tint]:active,
+[data-neutral] [data-tint]:focus-visible { --lit: 1; }
+@media (hover: hover) {
+  [data-neutral] [data-tint]:hover { --lit: 1; }
+}
+
+[data-neutral] .panel[data-tint] {
+  border-color: color-mix(in oklab, var(--tint) calc(var(--lit) * 65%), rgb(236 232 225 / var(--n-border)));
+  box-shadow: 0 0 calc(var(--n-glow) * 2.75rem) calc(var(--n-glow) * -0.6rem) color-mix(in oklab, var(--tint) calc(var(--lit) * 100%), transparent);
+  transition: border-color 0.4s, box-shadow 0.5s, translate 0.3s, transform 0.3s;
+}
+[data-neutral] [data-tint] img {
+  filter: grayscale(calc(var(--n-gray) * (1 - var(--lit))));
+  opacity: calc(1 - (1 - var(--n-rest)) * (1 - var(--lit)));
+  transition: filter 0.6s, opacity 0.6s, scale 1s var(--ease-out-expo), transform 1s var(--ease-out-expo);
+}
+/* A character's face in a list: half colour at rest, so people stay recognisable. */
+[data-neutral] a[data-tint] img {
+  filter: grayscale(calc(var(--n-row-gray) * (1 - var(--lit))));
+  opacity: 1;
+}
+/* Marks are SVGs (Vampire) or masks painted in currentColor (Werewolf, Hunter). */
+[data-neutral] a[data-tint] :is(svg, [data-mark]) {
+  color: color-mix(in oklab, var(--tint) calc(var(--lit) * 100%), rgb(236 232 225 / 0.45));
+  transition: color 0.4s;
+}
+[data-neutral] section[data-tint] > div > a svg {
+  color: color-mix(in oklab, var(--tint) calc(var(--lit) * 100%), var(--color-bone));
+  transition: color 0.4s;
+}
+[data-neutral] a[data-tint]:not(.panel) {
+  background-color: color-mix(in oklab, var(--tint) calc(var(--lit) * 12%), transparent);
+  transition: background-color 0.3s, translate 0.3s;
+}

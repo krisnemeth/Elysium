@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { signIn, signUp, type AuthState } from '@/app/lib/actions/auth';
+import { haptic } from '@/app/lib/haptics';
+import { buttonPrimary } from '@/app/ui/kit/styles';
 
 const input =
   'w-full rounded-xl border border-bone/15 bg-bone/[0.04] px-4 py-3 text-bone placeholder:text-bone/30 transition-[border-color,box-shadow] duration-300 hover:border-bone/30 focus:border-accent focus:shadow-[0_0_0_3px_color-mix(in_oklab,var(--accent)_25%,transparent)] focus:outline-none';
@@ -12,6 +14,10 @@ const label = 'mb-1.5 block text-[0.7rem] tracking-[0.2em] text-bone/55 uppercas
 export default function EmailForm({ mode, next }: { mode: 'login' | 'signup'; next?: string }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(mode === 'login' ? signIn : signUp, {});
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (state.error) haptic('error');
+  }, [state]);
 
   return (
     <form action={action} className='flex flex-col gap-4'>
@@ -24,7 +30,8 @@ export default function EmailForm({ mode, next }: { mode: 'login' | 'signup'; ne
       )}
       <div>
         <label htmlFor='email' className={label}>Email</label>
-        <input id='email' name='email' type='email' required autoComplete='email' defaultValue={state.email} className={input} />
+        {/* `username`, not `email`: it pairs this field with the password for password managers. `email` only offers the browser's address details. */}
+        <input id='email' name='email' type='email' required autoComplete='username' defaultValue={state.email} className={input} />
       </div>
       <div>
         <label htmlFor='password' className={label}>Password</label>
@@ -56,7 +63,7 @@ export default function EmailForm({ mode, next }: { mode: 'login' | 'signup'; ne
 
       <button
         disabled={pending}
-        className='rounded-full bg-bone px-6 py-3.5 text-sm font-semibold text-ink transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_2rem_-0.5rem_var(--accent)] active:translate-y-0 active:scale-[0.99] disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bone'
+        className={`${buttonPrimary} py-3.5`}
       >
         {pending ? 'One moment…' : mode === 'login' ? 'Log in' : 'Create account'}
       </button>

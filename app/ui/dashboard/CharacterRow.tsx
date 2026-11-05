@@ -10,6 +10,7 @@ export default function CharacterRow({ character, style, showStatus = false, sho
     <li style={style}>
       <Link
         href={`/vault/${character.game}/characters/${character.slug}`}
+        data-tint={character.game}
         className='group flex items-center gap-4 rounded-xl p-2 transition-[background-color,translate] duration-300 ease-(--ease-out-expo) hover:translate-x-1 hover:bg-bone/[0.05] focus-visible:outline-2 focus-visible:outline-accent'
       >
         <span className='relative size-12 shrink-0 overflow-hidden rounded-lg bg-bone/[0.06] ring-1 ring-bone/10'>

@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GiD10 } from 'react-icons/gi';
 import { MdAdd, MdRemove, MdRefresh, MdRestartAlt } from 'react-icons/md';
 import clsx from 'clsx';
@@ -19,6 +19,7 @@ import {
 import { buttonGhost, buttonPrimary, panel } from '@/app/ui/kit/styles';
 import Glyph from './Glyph';
 import { settleMs } from '@/app/ui/dice3d/timing';
+import { haptic, type Haptic } from '@/app/lib/haptics';
 import Paper from '@/app/ui/game/Paper';
 
 // The 3D tray only runs in the browser.
@@ -103,6 +104,19 @@ const GAMES: Record<
       },
     },
   },
+};
+
+// What each result feels like when the dice land.
+const OUTCOME_HAPTIC: Record<Outcome, Haptic> = {
+  critical: 'success',
+  win: 'tap',
+  failure: 'select',
+  'total-failure': 'warning',
+  'messy-critical': 'heavy',
+  'bestial-failure': 'error',
+  brutal: 'heavy',
+  overreach: 'warning',
+  despair: 'error',
 };
 
 function outcomeText(game: Game, outcome: Outcome): OutcomeText {
@@ -226,6 +240,14 @@ export default function DiceRoller({
 
   const log = (entry: Omit<HistoryEntry, 'id'>) =>
     setHistory((h) => [{ ...entry, id: (h[0]?.id ?? 0) + 1 }, ...h].slice(0, 8));
+
+  // Felt once per throw, as the dice land.
+  const felt = useRef(0);
+  useEffect(() => {
+    if (!settled || !result || felt.current === rollKey) return;
+    felt.current = rollKey;
+    haptic(OUTCOME_HAPTIC[result.outcome]);
+  }, [settled, result, rollKey]);
 
   // The outcome is revealed once the dice have landed.
   const throwDice = (indexes: number[]) => {
@@ -438,6 +460,7 @@ export default function DiceRoller({
             </button>
             <button
               type='button'
+              data-haptic='heavy'
               onClick={roll}
               disabled={!settled || needsCheck || !!locked}
               aria-describedby={locked ? 'roll-locked' : needsCheck ? 'check-first' : undefined}

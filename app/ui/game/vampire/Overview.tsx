@@ -96,7 +96,7 @@ export default function VampireOverview({
           <section aria-labelledby='lore-title' className={`flex grow flex-col p-5 ${panel}`}>
             <div className='flex items-baseline justify-between px-2'>
               <h2 id='lore-title' className='font-display text-2xl'>Loresheets</h2>
-              <Link href='/vault/vampire/loresheets' className='text-xs tracking-[0.2em] text-bone/50 uppercase transition-colors hover:text-bone'>
+              <Link href='/vault/loresheets?game=vampire' className='text-xs tracking-[0.2em] text-bone/50 uppercase transition-colors hover:text-bone'>
                 All
               </Link>
             </div>
@@ -106,7 +106,7 @@ export default function VampireOverview({
                   const Icon = LORE_ICONS[l.kind];
                   return (
                   <li key={l.id}>
-                    <Link href={`/vault/vampire/loresheets/${l.id}`} className='flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-bone/[0.05]'>
+                    <Link href={`/vault/loresheets/${l.id}`} className='flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-bone/[0.05]'>
                       <Icon aria-hidden className='size-5 shrink-0 text-accent/80' />
                       <span className='grow truncate'>{l.title || `Untitled ${LORE_KINDS[l.kind].noun}`}</span>
                       <span className='shrink-0 text-[0.65rem] tracking-[0.15em] text-bone/45 uppercase'>{LORE_KINDS[l.kind].label}</span>
@@ -121,7 +121,7 @@ export default function VampireOverview({
                 <p className='max-w-[32ch] text-sm leading-relaxed text-bone/55'>
                   Loresheets hold the histories, places and grudges your sheets have no room for.
                 </p>
-                <Link href='/vault/vampire/loresheets' className={buttonGhost}>Write one</Link>
+                <Link href='/vault/loresheets?game=vampire' className={buttonGhost}>Write one</Link>
               </div>
             )}
           </section>

@@ -37,7 +37,7 @@ export default function SheetNav({ sections }: { sections: { id: string; label: 
               aria-current={active === id ? 'location' : undefined}
               className={`block rounded-full px-4 py-1.5 text-xs whitespace-nowrap transition-[background-color,color,box-shadow] duration-500 ease-(--ease-out-expo) focus-visible:outline-2 focus-visible:outline-accent ${
                 active === id
-                  ? 'bg-accent text-white shadow-[0_0_1rem_-0.25rem_var(--accent)]'
+                  ? 'bg-accent text-on-accent shadow-[0_0_1rem_-0.25rem_var(--accent)]'
                   : 'text-bone/60 hover:bg-bone/[0.06] hover:text-bone'
               }`}
             >

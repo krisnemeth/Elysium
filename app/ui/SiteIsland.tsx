@@ -167,7 +167,7 @@ export default function SiteIsland({
               href={ctaHref}
               onClick={closeAll}
               data-site-cta
-              className={`group inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white shadow-[0_0_1.5rem_-0.5rem_var(--accent)] transition duration-300 hover:brightness-110 active:scale-[0.98] ${focus}`}
+              className={`group inline-flex items-center gap-1.5 rounded-lg border border-accent/55 bg-black/35 px-4 py-2 text-sm font-semibold text-bone shadow-[0_0_1.75rem_-0.4rem_var(--accent),inset_0_0_1.25rem_-0.75rem_var(--accent)] backdrop-blur-[10px] transition duration-300 hover:border-accent/85 hover:bg-accent/10 active:scale-[0.98] ${focus}`}
             >
               {signedIn ? 'Your vault' : 'Sign up'}
               <MdArrowOutward aria-hidden className='transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />

@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
-import type { Game } from '@/app/lib/games';
 import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
 import { deleteLoresheet, saveLoresheet } from '@/app/lib/actions/loresheets';
-import { fieldInput, fieldLabel, panel } from '@/app/ui/kit/styles';
+import { fieldInput, fieldLabel, panel, buttonGhostSmall } from '@/app/ui/kit/styles';
 import SaveStatus from '@/app/ui/sheets/SaveStatus';
 import type { SaveState } from '@/app/ui/sheets/useCharacterSave';
 import { ActionButton } from '@/app/ui/social/forms';
@@ -15,13 +14,11 @@ type Draft = { title: string; character_id: string | null; content: Record<strin
 
 export default function LoresheetEditor({
   id,
-  game,
   kind,
   initial,
   characters,
 }: {
   id: string;
-  game: Game;
   kind: LoreKind;
   initial: Draft;
   characters: { id: string; name: string }[];
@@ -41,7 +38,7 @@ export default function LoresheetEditor({
     timer.current = undefined;
     setState('saving');
     const snapshot = latest.current;
-    const r = await saveLoresheet(id, game, kind, snapshot);
+    const r = await saveLoresheet(id, kind, snapshot);
     if (!r.ok) {
       setState('error');
       setError(r.error);
@@ -77,7 +74,7 @@ export default function LoresheetEditor({
     <div className='flex flex-col gap-6'>
       <div className='sticky top-36 z-30 flex flex-wrap items-center gap-3 md:top-20'>
         <SaveStatus className='mr-auto' state={state} error={error} onRetry={() => void save()} />
-        <ActionButton action={deleteLoresheet.bind(null, id, game)} confirm='Delete this loresheet?' className='rounded-full border border-bone/20 bg-ink/70 px-4 py-1.5 text-xs text-bone/80 backdrop-blur-md hover:border-bone/50'>
+        <ActionButton action={deleteLoresheet.bind(null, id)} confirm='Delete this loresheet?' className={buttonGhostSmall}>
           Delete
         </ActionButton>
       </div>

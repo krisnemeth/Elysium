@@ -1,14 +1,13 @@
-import { getContinue } from '@/app/lib/continue';
 import { getFriends, getPreferences } from '@/app/lib/data/social';
-import { enteredCover } from '@/app/lib/entry-cover';
-import OverviewShell from '@/app/ui/overview/OverviewShell';
+import NeutralShell from '@/app/ui/neutral/NeutralShell';
 
+// The pages where all three games meet stand on neutral ground.
 export default async function OverviewLayout({ children }: { children: React.ReactNode }) {
-  const [cover, preferences, resume, friends] = await Promise.all([enteredCover(), getPreferences(), getContinue(), getFriends()]);
+  const [preferences, friends] = await Promise.all([getPreferences(), getFriends()]);
   const friendRequests = friends.filter((f) => f.status === 'pending' && f.direction === 'incoming').length;
   return (
-    <OverviewShell cover={cover} preferences={preferences} resume={resume} friendRequests={friendRequests}>
+    <NeutralShell preferences={preferences} friendRequests={friendRequests}>
       {children}
-    </OverviewShell>
+    </NeutralShell>
   );
 }

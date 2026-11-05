@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Jsans, Cormorant, CinzelFont, SpecialElite, CourierPrime } from './fonts';
 import { startOnCoverScript, themeScript } from './lib/theme';
+import Haptics from './ui/Haptics';
 import ThemeColor from './ui/ThemeColor';
 
 export const metadata: Metadata = {
@@ -52,6 +53,7 @@ export default function RootLayout({
       <body className={Jsans.className}>
         {children}
         <ThemeColor />
+        <Haptics />
       </body>
     </html>
   );

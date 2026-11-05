@@ -93,7 +93,7 @@ export default function ThemePicker({ game }: { game: Game }) {
       <IslandSection open={open} id={id}>
         <div className='flex flex-col gap-2 px-2 pt-1 pb-2'>
           <ThemeTiles game={game} compact />
-          <Link href={gamePath(game, '/settings')} className='px-1 text-xs text-bone/50 underline-offset-2 hover:text-bone hover:underline'>
+          <Link href='/vault/settings' className='px-1 text-xs text-bone/50 underline-offset-2 hover:text-bone hover:underline'>
             Simple frames in Settings
           </Link>
         </div>

@@ -10,7 +10,7 @@ import { GAMES, type Game } from '@/app/lib/games';
 import { SPECIAL_DIE_NAME } from '@/app/lib/dice/rules';
 import { dieImage } from '@/app/lib/dice/faces';
 import { subscribe } from '@/app/lib/supabase/browser';
-import { buttonGhost, buttonPrimary, fieldInput, fieldLabel } from '@/app/ui/kit/styles';
+import { buttonGhost, buttonPrimary, fieldInput, fieldLabel, buttonGhostSmall } from '@/app/ui/kit/styles';
 
 // ------------------------------------------------------------------ your character
 
@@ -159,7 +159,7 @@ export function BotVote({
         </span>
         <span className='short:hidden'>You can change your vote until everyone has voted; ties go to the creator.</span>
         {isOwner && votes.length > 0 && waiting.length > 0 && (
-          <button type='button' disabled={pending} onClick={() => run(() => callBotVote(chronicleId, step))} className='rounded-full border border-bone/20 px-3 py-1 text-bone/80 hover:border-bone/50 hover:text-bone'>
+          <button type='button' disabled={pending} onClick={() => run(() => callBotVote(chronicleId, step))} className={buttonGhostSmall}>
             End the vote now
           </button>
         )}

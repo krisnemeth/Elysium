@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps<'/vault/chronicles/
 }
 
 const small = 'rounded-full border border-bone/20 px-4 py-1.5 text-xs text-bone/80 transition hover:border-bone/50 hover:text-bone';
-const smallPrimary = 'rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:brightness-110';
+const smallPrimary = 'rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-on-accent transition hover:brightness-110';
 
 export default async function ChroniclePage({ params }: PageProps<'/vault/chronicles/[id]'>) {
   const { id } = await params;

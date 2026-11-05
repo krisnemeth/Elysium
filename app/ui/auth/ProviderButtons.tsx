@@ -2,7 +2,7 @@ import { FaDiscord, FaGoogle } from 'react-icons/fa';
 import { signInWithProvider } from '@/app/lib/actions/auth';
 
 const btn =
-  'flex w-full items-center justify-center gap-3 rounded-xl border border-bone/15 bg-bone/[0.04] px-4 py-3 text-sm text-bone transition duration-300 hover:border-bone/35 hover:bg-bone/[0.08] active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bone';
+  'flex w-full items-center justify-center gap-3 rounded-lg border border-bone/35 bg-black/35 px-4 py-3 text-sm font-semibold tracking-[0.02em] text-bone backdrop-blur-[10px] transition duration-300 hover:border-bone/75 hover:bg-bone/[0.07] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bone';
 
 export default function ProviderButtons({ next = '/vault' }: { next?: string }) {
   return (

@@ -4,6 +4,7 @@ import { useActionState } from 'react';
 import { savePreferences } from '@/app/lib/actions/social';
 import type { Preferences } from '@/app/lib/preferences';
 import { buttonPrimary } from '@/app/ui/kit/styles';
+import HapticsToggle from './HapticsToggle';
 
 const OPTIONS: { key: keyof Preferences; title: string; body: string }[] = [
   { key: 'tooltips', title: 'Explain traits on the sheet', body: 'Hover over (or tab to) a trait’s name to see what it means.' },
@@ -24,6 +25,7 @@ export default function SettingsForm({ preferences }: { preferences: Preferences
           <input type='checkbox' name={o.key} defaultChecked={preferences[o.key]} className='mt-1 size-5 shrink-0 accent-[var(--accent)]' />
         </label>
       ))}
+      <HapticsToggle />
       {(state.error || state.message) && (
         <p role='status' className={`text-sm ${state.error ? 'text-accent' : 'text-bone/70'}`}>{state.error ?? state.message}</p>
       )}

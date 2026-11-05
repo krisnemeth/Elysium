@@ -4,7 +4,7 @@ import CharacterRow from '@/app/ui/dashboard/CharacterRow';
 import { panel } from '@/app/ui/kit/styles';
 import Stagger from '@/app/ui/kit/Stagger';
 import { LORE_ICONS } from '@/app/ui/loresheets/icons';
-import { GAMES, gamePath, type Game } from '@/app/lib/games';
+import { GAMES, type Game } from '@/app/lib/games';
 import { LORE_KINDS, type LoreKind } from '@/app/lib/loresheets';
 import type { Character } from '@/app/lib/sample-characters';
 
@@ -44,7 +44,7 @@ export default function OverviewShelves({ drafts, loresheets }: { drafts: Charac
               const Icon = LORE_ICONS[l.kind];
               return (
                 <li key={l.id}>
-                  <Link href={gamePath(l.game, `/loresheets/${l.id}`)} className='flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-bone/[0.05]'>
+                  <Link href={`/vault/loresheets/${l.id}`} data-tint={l.game} className='flex items-center justify-between gap-3 rounded-xl px-2 py-2.5 transition hover:bg-bone/[0.05]'>
                     <Icon aria-hidden className='size-5 shrink-0 text-accent/80' />
                     <span className='grow truncate'>{l.title || `Untitled ${LORE_KINDS[l.kind].noun}`}</span>
                     <span className='shrink-0 text-[0.65rem] tracking-[0.15em] text-bone/45 uppercase'>

@@ -14,6 +14,8 @@ type GameInfo = {
   name: string;
   title: string;
   tagline: string;
+  // The game's colour, as on the landing's calls to action and in its first scene.
+  color: string;
   Logo: ComponentType<SVGProps<SVGSVGElement>>;
   figure: { src: string; width: number; height: number; alt: string };
   // What the game calls its characters, groups and factions.
@@ -29,6 +31,7 @@ export const GAMES: Record<Game, GameInfo> = {
     name: 'Vampire',
     title: 'Vampire: The Masquerade',
     tagline: 'Hunger, politics and the Masquerade.',
+    color: '#c81e2b',
     Logo: LogoVampire,
     figure: { src: '/art/cover-ventrue.webp', width: 948, height: 1659, alt: 'A shaven-headed vampire in a black coat and corset.' },
     noun: { one: 'Kindred', many: 'Kindred', group: 'coterie', faction: 'Clan' },
@@ -39,6 +42,7 @@ export const GAMES: Record<Game, GameInfo> = {
     name: 'Werewolf',
     title: 'Werewolf: The Apocalypse',
     tagline: 'Rage, the Wyrm and the dying wild.',
+    color: '#7fb894',
     Logo: LogoWerewolf,
     figure: { src: '/art/vault/garou-brawler.webp', width: 791, height: 1400, alt: 'A muscular Garou in a vest, her fists wrapped for a fight.' },
     noun: { one: 'Garou', many: 'Garou', group: 'pack', faction: 'Tribe' },
@@ -49,6 +53,7 @@ export const GAMES: Record<Game, GameInfo> = {
     name: 'Hunter',
     title: 'Hunter: The Reckoning',
     tagline: 'Ordinary people who know what hides in the dark.',
+    color: '#f08a24',
     Logo: LogoHunter,
     figure: { src: '/art/cover-hunter-2.webp', width: 1003, height: 1568, alt: 'A hunter in tactical gear and a dark scarf, arms crossed.' },
     noun: { one: 'Hunter', many: 'Hunters', group: 'cell', faction: 'Creed' },

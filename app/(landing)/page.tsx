@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 export default async function Landing({ searchParams }: PageProps<'/'>) {
   const { cover: wanted } = await searchParams;
-  // A link's ?cover= first, then the cover last chosen (here or in the overview's Themes).
+  // A link's ?cover= first, then the cover last chosen.
   const initial = coverIndex(typeof wanted === 'string' ? wanted : (await cookies()).get(COVER_COOKIE)?.value);
 
   return (

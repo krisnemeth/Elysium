@@ -62,7 +62,7 @@ export function DamageTrack({
         <button type='button' className={tap} onClick={() => change('superficial', 1)} disabled={max === 0 || agg >= max}>
           <MdAdd aria-hidden /> Superficial
         </button>
-        <button type='button' className={tap} onClick={() => change('aggravated', 1)} disabled={max === 0 || agg >= max}>
+        <button type='button' className={tap} data-haptic='heavy' onClick={() => change('aggravated', 1)} disabled={max === 0 || agg >= max}>
           <MdAdd aria-hidden /> Aggravated
         </button>
         <button type='button' className={tap} onClick={() => change('superficial', -1)} disabled={sup === 0}>

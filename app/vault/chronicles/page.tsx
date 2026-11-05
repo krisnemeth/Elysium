@@ -4,15 +4,15 @@ import { MdArrowOutward } from 'react-icons/md';
 import { respondToInvite } from '@/app/lib/actions/social';
 import { getChronicles } from '@/app/lib/data/social';
 import { GAMES } from '@/app/lib/games';
-import { panel } from '@/app/ui/kit/styles';
+import { panel, buttonGhostSmall, buttonPrimarySmall } from '@/app/ui/kit/styles';
 import SocialShell, { TextLink } from '@/app/ui/social/SocialShell';
 import { ActionButton } from '@/app/ui/social/forms';
 import CreateChronicle from '@/app/ui/chronicles/CreateChronicle';
 
 export const metadata: Metadata = { title: 'Chronicles' };
 
-const small = 'rounded-full border border-bone/20 px-4 py-1.5 text-xs text-bone/80 transition hover:border-bone/50 hover:text-bone';
-const smallPrimary = 'rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-white transition hover:brightness-110';
+const small = buttonGhostSmall;
+const smallPrimary = buttonPrimarySmall;
 
 export default async function Chronicles() {
   const list = await getChronicles();

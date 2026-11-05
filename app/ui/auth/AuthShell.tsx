@@ -1,23 +1,24 @@
 import Image from 'next/image';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import Navbar from '@/app/ui/navbar';
 import { SECTIONS } from '@/app/ui/landing/sections';
 import { GAMES, GAMES_ORDER } from '@/app/lib/games';
+import NeutralGround from '@/app/ui/neutral/NeutralGround';
 
-// Shared frame for login, sign-up and the other auth screens. Dark only, like
-// the rest of the site pages (the saved theme is for the game dashboards).
+// Shared frame for login, sign-up and the other auth screens, on neutral ground.
 export default function AuthShell({ title, lead, children }: { title: string; lead?: ReactNode; children: ReactNode }) {
   return (
-    <div data-game='wod' className='relative isolate grid min-h-svh bg-ink text-bone transition-colors duration-500 lg:grid-cols-[1fr_minmax(26rem,32rem)]'>
+    <NeutralGround>
+    <div data-game='wod' className='relative isolate grid min-h-svh text-bone lg:grid-cols-[1fr_minmax(26rem,32rem)]'>
       <Navbar sections={SECTIONS.map((s) => ({ ...s, href: `/${s.href}` }))} />
-      {/* The three worlds, faint, behind the form on phones and beside it on desktop */}
-      <div aria-hidden className='absolute inset-0 -z-10 flex lg:relative lg:z-0'>
+      {/* The three worlds, faint, behind the form on phones and beside it on desktop. Each fades at its sides into the next, and the group into the ground under the form. */}
+      <div aria-hidden style={{ '--n-rest': 0.45 } as CSSProperties} className='absolute inset-0 -z-10 flex overflow-hidden lg:relative lg:z-0 lg:mask-[linear-gradient(to_right,black_65%,transparent)]'>
         {GAMES_ORDER.map((g) => (
-          <div key={g} className='relative flex-1 overflow-hidden'>
-            <Image src={GAMES[g].figure.src} alt='' fill sizes='(max-width: 1024px) 33vw, 22vw' className='object-cover object-top opacity-25 grayscale lg:opacity-45' />
+          <div key={g} data-tint={g} className='relative -mx-[3%] flex-1 overflow-hidden mask-[linear-gradient(to_right,transparent,black_20%,black_80%,transparent)]'>
+            <Image src={GAMES[g].figure.src} alt='' fill sizes='(max-width: 1024px) 33vw, 28vw' className='object-cover object-top' />
           </div>
         ))}
-        <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--ink)_85%)] lg:bg-[linear-gradient(to_right,transparent_40%,var(--ink))]' />
+        <div className='pointer-events-none absolute inset-0 bg-ink/55 bg-[radial-gradient(ellipse_at_center,transparent_20%,var(--ink)_85%)] lg:hidden' />
       </div>
 
       <main id='main' className='page-in relative flex flex-col px-6 pt-24 pb-8 md:px-12'>
@@ -28,5 +29,6 @@ export default function AuthShell({ title, lead, children }: { title: string; le
         </div>
       </main>
     </div>
+    </NeutralGround>
   );
 }

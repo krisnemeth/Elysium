@@ -26,7 +26,7 @@ export default function ViewSwitch({ initial, grid, list }: { initial: VaultView
             aria-pressed={view === value}
             onClick={() => choose(value)}
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-accent ${
-              view === value ? 'bg-accent text-white shadow-[0_0_1rem_-0.4rem_var(--accent)]' : 'text-bone/60 hover:bg-bone/[0.05] hover:text-bone'
+              view === value ? 'bg-accent text-on-accent shadow-[0_0_1rem_-0.4rem_var(--accent)]' : 'text-bone/60 hover:bg-bone/[0.05] hover:text-bone'
             }`}
           >
             <Icon aria-hidden className='size-4' />

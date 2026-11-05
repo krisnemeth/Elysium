@@ -5,7 +5,6 @@ import { panel } from '@/app/ui/kit/styles';
 import SettingsForm from '@/app/ui/social/SettingsForm';
 import { DisplayNameForm } from '@/app/ui/social/forms';
 
-// Shown in the overview (/vault/settings) and in each game (/vault/[game]/settings).
 export default async function SettingsPage() {
   const me = await getMe();
   return (
