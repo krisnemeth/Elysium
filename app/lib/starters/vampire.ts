@@ -27,7 +27,7 @@ export const VAMPIRES: Starter[] = [
     sort: 1,
     name: 'Trixx Laveau',
     faction: 'brujah',
-    portrait: '/Female1.jpg',
+    portrait: '/art/vault/punk-vampire.webp',
     summary:
       "Anarch enforcer and true believer of The Cause. Right hand to the Anarch leader. If you don't want trouble, stay out of her way.",
     sheet: {
@@ -102,7 +102,7 @@ export const VAMPIRES: Starter[] = [
     sort: 2,
     name: 'Blake Janssen',
     faction: 'nosferatu',
-    portrait: '/Nosferatu.jpeg',
+    portrait: '/art/vault/storyteller.webp',
     summary:
       'Nosferatu spymaster, he knows everything about everyone. He is the keeper of secrets and the master of the shadows.',
     sheet: {
@@ -170,7 +170,7 @@ export const VAMPIRES: Starter[] = [
     sort: 3,
     name: 'Claire Voyant',
     faction: 'malkavian',
-    portrait: '/Malkavian.jpg',
+    portrait: '/art/cover-neon.webp',
     summary:
       'Bearer of headaches, a Malkavian seer, she is the local oracle. She is cryptic, but her predictions are always accurate.',
     sheet: {

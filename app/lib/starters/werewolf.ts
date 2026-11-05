@@ -13,7 +13,7 @@ export const WEREWOLVES: Starter[] = [
     sort: 1,
     name: 'Grey-Fang',
     faction: 'Red Talons',
-    portrait: '/portraits/garou-crinos.webp',
+    portrait: '/art/cover-garou.webp',
     summary: 'An Ahroun who stopped counting the hunters he has buried. Speaks rarely, and only to the pack.',
     sheet: {
       profile: {
@@ -82,7 +82,7 @@ export const WEREWOLVES: Starter[] = [
     sort: 2,
     name: 'Rosa "Static" Vex',
     faction: 'Glass Walkers',
-    portrait: '/portraits/garou-punk.webp',
+    portrait: '/art/cover-garou-2.webp',
     summary: 'A Ragabash who hacks Endron payrolls for fun and spirit-talks the city grid for the pack.',
     sheet: {
       profile: {
@@ -146,7 +146,7 @@ export const WEREWOLVES: Starter[] = [
     sort: 3,
     name: 'Old Tom Marrow',
     faction: 'Bone Gnawers',
-    portrait: '/portraits/garou-drifter.webp',
+    portrait: '/art/vault/garou-biker.webp',
     summary: 'A Galliard who sings the forgotten caerns of the rail yards. Knows every stray by name.',
     sheet: {
       profile: {

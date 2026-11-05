@@ -13,7 +13,7 @@ export const HUNTERS: Starter[] = [
     sort: 1,
     name: 'Dez McAllister',
     faction: 'Inquisitive',
-    portrait: '/portraits/hunter-flannel.webp',
+    portrait: '/art/vault/hunter-tablet.webp',
     summary: 'Ex-crime-scene photographer. Keeps the cell’s evidence board and refuses to stop asking questions.',
     sheet: {
       profile: {
@@ -71,7 +71,7 @@ export const HUNTERS: Starter[] = [
     sort: 2,
     name: 'Father Ruiz',
     faction: 'Faithful',
-    portrait: '/portraits/hunter-priest.webp',
+    portrait: '/art/cover-hunter-2.webp',
     summary: 'A parish priest who saw what lived in the bell tower. His Drive is Atonement, and he has a lot to atone for.',
     sheet: {
       profile: {
@@ -135,7 +135,7 @@ export const HUNTERS: Starter[] = [
     sort: 3,
     name: 'Vesna Kovač',
     faction: 'Underground',
-    portrait: '/portraits/hunter-vesna.webp',
+    portrait: '/art/cover-hunter.webp',
     summary: 'Runs the cell’s burner phones, safehouses and forged papers. Hunts the thing that took her brother.',
     sheet: {
       profile: {

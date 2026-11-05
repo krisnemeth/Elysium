@@ -28,7 +28,7 @@ export default function CharacterCard({
           height={character.image.height}
           alt={`Portrait of ${character.name}.`}
           sizes='(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 22rem'
-          className='size-full object-cover transition-[scale,filter] duration-[1.2s] ease-(--ease-out-expo) group-hover:scale-105'
+          className='size-full object-cover object-top transition-[scale,filter] duration-[1.2s] ease-(--ease-out-expo) group-hover:scale-105'
         />
         <div className='absolute inset-0 bg-linear-to-t from-ink via-ink/30 to-transparent' />
         {character.status === 'draft' && (

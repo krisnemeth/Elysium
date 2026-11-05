@@ -128,7 +128,7 @@ export default function PortraitPicker({
       onDrop={onDrop}
     >
       <div className={clsx('relative aspect-[3/4] w-20 shrink-0 overflow-hidden rounded-xl bg-bone/5', pending && 'animate-pulse')}>
-        <Image src={src} alt={`Portrait of ${name || 'this character'}.`} fill sizes='5rem' unoptimized={isUploadedPortrait(src)} className='object-cover' />
+        <Image src={src} alt={`Portrait of ${name || 'this character'}.`} fill sizes='5rem' unoptimized={isUploadedPortrait(src)} className='object-cover object-top' />
       </div>
       <div className='flex min-w-0 flex-col gap-2'>
         <h3 className='font-display text-lg leading-tight'>Portrait</h3>

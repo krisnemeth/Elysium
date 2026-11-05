@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GiCastle, GiLockedChest, GiVampireCape, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
+import { GiLockedChest, GiVampireCape, GiD10, GiBatWing, GiWolfHowl, GiCrossbow, GiCampfire, GiScrollUnfurled } from 'react-icons/gi';
 import { MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 
@@ -10,13 +10,12 @@ import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 const groupName = (game: Game) => GAMES[game].noun.group[0].toUpperCase() + GAMES[game].noun.group.slice(1);
 
 const linksFor = (game: Game) => [
-  { name: 'Overview', href: gamePath(game), icon: GiCastle },
+  { name: 'Your vault', href: gamePath(game), icon: GiLockedChest },
   { name: groupName(game), href: gamePath(game, '/characters'), icon: GiVampireCape },
   { name: 'Loresheets', href: gamePath(game, '/loresheets'), icon: GiScrollUnfurled },
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
 ];
 
-const VAULT = { name: 'Your vault', href: '/vault', icon: GiLockedChest };
 const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
 const accountLinks = (game: Game) => [
   { name: 'Settings', href: gamePath(game, '/settings'), icon: MdOutlineSettings },
@@ -24,13 +23,13 @@ const accountLinks = (game: Game) => [
 ];
 
 function isActive(pathname: string, href: string, game: Game) {
-  return href === gamePath(game) || href === VAULT.href ? pathname === href : pathname.startsWith(href);
+  return href === gamePath(game) ? pathname === href : pathname.startsWith(href);
 }
 
 // Vertical list for the desktop sidebar.
 export function SideNavLinks({ game, group = 'main' }: { game: Game; group?: 'main' | 'chronicles' | 'account' }) {
   const pathname = usePathname();
-  const links = group === 'main' ? [VAULT, ...linksFor(game)] : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
+  const links = group === 'main' ? linksFor(game) : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
   return (
     <ul className='flex flex-col gap-1'>
       {links.map(({ name, href, icon: Icon }) => {
@@ -92,7 +91,7 @@ export function TabBarLinks({ game }: { game: Game }) {
 
 const GAME_ICON = { vampire: GiBatWing, werewolf: GiWolfHowl, hunter: GiCrossbow };
 
-// Jump between the three games' dashboards; the vault keeps one list of characters.
+// Jump between the three games' vaults.
 export function GameSwitcher({ game, compact = false }: { game: Game; compact?: boolean }) {
   return (
     <ul aria-label='Game' className={`grid grid-cols-3 gap-1 rounded-xl bg-bone/[0.04] p-1 ${compact ? 'w-full' : ''}`}>

@@ -185,7 +185,7 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
           <li key={p.user_id} className='flex items-center gap-3'>
             <span className='relative size-12 shrink-0 overflow-hidden rounded-xl bg-bone/5'>
               {p.character_id && p.game && (
-                <Image src={p.portrait ?? GAMES[p.game].figure.src} alt='' fill sizes='3rem' unoptimized={isUploadedPortrait(p.portrait)} className='object-cover' />
+                <Image src={p.portrait ?? GAMES[p.game].figure.src} alt='' fill sizes='3rem' unoptimized={isUploadedPortrait(p.portrait)} className='object-cover object-top' />
               )}
             </span>
             <span className='min-w-0 grow'>

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, type Game } from '@/app/lib/games';
-import { PORTRAIT_LIBRARY } from '@/app/lib/portrait-library';
+import { DARK_PACK_PORTRAITS, PORTRAIT_LIBRARY, type LibraryPortrait } from '@/app/lib/portrait-library';
 import { PORTRAIT_MAX_BYTES, PORTRAIT_SIZE } from '@/app/lib/portraits';
 import ImageCropper, { type CropRect } from './ImageCropper';
 
@@ -37,7 +37,29 @@ async function prepare(bitmap: ImageBitmap, rect: CropRect): Promise<Blob> {
   throw new Error('too large');
 }
 
-// The built-in portraits, the current game's first.
+function LibrarySection({ title, note, portraits, onPick }: { title: string; note?: string; portraits: LibraryPortrait[]; onPick: (src: string) => void }) {
+  return (
+    <section aria-label={title} className='mt-5'>
+      <h3 className='text-[0.65rem] tracking-[0.25em] text-bone/50 uppercase'>{title}</h3>
+      {note && <p className='mt-1 text-sm text-bone/60'>{note}</p>}
+      <ul className='mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5'>
+        {portraits.map((p) => (
+          <li key={p.src}>
+            <button
+              type='button'
+              onClick={() => onPick(p.src)}
+              className='group relative block aspect-[3/4] w-full overflow-hidden rounded-xl bg-bone/5 ring-1 ring-bone/10 transition hover:ring-2 hover:ring-accent focus-visible:outline-2 focus-visible:outline-accent'
+            >
+              <Image src={p.src} alt={p.label} fill sizes='9rem' className='object-cover object-top transition-transform duration-500 group-hover:scale-105' />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+// The built-in portraits, the current game's first, then the official Dark Pack art.
 function LibraryDialog({ game, onPick, onClose }: { game: Game; onPick: (src: string) => void; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => dialog.current?.showModal(), []);
@@ -63,23 +85,9 @@ function LibraryDialog({ game, onPick, onClose }: { game: Game; onPick: (src: st
       </div>
       <p className='mt-1 text-sm text-bone/60'>Pick one, then frame it.</p>
       {order.map((g) => (
-        <section key={g} aria-label={GAMES[g].name} className='mt-5'>
-          <h3 className='text-[0.65rem] tracking-[0.25em] text-bone/50 uppercase'>{GAMES[g].name}</h3>
-          <ul className='mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5'>
-            {PORTRAIT_LIBRARY[g].map((p) => (
-              <li key={p.src}>
-                <button
-                  type='button'
-                  onClick={() => onPick(p.src)}
-                  className='group relative block aspect-[3/4] w-full overflow-hidden rounded-xl bg-bone/5 ring-1 ring-bone/10 transition hover:ring-2 hover:ring-accent focus-visible:outline-2 focus-visible:outline-accent'
-                >
-                  <Image src={p.src} alt={p.label} fill sizes='9rem' className='object-cover object-top transition-transform duration-500 group-hover:scale-105' />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <LibrarySection key={g} title={GAMES[g].name} portraits={PORTRAIT_LIBRARY[g]} onPick={onPick} />
       ))}
+      <LibrarySection title='Dark Pack' note='Official World of Darkness art, for an authentic look.' portraits={DARK_PACK_PORTRAITS} onPick={onPick} />
     </dialog>
   );
 }

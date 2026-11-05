@@ -101,7 +101,7 @@ export default function CharacterSheetView({
       {/* Identity */}
       <header className={`relative grid overflow-hidden md:grid-cols-[18rem_1fr] ${panel}`}>
         <div className='relative aspect-[3/4] md:aspect-auto md:min-h-96'>
-          <Image src={c.image.src} unoptimized={c.image.unoptimized} alt={`Portrait of ${c.name}.`} fill sizes='(max-width: 768px) 100vw, 18rem' className='object-cover' preload />
+          <Image src={c.image.src} unoptimized={c.image.unoptimized} alt={`Portrait of ${c.name}.`} fill sizes='(max-width: 768px) 100vw, 18rem' className='object-cover object-top' preload />
           <div className='absolute inset-0 bg-linear-to-t from-ink/80 to-transparent md:bg-linear-to-r md:from-transparent md:to-ink/30' />
           {editablePortrait && <PortraitPicker variant='overlay' id={id} game={game} name={c.name} src={c.image.src} />}
         </div>

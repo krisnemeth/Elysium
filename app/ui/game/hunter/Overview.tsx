@@ -21,7 +21,7 @@ export default function HunterOverview({ characters: cell }: { characters: Chara
   return (
     <div className='flex flex-col gap-10'>
       <PageHeader
-        eyebrow='Hunter · The cell'
+        eyebrow='Your vault'
         title='Case files are open.'
         description='Everyone in the cell, everything you know about the quarry. Pin it up, roll for it, and watch the Danger.'
         actions={
@@ -64,7 +64,7 @@ export default function HunterOverview({ characters: cell }: { characters: Chara
                 style={{ left: `${p.x}%`, top: `${p.y}%`, rotate: `${p.r}deg` }}
               >
                 <span className='block bg-[#f7f2e6] p-2 pb-7 shadow-[0_0.75rem_1.25rem_-0.5rem_rgb(0_0_0/0.7)] transition duration-500 ease-(--ease-spring) group-hover:-translate-y-2 group-hover:scale-105 group-hover:rotate-0'>
-                  <Image src={c.image.src} unoptimized={c.image.unoptimized} width={240} height={320} alt={`Photo of ${c.name}.`} className='aspect-square w-full object-cover sepia-[0.35]' />
+                  <Image src={c.image.src} unoptimized={c.image.unoptimized} width={240} height={320} alt={`Photo of ${c.name}.`} className='aspect-square w-full bg-[#3a2f25] object-cover object-top sepia-[0.35]' />
                   <span className='mt-1 block truncate text-center font-display text-xs text-[#2b2119] md:text-sm'>{c.name}</span>
                 </span>
                 {/* Pushpin */}

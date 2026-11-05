@@ -7,9 +7,7 @@ import DiceRoller from '@/app/ui/dice/DiceRoller';
 import GuidedLoader from '@/app/ui/guided/GuidedLoader';
 import CharacterEditor from '@/app/ui/sheets/CharacterEditor';
 import SheetForm from '@/app/ui/sheets/SheetForm';
-import VampireOverview from '@/app/ui/game/vampire/Overview';
-import WerewolfOverview from '@/app/ui/game/werewolf/Overview';
-import HunterOverview from '@/app/ui/game/hunter/Overview';
+import VaultHome from '@/app/ui/dashboard/VaultHome';
 import { PreferencesProvider } from '@/app/ui/PreferencesContext';
 import { DEFAULT_PREFERENCES } from '@/app/lib/preferences';
 import { emptySheet } from '@/app/lib/sheets/empty';
@@ -32,9 +30,8 @@ const VIEWS = ['overview', 'dice', 'guided', 'classic', 'roller', 'scene'] as co
 export default async function Capture({ params, searchParams }: PageProps<'/capture/[game]/[view]'>) {
   if (process.env.NODE_ENV === 'production') notFound();
   const { game, view } = await params;
-  const { mode } = await searchParams;
+  const { mode, list } = await searchParams;
   if (!isGame(game) || !VIEWS.includes(view as (typeof VIEWS)[number])) notFound();
-  const characters = CHARACTERS.filter((c) => c.game === game);
 
   if (view === 'scene') {
     // The scene alone, nothing in front of it, for the landing's themes.
@@ -60,7 +57,7 @@ export default async function Capture({ params, searchParams }: PageProps<'/capt
   }
 
   let body: React.ReactNode;
-  if (view === 'overview') body = game === 'werewolf' ? <WerewolfOverview characters={characters} /> : game === 'hunter' ? <HunterOverview characters={characters} /> : <VampireOverview characters={characters} loresheets={[]} />;
+  if (view === 'overview') body = <VaultHome game={game} characters={CHARACTERS} loresheets={[]} view={list === '1' ? 'list' : 'grid'} />;
   else if (view === 'dice')
     body = (
       <div className='flex flex-col gap-10'>
