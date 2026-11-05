@@ -1,5 +1,13 @@
 import type { Game } from '@/app/lib/games';
 
+// The cover last chosen on the landing: the overview wears its theme (app/lib/entry-cover.ts).
+export const COVER_COOKIE = 'elysium-cover';
+
+// In the browser only.
+export function rememberCover(id: string) {
+  document.cookie = `${COVER_COOKIE}=${id}; path=/; max-age=31536000; samesite=lax`;
+}
+
 /*
   The cover characters, one per theme (two per game), and the mark behind each
   one's head. Plain data (no 'use client') so the server page can read it too.
@@ -10,6 +18,7 @@ export type Cover = {
   id: string;
   name: string;
   game: Game;
+  mode: 'dark' | 'light';
   src: string;
   width: number;
   height: number;
@@ -64,6 +73,7 @@ export const COVERS: Cover[] = [
     id: 'masquerade',
     name: 'Masquerade',
     game: 'vampire',
+    mode: 'dark',
     src: '/art/cover-ventrue.webp',
     width: 948,
     height: 1659,
@@ -80,6 +90,7 @@ export const COVERS: Cover[] = [
     id: 'forest',
     name: 'Moonlit forest',
     game: 'werewolf',
+    mode: 'dark',
     src: '/art/cover-garou-2.webp',
     width: 941,
     height: 1672,
@@ -97,6 +108,7 @@ export const COVERS: Cover[] = [
     id: 'hideout',
     name: 'The hideout',
     game: 'hunter',
+    mode: 'dark',
     src: '/art/cover-hunter.webp',
     width: 941,
     height: 1672,
@@ -113,6 +125,7 @@ export const COVERS: Cover[] = [
     id: 'neon',
     name: 'Neon Nights',
     game: 'vampire',
+    mode: 'light',
     // Cropped mid-thigh up from cover-neon.webp, to stand as close as the others.
     src: '/art/cover-neon-mid.webp',
     width: 702,
@@ -131,6 +144,7 @@ export const COVERS: Cover[] = [
     id: 'cave',
     name: 'The cave',
     game: 'werewolf',
+    mode: 'light',
     src: '/art/cover-garou.webp',
     width: 941,
     height: 1672,
@@ -147,6 +161,7 @@ export const COVERS: Cover[] = [
     id: 'hunter-2',
     name: 'The city',
     game: 'hunter',
+    mode: 'light',
     src: '/art/cover-hunter-2.webp',
     width: 1003,
     height: 1568,

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { FaPowerOff } from 'react-icons/fa';
 import { Elysium1 } from '@/app/ui/svgs';
 import ThemePicker from '@/app/ui/dashboard/ThemePicker';
-import PhoneIsland from '@/app/ui/dashboard/PhoneIsland';
+import { Drawer, DrawerButton, DrawerProvider } from '@/app/ui/dashboard/Drawer';
 import { signOut } from '@/app/lib/actions/auth';
 import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
 import { panel } from '@/app/ui/kit/styles';
@@ -27,12 +27,12 @@ function LogOut({ compact = false }: { compact?: boolean }) {
 export default function SideNav({ game }: { game: Game }) {
   const { Logo } = GAMES[game];
   return (
-    <>
-      {/* Desktop sidebar */}
-      <aside className={`group/side frame frame-tall fixed inset-y-4 left-4 z-40 hidden w-60 flex-col p-4 md:flex ${panel}`}>
+    <DrawerProvider>
+      {/* The sidebar: fixed on desktop, a drawer from the right on phones and tablets. */}
+      <Drawer label='Game menu' className={`group/side frame frame-tall p-4 desk:inset-y-4 desk:left-4 desk:w-60 ${panel}`}>
         <Link
           href='/vault'
-          aria-label='Your vault'
+          aria-label='Overview'
           className='mt-2 flex justify-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent'
         >
           <Elysium1 aria-hidden className='h-auto w-32 text-bone/90 drop-shadow-[0_0_0.6rem_var(--accent)]' />
@@ -58,10 +58,17 @@ export default function SideNav({ game }: { game: Game }) {
         <div className='mt-1'>
           <LogOut />
         </div>
-      </aside>
+      </Drawer>
 
-      {/* Phone top bar: grows into a menu (Your vault, Settings, Friends, Themes, Log out). */}
-      <PhoneIsland game={game} />
+      {/* Phones and tablets: the top bar with the drawer's button. */}
+      <header className='fixed inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-40 px-3 desk:hidden'>
+        <div className={`frame flex h-14 items-center justify-between px-3 ${panel}`}>
+          <Link href='/vault' aria-label='Overview'>
+            <Elysium1 aria-hidden className='h-auto w-24 text-bone/90' />
+          </Link>
+          <DrawerButton />
+        </div>
+      </header>
 
       {/* Phone tab bar */}
       <nav aria-label='Dashboard' className='fixed inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 px-3 md:hidden'>
@@ -69,6 +76,6 @@ export default function SideNav({ game }: { game: Game }) {
           <TabBarLinks game={game} />
         </div>
       </nav>
-    </>
+    </DrawerProvider>
   );
 }

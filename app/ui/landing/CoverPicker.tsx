@@ -28,7 +28,7 @@ import {
 import { GAMES, GAMES_ORDER, type Game } from '@/app/lib/games';
 import { TRIBES, glyphUrl } from '@/app/lib/factions';
 import { Fireflies, Searchlights, VeiledMoon } from '@/app/ui/game/SceneBits';
-import { ART_RATIO, COVERS, MARKS, pageColor, type MarkKey } from './covers';
+import { ART_RATIO, COVERS, MARKS, pageColor, type MarkKey, rememberCover } from './covers';
 import Rail, { haptic } from './Rail';
 import type { ArtBox } from './Atmosphere';
 import { setScene } from './scene';
@@ -212,6 +212,7 @@ export default function CoverPicker({ initial }: { initial: number }) {
     root.dataset.lcCover = '';
     root.dataset.lcScene = cover.id;
     root.dataset.lcGame = cover.game;
+    rememberCover(cover.id);
     setScene(current);
   }, [cover, current]);
   useEffect(

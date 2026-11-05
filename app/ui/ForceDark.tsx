@@ -13,15 +13,15 @@ declare global {
   theme. First loads are handled by the theme script (DARK_ONLY_PATHS); this
   covers in-app navigation to and from these pages.
 */
-export default function ForceDark() {
+export default function ForceDark({ theme = 'dark' }: { theme?: 'dark' | 'light' }) {
   useEffect(() => {
     const root = document.documentElement;
-    root.dataset.forceDark = '1';
-    root.dataset.theme = 'dark';
+    root.dataset.forceTheme = theme;
+    root.dataset.theme = theme;
     return () => {
-      delete root.dataset.forceDark;
+      delete root.dataset.forceTheme;
       window.__elysiumTheme?.();
     };
-  }, []);
+  }, [theme]);
   return null;
 }

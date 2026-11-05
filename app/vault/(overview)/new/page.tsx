@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import AppShell from '@/app/ui/dashboard/AppShell';
-import { currentGame } from '@/app/lib/current-game';
 import { GAMES, GAMES_ORDER, gamePath } from '@/app/lib/games';
 
 export const metadata: Metadata = { title: 'Create a character' };
@@ -13,9 +11,8 @@ const WHAT = {
   hunter: 'Creed, Drive, Desperation, Danger, Edges and perks.',
 };
 
-export default async function ChooseGame() {
+export default function ChooseGame() {
   return (
-    <AppShell game={await currentGame()}>
       <div className='page-in flex flex-col'>
         <header className='mx-auto max-w-3xl text-center'>
           <p className='text-xs tracking-[0.3em] text-accent uppercase'>New character</p>
@@ -44,6 +41,5 @@ export default async function ChooseGame() {
           })}
         </ul>
       </div>
-    </AppShell>
   );
 }

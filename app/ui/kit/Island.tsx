@@ -14,7 +14,7 @@ import clsx from 'clsx';
   - IslandBackdrop blurs and dims the page while the island is open; a tap
     closes it.
   - useIsland locks page scroll while open, closes on Escape (returning focus
-    to the trigger) and when crossing the md breakpoint.
+    to the trigger) and when crossing a breakpoint (md by default).
 */
 
 export function IslandSection({ open, id, children, className = '' }: { open: boolean; id?: string; children: ReactNode; className?: string }) {
@@ -59,6 +59,7 @@ export function useIsland({
   onBreakpoint,
   trigger,
   lockScroll = true,
+  breakpoint = '(min-width: 48rem)',
 }: {
   open: boolean;
   // Close the innermost thing; return focus to its trigger.
@@ -66,6 +67,7 @@ export function useIsland({
   onBreakpoint?: () => void;
   trigger?: RefObject<HTMLElement | null>;
   lockScroll?: boolean;
+  breakpoint?: string;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -77,7 +79,7 @@ export function useIsland({
       onEscape();
       trigger?.current?.focus();
     };
-    const desktop = window.matchMedia('(min-width: 48rem)');
+    const desktop = window.matchMedia(breakpoint);
     const onChange = () => onBreakpoint?.();
     document.addEventListener('keydown', onKey);
     desktop.addEventListener('change', onChange);
@@ -86,5 +88,5 @@ export function useIsland({
       document.removeEventListener('keydown', onKey);
       desktop.removeEventListener('change', onChange);
     };
-  }, [open, onEscape, onBreakpoint, trigger, lockScroll]);
+  }, [open, onEscape, onBreakpoint, trigger, lockScroll, breakpoint]);
 }

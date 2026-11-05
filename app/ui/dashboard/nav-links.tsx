@@ -6,30 +6,39 @@ import { GiLockedChest, GiVampireCape, GiD10, GiBatWing, GiWolfHowl, GiCrossbow,
 import { MdOutlineSettings, MdPeopleOutline } from 'react-icons/md';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 
+const GAME_ICON = { vampire: GiBatWing, werewolf: GiWolfHowl, hunter: GiCrossbow };
+
 // The characters page is named after the game's group: Coterie, Pack, Cell.
 const groupName = (game: Game) => GAMES[game].noun.group[0].toUpperCase() + GAMES[game].noun.group.slice(1);
 
 const linksFor = (game: Game) => [
-  { name: 'Your vault', href: gamePath(game), icon: GiLockedChest },
+  { name: GAMES[game].name, href: gamePath(game), icon: GAME_ICON[game] },
   { name: groupName(game), href: gamePath(game, '/characters'), icon: GiVampireCape },
   { name: 'Loresheets', href: gamePath(game, '/loresheets'), icon: GiScrollUnfurled },
   { name: 'Dice', href: gamePath(game, '/dice'), icon: GiD10 },
 ];
 
+const OVERVIEW = { name: 'Overview', href: '/vault', icon: GiLockedChest };
 const CHRONICLES = { name: 'Chronicles', href: '/vault/chronicles', icon: GiCampfire };
 const accountLinks = (game: Game) => [
   { name: 'Settings', href: gamePath(game, '/settings'), icon: MdOutlineSettings },
   { name: 'Friends', href: gamePath(game, '/friends'), icon: MdPeopleOutline },
 ];
 
-function isActive(pathname: string, href: string, game: Game) {
-  return href === gamePath(game) ? pathname === href : pathname.startsWith(href);
+const OVERVIEW_ACCOUNT = [
+  { name: 'Settings', href: '/vault/settings', icon: MdOutlineSettings },
+  { name: 'Friends', href: '/vault/friends', icon: MdPeopleOutline },
+];
+
+function isActive(pathname: string, href: string, game?: Game) {
+  return href === OVERVIEW.href || (game && href === gamePath(game)) ? pathname === href : pathname.startsWith(href);
 }
 
 // Vertical list for the desktop sidebar.
-export function SideNavLinks({ game, group = 'main' }: { game: Game; group?: 'main' | 'chronicles' | 'account' }) {
+export function SideNavLinks({ game, group = 'main' }: { game?: Game; group?: 'main' | 'chronicles' | 'account' | 'overview' | 'overview-account' }) {
   const pathname = usePathname();
-  const links = group === 'main' ? linksFor(game) : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
+  const links =
+    group === 'overview' ? [OVERVIEW] : group === 'overview-account' ? OVERVIEW_ACCOUNT : !game ? [] : group === 'main' ? [OVERVIEW, ...linksFor(game)] : group === 'chronicles' ? [CHRONICLES] : accountLinks(game);
   return (
     <ul className='flex flex-col gap-1'>
       {links.map(({ name, href, icon: Icon }) => {
@@ -88,8 +97,6 @@ export function TabBarLinks({ game }: { game: Game }) {
     </ul>
   );
 }
-
-const GAME_ICON = { vampire: GiBatWing, werewolf: GiWolfHowl, hunter: GiCrossbow };
 
 // Jump between the three games' vaults.
 export function GameSwitcher({ game, compact = false }: { game: Game; compact?: boolean }) {

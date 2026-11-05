@@ -7,7 +7,9 @@ import DiceRoller from '@/app/ui/dice/DiceRoller';
 import GuidedLoader from '@/app/ui/guided/GuidedLoader';
 import CharacterEditor from '@/app/ui/sheets/CharacterEditor';
 import SheetForm from '@/app/ui/sheets/SheetForm';
-import VaultHome from '@/app/ui/dashboard/VaultHome';
+import VampireOverview from '@/app/ui/game/vampire/Overview';
+import WerewolfOverview from '@/app/ui/game/werewolf/Overview';
+import HunterOverview from '@/app/ui/game/hunter/Overview';
 import { PreferencesProvider } from '@/app/ui/PreferencesContext';
 import { DEFAULT_PREFERENCES } from '@/app/lib/preferences';
 import { emptySheet } from '@/app/lib/sheets/empty';
@@ -30,8 +32,9 @@ const VIEWS = ['overview', 'dice', 'guided', 'classic', 'roller', 'scene'] as co
 export default async function Capture({ params, searchParams }: PageProps<'/capture/[game]/[view]'>) {
   if (process.env.NODE_ENV === 'production') notFound();
   const { game, view } = await params;
-  const { mode, list } = await searchParams;
+  const { mode } = await searchParams;
   if (!isGame(game) || !VIEWS.includes(view as (typeof VIEWS)[number])) notFound();
+  const characters = CHARACTERS.filter((c) => c.game === game);
 
   if (view === 'scene') {
     // The scene alone, nothing in front of it, for the landing's themes.
@@ -57,7 +60,7 @@ export default async function Capture({ params, searchParams }: PageProps<'/capt
   }
 
   let body: React.ReactNode;
-  if (view === 'overview') body = <VaultHome game={game} characters={CHARACTERS} loresheets={[]} view={list === '1' ? 'list' : 'grid'} />;
+  if (view === 'overview') body = game === 'werewolf' ? <WerewolfOverview characters={characters} /> : game === 'hunter' ? <HunterOverview characters={characters} /> : <VampireOverview characters={characters} loresheets={[]} />;
   else if (view === 'dice')
     body = (
       <div className='flex flex-col gap-10'>
@@ -81,7 +84,7 @@ export default async function Capture({ params, searchParams }: PageProps<'/capt
       <CaptureMode mode={mode === 'light' ? 'light' : 'dark'} />
       <Ambience game={game} />
       <SideNav game={game} />
-      <main id='main' className='relative px-4 pt-32 pb-32 md:pt-10 md:pr-8 md:pb-16 md:pl-72'>
+      <main id='main' className='relative px-4 pt-[calc(6rem+env(safe-area-inset-top))] pb-32 md:pr-8 md:pb-16 desk:pt-10 desk:pl-72'>
         <div className='mx-auto max-w-6xl'>
           <PreferencesProvider value={DEFAULT_PREFERENCES}>{body}</PreferencesProvider>
         </div>

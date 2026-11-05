@@ -1,9 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FactionMark, factionName } from '@/app/ui/game/FactionMark';
+import { GAMES } from '@/app/lib/games';
 import type { Character } from '@/app/lib/sample-characters';
 
-export default function CharacterRow({ character, style, showStatus = false }: { character: Character; style?: React.CSSProperties; showStatus?: boolean }) {
+export default function CharacterRow({ character, style, showStatus = false, showGame = false }: { character: Character; style?: React.CSSProperties; showStatus?: boolean; showGame?: boolean }) {
   const clanName = factionName(character);
   return (
     <li style={style}>
@@ -27,6 +28,7 @@ export default function CharacterRow({ character, style, showStatus = false }: {
         <span className='min-w-0 grow'>
           <span className='block truncate font-display text-xl leading-tight'>{character.name}</span>
           <span className='block text-xs tracking-[0.15em] text-bone/45 uppercase'>
+            {showGame && `${GAMES[character.game].name} · `}
             {clanName}
             {showStatus && character.status === 'draft' && ' · Draft'}
           </span>

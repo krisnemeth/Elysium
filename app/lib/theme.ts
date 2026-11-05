@@ -1,3 +1,5 @@
+import { COVER_COOKIE } from '@/app/ui/landing/covers';
+
 export type Theme = 'light' | 'dark';
 
 export const THEME_STORAGE_KEY = 'elysium-theme';
@@ -6,6 +8,10 @@ export const THEME_STORAGE_KEY = 'elysium-theme';
 // table has its own skins); the saved theme applies everywhere else inside the
 // app. Keep in step with app/ui/ForceDark.tsx.
 export const DARK_ONLY_PATHS = '^/$|^/vault/chronicles/[^/]+/?$|^/(login|signup|auth)(/|$)';
+
+// The overview's pages wear the theme of the cover you came in through (app/lib/entry-cover.ts), also without touching the saved one.
+export const OVERVIEW_PATHS = '^/vault(/(new|settings|friends))?/?$';
+const SECOND_SCENE_COVERS = ['neon', 'cave', 'hunter-2'];
 
 /*
   Runs inline in <head> before first paint: applies the saved theme, or the
@@ -16,11 +22,22 @@ export const DARK_ONLY_PATHS = '^/$|^/vault/chronicles/[^/]+/?$|^/(login|signup|
 export const themeScript = `(() => {
   const key = '${THEME_STORAGE_KEY}';
   const darkOnly = new RegExp('${DARK_ONLY_PATHS}');
+  const overview = new RegExp('${OVERVIEW_PATHS}');
+  const secondScene = ${JSON.stringify(SECOND_SCENE_COVERS)};
   const media = matchMedia('(prefers-color-scheme: dark)');
   const apply = () => {
     const root = document.documentElement;
-    if (root.dataset.forceDark || darkOnly.test(location.pathname)) {
+    if (root.dataset.forceTheme) {
+      root.dataset.theme = root.dataset.forceTheme;
+      return;
+    }
+    if (darkOnly.test(location.pathname)) {
       root.dataset.theme = 'dark';
+      return;
+    }
+    if (overview.test(location.pathname)) {
+      const cover = document.cookie.match(/(?:^|; )${COVER_COOKIE}=([^;]+)/);
+      root.dataset.theme = cover && secondScene.includes(cover[1]) ? 'light' : 'dark';
       return;
     }
     let saved = null;

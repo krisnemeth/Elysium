@@ -9,6 +9,9 @@
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 /* Short screens (e.g. 1280×800 laptops): the chronicle table slims down to fit. */
 @custom-variant short (@media (max-height: 860px));
+/* A fixed sidebar with a mouse and room for it; anything else (phones, tablets either way up) has the slide-in drawer. Keep in step with DESK_QUERY (app/ui/dashboard/Drawer.tsx). */
+@custom-variant desk (@media (min-width: 64rem) and (hover: hover));
+@custom-variant undesk (@media not all and (min-width: 64rem) and (hover: hover));
 
 @theme {
   --breakpoint-3xl: 1600px;

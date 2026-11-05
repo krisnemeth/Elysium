@@ -6,7 +6,7 @@ import { panel } from '@/app/ui/kit/styles';
 import { GAMES, GAMES_ORDER, gamePath, type Game } from '@/app/lib/games';
 import type { Character } from '@/app/lib/sample-characters';
 import type { VaultView } from '@/app/lib/vault-view';
-import CharacterRow from './CharacterRow';
+import CharacterRow from '@/app/ui/dashboard/CharacterRow';
 import ViewSwitch from './ViewSwitch';
 
 function GroupHead({ game, count }: { game: Game; count: number }) {
@@ -70,7 +70,7 @@ function Card({ character: c }: { character: Character }) {
   Everyone in the vault, across all three games, the current game first. Grid
   is portrait cards, list is compact rows side by side; the choice is remembered.
 */
-export default function VaultCharacters({ game, characters, view }: { game: Game; characters: Character[]; view: VaultView }) {
+export default function EveryCharacter({ game, characters, view }: { game: Game; characters: Character[]; view: VaultView }) {
   const groups = [game, ...GAMES_ORDER.filter((g) => g !== game)].map((g) => ({ game: g, list: characters.filter((c) => c.game === g) }));
   return (
     <section aria-labelledby='vault-characters-title' className='flex flex-col gap-6'>

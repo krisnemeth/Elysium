@@ -21,7 +21,7 @@ export default function HunterOverview({ characters: cell }: { characters: Chara
   return (
     <div className='flex flex-col gap-10'>
       <PageHeader
-        eyebrow='Your vault'
+        eyebrow='Hunter · The cell'
         title='Case files are open.'
         description='Everyone in the cell, everything you know about the quarry. Pin it up, roll for it, and watch the Danger.'
         actions={
