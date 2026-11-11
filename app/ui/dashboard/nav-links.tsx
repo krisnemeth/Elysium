@@ -114,36 +114,6 @@ export function OverviewAccountLinks({ friendRequests }: { friendRequests: numbe
   );
 }
 
-// Bottom tab bar for phones.
-export function TabBarLinks({ game }: { game: Game }) {
-  const pathname = usePathname();
-  return (
-    <ul className='grid grid-cols-4'>
-      {linksFor(game).map(({ name, href, icon: Icon }) => {
-        const active = isActive(pathname, href, game);
-        return (
-          <li key={href}>
-            <Link
-              href={href}
-              aria-current={active ? 'page' : undefined}
-              className={`flex flex-col items-center gap-1 py-2.5 text-[0.65rem] tracking-wide transition-colors duration-300 ${active ? 'text-bone' : 'text-bone/50'}`}
-            >
-              <span
-                className={`grid h-8 w-12 place-items-center rounded-full transition-[background-color,scale] duration-500 ease-(--ease-spring) ${
-                  active ? 'scale-100 bg-accent/90 text-on-accent shadow-[0_0_1rem_-0.25rem_var(--accent)]' : 'scale-90'
-                }`}
-              >
-                <Icon aria-hidden className='size-5' />
-              </span>
-              {name}
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
 // Jump between the three games' vaults.
 export function GameSwitcher({ game, compact = false }: { game?: Game; compact?: boolean }) {
   return (

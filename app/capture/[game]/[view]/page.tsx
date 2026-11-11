@@ -4,6 +4,7 @@ import SideNav from '@/app/ui/dashboard/sidenav';
 import Ambience from '@/app/ui/game/Ambience';
 import PageHeader from '@/app/ui/kit/PageHeader';
 import DiceRoller from '@/app/ui/dice/DiceRoller';
+import DicePage from '@/app/ui/dice/DicePage';
 import GuidedLoader from '@/app/ui/guided/GuidedLoader';
 import CharacterEditor from '@/app/ui/sheets/CharacterEditor';
 import SheetForm from '@/app/ui/sheets/SheetForm';
@@ -62,12 +63,7 @@ export default async function Capture({ params, searchParams }: PageProps<'/capt
   let body: React.ReactNode;
   if (view === 'overview') body = game === 'werewolf' ? <WerewolfOverview characters={characters} /> : game === 'hunter' ? <HunterOverview characters={characters} /> : <VampireOverview characters={characters} loresheets={[]} />;
   else if (view === 'dice')
-    body = (
-      <div className='flex flex-col gap-10'>
-        <PageHeader eyebrow={`${GAMES[game].name} · dice`} title='Roll the dice.' description='Criticals, messy criticals and rerolls, in the game’s own tray.' />
-        <DiceRoller game={game} />
-      </div>
-    );
+    body = <DicePage game={game} />;
   else if (view === 'guided') body = <GuidedLoader game={game} />;
   else
     body = (
@@ -84,7 +80,7 @@ export default async function Capture({ params, searchParams }: PageProps<'/capt
       <CaptureMode mode={mode === 'light' ? 'light' : 'dark'} />
       <Ambience game={game} />
       <SideNav game={game} />
-      <main id='main' className='relative px-4 pt-[calc(6rem+env(safe-area-inset-top))] pb-32 md:pr-8 md:pb-16 desk:pt-10 desk:pl-72'>
+      <main id='main' className='relative px-4 pt-[calc(6rem+env(safe-area-inset-top))] pb-16 md:pr-8 desk:pt-10 desk:pl-72'>
         <div className='mx-auto max-w-6xl'>
           <PreferencesProvider value={DEFAULT_PREFERENCES}>{body}</PreferencesProvider>
         </div>

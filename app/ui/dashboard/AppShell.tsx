@@ -7,7 +7,7 @@ import { PreferencesProvider } from '@/app/ui/PreferencesContext';
 
 /*
   The inside of the app, past login: the game's look and scene, the sidebar (on
-  phones and tablets a top bar and a drawer; phones also have tabs). The game's dashboard and the pages spanning all
+  phones and tablets a top bar and a drawer). The game's dashboard and the pages spanning all
   three (vault, chronicles) share it. Focus screens stay out of it: the
   chronicle table and the printable sheet.
 */
@@ -17,7 +17,7 @@ export default async function AppShell({ game, children }: { game: Game; childre
     <div data-game={game} data-frames={preferences.simpleFrames ? 'simple' : undefined} className='relative isolate min-h-svh bg-ink text-bone transition-colors duration-500'>
       <Ambience game={game} />
       <SideNav game={game} />
-      <main id='main' className='relative px-4 pt-[calc(6rem+env(safe-area-inset-top))] pb-32 md:pr-8 md:pb-16 desk:pt-10 desk:pl-72'>
+      <main id='main' className='relative px-4 pt-[calc(6rem+env(safe-area-inset-top))] pb-16 md:pr-8 desk:pt-10 desk:pl-72'>
         <div className='mx-auto max-w-6xl'>
           <PreferencesProvider value={preferences}>{children}</PreferencesProvider>
         </div>

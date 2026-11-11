@@ -4,7 +4,7 @@ import { Elysium1 } from '@/app/ui/svgs';
 import ThemePicker from '@/app/ui/dashboard/ThemePicker';
 import { Drawer, DrawerButton, DrawerProvider } from '@/app/ui/dashboard/Drawer';
 import { signOut } from '@/app/lib/actions/auth';
-import { SideNavLinks, TabBarLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
+import { SideNavLinks, GameSwitcher } from '@/app/ui/dashboard/nav-links';
 import { panel } from '@/app/ui/kit/styles';
 import { GAMES, type Game } from '@/app/lib/games';
 
@@ -69,13 +69,6 @@ export default function SideNav({ game }: { game: Game }) {
           <DrawerButton />
         </div>
       </header>
-
-      {/* Phone tab bar */}
-      <nav aria-label='Dashboard' className='fixed inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 px-3 md:hidden'>
-        <div className={`frame ${panel}`}>
-          <TabBarLinks game={game} />
-        </div>
-      </nav>
     </DrawerProvider>
   );
 }

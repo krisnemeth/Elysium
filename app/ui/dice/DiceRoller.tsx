@@ -61,7 +61,7 @@ const GAMES: Record<
       button: 'Rouse check',
       calm: 'Rouse check: calm',
       bad: 'Rouse check: Hunger rises',
-      uses: 'This roll uses the blood (a Discipline or Blood Surge)',
+      uses: 'Uses the blood (a Discipline or Blood Surge)',
       first: 'Rouse the blood first: this roll draws on it.',
     },
   },
@@ -82,7 +82,7 @@ const GAMES: Record<
       button: 'Rage check',
       calm: 'Rage check: Rage holds',
       bad: 'Rage check: Rage spent',
-      uses: 'This roll calls on a Gift or a change of form',
+      uses: 'Calls on a Gift or a change of form',
       first: 'Make a Rage check first: this roll calls on your Rage.',
     },
   },
@@ -131,16 +131,16 @@ function outcomeText(game: Game, outcome: Outcome): OutcomeText {
 
 function Stepper({ label, value, min, max, onChange, small = false }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void; small?: boolean }) {
   const btn =
-    `grid ${small ? 'size-6' : 'size-9'} place-items-center rounded-full border border-bone/15 text-bone/80 transition duration-300 ease-(--ease-spring) hover:scale-110 hover:border-bone/40 hover:text-bone active:scale-95 focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-30`;
-  // Small steppers sit three to a row in a narrow column.
+    `grid ${small ? 'size-6' : 'size-8 lg:size-9'} place-items-center rounded-full border border-bone/15 text-bone/80 transition duration-300 ease-(--ease-spring) hover:scale-110 hover:border-bone/40 hover:text-bone active:scale-95 focus-visible:outline-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-30`;
+  // Steppers sit three to a row: small ones in the table's narrow column, the others on phones.
   return (
-    <div className={small ? 'flex min-w-0 flex-col items-center gap-0.5' : 'flex flex-col items-center gap-2'}>
-      <span className={`${small ? 'max-w-full truncate text-[0.6rem] tracking-[0.12em]' : 'text-[0.7rem] tracking-[0.2em]'} text-bone/55 uppercase`}>{label}</span>
-      <div className={`flex items-center ${small ? 'gap-0.5' : 'gap-2'}`}>
+    <div className={small ? 'flex min-w-0 flex-col items-center gap-0.5' : 'flex min-w-0 flex-col items-center gap-1.5 lg:gap-2'}>
+      <span className={`max-w-full truncate ${small ? 'text-[0.6rem] tracking-[0.12em]' : 'text-[0.65rem] tracking-[0.15em] lg:text-[0.7rem] lg:tracking-[0.2em]'} text-bone/55 uppercase`}>{label}</span>
+      <div className={`flex items-center ${small ? 'gap-0.5' : 'gap-1 lg:gap-2'}`}>
         <button type='button' aria-label={`Decrease ${label}`} className={btn} disabled={value <= min} onClick={() => onChange(value - 1)}>
           <MdRemove aria-hidden />
         </button>
-        <output aria-label={label} key={value} className={`result-in text-center font-display tabular-nums ${small ? 'w-7 text-2xl' : 'w-10 text-4xl'}`}>
+        <output aria-label={label} key={value} className={`result-in text-center font-display tabular-nums ${small ? 'w-7 text-2xl' : 'w-8 text-3xl lg:w-10 lg:text-4xl'}`}>
           {value}
         </output>
         <button type='button' aria-label={`Increase ${label}`} className={btn} disabled={value >= max} onClick={() => onChange(value + 1)}>
@@ -186,6 +186,7 @@ export default function DiceRoller({
   poolNote,
   onResult,
   compact = false,
+  fill = false,
   locked,
   onReset,
 }: {
@@ -207,6 +208,8 @@ export default function DiceRoller({
   // A smaller roller for the chronicle page: one column, a portrait tray, no
   // history (the chronicle keeps its own roll log).
   compact?: boolean;
+  // On desktops, fill the height the page gives it (the dice page fits the window): the tray grows, the history scrolls.
+  fill?: boolean;
   // Why rolling isn't possible right now (e.g. it's someone else's turn).
   locked?: string;
   // Reset also sets the pool back up (e.g. a sheet-built pool's modifier).
@@ -239,7 +242,7 @@ export default function DiceRoller({
   const usableSpecial = Math.min(game === 'hunter' && despair ? 0 : special, set.special);
 
   const log = (entry: Omit<HistoryEntry, 'id'>) =>
-    setHistory((h) => [{ ...entry, id: (h[0]?.id ?? 0) + 1 }, ...h].slice(0, 8));
+    setHistory((h) => [{ ...entry, id: (h[0]?.id ?? 0) + 1 }, ...h].slice(0, 20));
 
   // Felt once per throw, as the dice land.
   const felt = useRef(0);
@@ -342,13 +345,19 @@ export default function DiceRoller({
   const text = result ? outcomeText(game, result.outcome) : null;
 
   return (
-    <div className={compact ? 'flex h-full min-h-0 flex-col gap-5' : 'grid gap-5 xl:grid-cols-3'}>
-      <Paper index={1} className={compact ? 'min-h-0 grow' : 'xl:col-span-2'}>
+    <div
+      className={
+        compact
+          ? 'flex h-full min-h-0 flex-col gap-5'
+          : clsx('grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,21rem)]', fill && 'desk:min-h-0 desk:flex-1 desk:grid-rows-[minmax(0,1fr)]')
+      }
+    >
+      <Paper index={1} className={compact ? 'min-h-0 grow' : clsx('min-w-0', fill && 'desk:h-full')}>
         {/* Compact rollers sit inside the table's own panel. */}
         {(torn) => (
-      <div className={`flex h-full flex-col ${compact ? 'gap-3' : `gap-6 p-6 md:p-8 ${torn} ${panel}`}`}>
-        <div className={compact ? 'grid grid-cols-3 gap-1' : 'flex flex-wrap items-end justify-center gap-x-10 gap-y-6 md:justify-between'}>
-          <div className={compact ? 'contents' : 'flex flex-col items-center gap-1'}>
+      <div className={`flex h-full flex-col ${compact ? 'gap-3' : `gap-3 p-4 md:gap-4 md:p-6 short:gap-3 ${torn} ${panel}`}`}>
+        <div className={compact ? 'grid grid-cols-3 gap-1' : 'grid shrink-0 grid-cols-3 items-start gap-2 lg:flex lg:justify-between lg:gap-6'}>
+          <div className={compact ? 'contents' : 'flex min-w-0 flex-col items-center gap-1'}>
             <Stepper small={compact} label={compact ? 'Pool' : 'Dice pool'} value={usablePool} min={1} max={set.pool} onChange={(v) => { setPool(v); resetRoll(); }} />
             {poolNote && !compact && <span className='max-w-48 text-center text-xs text-bone/45'>{poolNote}</span>}
           </div>
@@ -357,7 +366,14 @@ export default function DiceRoller({
         </div>
         {poolNote && compact && <p title={poolNote} className='-mt-1 truncate text-xs text-bone/45'>{poolNote}</p>}
 
-        <div className={compact ? 'relative min-h-72 w-full grow lg:min-h-40' : 'relative -mx-2 h-108 md:h-144'}>
+        {/* On phones and tablets the tray comes first, the controls under it. */}
+        <div
+          className={
+            compact
+              ? 'relative min-h-72 w-full grow lg:min-h-40'
+              : clsx('relative order-first -mx-2 h-[min(38svh,20rem)] shrink-0 md:h-108 lg:order-none', fill && 'desk:h-auto desk:min-h-44 desk:shrink desk:grow')
+          }
+        >
           <DiceScene
             game={game}
             portrait={compact}
@@ -386,12 +402,12 @@ export default function DiceRoller({
 
         {/* What the roll says, in a slot of fixed height, so nothing below or
             around the tray moves as messages come and go. */}
-        <div aria-live='polite' className={clsx('flex shrink-0 flex-col items-center justify-center overflow-hidden border-t border-bone/10 text-center', compact ? 'h-21 pt-2' : 'h-36 pt-4')}>
+        <div aria-live='polite' className={clsx('flex shrink-0 flex-col items-center justify-center overflow-hidden border-t border-bone/10 text-center', compact ? 'h-21 pt-2' : 'h-24 pt-3 lg:h-28')}>
           {text && result && settled ? (
             <div key={rollKey} className={clsx('result-in flex flex-col items-center', compact ? 'gap-0.5' : 'gap-1.5')}>
               <div className='flex items-center gap-2.5'>
-                {text.glyph && <Glyph name={text.glyph} className={clsx('inline-block', compact ? 'size-7' : 'size-11', text.grim ? 'text-accent' : 'text-bone')} />}
-                <p className={clsx('font-display leading-none italic', compact ? 'text-[1.75rem]' : 'text-5xl', text.grim && 'text-accent')}>{text.title}</p>
+                {text.glyph && <Glyph name={text.glyph} className={clsx('inline-block', compact ? 'size-7' : 'size-9 lg:size-11', text.grim ? 'text-accent' : 'text-bone')} />}
+                <p className={clsx('font-display leading-none italic', compact ? 'text-[1.75rem]' : 'text-4xl lg:text-5xl', text.grim && 'text-accent')}>{text.title}</p>
               </div>
               {game === 'hunter' && result.outcome === 'overreach' && !choiceMade ? (
                 <div className='mt-1 flex gap-2'>
@@ -400,7 +416,7 @@ export default function DiceRoller({
                 </div>
               ) : (
                 <>
-                  <p title={text.note} className={clsx('max-w-md text-bone/60', compact ? 'line-clamp-1 text-xs' : 'line-clamp-2')}>{text.note}</p>
+                  <p title={text.note} className={clsx('max-w-md text-bone/60', compact ? 'line-clamp-1 text-xs' : 'line-clamp-1 text-sm lg:line-clamp-2')}>{text.note}</p>
                   <p className='text-[0.65rem] tracking-[0.2em] text-bone/45 uppercase'>
                     {result.successes} {result.successes === 1 ? 'success' : 'successes'} vs difficulty {difficulty}
                   </p>
@@ -431,8 +447,13 @@ export default function DiceRoller({
         )}
 
         {/* Every action keeps its place: buttons are enabled or disabled, never added or removed. */}
-        <div className={clsx('flex shrink-0 flex-col gap-2', !compact && 'mx-auto w-full max-w-xl')}>
-          <div className={clsx('grid gap-2', config.check && 'grid-cols-2')}>
+        <div
+          className={clsx(
+            'flex shrink-0 flex-col gap-2',
+            !compact && (config.check ? 'lg:grid lg:grid-cols-[1fr_1fr_auto_1.4fr]' : 'lg:grid lg:grid-cols-[1fr_auto_1.4fr]'),
+          )}
+        >
+          <div className={clsx('grid gap-2', config.check && 'grid-cols-2', !compact && 'lg:contents')}>
             {config.check && (
               // Lit up while the next roll is waiting for it.
               <button type='button' onClick={check} disabled={!!locked} className={clsx(buttonGhost, 'min-w-0 px-3', needsCheck && 'border-accent text-bone shadow-[0_0_1.25rem_-0.25rem_var(--accent)]')}>
@@ -450,11 +471,11 @@ export default function DiceRoller({
               <span className='truncate'>
                 {compact
                   ? selected.length && canRerollNow ? `Reroll ${selected.length}` : 'Reroll'
-                  : canRerollNow && selected.length ? `Reroll ${selected.length} with Willpower` : canRerollNow ? `Tap up to ${MAX_REROLL} dice to reroll` : 'Willpower reroll'}
+                  : canRerollNow && selected.length ? `Reroll ${selected.length} with Willpower` : canRerollNow ? 'Pick dice to reroll' : 'Willpower reroll'}
               </span>
             </button>
           </div>
-          <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
+          <div className={clsx('grid grid-cols-[auto_1fr] items-center gap-2', !compact && 'lg:contents')}>
             <button type='button' onClick={resetAll} aria-label='Reset the roll' title='Reset: clear the roll and set up the dice again' className={`${buttonGhost} size-10 px-0 py-0`}>
               <MdRestartAlt aria-hidden className='size-4 shrink-0' />
             </button>
@@ -475,19 +496,18 @@ export default function DiceRoller({
         )}
       </Paper>
 
-      <div className={compact ? 'grid gap-5 empty:hidden' : 'flex flex-col gap-5'}>
+      <div className={compact ? 'grid gap-5 empty:hidden' : clsx('flex min-w-0 flex-col gap-5', fill && 'desk:min-h-0')}>
         {/* Compact rollers keep the check button next to Roll instead. */}
         {config.check && !compact && (
-          <section aria-labelledby='check-title' className={`p-6 ${panel}`}>
+          <section aria-labelledby='check-title' className={`order-last shrink-0 p-5 lg:order-none lg:p-6 ${panel}`}>
             <h2 id='check-title' className='font-display text-2xl'>{config.check.title}</h2>
             <p className='mt-2 text-sm leading-relaxed text-bone/60'>{config.check.body}</p>
-            <button type='button' onClick={check} className={`${buttonGhost} mt-5`}>{config.check.button}</button>
           </section>
         )}
 
         {/* Play mode shows Danger and Despair with the character's condition instead. */}
         {game === 'hunter' && dangerProp === undefined && (
-          <section aria-labelledby='cell-title' className={`p-6 ${panel}`}>
+          <section aria-labelledby='cell-title' className={`shrink-0 p-5 lg:p-6 ${panel}`}>
             <h2 id='cell-title' className='font-display text-2xl'>The cell</h2>
             <div className='mt-4 flex items-center justify-between'>
               <span className='text-sm text-bone/70'>Danger</span>
@@ -505,7 +525,7 @@ export default function DiceRoller({
         )}
 
         {!compact && (
-        <section aria-labelledby='history-title' className={`grow p-6 ${panel}`}>
+        <section aria-labelledby='history-title' className={clsx('grow p-5 lg:p-6', fill && 'desk:min-h-0 desk:overflow-y-auto', panel)}>
           <h2 id='history-title' className='font-display text-2xl'>Recent rolls</h2>
           {history.length ? (
             <ol className='mt-4 flex flex-col gap-2'>
