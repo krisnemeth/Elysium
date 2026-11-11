@@ -501,7 +501,8 @@ export default function GuidedCreation({ game }: { game: Game }) {
                   onClick={() => go(i)}
                   aria-current={i === step ? 'step' : undefined}
                   aria-label={`${TITLES[s]}${i < step ? ' (done)' : ''}`}
-                  className={clsx('block h-1.5 w-full rounded-full transition-colors', i < step ? 'bg-accent' : i === step ? 'bg-accent/60' : 'bg-bone/15')}
+                  // Hit areas 28px tall that meet across the 6px gaps.
+                  className={clsx('tap relative block h-1.5 w-full rounded-full transition-colors [--tap-h:28px] [--tap-w:calc(100%+0.375rem)]', i < step ? 'bg-accent' : i === step ? 'bg-accent/60' : 'bg-bone/15')}
                 />
               </li>
             ))}
@@ -540,7 +541,7 @@ export default function GuidedCreation({ game }: { game: Game }) {
               setShown([]);
               setState({ w: start(game), step: 0 });
             }}
-            className='text-xs text-bone/45 underline-offset-2 hover:text-bone hover:underline'
+            className='tap relative [--tap-h:32px] text-xs text-bone/45 underline-offset-2 hover:text-bone hover:underline'
           >
             Start over
           </button>

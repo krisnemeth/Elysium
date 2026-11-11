@@ -67,7 +67,7 @@ export default function WerewolfOverview({ characters: pack }: { characters: Cha
       <section aria-labelledby='pack-title'>
         <div className='flex items-baseline justify-between'>
           <h2 id='pack-title' className='font-display text-3xl'>The pack</h2>
-          <Link href='/vault/werewolf/characters' className='text-xs tracking-[0.2em] text-bone/55 uppercase transition-colors hover:text-bone'>
+          <Link href='/vault/werewolf/characters' className='tap relative [--tap-h:32px] text-xs tracking-[0.2em] text-bone/55 uppercase transition-colors hover:text-bone'>
             {pack.length} Garou · {drafts} draft{drafts === 1 ? '' : 's'}
           </Link>
         </div>

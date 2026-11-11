@@ -13,15 +13,22 @@ Agreed direction (2026-11-11): Elysium works properly on phones for what players
 
 Breakpoints stay as they are: phones below `md` (768px), tablets `md` to `lg`, desktops `desk:` (1024px and up with a mouse). Tablets use the phone layouts where it's simpler, and the drawer below `desk:`.
 
-## Already done (vault-home, uncommitted)
+## Already done (vault-home)
 
 - **Bottom tab bar removed.** Phones use the drawer from the top bar, which has every link the tab bar had. Main content lost its extra bottom padding.
 - **Dice page.** On phones the tray comes first, then the three steppers in one row, the result, the check, Willpower reroll, reset and Roll, then the history. Everything down to Roll fits in 821px at 390×844; real Safari's toolbars may make that a short scroll.
 - **Site navbar** switches to the menu below 1024px (committed, d654fc9).
+- **Tap targets (groundwork 1 and 6).** The `tap` utility (`app/globals.css`) and `scripts/mobile-check.mts`. Every checked page went from 282 undersized controls (classic sheet) and a handful elsewhere to none under 24px, with page heights unchanged (nothing visible moved). Rating dots: 26×40px hit areas that tile each row, plus drag along the row to set the value (vertical drags still scroll). Specialty fields: taller by padding taken back with a negative margin. Guided step bar: 28px tall areas meeting across its gaps. Standalone text links: 32px tall. The landing rail's ticks are 24px apart on touch screens instead of 16px (the one visible change).
 
 ## Shared groundwork (do first, it helps every page)
 
-1. **Tap targets.** Classic creation has 326 controls smaller than 32px (the rating dots are 20px buttons). Rule: every control gets a 44px hit area on touch, without changing how it looks: an invisible `::before` that extends the hit area, applied with a `pointer-coarse:` variant. Do it once in `DotRating` and the kit, then re-run the count.
+1. **Tap targets: looks first.** Nothing gets bigger to be tappable. Each control keeps its drawn size; on touch screens (`pointer: coarse`) its *hit area* grows invisibly, into the spacing around it, and only as far as it must:
+   - **Floor: 24×24px**, WCAG 2.2's minimum (2.5.8, AA). A smaller control is acceptable only if a 24px circle at its centre touches no other target.
+   - **Aim: about 40px** where there's free space (Apple asks 44pt, Material 48dp; 40px works in practice for single buttons). Never past the point where it would meet a neighbour's hit area.
+   - **Rows of small controls tile:** dots in a rating split the gaps between them, so the whole row is tappable with no dead space and no overlap; the row's height is the space between rows.
+   - **Spacing before size:** where two targets are too close to tile at 24px, add space between them (often a few px is enough) rather than enlarging either.
+   - **Gestures where taps are tight:** the rating dots also accept a drag along the row (scrub to the value), so precision matters less than with taps alone.
+   - **Measured, not guessed:** the check script probes each control's real hit area (including invisible ones) and lists anything under 24px or overlapping another target.
 2. **Tooltips without hover.** `Explain` shows on hover or focus, as a 16rem box anchored left, which runs off the right edge near the screen's side. On touch: tap the term to open it as a small sheet anchored to the bottom of the screen (the Island pattern), tap anywhere to close. Desktop stays as it is.
 3. **Hover-only features.** Anything that only reveals on hover needs a touch equivalent: the landing's clips (play when scrolled into view instead), the neutral tints (already shown while pressed), card actions that appear on hover.
 4. **Page header on phones.** The `compact` PageHeader (made for the dice page) is a good default for all app pages on phones: smaller title, description hidden or shortened. Big titles cost a third of the first screen.
@@ -31,8 +38,8 @@ Breakpoints stay as they are: phones below `md` (768px), tablets `md` to `lg`, d
 ## Made for phones
 
 ### Character creation
-- **Guided** (11 steps) already reads well. Fix: the step's fields are long forms; keep Next and Back fixed at the bottom of the screen (above the safe area), so players don't scroll to find them. Dot choices need the tap-target rule. Lists of merits and flaws become a searchable list with the choice opening in a bottom sheet.
-- **Classic** is the full printed sheet: about 10,500px tall on a phone, with a section tab strip that scrolls sideways. Approach: one section at a time (the tabs choose which section shows instead of scrolling to it), sticky tabs under the top bar, and attributes and skills as a single column of name + dots rows, at least 44px tall each. Suggest Guided on phones, but keep Classic available.
+- **Guided** (11 steps) already reads well. Fix: the step's fields are long forms; keep Next and Back fixed at the bottom of the screen (above the safe area), so players don't scroll to find them. Dot choices follow the tap-target rule. Lists of merits and flaws become a searchable list with the choice opening in a bottom sheet.
+- **Classic** is the full printed sheet: about 10,500px tall on a phone, with a section tab strip that scrolls sideways. Approach: one section at a time (the tabs choose which section shows instead of scrolling to it), sticky tabs under the top bar, and attributes and skills as a single column of name + dots rows, with enough space between rows for the dots' hit areas. Suggest Guided on phones, but keep Classic available.
 
 ### Sheet viewing
 - Same section-at-a-time approach as Classic, read-only: Profile, Attributes, Skills, Disciplines/Gifts/Edges, Advantages, Notes. The portrait goes at the top as a header image, cropped with `object-top`.
@@ -41,7 +48,7 @@ Breakpoints stay as they are: phones below `md` (768px), tablets `md` to `lg`, d
 
 ### Play mode
 - Probably the most used feature at a real table. Phone-first: the trackers (Health, Willpower, Hunger/Rage/Desperation, Humanity) as large tap rows at the top, the dice roller under them (it already has the phone order), conditions and notes below.
-- Marking damage: tap a box to cycle empty → Superficial → Aggravated, as on desktop, but with a 44px box. Use the heavy haptic for Aggravated, as now.
+- Marking damage: tap a box to cycle empty → Superficial → Aggravated, as on desktop; the boxes keep their size, with hit areas tiling the row (see tap targets). Use the heavy haptic for Aggravated, as now.
 - Check that the sheet dialog and play mode don't stack two scroll areas.
 
 ### Loresheets

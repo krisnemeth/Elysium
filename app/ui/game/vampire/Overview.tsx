@@ -58,7 +58,7 @@ export default function VampireOverview({
             <h2 id='finished-title' className='font-display text-2xl'>Finished</h2>
             <Link
               href='/vault/vampire/characters'
-              className='group inline-flex items-center gap-1 text-xs tracking-[0.2em] text-bone/50 uppercase transition-colors hover:text-bone'
+              className='group tap relative [--tap-h:32px] inline-flex items-center gap-1 text-xs tracking-[0.2em] text-bone/50 uppercase transition-colors hover:text-bone'
             >
               All characters
               <MdArrowOutward aria-hidden className='transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
@@ -96,7 +96,7 @@ export default function VampireOverview({
           <section aria-labelledby='lore-title' className={`flex grow flex-col p-5 ${panel}`}>
             <div className='flex items-baseline justify-between px-2'>
               <h2 id='lore-title' className='font-display text-2xl'>Loresheets</h2>
-              <Link href='/vault/loresheets?game=vampire' className='text-xs tracking-[0.2em] text-bone/50 uppercase transition-colors hover:text-bone'>
+              <Link href='/vault/loresheets?game=vampire' className='tap relative [--tap-h:32px] text-xs tracking-[0.2em] text-bone/50 uppercase transition-colors hover:text-bone'>
                 All
               </Link>
             </div>

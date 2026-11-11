@@ -70,9 +70,9 @@ export default function EmailForm({ mode, next }: { mode: 'login' | 'signup'; ne
 
       <p className='text-center text-sm text-bone/60'>
         {mode === 'login' ? (
-          <>New here? <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : '/signup'} className='text-bone underline underline-offset-4 hover:text-accent'>Create an account</Link></>
+          <>New here? <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : '/signup'} className='tap relative [--tap-h:32px] text-bone underline underline-offset-4 hover:text-accent'>Create an account</Link></>
         ) : (
-          <>Already have one? <Link href='/login' className='text-bone underline underline-offset-4 hover:text-accent'>Log in</Link></>
+          <>Already have one? <Link href='/login' className='tap relative [--tap-h:32px] text-bone underline underline-offset-4 hover:text-accent'>Log in</Link></>
         )}
       </p>
     </form>

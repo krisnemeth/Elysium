@@ -440,7 +440,7 @@ export default function DiceRoller({
         </div>
 
         {config.check && (
-          <label className={clsx('flex shrink-0 cursor-pointer items-center justify-center gap-3 text-bone/75', compact ? 'text-xs' : 'text-sm')}>
+          <label className={clsx('tap relative flex shrink-0 cursor-pointer items-center justify-center gap-3 text-bone/75 [--tap-h:32px]', compact ? 'text-xs' : 'text-sm')}>
             <input type='checkbox' checked={usesPower} onChange={(e) => setUsesPower(e.target.checked)} className='size-4 shrink-0 accent-[var(--accent)]' />
             {config.check.uses}
           </label>

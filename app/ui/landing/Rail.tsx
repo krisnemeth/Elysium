@@ -65,7 +65,7 @@ function Rail({ current, moved, pick, step }: RailProps) {
             onClick={() => pick(i)}
             aria-label={`${c.name}, ${GAMES[c.game].name}`}
             aria-current={i === current ? 'true' : undefined}
-            className='group grid h-6 w-4 place-items-center rounded-xs focus-visible:outline-2 focus-visible:outline-bone'
+            className='group grid h-6 w-4 place-items-center pointer-coarse:w-6 rounded-xs focus-visible:outline-2 focus-visible:outline-bone'
           >
             <span
               aria-hidden

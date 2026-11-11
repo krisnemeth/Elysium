@@ -15,7 +15,8 @@ import { glyphUrl } from '@/app/lib/factions';
 // Sections every game's sheet shares. All read and write the shared sheet.
 
 const groupTitle = 'mb-2 text-xs tracking-[0.25em] text-accent uppercase';
-const smallInput = 'w-full bg-transparent text-sm text-bone placeholder:text-bone/25 focus:outline-none';
+// Borderless, so on touch screens padding (taken back by a negative margin) makes it taller to tap without moving anything.
+const smallInput = 'w-full bg-transparent text-sm text-bone placeholder:text-bone/25 focus:outline-none pointer-coarse:-my-2.5 pointer-coarse:py-2.5';
 const addButton =
   'mt-3 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-bone/25 px-3 py-1.5 text-xs text-bone/60 transition-colors hover:border-bone/50 hover:text-bone focus-visible:outline-2 focus-visible:outline-accent';
 const removeButton =

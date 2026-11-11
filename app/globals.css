@@ -165,6 +165,27 @@ body {
   color: #fff;
 }
 
+/*
+  An invisible hit area for touch screens (plans/mobile.md, "Tap targets"): the
+  control keeps its drawn size, and on coarse pointers its tappable area grows
+  to --tap-w × --tap-h (default 40px), centred, never smaller than the control.
+  Set them to the smallest value that works: up to the neighbours, not past
+  them. The element must be positioned (relative/absolute).
+*/
+@utility tap {
+  @media (pointer: coarse) {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: max(100%, var(--tap-w, 2.5rem));
+      height: max(100%, var(--tap-h, 2.5rem));
+      translate: -50% -50%;
+    }
+  }
+}
+
 /* Film grain to break up flat gradients. */
 @utility grain {
   &::after {

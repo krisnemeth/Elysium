@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, type KeyboardEvent } from 'react';
+import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { haptic } from '@/app/lib/haptics';
 
 type Props = {
   label: string;
@@ -17,6 +18,11 @@ type Props = {
   A V5-style rating: clicking the third dot sets the value to 3, clicking the
   current value clears it back by one. Hovering previews the new value.
   Works as a slider for keyboard and screen reader users.
+
+  On touch screens the dots keep their size: each one's hit area (the `tap`
+  utility) splits the gaps with its neighbours and fills the row's height, and
+  a sideways drag along the row sets the value under the finger, so precise
+  taps matter less. Vertical drags still scroll the page.
 */
 export default function DotRating({
   label,
@@ -52,6 +58,45 @@ export default function DotRating({
     }
   };
 
+  // A sideways drag (touch or pen) sets the value under the finger; the click that follows it is ignored.
+  const drag = useRef<{ x: number; moved: boolean; last: number } | null>(null);
+  const skipClick = useRef(false);
+  const dotAt = (row: HTMLElement, x: number) => {
+    const dots = [...row.querySelectorAll('button')];
+    const first = dots[0]?.getBoundingClientRect();
+    if (!first || x < first.left - 4) return 0;
+    let n = 0;
+    dots.forEach((d, i) => {
+      if (x >= d.getBoundingClientRect().left - 3) n = i + 1;
+    });
+    return n;
+  };
+  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    // With the pointer captured, the click after a drag may not reach a dot at all: start each touch clean.
+    skipClick.current = false;
+    if (e.pointerType === 'mouse') return;
+    drag.current = { x: e.clientX, moved: false, last: value };
+  };
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    if (!d) return;
+    if (!d.moved) {
+      if (Math.abs(e.clientX - d.x) < 6) return;
+      d.moved = true;
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+    const n = dotAt(e.currentTarget, e.clientX);
+    if (n !== d.last) {
+      d.last = n;
+      set(n);
+      haptic('select');
+    }
+  };
+  const endDrag = () => {
+    if (drag.current?.moved) skipClick.current = true;
+    drag.current = null;
+  };
+
   const shown = preview ?? value;
   const dim = size === 'sm' ? 'size-2.5' : 'size-3';
 
@@ -66,7 +111,11 @@ export default function DotRating({
       aria-valuetext={`${value} of ${max}`}
       onKeyDown={onKeyDown}
       onMouseLeave={() => setPreview(null)}
-      className={`group/dots inline-flex items-center gap-1.5 rounded-full p-1 outline-none focus-visible:ring-2 focus-visible:ring-accent/70 ${className}`}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={() => (drag.current = null)}
+      className={`group/dots inline-flex touch-pan-y items-center gap-1.5 rounded-full p-1 outline-none focus-visible:ring-2 focus-visible:ring-accent/70 ${className}`}
     >
       {Array.from({ length: max }, (_, i) => {
         const n = i + 1;
@@ -79,8 +128,15 @@ export default function DotRating({
             tabIndex={-1}
             aria-hidden
             onMouseEnter={() => setPreview(n === value ? n - 1 : n)}
-            onClick={() => set(n === value ? n - 1 : n)}
-            className='grid size-5 place-items-center'
+            onClick={() => {
+              if (skipClick.current) {
+                skipClick.current = false;
+                return;
+              }
+              set(n === value ? n - 1 : n);
+            }}
+            // 20px dots 6px apart: hit areas of 26px meet with no gap, 40px tall fills a sheet row (41px apart).
+            className='tap relative grid size-5 place-items-center [--tap-h:40px] [--tap-w:26px]'
           >
             <span
               key={`${i}-${pop.id}`}
