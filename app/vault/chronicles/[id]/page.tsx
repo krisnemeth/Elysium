@@ -14,6 +14,7 @@ import { ACT_COUNT, buildArc, knownNpcs, sceneFor, storySoFar } from '@/app/lib/
 import { SUPABASE_KEY, SUPABASE_URL } from '@/app/lib/supabase/env';
 import { readSkin, SKIN_COOKIE } from '@/app/lib/table-skin';
 import { panel } from '@/app/ui/kit/styles';
+import LargerScreen, { CopyPageLink } from '@/app/ui/kit/LargerScreen';
 import SocialShell from '@/app/ui/social/SocialShell';
 import { ActionButton } from '@/app/ui/social/forms';
 import { BotVote, CharacterPicker, InviteFriends, LiveRefresh, LiveRolls, NoteComposer } from '@/app/ui/chronicles/parts';
@@ -323,14 +324,37 @@ export default async function ChroniclePage({ params }: PageProps<'/vault/chroni
 
   const skin = readSkin((await cookies()).get(SKIN_COOKIE)?.value, `${c.game}-dark`);
 
+  // Phones get a short page instead of the table during the beta (plans/mobile.md).
+  const onPhones = (
+    <SocialShell game={c.game} eyebrow={`${GAMES[c.game].name} chronicle`} title={c.name} description='The table needs a larger screen during the beta. Open this chronicle on a tablet or a computer to play.'>
+      <div className='flex flex-col gap-6'>
+        <section aria-labelledby='party-title' className={`p-5 ${panel}`}>
+          <h2 id='party-title' className='font-display text-2xl'>Who’s here</h2>
+          <ul className='mt-3 flex flex-col'>
+            {joined.map((p) => (
+              <li key={p.id} className='border-b border-bone/[0.07] py-2 text-sm last:border-0'>
+                {p.id === me ? 'You' : p.name}
+              </li>
+            ))}
+          </ul>
+        </section>
+        <div>
+          <CopyPageLink />
+        </div>
+      </div>
+    </SocialShell>
+  );
+
   return (
-    <TableShell game={c.game} act={scene?.act ?? 0} skin={skin}>
-      <LiveRefresh chronicleId={c.id} live={live} />
-      {/* The page is rendered per request, so its clock is the server's. */}
-      {/* eslint-disable-next-line react-hooks/purity */}
-      <TurnProvider chronicleId={c.id} initial={turn} seats={seats} me={me} bot={!!bot} isStoryteller={isStoryteller} serverNow={Date.now()} live={live}>
-        {table}
-      </TurnProvider>
-    </TableShell>
+    <LargerScreen fallback={onPhones}>
+      <TableShell game={c.game} act={scene?.act ?? 0} skin={skin}>
+        <LiveRefresh chronicleId={c.id} live={live} />
+        {/* The page is rendered per request, so its clock is the server's. */}
+        {/* eslint-disable-next-line react-hooks/purity */}
+        <TurnProvider chronicleId={c.id} initial={turn} seats={seats} me={me} bot={!!bot} isStoryteller={isStoryteller} serverNow={Date.now()} live={live}>
+          {table}
+        </TurnProvider>
+      </TableShell>
+    </LargerScreen>
   );
 }

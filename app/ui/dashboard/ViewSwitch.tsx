@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { MdGridView, MdViewList } from 'react-icons/md';
 import { rememberVaultView, type VaultView } from '@/app/lib/vault-view';
 
@@ -9,9 +9,19 @@ const OPTIONS = [
   { value: 'list', label: 'List', Icon: MdViewList },
 ] as const;
 
-// Shows one of two views already rendered on the server, and remembers the choice in a cookie so the next visit starts on it.
-export default function ViewSwitch({ initial, grid, list }: { initial: VaultView; grid: ReactNode; list: ReactNode }) {
+/*
+  Shows one of two views already rendered on the server, and remembers the
+  choice in a cookie so the next visit starts on it. Before any choice
+  ('auto'), phones get List and larger screens Grid: the server renders both
+  and CSS picks, so nothing jumps on load; the switch then follows the screen.
+*/
+export default function ViewSwitch({ initial, grid, list }: { initial: VaultView | 'auto'; grid: ReactNode; list: ReactNode }) {
   const [view, setView] = useState(initial);
+  useEffect(() => {
+    if (initial !== 'auto') return;
+    const fit = () => setView(matchMedia('(max-width: 47.99rem)').matches ? 'list' : 'grid');
+    fit();
+  }, [initial]);
   const choose = (next: VaultView) => {
     setView(next);
     rememberVaultView(next);
@@ -34,7 +44,16 @@ export default function ViewSwitch({ initial, grid, list }: { initial: VaultView
           </button>
         ))}
       </div>
-      {view === 'grid' ? grid : list}
+      {view === 'auto' ? (
+        <>
+          <div className='max-md:hidden'>{grid}</div>
+          <div className='md:hidden'>{list}</div>
+        </>
+      ) : view === 'grid' ? (
+        grid
+      ) : (
+        list
+      )}
     </div>
   );
 }

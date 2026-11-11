@@ -17,6 +17,19 @@ import { emptySheet } from '@/app/lib/sheets/empty';
 import { CHARACTERS } from '@/app/lib/sample-characters';
 import { GAMES, isGame } from '@/app/lib/games';
 import CaptureMode from './CaptureMode';
+import CharacterSheetView from '@/app/ui/characters/CharacterSheetView';
+import PlaySheet from '@/app/ui/play/PlaySheet';
+import LoresheetEditor from '@/app/ui/loresheets/LoresheetEditor';
+import { VAMPIRES } from '@/app/lib/starters/vampire';
+import { WEREWOLVES } from '@/app/lib/starters/werewolf';
+import { HUNTERS } from '@/app/lib/starters/hunter';
+import type { CharacterRecord } from '@/app/lib/data/characters';
+
+// A starter as if it were saved, for the sheet and play views.
+function sampleRecord(game: 'vampire' | 'werewolf' | 'hunter'): CharacterRecord {
+  const s = { vampire: VAMPIRES, werewolf: WEREWOLVES, hunter: HUNTERS }[game][0];
+  return { id: 'sample', user_id: 'sample', game, name: s.name, faction: s.faction, portrait: s.portrait, summary: s.summary, status: 'finished', sheet: s.sheet, starter_key: s.key, created_at: '', updated_at: '' };
+}
 
 export const metadata: Metadata = { title: 'Capture', robots: { index: false } };
 
@@ -28,7 +41,7 @@ export const metadata: Metadata = { title: 'Capture', robots: { index: false } }
   public/landing/). ?mode=light shows a game's second scene. Saving is off:
   the editors' save status is hidden, as nothing here is signed in.
 */
-const VIEWS = ['overview', 'dice', 'guided', 'classic', 'roller', 'scene'] as const;
+const VIEWS = ['overview', 'dice', 'guided', 'classic', 'roller', 'scene', 'sheet', 'play', 'lore'] as const;
 
 export default async function Capture({ params, searchParams }: PageProps<'/capture/[game]/[view]'>) {
   if (process.env.NODE_ENV === 'production') notFound();
@@ -65,6 +78,20 @@ export default async function Capture({ params, searchParams }: PageProps<'/capt
   else if (view === 'dice')
     body = <DicePage game={game} />;
   else if (view === 'guided') body = <GuidedLoader game={game} />;
+  else if (view === 'sheet') body = <CharacterSheetView record={sampleRecord(game)} back={{ href: '#', label: `All ${GAMES[game].noun.many}` }} />;
+  else if (view === 'lore')
+    body = (
+      <LoresheetEditor
+        id='sample'
+        kind='npc'
+        characters={[]}
+        initial={{ title: 'Old Mags', character_id: null, content: { rumours: 'Seventy if she is a day, in a coat two sizes too big. Smells of coal tar soap and rain.' } }}
+      />
+    );
+  else if (view === 'play') {
+    const r = sampleRecord(game);
+    body = <PlaySheet game={game} id={r.id} name={r.name} initialSheet={r.sheet} />;
+  }
   else
     body = (
       <div className='flex flex-col gap-8'>

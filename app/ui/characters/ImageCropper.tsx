@@ -115,7 +115,10 @@ export default function ImageCropper({
       className='m-auto w-[min(26rem,92vw)] rounded-2xl border border-bone/15 bg-ink p-5 text-bone shadow-[0_2rem_6rem_rgb(0_0_0/0.8)] backdrop:bg-black/60 backdrop:backdrop-blur-md'
     >
       <h2 className='font-display text-2xl'>Frame the portrait</h2>
-      <p className='mt-1 text-sm text-bone/60'>Drag to move, zoom to fit. Arrow keys and + / − work too.</p>
+      <p className='mt-1 text-sm text-bone/60'>
+        <span className='pointer-coarse:hidden'>Drag to move, zoom to fit. Arrow keys and + / − work too.</span>
+        <span className='hidden pointer-coarse:inline'>Drag to move, pinch to zoom.</span>
+      </p>
 
       <div
         ref={frame}
@@ -138,7 +141,7 @@ export default function ImageCropper({
       </div>
 
       <div className='mt-4 flex items-center gap-3'>
-        <button type='button' aria-label='Zoom out' onClick={() => zoomTo(zoom / 1.2)} className='text-bone/70 hover:text-bone'>
+        <button type='button' aria-label='Zoom out' onClick={() => zoomTo(zoom / 1.2)} className='tap relative text-bone/70 hover:text-bone'>
           <MdZoomOut aria-hidden className='size-5' />
         </button>
         <input
@@ -151,7 +154,7 @@ export default function ImageCropper({
           onChange={(e) => zoomTo(Number(e.target.value))}
           className='grow accent-[var(--accent)]'
         />
-        <button type='button' aria-label='Zoom in' onClick={() => zoomTo(zoom * 1.2)} className='text-bone/70 hover:text-bone'>
+        <button type='button' aria-label='Zoom in' onClick={() => zoomTo(zoom * 1.2)} className='tap relative text-bone/70 hover:text-bone'>
           <MdZoomIn aria-hidden className='size-5' />
         </button>
       </div>

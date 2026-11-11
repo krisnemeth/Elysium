@@ -72,13 +72,13 @@ export default function LoresheetEditor({
 
   return (
     <div className='flex flex-col gap-6'>
-      <div className='sticky top-36 z-30 flex flex-wrap items-center gap-3 md:top-20'>
+      <div className='sticky top-20 z-30 flex flex-wrap items-center gap-3'>
         <SaveStatus className='mr-auto' state={state} error={error} onRetry={() => void save()} />
         <ActionButton action={deleteLoresheet.bind(null, id)} confirm='Delete this loresheet?' className={buttonGhostSmall}>
           Delete
         </ActionButton>
       </div>
-      <section className={`flex flex-col gap-6 p-6 md:p-8 ${panel}`}>
+      <section className={`flex flex-col gap-6 p-5 md:p-8 ${panel}`}>
         <div className='flex flex-col gap-1'>
           <label htmlFor={titleId} className={fieldLabel}>{kind === 'pc' ? 'Title' : 'Name'}</label>
           <input
@@ -87,7 +87,7 @@ export default function LoresheetEditor({
             maxLength={200}
             placeholder={kind === 'location' ? 'The Barrowland back bar' : kind === 'npc' ? 'Old Mags' : 'Trixx: the years on the road'}
             onChange={(e) => change({ title: e.target.value })}
-            className={`${fieldInput} font-display text-3xl`}
+            className={`${fieldInput} font-display text-2xl md:text-3xl`}
           />
         </div>
         {kind === 'pc' && (
@@ -117,7 +117,8 @@ export default function LoresheetEditor({
                 placeholder={f.hint}
                 maxLength={20000}
                 onChange={(e) => change({ content: { [f.key]: e.target.value } })}
-                className={`${fieldInput} resize-y leading-relaxed`}
+                // Grows with what's written (where supported), so long notes don't scroll inside a small box on phones.
+                className={`${fieldInput} min-h-20 resize-y leading-relaxed [field-sizing:content]`}
               />
             </div>
           ))}

@@ -34,7 +34,7 @@ export default async function CharacterPage({ params }: PageProps<'/vault/[game]
           <Link href={`/vault/${game}/characters/${id}/play`} className={buttonGhost}>
             <GiD10 aria-hidden className='size-4' /> Play
           </Link>
-          <Link href={`/vault/print/${id}`} className={buttonGhost}>
+          <Link href={`/vault/print/${id}`} className={`${buttonGhost} max-md:hidden`}>
             <MdPictureAsPdf aria-hidden className='size-4' /> PDF
           </Link>
           <DeleteCharacter id={id} game={game} name={record.name} />

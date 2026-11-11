@@ -30,6 +30,11 @@ const PAGES: Record<string, string> = {
   'classic-werewolf': '/capture/werewolf/classic',
   'classic-hunter': '/capture/hunter/classic',
   dice: '/capture/vampire/dice',
+  sheet: '/capture/werewolf/sheet',
+  play: '/capture/vampire/play',
+  'play-hunter': '/capture/hunter/play',
+  loresheet: '/capture/vampire/lore',
+  neutral: '/lab/neutral',
 };
 
 const MIN = 24;
@@ -37,13 +42,14 @@ const MIN = 24;
 type Small = { name: string; w: number; h: number };
 
 const browser = await chromium.launch({ channel: 'chrome' });
-for (const [name, path] of Object.entries(PAGES)) {
+for (let [name, path] of Object.entries(PAGES)) {
   if (only && !only.includes(name)) continue;
+  path ||= '/';
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   const page = await context.newPage();
   await page.goto(base + path, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1500);
-  const report = await page.evaluate(async (MIN) => {
+  const measure = () => page.evaluate(async (MIN) => {
     const controls = [...document.querySelectorAll<HTMLElement>('button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=tab], summary')].filter((el) => {
       const r = el.getBoundingClientRect();
       const s = getComputedStyle(el);
@@ -83,7 +89,21 @@ for (const [name, path] of Object.entries(PAGES)) {
       small,
     };
   }, MIN);
-  console.log(`${name.padEnd(18)} height ${String(report.height).padStart(6)}  overflow ${report.overflow}  controls ${String(report.controls).padStart(4)}  under ${MIN}px: ${report.small.length}`);
+  // Pages split into sections on phones (sheets, play mode): measure every section.
+  const tabs = page.locator('nav[aria-label="Sheet sections"] a:visible');
+  const count = await tabs.count();
+  const report = await measure();
+  for (let i = 1; i < count; i++) {
+    await tabs.nth(i).evaluate((a) => (a as HTMLElement).click());
+    await page.waitForTimeout(400);
+    const more = await measure();
+    report.height = Math.max(report.height, more.height);
+    report.overflow = Math.max(report.overflow, more.overflow);
+    report.controls += more.controls;
+    report.small.push(...more.small);
+  }
+  if (count > 1) name += ` (${count} sections)`;
+  console.log(`${name.padEnd(28)} height ${String(report.height).padStart(6)}  overflow ${report.overflow}  controls ${String(report.controls).padStart(4)}  under ${MIN}px: ${report.small.length}`);
   if (list) {
     const grouped = new Map<string, number>();
     for (const s of report.small) {

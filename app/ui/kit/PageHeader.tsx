@@ -18,7 +18,7 @@ export default function PageHeader({
     <header className='flex shrink-0 flex-col gap-6 md:flex-row md:items-end md:justify-between'>
       <div className='max-w-2xl'>
         <p className='text-xs tracking-[0.3em] text-accent uppercase'>{eyebrow}</p>
-        <h1 className={`font-display leading-[0.95] font-medium tracking-tight text-balance ${compact ? 'mt-2 text-[2rem] md:text-5xl' : 'mt-3 text-5xl md:text-6xl'}`}>
+        <h1 className={`font-display leading-[0.95] font-medium tracking-tight text-balance ${compact ? 'mt-2 text-[2rem] md:text-5xl' : 'mt-3 text-4xl md:text-6xl'}`}>
           {title}
         </h1>
         {description && (

@@ -26,7 +26,7 @@ export default async function LoresheetPage({ params }: Props) {
 
   return (
     <div className='flex flex-col gap-8'>
-      <Link href='/vault/loresheets' className='inline-flex items-center gap-1.5 self-start text-sm text-bone/60 transition-colors hover:text-bone'>
+      <Link href='/vault/loresheets' className='tap relative inline-flex items-center gap-1.5 self-start text-sm text-bone/60 transition-colors [--tap-h:32px] hover:text-bone'>
         <MdArrowBack aria-hidden /> All loresheets
       </Link>
       <PageHeader eyebrow={`${GAMES[sheet.game].name} · ${spec.label}`} title={sheet.title || `New ${spec.noun}`} description={spec.blurb} />

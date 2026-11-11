@@ -11,6 +11,8 @@ Agreed direction (2026-11-11): Elysium works properly on phones for what players
 | **Larger screens only** | Chronicles (the table, the list, invitations) during the beta | A clear page saying so, with a way to do what's possible (accept an invite, copy the link) |
 | **Not on phones** | Printable sheet, the theme lab, the capture route | Print opens from a desktop; the dev tools are dev-only anyway |
 
+**Decisions (2026-11-11):** sheets (viewing and Classic) show one section at a time on phones, switched by the sticky tabs or a swipe; play mode on phones is two tabs, Condition | Roll; chronicles show the larger-screen page below 768px only (tablets keep the table and its tabs); the landing's dice clip is one roll per game, about 15s, looping, with the Vampire tray as its still.
+
 Breakpoints stay as they are: phones below `md` (768px), tablets `md` to `lg`, desktops `desk:` (1024px and up with a mouse). Tablets use the phone layouts where it's simpler, and the drawer below `desk:`.
 
 ## Already done (vault-home)
@@ -19,6 +21,21 @@ Breakpoints stay as they are: phones below `md` (768px), tablets `md` to `lg`, d
 - **Dice page.** On phones the tray comes first, then the three steppers in one row, the result, the check, Willpower reroll, reset and Roll, then the history. Everything down to Roll fits in 821px at 390×844; real Safari's toolbars may make that a short scroll.
 - **Site navbar** switches to the menu below 1024px (committed, d654fc9).
 - **Tap targets (groundwork 1 and 6).** The `tap` utility (`app/globals.css`) and `scripts/mobile-check.mts`. Every checked page went from 282 undersized controls (classic sheet) and a handful elsewhere to none under 24px, with page heights unchanged (nothing visible moved). Rating dots: 26×40px hit areas that tile each row, plus drag along the row to set the value (vertical drags still scroll). Specialty fields: taller by padding taken back with a negative margin. Guided step bar: 28px tall areas meeting across its gaps. Standalone text links: 32px tall. The landing rail's ticks are 24px apart on touch screens instead of 16px (the one visible change).
+
+- **Round 1 (2026-11-11), built and checked at 390×844 with sample data** (`node scripts/mobile-check.mts`: every page and every phone section, no control under 24px, no sideways overflow):
+  - Sheets one section at a time on phones (`app/ui/sheets/SheetNav.tsx`, `SheetSections`): the sheet view (Profile becomes its own tab, the portrait a 4:3 banner, PDF hidden) and Classic; tabs or a sideways swipe (not on dots or fields) switch; tablets and up keep the long page.
+  - Play mode: Condition | Roll tabs on phones.
+  - Trait explanations on touch rise from the bottom of the screen (rendered at page level, as panels' blur would pin them).
+  - Guided creation: Back / Start over / Continue stay at the bottom of the screen on phones.
+  - Loresheet editor: fields grow with their text (`field-sizing`), lighter padding, its save bar under the top bar.
+  - Portraits: touch wording (pinch to zoom; no drop-a-file), tap areas on the zoom buttons. Pinch and drag were already there.
+  - Landing clips play while on screen on touch screens (pause with the button holds until scrolled away); the cover already turned by swipe.
+  - Coterie/Pack/Cell default to List on phones until the player picks (`toVaultView` 'auto').
+  - Werewolf home: the pack first, two to a row, then the moons and caerns.
+  - Chronicles: below 768px the table isn't mounted; a short page with who's there and "Copy the link" (`app/ui/kit/LargerScreen.tsx`). Invitations still work.
+  - Landing dice section: two columns, one clip of all three rollers (`public/landing/dice-all.mp4`, 16.6s, recorded at 1440×900 from `/capture/<game>/dice` and scaled to 1280×800; still: the Vampire tray). The per-game dice clips are gone.
+  - Dice: the newest Recent rolls entry waits for the dice to land (it gave the result away); the reroll button's label is short below 1536px.
+- **Not done yet (candidates for round 2):** guided merits and flaws as a searchable list in a bottom sheet; XP purchases as a bottom sheet; the 3D tray's frame rate on older phones; anything the real-device pass finds (keyboard, safe areas, toolbars).
 
 ## Shared groundwork (do first, it helps every page)
 

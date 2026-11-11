@@ -3,8 +3,9 @@ export type VaultView = 'grid' | 'list';
 
 export const VAULT_VIEW_COOKIE = 'elysium-vault-view';
 
-export function toVaultView(saved: string | undefined): VaultView {
-  return saved === 'list' ? 'list' : 'grid';
+// 'auto' until the player chooses: List on phones, Grid elsewhere (plans/mobile.md).
+export function toVaultView(saved: string | undefined): VaultView | 'auto' {
+  return saved === 'list' || saved === 'grid' ? saved : 'auto';
 }
 
 // In the browser only.

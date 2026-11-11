@@ -343,6 +343,7 @@ export default function DiceRoller({
   };
 
   const text = result ? outcomeText(game, result.outcome) : null;
+  const shownHistory = settled ? history : history.slice(1);
 
   return (
     <div
@@ -468,11 +469,13 @@ export default function DiceRoller({
               className={`${buttonGhost} min-w-0 px-3`}
             >
               <MdRefresh aria-hidden className='size-4 shrink-0 transition-transform duration-500 group-hover:-rotate-180' />
-              <span className='truncate'>
-                {compact
-                  ? selected.length && canRerollNow ? `Reroll ${selected.length}` : 'Reroll'
-                  : canRerollNow && selected.length ? `Reroll ${selected.length} with Willpower` : canRerollNow ? 'Pick dice to reroll' : 'Willpower reroll'}
-              </span>
+              {/* Short where the button is narrow (the table, phones, laptops); the full wording from 2xl. */}
+              <span className={clsx('truncate', !compact && '2xl:hidden')}>{selected.length && canRerollNow ? `Reroll ${selected.length}` : canRerollNow ? 'Pick dice' : 'Reroll'}</span>
+              {!compact && (
+                <span className='truncate max-2xl:hidden'>
+                  {canRerollNow && selected.length ? `Reroll ${selected.length} with Willpower` : canRerollNow ? 'Pick dice to reroll' : 'Willpower reroll'}
+                </span>
+              )}
             </button>
           </div>
           <div className={clsx('grid grid-cols-[auto_1fr] items-center gap-2', !compact && 'lg:contents')}>
@@ -527,9 +530,10 @@ export default function DiceRoller({
         {!compact && (
         <section aria-labelledby='history-title' className={clsx('grow p-5 lg:p-6', fill && 'desk:min-h-0 desk:overflow-y-auto', panel)}>
           <h2 id='history-title' className='font-display text-2xl'>Recent rolls</h2>
-          {history.length ? (
+          {/* The newest entry waits for the dice to land, so the log doesn't give the result away. */}
+          {shownHistory.length ? (
             <ol className='mt-4 flex flex-col gap-2'>
-              {history.map((h) => (
+              {shownHistory.map((h) => (
                 <li key={h.id} className='result-in flex items-baseline justify-between gap-3 border-b border-bone/[0.07] pb-2'>
                   <span className={`text-sm ${h.grim ? 'text-accent' : 'text-bone'}`}>{h.label}</span>
                   <span className='shrink-0 text-xs text-bone/45 tabular-nums'>{h.detail}</span>

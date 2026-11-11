@@ -298,36 +298,45 @@ export default function Screens({ initial }: { initial: number }) {
           <Image src='/locations/location-53.webp' alt='' fill sizes='100vw' className='lc-bx-drift object-cover object-[center_40%] opacity-45' />
         </div>
         <div className={BODY}>
-          <div className='grid gap-x-12 gap-y-4 lg:grid-cols-12 lg:items-end'>
-            <Heading id='lc-dice' eyebrow='The dice' className='lg:col-span-7'>
-              The real dice, rolled in 3D.
-            </Heading>
-            <p className='lc-in max-w-[46ch] leading-relaxed text-pretty text-bone/65 lg:col-span-5 lg:pb-2' style={at(2)}>
-              Every game rolls its own d10s with its own rules: Hunger, Rage and Desperation, criticals, messy criticals, Brutal outcomes and Overreach.
-            </p>
-          </div>
-          <ul className='mt-[clamp(1.25rem,4svh,3rem)] grid flex-1 gap-4 md:grid-cols-3'>
-            {DICE.map((d, i) => (
-              <li key={d.game} data-game={d.game} data-clip-host className='lc-bx-dice lc-in group flex flex-col p-2' style={at(i * 2 + 3)}>
-                <span className='relative block min-h-[16rem] flex-1 overflow-hidden rounded-xl'>
-                  <Clip {...clip(`dice-${d.game}`)} label={`Rolling ${GAMES[d.game].name} dice in Elysium.`} className='absolute inset-0 size-full object-cover object-top' />
-                </span>
-                <Link href={gamePath(d.game, '/dice')} className='flex items-center gap-3 rounded-xl px-3 pt-3 pb-2 focus-visible:outline-2 focus-visible:outline-bone'>
-                  <span className='flex shrink-0 -space-x-2'>
-                    {d.dice.map((name, j) => (
-                      <span key={name} className='lc-in-die block' style={at(i * 2 + j + 4)}>
-                        <Image src={`/dice/official/${name}.webp`} width={309} height={339} alt='' className={clsx('w-10 drop-shadow-[0_0.5rem_0.6rem_rgb(0_0_0/0.6)] transition duration-700 ease-(--ease-spring) group-hover:-translate-y-1', j ? 'group-hover:rotate-12' : 'group-hover:-rotate-12')} />
+          {/* Two columns: the three games' dice on the left, one clip of all three rollers on the right (a still until hovered). */}
+          <div className='grid min-h-0 flex-1 gap-x-12 gap-y-[clamp(1.25rem,4svh,2.5rem)] lg:grid-cols-12 lg:items-center'>
+            <div className='flex flex-col lg:col-span-5'>
+              <Heading id='lc-dice' eyebrow='The dice'>
+                The real dice, rolled in 3D.
+              </Heading>
+              <p className='lc-in mt-4 max-w-[46ch] leading-relaxed text-pretty text-bone/65' style={at(2)}>
+                Every game rolls its own d10s by its own rules, in a tray of its own. The roller counts the successes and names the result, so the table can get on with the story.
+              </p>
+              <ul className='mt-[clamp(1rem,3.5svh,2rem)] grid gap-2'>
+                {DICE.map((d, i) => (
+                  <li key={d.game} className={clsx('lc-in', TONE[d.game])} style={at(i + 3)}>
+                    <Link
+                      href={gamePath(d.game, '/dice')}
+                      className='group flex items-center gap-4 rounded-xl border border-bone/10 bg-[#0a0809]/45 p-3 backdrop-blur-[3px] transition-[border-color,background-color] duration-500 hover:border-(--glow) hover:bg-[#0a0809]/70 focus-visible:outline-2 focus-visible:outline-bone'
+                    >
+                      <span className='flex shrink-0 -space-x-3'>
+                        {d.dice.map((name, j) => (
+                          <span key={name} className='lc-in-die block' style={at(i + j + 4)}>
+                            <Image src={`/dice/official/${name}.webp`} width={309} height={339} alt='' className={clsx('w-11 drop-shadow-[0_0.5rem_0.6rem_rgb(0_0_0/0.6)] transition duration-700 ease-(--ease-spring) group-hover:-translate-y-1', j ? 'group-hover:rotate-12' : 'group-hover:-rotate-12')} />
+                          </span>
+                        ))}
                       </span>
-                    ))}
-                  </span>
-                  <span className='min-w-0'>
-                    <span className='lc-display lc-scene-type block text-[clamp(1.25rem,2.8svh,1.6rem)] leading-tight'>{GAMES[d.game].name}</span>
-                    <span className='block text-[0.68rem] leading-snug text-bone/55'>{d.line}</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+                      <span className='min-w-0'>
+                        <span className='lc-display block text-[clamp(1.2rem,2.6svh,1.5rem)] leading-tight transition-colors duration-500 group-hover:text-(--glow)'>
+                          {GAMES[d.game].name} <span className='text-[0.65em] text-bone/45'>· {d.special}</span>
+                        </span>
+                        <span className='block text-[0.75rem] leading-snug text-bone/55'>{d.line}</span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <figure data-clip-host className='lc-in lc-in-wipe relative aspect-[16/10] w-full self-center overflow-hidden rounded-xl border border-bone/15 bg-[#050405] shadow-[0_2rem_4rem_-2rem_rgb(0_0_0/0.8)] lg:col-span-7' style={at(4)}>
+              <Clip {...clip('dice-all')} label='Rolling Vampire, Werewolf and Hunter dice in Elysium, one after another.' className='absolute inset-0 size-full object-cover' />
+              <figcaption className='sr-only'>The dice roller in each of the three games.</figcaption>
+            </figure>
+          </div>
         </div>
       </section>
 

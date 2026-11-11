@@ -530,7 +530,8 @@ export default function GuidedCreation({ game }: { game: Game }) {
         )}
         {error && <p role='alert' className='text-sm text-accent'>{error}</p>}
 
-        <footer className='flex items-center justify-between gap-3 border-t border-bone/10 pt-4'>
+        {/* On phones it stays at the bottom of the screen while the step scrolls. */}
+        <footer className='flex items-center justify-between gap-3 border-t border-bone/10 pt-4 max-md:sticky max-md:bottom-[max(0.75rem,env(safe-area-inset-bottom))] max-md:z-20 max-md:-mx-2 max-md:rounded-xl max-md:border max-md:border-bone/10 max-md:bg-ink/85 max-md:p-2 max-md:shadow-[0_-1rem_2rem_-1rem_rgb(0_0_0/0.8)] max-md:backdrop-blur-xl'>
           <button type='button' onClick={() => go(step - 1)} disabled={step === 0} className={buttonGhost}>
             <MdArrowBack aria-hidden /> Back
           </button>

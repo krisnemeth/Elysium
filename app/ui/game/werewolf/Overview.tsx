@@ -45,7 +45,8 @@ export default function WerewolfOverview({ characters: pack }: { characters: Cha
         }
       />
 
-      <section aria-label='Auspices' className={`p-5 ${panel}`}>
+      {/* On phones the pack comes first, the moons and caerns after it. */}
+      <section aria-label='Auspices' className={`p-5 max-md:order-2 ${panel}`}>
         <Stagger as='ul' className='grid grid-cols-5 gap-2'>
           {AUSPICES.map((a) => {
             const url = `url(${glyphUrl(a)})`;
@@ -78,12 +79,12 @@ export default function WerewolfOverview({ characters: pack }: { characters: Cha
             </EmptyState>
           </div>
         ) : (
-          <Stagger as='ul' className='mt-6 flex flex-wrap justify-center gap-10 md:justify-start'>
+          <Stagger as='ul' className='mt-6 grid grid-cols-2 gap-x-4 gap-y-8 md:flex md:flex-wrap md:justify-start md:gap-10'>
             {pack.map((c) => (
               <li key={c.slug}>
-                <Link href={`/vault/werewolf/characters/${c.slug}`} className='group flex w-40 flex-col items-center text-center focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent'>
+                <Link href={`/vault/werewolf/characters/${c.slug}`} className='group flex w-full flex-col items-center text-center focus-visible:outline-2 md:w-40 focus-visible:outline-offset-8 focus-visible:outline-accent'>
                   <span className='relative block'>
-                    <span className='block size-36 overflow-hidden rounded-full ring-2 ring-bone/15 transition duration-700 ease-(--ease-out-expo) group-hover:-translate-y-2 group-hover:shadow-[0_0_2.5rem_-0.25rem_var(--accent)] group-hover:ring-accent'>
+                    <span className='block size-32 overflow-hidden rounded-full md:size-36 ring-2 ring-bone/15 transition duration-700 ease-(--ease-out-expo) group-hover:-translate-y-2 group-hover:shadow-[0_0_2.5rem_-0.25rem_var(--accent)] group-hover:ring-accent'>
                       <Image src={c.image.src} unoptimized={c.image.unoptimized} width={288} height={384} alt={`Portrait of ${c.name}.`} className='size-full object-cover object-top transition-transform duration-1000 group-hover:scale-110' />
                     </span>
                     <span className='absolute -right-1 bottom-1 grid size-11 place-items-center rounded-full bg-ink ring-1 ring-bone/20'>
@@ -102,7 +103,7 @@ export default function WerewolfOverview({ characters: pack }: { characters: Cha
         )}
       </section>
 
-      <section className={`flex flex-col items-center gap-3 p-8 text-center ${panel}`}>
+      <section className={`flex flex-col items-center gap-3 p-8 text-center max-md:order-3 ${panel}`}>
         <GiWolfHowl aria-hidden className='size-10 text-accent/80' />
         <h2 className='font-display text-2xl'>No caerns marked yet</h2>
         <p className='max-w-[44ch] text-sm leading-relaxed text-bone/60'>

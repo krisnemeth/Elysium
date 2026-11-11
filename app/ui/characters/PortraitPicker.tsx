@@ -132,7 +132,9 @@ export default function PortraitPicker({
       </div>
       <div className='flex min-w-0 flex-col gap-2'>
         <h3 className='font-display text-lg leading-tight'>Portrait</h3>
-        <p className='text-xs leading-relaxed text-bone/50'>Upload an image (or drop one here) or choose one from the library, then frame it.</p>
+        <p className='text-xs leading-relaxed text-bone/50'>
+          Upload an image<span className='pointer-coarse:hidden'> (or drop one here)</span> or choose one from the library, then frame it.
+        </p>
         {fileInput}
         {buttons}
         {status}

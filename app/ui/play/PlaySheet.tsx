@@ -8,6 +8,7 @@ import type { Damage, Sheet } from '@/app/lib/sheets/types';
 import { NO_DAMAGE } from '@/app/lib/play/damage';
 import { healthMax as healthOf, willpowerMax as willpowerOf } from '@/app/lib/sheets/derived';
 import { panel } from '@/app/ui/kit/styles';
+import SheetSections from '@/app/ui/sheets/SheetNav';
 import SaveStatus from '@/app/ui/sheets/SaveStatus';
 import { useCharacterSave } from '@/app/ui/sheets/useCharacterSave';
 import { DamageTrack, HumanityTrack, PointTrack } from './tracks';
@@ -48,19 +49,22 @@ export default function PlaySheet({
   const [shareTo, setShareTo] = useState(chronicles[0]?.id ?? '');
 
   return (
-    <div className='flex flex-col gap-8'>
+    <div className='flex flex-col gap-6 md:gap-8'>
       <header className='flex flex-wrap items-center gap-3'>
-        <Link href={`/vault/${game}/characters/${id}`} className='inline-flex items-center gap-1.5 text-sm text-bone/60 transition-colors hover:text-bone'>
+        <Link href={`/vault/${game}/characters/${id}`} className='tap relative inline-flex items-center gap-1.5 text-sm text-bone/60 transition-colors [--tap-h:32px] hover:text-bone'>
           <MdArrowBack aria-hidden /> {name}
         </Link>
-        <Link href={`/vault/${game}/characters/${id}/edit`} className='inline-flex items-center gap-1.5 text-sm text-bone/60 transition-colors hover:text-bone'>
+        <Link href={`/vault/${game}/characters/${id}/edit`} className='tap relative inline-flex items-center gap-1.5 text-sm text-bone/60 transition-colors [--tap-h:32px] hover:text-bone'>
           <MdEdit aria-hidden /> Full sheet
         </Link>
         <SaveStatus className='ml-auto' state={state} error={error} onRetry={() => void retry()} />
       </header>
 
-      <section aria-labelledby='condition-title' className='flex flex-col gap-4'>
-        <h2 id='condition-title' className='font-display text-3xl'>Condition</h2>
+      {/* On phones two tabs, Condition and Roll, one at a time; larger screens show both. */}
+      <SheetSections tabsOnPhones sections={[{ id: 'condition', label: 'Condition' }, { id: 'roll', label: 'Roll' }]}>
+      <div className='flex flex-col gap-8'>
+      <section id='condition' data-section='condition' aria-labelledby='condition-title' className='flex flex-col gap-4'>
+        <h2 id='condition-title' className='font-display text-3xl max-md:sr-only'>Condition</h2>
         <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
           <DamageTrack
             label='Health'
@@ -125,8 +129,8 @@ export default function PlaySheet({
         </div>
       </section>
 
-      <section aria-labelledby='roll-title' className='flex flex-col gap-4'>
-        <h2 id='roll-title' className='font-display text-3xl'>Roll</h2>
+      <section id='roll' data-section='roll' aria-labelledby='roll-title' className='flex flex-col gap-4'>
+        <h2 id='roll-title' className='font-display text-3xl max-md:sr-only'>Roll</h2>
         {chronicles.length > 0 && (
           <div className='flex flex-wrap items-center gap-3 text-sm text-bone/70'>
             <label htmlFor={shareId}>Share rolls with</label>
@@ -140,6 +144,8 @@ export default function PlaySheet({
         )}
         <PoolRoller game={game} name={name} sheet={sheet} update={update} shareTo={shareTo} />
       </section>
+      </div>
+      </SheetSections>
     </div>
   );
 }

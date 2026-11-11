@@ -14,12 +14,14 @@ import Dots from '@/app/ui/characters/Dots';
 import PortraitPicker from '@/app/ui/characters/PortraitPicker';
 import DeleteCharacter from '@/app/ui/characters/DeleteCharacter';
 import Stagger from '@/app/ui/kit/Stagger';
+import SheetSections from '@/app/ui/sheets/SheetNav';
 
 const label = 'text-[0.7rem] tracking-[0.2em] text-bone/50 uppercase';
 
-function Block({ title, children, className = '' }: { title: string; children: ReactNode; className?: string }) {
+// One block of the sheet; on phones each is a section of its own (SheetSections).
+function Block({ id, title, children, className = '' }: { id: string; title: string; children: ReactNode; className?: string }) {
   return (
-    <section className={`p-6 ${panel} ${className}`}>
+    <section id={id} data-section={id} className={`scroll-mt-24 p-5 md:p-6 ${panel} ${className}`}>
       <h2 className='font-display text-2xl'>{title}</h2>
       <div className='mt-4'>{children}</div>
     </section>
@@ -91,46 +93,70 @@ export default function CharacterSheetView({
   const advantages = s.advantages.filter((a) => a.kind !== 'flaw');
   const flaws = s.advantages.filter((a) => a.kind === 'flaw');
   const xp = xpTotals(s);
+  const powers = s.disciplines ? 'Disciplines' : s.gifts ? 'Gifts' : s.edges ? 'Edges' : null;
+  const hasLore = !!(s.bane || s.favor || s.ban || s.tenets);
+  const sections = [
+    { id: 'profile', label: 'Profile', phoneOnly: true },
+    { id: 'attributes', label: 'Attributes' },
+    { id: 'trackers', label: 'Trackers' },
+    { id: 'skills', label: 'Skills' },
+    ...(powers ? [{ id: 'powers', label: powers }] : []),
+    { id: 'experience', label: 'Experience' },
+    { id: 'advantages', label: 'Advantages' },
+    { id: 'convictions', label: 'Convictions' },
+    ...(hasLore ? [{ id: 'lore', label: s.bane ? 'Bane' : 'Favor & ban' }] : []),
+    { id: 'biography', label: 'Biography' },
+  ];
+  const profileList = (
+    <dl className='grid gap-x-8 gap-y-3 sm:grid-cols-2'>
+      {profileRows.map(([k, l]) => (
+        <div key={k}>
+          <dt className={label}>{l}</dt>
+          <dd className='mt-0.5 text-bone/90'>{s.profile[k]}</dd>
+        </div>
+      ))}
+    </dl>
+  );
 
   return (
-    <div className='flex flex-col gap-8'>
-      <Link href={back.href} className='inline-flex items-center gap-1.5 self-start text-sm text-bone/60 transition-colors hover:text-bone'>
+    <div className='flex flex-col gap-6 md:gap-8'>
+      <Link href={back.href} className='tap relative inline-flex items-center gap-1.5 self-start text-sm text-bone/60 transition-colors [--tap-h:32px] hover:text-bone'>
         <MdArrowBack aria-hidden /> {back.label}
       </Link>
 
       {/* Identity */}
       <header className={`relative grid overflow-hidden md:grid-cols-[18rem_1fr] ${panel}`}>
-        <div className='relative aspect-[3/4] md:aspect-auto md:min-h-96'>
+        {/* On phones a banner, cropped to the head and shoulders. */}
+        <div className='relative aspect-[4/3] md:aspect-auto md:min-h-96'>
           <Image src={c.image.src} unoptimized={c.image.unoptimized} alt={`Portrait of ${c.name}.`} fill sizes='(max-width: 768px) 100vw, 18rem' className='object-cover object-top' preload />
           <div className='absolute inset-0 bg-linear-to-t from-ink/80 to-transparent md:bg-linear-to-r md:from-transparent md:to-ink/30' />
           {editablePortrait && <PortraitPicker variant='overlay' id={id} game={game} name={c.name} src={c.image.src} />}
         </div>
-        <div className='flex flex-col gap-5 p-6 md:p-8'>
+        <div className='flex flex-col gap-5 p-5 md:p-8'>
           <div className='flex items-start justify-between gap-4'>
             <div>
               <p className='text-xs tracking-[0.25em] text-accent uppercase'>
                 {GAMES[game].name} · {factionName(c) || GAMES[game].noun.one}
                 {record.status === 'draft' && ' · draft'}
               </p>
-              <h1 className='mt-2 font-display text-5xl leading-none tracking-tight md:text-6xl'>{c.name}</h1>
+              <h1 className='mt-2 font-display text-4xl leading-none tracking-tight md:text-6xl'>{c.name}</h1>
             </div>
             <FactionMark character={c} className='h-12 max-w-14 shrink-0 text-bone/60 [--knockout:transparent]' />
           </div>
           {record.summary && <p className='max-w-[60ch] leading-relaxed text-pretty text-bone/70'>{record.summary}</p>}
-          <dl className='grid gap-x-8 gap-y-3 sm:grid-cols-2'>
-            {profileRows.map(([k, l]) => (
-              <div key={k}>
-                <dt className={label}>{l}</dt>
-                <dd className='mt-0.5 text-bone/90'>{s.profile[k]}</dd>
-              </div>
-            ))}
-          </dl>
+          {/* On phones the profile is a section of its own. */}
+          <div className='max-md:hidden'>{profileList}</div>
           {actions && <div className='mt-auto flex flex-wrap gap-3 pt-2'>{actions}</div>}
         </div>
       </header>
 
+      <SheetSections sections={sections}>
       <Stagger className='grid gap-5 lg:grid-cols-2'>
-        <Block title='Attributes'>
+        <Block id='profile' title='Profile' className='md:hidden'>
+          {profileList}
+        </Block>
+
+        <Block id='attributes' title='Attributes'>
           <div className='grid gap-6 sm:grid-cols-3'>
             {Object.entries(ATTRIBUTES).map(([group, attrs]) => (
               <div key={group}>
@@ -147,7 +173,7 @@ export default function CharacterSheetView({
           </div>
         </Block>
 
-        <Block title='Trackers'>
+        <Block id='trackers' title='Trackers'>
           <ul className='flex flex-col gap-3'>
             {Object.entries(TRACK_LABELS)
               .filter(([k]) => k in s.trackers)
@@ -174,7 +200,7 @@ export default function CharacterSheetView({
           </ul>
         </Block>
 
-        <Block title='Skills' className='lg:col-span-2'>
+        <Block id='skills' title='Skills' className='lg:col-span-2'>
           <div className='grid gap-6 sm:grid-cols-3'>
             {skillRows.map(([group, list]) => (
               <div key={group}>
@@ -200,7 +226,7 @@ export default function CharacterSheetView({
         </Block>
 
         {s.disciplines && (
-          <Block title='Disciplines'>
+          <Block id='powers' title='Disciplines'>
             <ul className='flex flex-col gap-4'>
               {s.disciplines.map((d) => (
                 <li key={d.name}>
@@ -216,7 +242,7 @@ export default function CharacterSheetView({
         )}
 
         {s.gifts && (
-          <Block title='Renown, gifts & rites'>
+          <Block id='powers' title='Renown, gifts & rites'>
             {s.renown && (
               <ul className='mb-5 grid grid-cols-3 gap-3'>
                 {(['glory', 'honor', 'wisdom'] as const).map((r) => (
@@ -239,7 +265,7 @@ export default function CharacterSheetView({
         )}
 
         {s.edges && (
-          <Block title='Edges & perks'>
+          <Block id='powers' title='Edges & perks'>
             <ul className='flex flex-col gap-3'>
               {s.edges.map((e) => (
                 <li key={e.name}>
@@ -253,7 +279,7 @@ export default function CharacterSheetView({
           </Block>
         )}
 
-        <Block title='Experience'>
+        <Block id='experience' title='Experience'>
           <dl className='grid grid-cols-3 gap-3 text-center'>
             {[
               ['Available', xp.available],
@@ -281,7 +307,7 @@ export default function CharacterSheetView({
           )}
         </Block>
 
-        <Block title='Advantages & flaws'>
+        <Block id='advantages' title='Advantages & flaws'>
           <ul className='flex flex-col gap-2'>
             {[...advantages, ...flaws].map((a, i) => (
               <li key={i} className='flex items-start justify-between gap-3 border-b border-bone/[0.07] pb-2 text-sm'>
@@ -295,7 +321,7 @@ export default function CharacterSheetView({
           </ul>
         </Block>
 
-        <Block title='Convictions & touchstones'>
+        <Block id='convictions' title='Convictions & touchstones'>
           <ul className='flex flex-col gap-3'>
             {s.convictions.map((cv, i) => (
               <li key={i}>
@@ -308,7 +334,7 @@ export default function CharacterSheetView({
         </Block>
 
         {(s.bane || s.favor || s.ban || s.tenets) && (
-          <Block title={s.bane ? 'Bane & tenets' : 'Favor & ban'}>
+          <Block id='lore' title={s.bane ? 'Bane & tenets' : 'Favor & ban'}>
             <div className='flex flex-col gap-4 text-sm'>
               {s.bane && <div><p className={label}>Clan bane</p><Prose text={s.bane} /></div>}
               {s.tenets && <div><p className={label}>Chronicle tenets</p><Prose text={s.tenets} /></div>}
@@ -322,7 +348,7 @@ export default function CharacterSheetView({
           </Block>
         )}
 
-        <Block title='Biography' className='lg:col-span-2'>
+        <Block id='biography' title='Biography' className='lg:col-span-2'>
           <dl className='mb-5 grid gap-4 sm:grid-cols-2'>
             <div>
               <dt className={label}>Born</dt>
@@ -351,6 +377,7 @@ export default function CharacterSheetView({
           )}
         </Block>
       </Stagger>
+      </SheetSections>
     </div>
   );
 }
