@@ -479,8 +479,8 @@ export default function CoverPicker({ initial }: { initial: number }) {
         {/* The sides of the stage turn the ring too, on devices that hover:
             the cursor and the logo on that side say which way. Hidden from
             assistive tech; the logos are the controls. */}
-        <button type='button' aria-hidden tabIndex={-1} onClick={() => step(-1)} className='lc-half lc-half-prev absolute inset-y-0 left-0 z-[25] hidden w-[28%] cursor-w-resize [@media(hover:hover)]:block' />
-        <button type='button' aria-hidden tabIndex={-1} onClick={() => step(1)} className='lc-half lc-half-next absolute inset-y-0 right-0 z-[25] hidden w-[28%] cursor-e-resize [@media(hover:hover)]:block' />
+        <button type='button' aria-hidden tabIndex={-1} onClick={() => step(-1)} className='lc-half lc-half-prev absolute inset-y-0 left-0 z-[25] hidden w-[28%] [@media(hover:hover)]:block' />
+        <button type='button' aria-hidden tabIndex={-1} onClick={() => step(1)} className='lc-half lc-half-next absolute inset-y-0 right-0 z-[25] hidden w-[28%] [@media(hover:hover)]:block' />
 
         {/* Cover text, at the foot: the picker, the tagline and the buttons */}
         <div className='pointer-events-none relative z-30 flex flex-col items-center px-5 [grid-area:1/1]'>

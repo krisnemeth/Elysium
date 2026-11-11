@@ -128,7 +128,7 @@ export default function SiteIsland({
 
           {/* Everything sits on the right: links, theme, account, call to action. */}
           <div className='flex items-center gap-1'>
-            <ul className='mr-3 hidden items-center gap-6 text-sm text-bone/70 md:flex'>
+            <ul className='mr-3 hidden items-center gap-6 text-sm text-bone/70 lg:flex'>
               {sections.map(({ href, label }) => {
                 const isHash = href.startsWith('#');
                 if (isHash) hashIndex++;
@@ -152,7 +152,7 @@ export default function SiteIsland({
                 );
               })}
             </ul>
-            <div className='hidden items-center md:flex'>
+            <div className='hidden items-center lg:flex'>
               {signedIn ? (
                 <form action={signOut}>
                   <button className={quiet}>Log out</button>
@@ -179,15 +179,15 @@ export default function SiteIsland({
               aria-expanded={menu}
               aria-controls='site-menu'
               onClick={() => setMenu((m) => !m)}
-              className={`ml-1 grid size-9 place-items-center rounded-xl text-bone/80 transition-colors hover:bg-bone/[0.06] md:hidden ${focus}`}
+              className={`ml-1 grid size-9 place-items-center rounded-xl text-bone/80 transition-colors hover:bg-bone/[0.06] lg:hidden ${focus}`}
             >
               {menu ? <MdClose aria-hidden className='size-6' /> : <MdMenu aria-hidden className='size-6' />}
             </button>
           </div>
         </nav>
 
-        {/* Phone menu: grows the pill itself. */}
-        <IslandSection open={menu} id='site-menu' className='md:hidden'>
+        {/* Phone and tablet menu (below lg, where the links don't fit): grows the pill itself. */}
+        <IslandSection open={menu} id='site-menu' className='lg:hidden'>
           <div className='flex flex-col gap-1 border-t border-bone/10 px-1 pt-2 pb-3'>
             {sections.map(({ href, label }) => (
               <a key={href} href={href} onClick={(e) => (href.startsWith('#') ? onSectionClick(e, href) : closeAll())} className='rounded-xl px-3 py-3.5 text-base text-bone/85 hover:bg-bone/[0.06]'>
